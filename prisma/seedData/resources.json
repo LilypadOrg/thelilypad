@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Solidity Language documentation",
+    "description": "Official Solidity doumentation",
+    "url": "https://docs.soliditylang.org/",
+    "technologies": ["Solidity"],
+    "tags": ["smart contracts"]
+  },
+  {
+    "title": "Pinata",
+    "description": "Decentralized media storage",
+    "url": "https://www.pinata.cloud/",
+    "technologies": ["IPFS"],
+    "tags": ["web3", "nft"]
+  }
+]

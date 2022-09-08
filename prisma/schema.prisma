@@ -1,0 +1,113 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id Int @id @default(autoincrement())
+  address String @unique
+  xp Int @default(0)
+  level UserLevel @relation(fields: [levelNumber], references: [number])
+  levelNumber Int
+  courses UserCourse[]
+  cratedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserLevel {
+  number Int @id
+  xpFrom Int
+  xpTo Int
+  users User[]
+}
+
+model Course {
+  id Int @id @default(autoincrement())
+  title String @unique
+  slug String @unique
+  description String
+  url String
+  coverImageUrl String?
+  levels CourseLevel[]
+  xp Int
+  technologies Technology[]
+  users UserCourse[]
+  tags Tag[]
+  cratedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Resource {
+  id Int @id @default(autoincrement())
+  title String @unique
+  slug String @unique
+  description String
+  url String
+  coverImageUrl String?
+  technologies Technology[]
+  tags Tag[]
+  cratedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserCourse {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+  course Course @relation(fields: [courseId], references: [id])
+  courseId Int
+  enrolled Boolean @default(false)
+  completed Boolean @default(false)
+  completedOn DateTime?
+
+  @@unique([userId, courseId])
+}
+
+model Tag {
+  id Int @id @default(autoincrement())
+  name String @unique
+  slug String @unique
+  courses Course[]
+  events Event[]
+  resources Resource[]
+}
+
+model Event {
+  id Int @id @default(autoincrement())
+  title String
+  location String
+  url String
+  startDate DateTime @db.Date
+  endDate DateTime @db.Date
+  slug String
+  tags Tag[]
+  cratedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Technology {
+  id Int @id @default(autoincrement())
+  name String @unique
+  slug String @unique
+  courses Course[]
+  resources Resource[]
+}
+
+model CourseLevel {
+  id Int @id @default(autoincrement())
+  name String @unique
+  slug String @unique
+  courses Course[]
+}
+
+
+
+

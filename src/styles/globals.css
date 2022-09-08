@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-200 tracking-wide text-gray-900 dark:bg-slate-900 dark:text-slate-400;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply mt-2 mb-4 font-bold;
+  }
+
+  h1 {
+    @apply text-9xl;
+  }
+
+  h2 {
+    @apply text-7xl;
+  }
+
+  h3 {
+    @apply text-5xl;
+  }
+
+  h4 {
+    @apply text-3xl;
+  }
+
+  h5 {
+    @apply text-2xl;
+  }
+
+  h6 {
+    @apply text-xl;
+  }
+
+  a {
+    @apply hover:border-b hover:border-slate-400;
+  }
+}

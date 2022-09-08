@@ -1,0 +1,22 @@
+[
+  {
+    "number": 1,
+    "xpFrom": 0,
+    "xpTo": 1000
+  },
+  {
+    "number": 2,
+    "xpFrom": 1001,
+    "xpTo": 2000
+  },
+  {
+    "number": 3,
+    "xpFrom": 2001,
+    "xpTo": 3000
+  },
+  {
+    "number": 4,
+    "xpFrom": 3001,
+    "xpTo": 4000
+  }
+]

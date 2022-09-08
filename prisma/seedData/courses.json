@@ -1,0 +1,28 @@
+[
+  {
+    "title": "Learn Blockchain, Solidity, and Full Stack Web3 Development with JavaScript",
+    "description": "This course will give you a full introduction into all of the core concepts related to blockchain, smart contracts, Solidity, ERC20s, full-stack Web3 dapps, decentralized finance (DeFi), JavaScript, TypeScript, Chainlink, Ethereum, upgradable smart contracts, DAOs, the graph, moralis, aave, IPFS, and more. Follow along with the videos and you'll be a blockchain wizard in no time!",
+    "url": "https://www.youtube.com/watch?v=gyMwXuJrbJQ",
+    "xp": 1000,
+    "coverImageUrl": "https://i.ytimg.com/vi/gyMwXuJrbJQ/hqdefault.jpg",
+    "levels": ["Beginner", "Intermediate"],
+    "technologies": [
+      "Javascript",
+      "Solidity",
+      "Hardhat",
+      "ChainLink",
+      "Moralis"
+    ],
+    "tags": ["web3", "blockchain", "full-stack"]
+  },
+  {
+    "title": "Learn Web3 Dao - Freshman Track",
+    "description": "Learn the fundamentals of Web3, set up your crypto wallet, get into developer mode, and deploy your first smart contract, token, and NFT!",
+    "url": "https://learnweb3.io/courses/9a3fafe4-b5eb-4329-bdef-97b2aa6aacc1/lessons",
+    "xp": 500,
+    "coverImageUrl": "https://i.imgur.com/M9uocHi.png",
+    "levels": ["Beginner"],
+    "technologies": ["Javascript", "Solidity"],
+    "tags": ["web3"]
+  }
+]
