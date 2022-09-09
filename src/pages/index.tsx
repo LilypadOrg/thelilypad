@@ -1,4 +1,5 @@
 import type { NextPage } from 'next';
+import CourseCard from '~/components/CourseCard';
 
 const coursesList = [
   'Something',
@@ -107,7 +108,77 @@ const Home: NextPage = () => {
             </div>
           </div>
         </div>
-        <div className="h-[10rem] w-[10rem] border-2  border-red-400"></div>
+        {/* Collection */}
+        <div className="my-8">
+          {/* First three collection */}
+          <div className="grid grid-cols-3  gap-8">
+            <div className="relative h-[320px] rounded-lg bg-gray-400 ">
+              <div className=" absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg bg-primary-400 p-4 text-white">
+                <h1 className="mb-0 text-lg">The Lily Pad</h1>
+                <p className=" break-all text-sm font-light leading-[1.1]">
+                  A community endeavouring to guide those self-learning in web3{' '}
+                </p>
+                <p className="text-sm font-light">#goForYou</p>
+              </div>
+            </div>
+            <div className="relative h-[320px] rounded-lg bg-gray-400">
+              <div className=" absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg bg-secondary-400 p-4 text-white">
+                <h1 className="mb-0 text-lg">The Lily Pad</h1>
+                <p className=" break-all text-sm font-light leading-[1.1]">
+                  A community endeavouring to guide those self-learning in web3{' '}
+                </p>
+                <p className="text-sm font-light">#goForYou</p>
+              </div>
+            </div>
+            <div className="relative h-[320px] rounded-lg bg-gray-400">
+              <div className=" absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg bg-primary-400 p-4 text-white">
+                <h1 className="mb-0 text-lg">The Lily Pad</h1>
+                <p className=" break-all text-sm font-light leading-[1.1]">
+                  A community endeavouring to guide those self-learning in web3{' '}
+                </p>
+                <p className="text-sm font-light">#goForYou</p>
+              </div>
+            </div>
+          </div>
+          {/* Next two collection */}
+          <div className="mt-6 grid grid-cols-2 gap-4">
+            <div className="relative h-[320px] rounded-lg  bg-gray-400">
+              <div className=" absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg bg-primary-400 p-4 text-white">
+                <h1 className="mb-0 text-lg">The Lily Pad</h1>
+                <p className=" break-all text-sm font-light leading-[1.1]">
+                  A community endeavouring to guide those self-learning in web3{' '}
+                </p>
+                <p className="text-sm font-light">#goForYou</p>
+              </div>
+            </div>
+            <div className="relative h-[320px] rounded-lg  bg-gray-400">
+              <div className=" absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg bg-primary-400 p-4 text-white">
+                <h1 className="mb-0 text-lg">The Lily Pad</h1>
+                <p className=" break-all text-sm font-light leading-[1.1]">
+                  A community endeavouring to guide those self-learning in web3{' '}
+                </p>
+                <p className="text-sm font-light">#goForYou</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Top 10 courses */}
+        <div className="my-8">
+          <h1 className="mt-8 text-4xl">Top10 Courses</h1>
+          {/* Card Container */}
+          <div className="mt-8 flex space-x-8 overflow-x-auto">
+            {/* card */}
+            <CourseCard />
+            <CourseCard />
+            <CourseCard />
+            <CourseCard />
+            <CourseCard />
+            <CourseCard />
+            <CourseCard />
+            <CourseCard />
+            <CourseCard />
+          </div>
+        </div>
       </div>
     </div>
   );
