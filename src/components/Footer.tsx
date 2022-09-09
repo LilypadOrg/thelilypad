@@ -1,14 +1,13 @@
-import Link from 'next/link';
-import { getFooterMainItems, getFooterSecItems } from '../utils/navLinks';
+// import Link from 'next/link';
+// import { getFooterMainItems, getFooterSecItems } from '../utils/navLinks';
 
 const Footer = () => {
-  const footerMainItems = getFooterMainItems();
-  const footerSecItems = getFooterSecItems();
+  // const footerMainItems = getFooterMainItems();
+  // const footerSecItems = getFooterSecItems();
 
   return (
-    <div>
-      <div className="mx-auto grid max-w-6xl md:grid-cols-3">
-        <div>Social</div>
+    <div className="mt-14 grid h-72  w-full bg-primary-500 text-white md:grid-cols-3">
+      {/* <div>Social</div>
         <div>
           <ul>
             {footerMainItems.map((l) => (
@@ -30,8 +29,7 @@ const Footer = () => {
               </li>
             ))}
           </ul>
-        </div>
-      </div>
+        </div> */}
     </div>
   );
 };

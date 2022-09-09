@@ -34,7 +34,7 @@ const Navbar = () => {
   return (
     <div className="h-20">
       <div
-        className={`fixed z-[100] h-20 w-full bg-gray-200 dark:bg-slate-900 ${
+        className={`fixed z-[100] h-20 w-full bg-white dark:bg-slate-900 ${
           shadow ? ' shadow-md shadow-black' : ''
         } `}
       >

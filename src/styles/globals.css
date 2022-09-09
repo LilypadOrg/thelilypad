@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-gray-200 tracking-wide text-gray-900 dark:bg-slate-900 dark:text-slate-400;
+    @apply bg-white tracking-wide text-gray-900 dark:bg-slate-900 dark:text-slate-400;
   }
 
   h1,

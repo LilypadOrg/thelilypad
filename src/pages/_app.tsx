@@ -13,6 +13,7 @@ import { withTRPC } from '@trpc/next';
 import { AppRouter } from '~/server/routers/_app';
 import superjson from 'superjson';
 import Navbar from '~/components/Navbar';
+import Footer from '~/components/Footer';
 
 const getSiweMessageOptions: GetSiweMessageOptions = () => ({
   statement: 'Sign in to The Lily Pad',
@@ -28,6 +29,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           <RainbowKitProvider chains={chains}>
             <Navbar />
             <Component {...pageProps} />
+            <Footer />
             {/* <Layout>
             </Layout> */}
           </RainbowKitProvider>
