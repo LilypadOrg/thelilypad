@@ -33,7 +33,7 @@
     "coverImageUrl": "image/courses/CryptoZombies.png",
     "levels": ["Beginner"],
     "technologies": ["Solidity"],
-    "tags": ["web3", "blockchain", "gaming"]
+    "tags": ["web3", "blockchain", "games"]
   },
   {
     "title": "SpeedRunEthereum - Challenge 0: Simple NFT Example",
@@ -73,7 +73,7 @@
     "coverImageUrl": "images/courses/Advanced_Computer_Vision.png",
     "levels": ["Advanced"],
     "technologies": ["OpenCV", "Mediapipe", "Python"],
-    "tags": ["Web2", "Python", "AI"]
+    "tags": ["web2", "python", "ai"]
   },
   
   {
@@ -84,7 +84,7 @@
     "coverImageUrl": "images/courses/Advanced_Git.png",
     "levels": ["Advanced"],
     "technologies": ["Git", "CLI"],
-    "tags": ["Web2", "Web3", "Command Line"]
+    "tags": ["web2", "web3", "command line"]
   }
   
 ]
