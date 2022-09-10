@@ -1,7 +1,7 @@
 [
   {
     "title": "Solidity Language documentation",
-    "description": "Official Solidity doumentation",
+    "description": "Official Solidity documentation",
     "url": "https://docs.soliditylang.org/",
     "technologies": ["Solidity"],
     "tags": ["smart contracts"]
@@ -11,6 +11,27 @@
     "description": "Decentralized media storage",
     "url": "https://www.pinata.cloud/",
     "technologies": ["IPFS"],
-    "tags": ["web3", "nft"]
+    "tags": ["web3", "nft", "storage"]
+  },
+  {
+    "title": "Interplanetary File System",
+    "description": "IPFS Documentation",
+    "url": "https://docs.ipfs.tech/",
+    "technologies": ["IPFS"],
+    "tags": ["web3", "nft", "storage", "docs"]
+  },
+  {
+    "title": "GitHub",
+    "description": "Code Repos, Version Control, Project Backups",
+    "url": "https://docs.github.com/en",
+    "technologies": ["Git"],
+    "tags": ["github", "docs", "web3", "web2"]
+  },
+  {
+    "title": "Alchemy",
+    "description": "Web3 Platform Layer and RPC Provider",
+    "url": "https://docs.alchemy.com/",
+    "technologies": ["RPC", "Alchemy"],
+    "tags": ["docs", "web3", "rpc"]
   }
 ]
