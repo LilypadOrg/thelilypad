@@ -83,8 +83,8 @@
     "xp": 500,
     "coverImageUrl": "images/courses/Advanced_Git.png",
     "levels": ["Advanced"],
-    "technologies": ["Git", "CLI"],
-    "tags": ["web2", "web3", "command line"]
+    "technologies": ["Git", "Command Line"],
+    "tags": ["web2", "web3"]
   }
   
 ]
