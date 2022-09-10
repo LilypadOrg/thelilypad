@@ -1,5 +1,5 @@
 import type { NextPage } from 'next';
-import CourseCard from '~/components/CourseCard';
+import CourseCarousel from '~/components/CourseCarousel';
 
 const coursesList = [
   'Something',
@@ -168,22 +168,7 @@ const Home: NextPage = () => {
       <hr className="my-14 w-full bg-main-gray-dark" />
       <div className="px-[5.5rem]">
         {/* Top 10 courses */}
-        <div className="my-8">
-          <h1 className="mt-8 text-4xl">Top10 Courses</h1>
-          {/* Card Container */}
-          <div className="mt-8 flex space-x-8 overflow-x-auto px-2 py-2">
-            {/* card */}
-            <CourseCard />
-            <CourseCard />
-            <CourseCard />
-            <CourseCard />
-            <CourseCard />
-            <CourseCard />
-            <CourseCard />
-            <CourseCard />
-            <CourseCard />
-          </div>
-        </div>
+        <CourseCarousel title="Top 10 Courses" />
         {/* view AllCourse one tab*/}
         <div className="my-14 w-full">
           <div className="flex w-[30%] justify-between rounded-md bg-main-gray-light py-2 px-4">
