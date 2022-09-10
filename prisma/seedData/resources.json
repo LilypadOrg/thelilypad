@@ -11,27 +11,27 @@
     "description": "Decentralized media storage",
     "url": "https://www.pinata.cloud/",
     "technologies": ["IPFS"],
-    "tags": ["Web3", "NFT", "Storage"]
+    "tags": ["web3", "nft", "storage"]
   },
   {
     "title": "Interplanetary File System",
     "description": "IPFS Documentation",
     "url": "https://docs.ipfs.tech/",
     "technologies": ["IPFS"],
-    "tags": ["Web3", "NFT", "Storage", "Docs"]
+    "tags": ["web3", "nft", "storage", "docs"]
   },
   {
     "title": "GitHub",
     "description": "Code Repos, Version Control, Project Backups",
     "url": "https://docs.github.com/en",
     "technologies": ["Git"],
-    "tags": ["GitHub", "Docs", "Web3", "Web2"]
+    "tags": ["github", "docs", "web3", "web2"]
   },
   {
     "title": "Alchemy",
     "description": "Web3 Platform Layer and RPC Provider",
     "url": "https://docs.alchemy.com/",
     "technologies": ["RPC", "Alchemy"],
-    "tags": ["Docs", "Web3", "RPC"]
+    "tags": ["docs", "web3", "rpc"]
   }
 ]
