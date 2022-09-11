@@ -15,13 +15,21 @@ const AccountWidget = () => {
     }
   }, [address, session, disconnect]);
 
-  const { data: user } = trpc.useQuery(['users.profile'], {
-    enabled: !!session?.user,
-  });
+  const { data: user } = trpc.useQuery(
+    ['users.byAddress', { address: session?.user.address || '' }],
+    {
+      enabled: !!session?.user,
+      onSuccess: (data) => {
+        if (!data) {
+          disconnect();
+        }
+      },
+    }
+  );
 
   return user ? (
     <div>
-      <Link href="/profiles">
+      <Link href={`/profiles/${user.name}`}>
         <button className="rounded-lg border-2 border-slate-500 p-2">
           Lvl: {user?.level.number} / XP: {user?.xp}
         </button>

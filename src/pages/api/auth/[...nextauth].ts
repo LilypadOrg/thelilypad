@@ -52,7 +52,11 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
           const user = await prisma.user.upsert({
             where: { address: siwe.address },
             update: {},
-            create: { address: siwe.address, levelNumber: 1 },
+            create: {
+              address: siwe.address,
+              levelNumber: 1,
+              name: siwe.address,
+            },
           });
           return {
             // id: siwe.address,

@@ -1,8 +1,8 @@
 [
   "HTML",
   "CSS",
-  "Javascript",
-  "Typescript",
+  "JavaScript",
+  "TypeScript",
   "React",
   "Next JS",
   "Solidity",
@@ -17,5 +17,6 @@
   "Mediapipe",
   "Python",
   "Git",
-  "Command Line"
+  "Command Line",
+  "Alchemy"
 ]

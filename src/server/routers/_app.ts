@@ -10,6 +10,7 @@ import { tagRouter } from './tags';
 import { technologyRouter } from './technologies';
 import { courseLevelRouter } from './courseLevels';
 import { resourceRouter } from './resources';
+import { blockenRouter } from './blockend';
 
 /**
  * Create your application's root router
@@ -45,6 +46,7 @@ export const appRouter = createRouter()
   .merge('tags.', tagRouter)
   .merge('technologies.', technologyRouter)
   .merge('courseLevels.', courseLevelRouter)
-  .merge('resources.', resourceRouter);
+  .merge('resources.', resourceRouter)
+  .merge('blockend.', blockenRouter);
 
 export type AppRouter = typeof appRouter;

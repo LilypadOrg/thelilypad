@@ -27,6 +27,7 @@
     "react-toastify": "^9.0.8",
     "superjson": "^1.9.1",
     "wagmi": "^0.6.4",
+    "web3": "^1.7.5",
     "zod": "^3.18.0"
   },
   "devDependencies": {

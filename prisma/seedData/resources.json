@@ -31,7 +31,7 @@
     "title": "Alchemy",
     "description": "Web3 Platform Layer and RPC Provider",
     "url": "https://docs.alchemy.com/",
-    "technologies": ["RPC", "Alchemy"],
+    "technologies": ["Alchemy"],
     "tags": ["docs", "web3", "rpc"]
   }
 ]

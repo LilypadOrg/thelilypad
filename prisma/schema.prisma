@@ -14,6 +14,7 @@ datasource db {
 model User {
   id Int @id @default(autoincrement())
   address String @unique
+  name String @unique
   xp Int @default(0)
   level UserLevel @relation(fields: [levelNumber], references: [number])
   levelNumber Int
@@ -30,7 +31,7 @@ model UserLevel {
 }
 
 model Course {
-  id Int @id @default(autoincrement())
+  id Int @id
   title String @unique
   slug String @unique
   description String
