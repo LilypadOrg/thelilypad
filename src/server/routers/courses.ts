@@ -3,17 +3,23 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { createRouter } from '~/server/createRouter';
 import { prisma } from '~/server/prisma';
+import { ContentType } from '~/types/types';
 
-const defaultCourseSelect = Prisma.validator<Prisma.CourseSelect>()({
+const defaultCourseSelect = Prisma.validator<Prisma.ContentSelect>()({
   id: true,
   title: true,
   description: true,
   coverImageUrl: true,
   technologies: true,
-  levels: true,
-  xp: true,
   tags: true,
   slug: true,
+  course: {
+    select: {
+      id: true,
+      levels: true,
+      xp: true,
+    },
+  },
 });
 
 export const courseRouter = createRouter()
@@ -32,16 +38,21 @@ export const courseRouter = createRouter()
        * @link https://trpc.io/docs/useInfiniteQuery
        */
       try {
-        const courses = await prisma.course.findMany({
+        const courses = await prisma.content.findMany({
           where: {
+            contentType: { name: ContentType.COURSE },
             ...(input?.tags
               ? { tags: { some: { slug: { in: input.tags } } } }
               : {}),
             ...(input?.technologies
-              ? { technologies: { some: { slug: { in: input.technologies } } } }
+              ? {
+                  technologies: {
+                    some: { slug: { in: input.technologies } },
+                  },
+                }
               : {}),
             ...(input?.levels
-              ? { levels: { some: { slug: { in: input.levels } } } }
+              ? { course: { levels: { some: { slug: { in: input.levels } } } } }
               : {}),
           },
           select: defaultCourseSelect,
@@ -69,14 +80,17 @@ export const courseRouter = createRouter()
        * @link https://trpc.io/docs/useInfiniteQuery
        */
       try {
-        const courses = await prisma.course.findMany({
+        const courses = await prisma.content.findMany({
           where:
             input?.tags || input?.technologies || input?.levels
               ? {
+                  contentType: { name: ContentType.COURSE },
                   OR: [
                     {
                       ...(input?.tags
-                        ? { tags: { some: { slug: { in: input.tags } } } }
+                        ? {
+                            tags: { some: { slug: { in: input.tags } } },
+                          }
                         : {}),
                     },
                     {
@@ -90,12 +104,18 @@ export const courseRouter = createRouter()
                     },
                     {
                       ...(input?.levels
-                        ? { levels: { some: { slug: { in: input.levels } } } }
+                        ? {
+                            course: {
+                              levels: { some: { slug: { in: input.levels } } },
+                            },
+                          }
                         : {}),
                     },
                   ],
                 }
-              : undefined,
+              : {
+                  contentType: { name: ContentType.COURSE },
+                },
           select: defaultCourseSelect,
         });
         return courses;
@@ -114,8 +134,8 @@ export const courseRouter = createRouter()
     async resolve({ input }) {
       try {
         const { id } = input;
-        const course = await prisma.course.findUnique({
-          where: { id },
+        const course = await prisma.content.findFirst({
+          where: { id, contentType: { name: ContentType.COURSE } },
           select: defaultCourseSelect,
         });
 

@@ -30,33 +30,53 @@ model UserLevel {
   users User[]
 }
 
-model Course {
+// Generic content type
+model Content {
   id Int @id
   title String @unique
   slug String @unique
   description String
   url String
   coverImageUrl String?
-  levels CourseLevel[]
-  xp Int
   technologies Technology[]
-  users UserCourse[]
   tags Tag[]
+  contentType ContentType @relation(fields: [contentTypeId], references: [id])
+  contentTypeId Int
+  course Course?
+  resource Resource?
+  event Event?
+  communityProject CommunityProject?
   cratedAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Resource {
+model Tag {
   id Int @id @default(autoincrement())
-  title String @unique
+  name String @unique
   slug String @unique
-  description String
-  url String
-  coverImageUrl String?
-  technologies Technology[]
-  tags Tag[]
-  cratedAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  contents Content[]
+}
+
+model Technology {
+  id Int @id @default(autoincrement())
+  name String @unique
+  slug String @unique
+  contents Content[]
+}
+
+model Course {
+  id Int @id
+  levels CourseLevel[]
+  xp Int
+  users UserCourse[]
+  content Content @relation(fields: [contentId], references: [id])
+  contentId Int @unique
+}
+
+model Resource {
+  id Int @id
+  content Content @relation(fields: [contentId], references: [id])
+  contentId Int @unique
 }
 
 model UserCourse {
@@ -72,34 +92,31 @@ model UserCourse {
   @@unique([userId, courseId])
 }
 
-model Tag {
-  id Int @id @default(autoincrement())
-  name String @unique
-  slug String @unique
-  courses Course[]
-  events Event[]
-  resources Resource[]
-}
+
 
 model Event {
-  id Int @id @default(autoincrement())
-  title String
-  location String
-  url String
+  id Int @id
   startDate DateTime @db.Date
   endDate DateTime @db.Date
-  slug String
-  tags Tag[]
-  cratedAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  location String
+  content Content @relation(fields: [contentId], references: [id])
+  contentId Int @unique
 }
 
-model Technology {
+model CommunityProject {
+  id Int @id
+  author String
+  codeUrl String?
+  content Content @relation(fields: [contentId], references: [id])
+  contentId Int @unique
+}
+
+
+model ContentType {
   id Int @id @default(autoincrement())
   name String @unique
   slug String @unique
-  courses Course[]
-  resources Resource[]
+  contents Content[]
 }
 
 model CourseLevel {

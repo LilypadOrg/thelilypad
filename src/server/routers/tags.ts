@@ -2,6 +2,8 @@ import { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { createRouter } from '~/server/createRouter';
 import { prisma } from '~/server/prisma';
+import { z } from 'zod';
+import { ContentType } from '~/types/types';
 
 const defaultTagsSelect = Prisma.validator<Prisma.TagSelect>()({
   id: true,
@@ -27,28 +29,16 @@ export const tagRouter = createRouter()
       }
     },
   })
-  .query('forCourses', {
-    async resolve() {
+  .query('byContentTYpe', {
+    input: z.object({
+      contentType: z.nativeEnum(ContentType),
+    }),
+    async resolve({ input }) {
       try {
         const tags = await prisma.tag.findMany({
-          where: { courses: { some: {} } },
-          select: defaultTagsSelect,
-        });
-        return tags;
-      } catch (err) {
-        console.error(err);
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: `Error retrieving data.`,
-        });
-      }
-    },
-  })
-  .query('forResources', {
-    async resolve() {
-      try {
-        const tags = await prisma.tag.findMany({
-          where: { resources: { some: {} } },
+          where: {
+            contents: { some: { contentType: { name: input.contentType } } },
+          },
           select: defaultTagsSelect,
         });
         return tags;

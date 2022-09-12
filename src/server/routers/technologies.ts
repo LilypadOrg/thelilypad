@@ -2,6 +2,8 @@ import { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { createRouter } from '~/server/createRouter';
 import { prisma } from '~/server/prisma';
+import { ContentType } from '~/types/types';
+import { z } from 'zod';
 
 const defaultTechnologiesSelect = Prisma.validator<Prisma.TechnologySelect>()({
   id: true,
@@ -27,28 +29,16 @@ export const technologyRouter = createRouter()
       }
     },
   })
-  .query('forCourses', {
-    async resolve() {
+  .query('byContentTYpe', {
+    input: z.object({
+      contentType: z.nativeEnum(ContentType),
+    }),
+    async resolve({ input }) {
       try {
         const techs = await prisma.technology.findMany({
-          where: { courses: { some: {} } },
-          select: defaultTechnologiesSelect,
-        });
-        return techs;
-      } catch (err) {
-        console.error(err);
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: `Error retrieving data.`,
-        });
-      }
-    },
-  })
-  .query('forResources', {
-    async resolve() {
-      try {
-        const techs = await prisma.technology.findMany({
-          where: { resources: { some: {} } },
+          where: {
+            contents: { some: { contentType: { name: input.contentType } } },
+          },
           select: defaultTechnologiesSelect,
         });
         return techs;

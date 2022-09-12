@@ -5,9 +5,10 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { trpc } from '~/utils/trpc';
 import CourseList from '~/components/CourseList';
+import { ContentType } from '~/types/types';
 
 const Courses: NextPage = () => {
-  const [contentFilters, setContentFilters] = useState<ContentFilter>({});
+  const [contentFilters, setContentFilters] = useState<ContentFilterType>({});
   const { data: content } = trpc.useQuery(['courses.all', contentFilters], {
     onError: (err) => {
       toast.error(err.message);
@@ -18,19 +19,25 @@ const Courses: NextPage = () => {
     // },
   });
 
-  const { data: techs } = trpc.useQuery(['technologies.forCourses'], {
-    // TODO: Find a way to manage error globally
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: (data) => console.log(data),
-  });
+  const { data: techs } = trpc.useQuery(
+    ['technologies.byContentTYpe', { contentType: ContentType.COURSE }],
+    {
+      // TODO: Find a way to manage error globally
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: (data) => console.log(data),
+    }
+  );
 
-  const { data: tags } = trpc.useQuery(['tags.forCourses'], {
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
+  const { data: tags } = trpc.useQuery(
+    ['tags.byContentTYpe', { contentType: ContentType.COURSE }],
+    {
+      onError: (err) => {
+        toast.error(err.message);
+      },
+    }
+  );
 
   const { data: levels } = trpc.useQuery(['courseLevels.forCourses'], {
     onError: (err) => {

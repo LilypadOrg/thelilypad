@@ -3,8 +3,9 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { createRouter } from '~/server/createRouter';
 import { prisma } from '~/server/prisma';
+import { ContentType } from '~/types/types';
 
-const defaultResourceSelect = Prisma.validator<Prisma.ResourceSelect>()({
+const defaultResourceSelect = Prisma.validator<Prisma.ContentSelect>()({
   id: true,
   title: true,
   description: true,
@@ -30,8 +31,9 @@ export const resourceRouter = createRouter()
        * @link https://trpc.io/docs/useInfiniteQuery
        */
       try {
-        const resources = await prisma.resource.findMany({
+        const resources = await prisma.content.findMany({
           where: {
+            contentType: { name: ContentType.RESOURCE },
             ...(input?.tags
               ? { tags: { some: { slug: { in: input.tags } } } }
               : {}),
@@ -68,10 +70,11 @@ export const resourceRouter = createRouter()
        * @link https://trpc.io/docs/useInfiniteQuery
        */
       try {
-        const resources = await prisma.resource.findMany({
+        const resources = await prisma.content.findMany({
           where:
             input?.tags || !input?.technologies
               ? {
+                  contentType: { name: ContentType.RESOURCE },
                   OR: [
                     {
                       ...(input?.tags
@@ -89,7 +92,9 @@ export const resourceRouter = createRouter()
                     },
                   ],
                 }
-              : undefined,
+              : {
+                  contentType: { name: ContentType.RESOURCE },
+                },
           select: defaultResourceSelect,
         });
         return resources;
@@ -108,7 +113,7 @@ export const resourceRouter = createRouter()
     async resolve({ input }) {
       try {
         const { id } = input;
-        const resource = await prisma.resource.findUnique({
+        const resource = await prisma.content.findUnique({
           where: { id },
           select: defaultResourceSelect,
         });

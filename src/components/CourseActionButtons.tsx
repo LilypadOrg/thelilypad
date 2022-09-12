@@ -56,7 +56,8 @@ const CourseActionButtons = ({
     contractInterface: MAIN_CONTRACT_ABI,
     functionName: 'completeEvent',
     args: [user.address, courseId, completeEventSignature],
-    enabled: !!onChainProfile && !!completeEventSignature,
+    enabled:
+      !!onChainProfile && !!completeEventSignature && !!data && !data.completed,
   });
   const { data: completeCourseRes, write: completeCourse } =
     useContractWrite(completeCourseConfig);

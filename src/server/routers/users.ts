@@ -15,7 +15,12 @@ const profileUserSelect = Prisma.validator<Prisma.UserSelect>()({
     select: {
       completed: true,
       enrolled: true,
-      course: true,
+      course: {
+        select: {
+          id: true,
+          content: true,
+        },
+      },
     },
   },
 });

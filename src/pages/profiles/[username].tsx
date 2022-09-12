@@ -246,7 +246,7 @@ const Profile: NextPage = () => {
           <h6>Completed Courses</h6>
           {completedCourses && completedCourses.length > 0 ? (
             completedCourses.map(({ course }) => (
-              <div key={course.id}>{course.title}</div>
+              <div key={course.id}>{course.content.title}</div>
             ))
           ) : (
             <div>Yo have not completed any course</div>
@@ -254,7 +254,7 @@ const Profile: NextPage = () => {
           <h6>Enrolled Courses</h6>
           {enrolledCourses && enrolledCourses.length > 0 ? (
             enrolledCourses.map(({ course }) => (
-              <div key={course.id}>{course.title}</div>
+              <div key={course.id}>{course.content.title}</div>
             ))
           ) : (
             <div>You are not enrolled in any course</div>
