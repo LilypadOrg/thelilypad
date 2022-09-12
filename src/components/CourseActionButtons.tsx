@@ -36,10 +36,6 @@ const CourseActionButtons = ({
       functionName: 'getMember',
       enabled: !!session?.user,
       args: [session?.user.address],
-      onSuccess: (data) => {
-        console.log('On chain profile');
-        console.log(data);
-      },
     });
 
   const { data: completeEventSignature } = trpc.useQuery(
@@ -52,23 +48,15 @@ const CourseActionButtons = ({
     ],
     {
       enabled: !!onChainProfile?.pathChosen,
-      onSuccess: (data) => {
-        console.log('singnature');
-        console.log(data);
-      },
     }
   );
 
-  const { config: completeCourseConfig, error } = usePrepareContractWrite({
+  const { config: completeCourseConfig } = usePrepareContractWrite({
     addressOrName: MAIN_CONTRACT_ADDRESS,
     contractInterface: MAIN_CONTRACT_ABI,
     functionName: 'completeEvent',
     args: [user.address, courseId, completeEventSignature],
     enabled: !!onChainProfile && !!completeEventSignature,
-    onError: (error) => {
-      console.log('error');
-      console.log(error);
-    },
   });
   const { data: completeCourseRes, write: completeCourse } =
     useContractWrite(completeCourseConfig);
@@ -123,9 +111,6 @@ const CourseActionButtons = ({
   });
 
   const handleSetCompleted = async () => {
-    console.log('Completion handler');
-    console.log(onChainProfile);
-    console.log(completeCourse);
     if (onChainProfile) {
       if (completeCourse) {
         completeCourse();
@@ -157,11 +142,18 @@ const CourseActionButtons = ({
           <button onClick={handleSetEnrolled}>
             {data.enrolled ? 'Canel Enrollment' : 'Enroll'}
           </button>
-          {!data.completed ? (
-            `Course completed on ${data.completedOn}`
+          {data.completed ? (
+            `Course completed on ${data.completedOn?.toLocaleDateString(
+              'en-gb',
+              {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+              }
+            )}`
           ) : (
             <button
-              disabled={!isSuccessOnChainProfile}
+              disabled={!isSuccessOnChainProfile || isLoadingCompleteCourse}
               onClick={handleSetCompleted}
             >
               {isLoadingCompleteCourse ? 'Loading...' : 'Mark as completed!'}

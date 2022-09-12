@@ -3,6 +3,7 @@ import { TRPCError } from '@trpc/server';
 import { createRouter } from '~/server/createRouter';
 import { prisma } from '~/server/prisma';
 import { z } from 'zod';
+import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from '~/utils/constants';
 
 const profileUserSelect = Prisma.validator<Prisma.UserSelect>()({
   id: true,
@@ -60,7 +61,7 @@ export const userRouter = createRouter()
   })
   .mutation('updateUsername', {
     input: z.object({
-      username: z.string(),
+      username: z.string().min(USERNAME_MIN_LENGTH).max(USERNAME_MAX_LENGTH),
     }),
     async resolve({ ctx, input }) {
       if (!ctx.session?.user) {

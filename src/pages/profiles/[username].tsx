@@ -18,7 +18,11 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { ethers } from 'ethers';
-import { SBT_MINT_FEE } from '~/utils/constants';
+import {
+  SBT_MINT_FEE,
+  USERNAME_MAX_LENGTH,
+  USERNAME_MIN_LENGTH,
+} from '~/utils/constants';
 
 const Profile: NextPage = () => {
   const { data: session } = useSession();
@@ -184,7 +188,21 @@ const Profile: NextPage = () => {
                 placeholder="Chose a name"
                 onChange={(e) => setNewUsername(e.target.value)}
               />
-              <button onClick={handleSaveUsername}>Save Username</button>
+              <button
+                disabled={
+                  newUsername.length < USERNAME_MIN_LENGTH ||
+                  newUsername.length > USERNAME_MAX_LENGTH
+                }
+                onClick={handleSaveUsername}
+              >
+                Save Username
+              </button>
+              {(newUsername && newUsername.length <= USERNAME_MIN_LENGTH) ||
+                (newUsername.length > USERNAME_MAX_LENGTH && (
+                  <div className="text-red-500">
+                    Username must be between 3 and 42 characters
+                  </div>
+                ))}
             </div>
           )}
           {isLoadingOnchainProfile && <div>Loading on-chain profile...</div>}
