@@ -1,5 +1,9 @@
 import type { NextPage } from 'next';
+import Link from 'next/link';
 import CourseCarousel from '~/components/CourseCarousel';
+import { ContentType } from '~/types/types';
+import { HOMEPAGE_COURSE_FILTERS } from '~/utils/constants';
+import { trpc } from '~/utils/trpc';
 
 const coursesList = [
   'Something',
@@ -25,6 +29,27 @@ const coursesList = [
 const bigResourceList = [...coursesList];
 
 const Home: NextPage = () => {
+  const { data: techs } = trpc.useQuery(
+    ['technologies.byContentTYpe', { contentType: ContentType.COURSE }],
+    {
+      onSuccess: (data) => {
+        console.log('techs');
+        console.log(data);
+      },
+    }
+  );
+  const { data: tags } = trpc.useQuery(
+    ['tags.byContentTYpe', { contentType: ContentType.COURSE }],
+    {
+      onSuccess: (data) => {
+        console.log('tags');
+        console.log(data);
+      },
+    }
+  );
+
+  const { data: courses } = trpc.useQuery(['courses.all']);
+
   return (
     <div>
       {/* Hero and cards */}
@@ -94,19 +119,36 @@ const Home: NextPage = () => {
             {/* List */}
             <div className="mt-4 grid grid-cols-2 gap-2">
               <div className="col-span-2 flex justify-between rounded-md bg-white py-2 px-4">
-                <p className="">All Courses</p>
+                <p className="">
+                  <Link href="courses">All Courses</Link>
+                </p>
                 <p className="font-normal">&#62;</p>
               </div>
 
-              {coursesList.map((courseName, i) => (
-                <div
-                  className="flex justify-between rounded-md bg-white py-2 px-4"
-                  key={`${i}-${courseName}`}
-                >
-                  <p className="">{courseName}</p>
-                  <p className="font-normal">&#62;</p>
-                </div>
-              ))}
+              {tags &&
+                techs &&
+                tags
+                  .map((t) => ({ ...t, type: 'tag' }))
+                  .concat(techs.map((t) => ({ ...t, type: 'tech' })))
+                  .sort((a, b) => b._count.contents - a._count.contents)
+                  .slice(0, HOMEPAGE_COURSE_FILTERS)
+                  .map((courseFilter) => (
+                    <div
+                      className="flex justify-between rounded-md bg-white py-2 px-4"
+                      key={`home-coursefilter-${courseFilter.slug}`}
+                    >
+                      <p className="">
+                        <Link
+                          href={`/courses/browse/${courseFilter.type}/${courseFilter.slug}`}
+                        >
+                          <a>
+                            {courseFilter.name} ({courseFilter._count.contents})
+                          </a>
+                        </Link>
+                      </p>
+                      <p className="font-normal">&#62;</p>
+                    </div>
+                  ))}
             </div>
           </div>
         </div>
@@ -168,7 +210,7 @@ const Home: NextPage = () => {
       <hr className="my-14 w-full bg-main-gray-dark" />
       <div className="px-[5.5rem]">
         {/* Top 10 courses */}
-        <CourseCarousel title="Top 10 Courses" />
+        <CourseCarousel title="Top 10 Courses" courses={courses} />
         {/* view AllCourse one tab*/}
         <div className="my-14 w-full">
           <div className="flex w-[30%] justify-between rounded-md bg-main-gray-light py-2 px-4">

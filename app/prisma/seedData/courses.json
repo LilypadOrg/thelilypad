@@ -14,7 +14,7 @@
       "ChainLink",
       "Moralis"
     ],
-    "tags": ["web3", "blockchain", "full-stack"]
+    "tags": ["Web3", "Blockchain", "Full-stack"]
   },
   {
     "id": 10002,
@@ -25,7 +25,7 @@
     "coverImageUrl": "/images/courses/LW3_Freshman.png",
     "levels": ["Beginner"],
     "technologies": ["JavaScript", "Solidity"],
-    "tags": ["web3"]
+    "tags": ["Web3"]
   },
   {
     "id": 10003,
@@ -36,7 +36,7 @@
     "coverImageUrl": "/images/courses/CryptoZombies.png",
     "levels": ["Beginner"],
     "technologies": ["Solidity"],
-    "tags": ["web3", "blockchain", "games"]
+    "tags": ["Web3", "Blockchain", "Games"]
   },
   {
     "id": 10004,
@@ -55,7 +55,7 @@
       "JavaScript",
       "TypeScript"
     ],
-    "tags": ["blockchain", "web3", "full-stack"]
+    "tags": ["Blockchain", "Web3", "Full-stack"]
   },
   {
     "id": 10005,
@@ -74,7 +74,7 @@
       "JavaScript",
       "TypeScript"
     ],
-    "tags": ["blockchain", "web3", "full-stack", "defi"]
+    "tags": ["Blockchain", "Web3", "Full-stack", "Defi"]
   },
   {
     "id": 10006,
@@ -93,7 +93,7 @@
       "JavaScript",
       "TypeScript"
     ],
-    "tags": ["blockchain", "web3", "full-stack", "defi"]
+    "tags": ["Blockchain", "Web3", "Full-stack", "Defi"]
   },
   {
     "id": 10007,
@@ -104,7 +104,7 @@
     "coverImageUrl": "/images/courses/Advanced_Computer_Vision.png",
     "levels": ["Advanced"],
     "technologies": ["OpenCV", "Mediapipe", "Python"],
-    "tags": ["web2", "python", "ai"]
+    "tags": ["Web2", "AI"]
   },
   {
     "id": 10008,
@@ -115,6 +115,6 @@
     "coverImageUrl": "/images/courses/Advanced_Git.png",
     "levels": ["Advanced"],
     "technologies": ["Git", "Command Line"],
-    "tags": ["web2", "web3"]
+    "tags": ["Web2", "Web3"]
   }
 ]

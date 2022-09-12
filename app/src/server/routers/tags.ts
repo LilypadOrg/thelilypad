@@ -17,7 +17,12 @@ export const tagRouter = createRouter()
     async resolve() {
       try {
         const tags = await prisma.tag.findMany({
-          select: defaultTagsSelect,
+          select: {
+            ...defaultTagsSelect,
+            _count: {
+              select: { contents: true },
+            },
+          },
         });
         return tags;
       } catch (err) {
@@ -39,7 +44,16 @@ export const tagRouter = createRouter()
           where: {
             contents: { some: { contentType: { name: input.contentType } } },
           },
-          select: defaultTagsSelect,
+          select: {
+            ...defaultTagsSelect,
+            _count: {
+              select: {
+                contents: {
+                  where: { contentType: { name: input.contentType } },
+                },
+              },
+            },
+          },
         });
         return tags;
       } catch (err) {

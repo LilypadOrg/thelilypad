@@ -1,8 +1,8 @@
 import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
 import CourseCard from '~/components/CourseCard';
 import CourseCarousel from '~/components/CourseCarousel';
-
-const courseData = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+import { trpc } from '~/utils/trpc';
 
 const coursesList = [
   'Something',
@@ -23,13 +23,27 @@ const coursesList = [
 const bigResourceList = [...coursesList];
 
 const CourseCategories: NextPage = () => {
+  const router = useRouter();
+
+  const { type, slug } = router.query;
+
+  const { data: courses } = trpc.useQuery([
+    'courses.all',
+    {
+      tags: type === 'tag' ? slug : undefined,
+      technologies: type === 'tech' ? slug : undefined,
+      levels: type === 'level' ? slug : undefined,
+    },
+  ]);
+
+  console.log('courses');
+  console.log(courses);
+
   return (
     <div>
       {/* Header */}
       <div className="flex flex-col py-8 px-[5.5rem]">
-        <h1 className="mb-4 text-5xl font-bold">
-          So You want to learn Solidity
-        </h1>
+        <h1 className="mb-4 text-5xl font-bold">So You want to learn {slug}</h1>
         <p className="max-w-lg font-light">
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Placeat
           suscipit.
@@ -38,7 +52,7 @@ const CourseCategories: NextPage = () => {
       {/* Course Carousel */}
       <div className="bg-main-gray-light pt-2 pb-4">
         <div className="px-[5.5rem]">
-          <CourseCarousel title="Top 10 Solidity Courses" />
+          <CourseCarousel title="Top 10 Solidity Courses" courses={courses} />
         </div>
       </div>
       {/* Course Grid */}
@@ -55,8 +69,8 @@ const CourseCategories: NextPage = () => {
         </div>
         {/* Grid */}
         <div className="grid grid-cols-3 gap-6">
-          {courseData.map((data) => (
-            <CourseCard key={data} />
+          {courses?.map((data) => (
+            <CourseCard key={`course-${data.id}`} course={data} />
           ))}
         </div>
         {/* show more */}

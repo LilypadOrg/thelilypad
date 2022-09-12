@@ -8,3 +8,4 @@ export enum ContentType {
 }
 
 export type Course = inferQueryOutput<'courses.byId'>;
+export type Courses = inferQueryOutput<'courses.all'>;

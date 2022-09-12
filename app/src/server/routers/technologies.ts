@@ -39,7 +39,16 @@ export const technologyRouter = createRouter()
           where: {
             contents: { some: { contentType: { name: input.contentType } } },
           },
-          select: defaultTechnologiesSelect,
+          select: {
+            ...defaultTechnologiesSelect,
+            _count: {
+              select: {
+                contents: {
+                  where: { contentType: { name: input.contentType } },
+                },
+              },
+            },
+          },
         });
         return techs;
       } catch (err) {

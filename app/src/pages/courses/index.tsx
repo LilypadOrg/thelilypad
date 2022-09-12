@@ -1,143 +1,176 @@
-import type { NextPage } from 'next';
-import { toast } from 'react-toastify';
-import ContentFilter from '~/components/ContentFilter';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { trpc } from '~/utils/trpc';
-import CourseList from '~/components/CourseList';
-import { ContentType } from '~/types/types';
+import React from 'react';
+import CourseCard from '~/components/CourseCard';
 
-const Courses: NextPage = () => {
-  const [contentFilters, setContentFilters] = useState<ContentFilterType>({});
-  const { data: content } = trpc.useQuery(['courses.all', contentFilters], {
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    // onSuccess: (data) => {
-    //   console.log('Success. Data:');
-    //   console.log(data);
-    // },
-  });
+const coursesList = [
+  'Something',
+  'Something',
+  'Something',
+  'Something',
+  'Something',
+  'Something',
+  'Something',
+  'Something',
+  'Something',
+];
 
-  const { data: techs } = trpc.useQuery(
-    ['technologies.byContentTYpe', { contentType: ContentType.COURSE }],
-    {
-      // TODO: Find a way to manage error globally
-      onError: (err) => {
-        toast.error(err.message);
-      },
-      onSuccess: (data) => console.log(data),
-    }
-  );
+const bigResourceList1 = [...coursesList];
+const bigResourceList2 = [
+  ...coursesList,
+  coursesList[0],
+  coursesList[1],
+  coursesList[2],
+];
+const bigResourceList3 = [
+  coursesList[0],
+  coursesList[1],
+  coursesList[2],
+  coursesList[3],
+];
 
-  const { data: tags } = trpc.useQuery(
-    ['tags.byContentTYpe', { contentType: ContentType.COURSE }],
-    {
-      onError: (err) => {
-        toast.error(err.message);
-      },
-    }
-  );
+const bigResourceList4 = [
+  coursesList[0],
+  coursesList[1],
+  coursesList[2],
+  coursesList[3],
+];
+const bigResourceList5 = [
+  coursesList[0],
+  coursesList[1],
+  coursesList[2],
+  coursesList[3],
+];
 
-  const { data: levels } = trpc.useQuery(['courseLevels.forCourses'], {
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
-
-  // console.log('courses');
-  // console.log(courses);
-  // console.log('tech');
-  // console.log(techs);
-
-  const router = useRouter();
-
-  useEffect(() => {
-    const { tags, technologies, levels } = router.query;
-    setContentFilters({ tags, technologies, levels });
-  }, [router.query]);
-
-  const updateFilter = (value: string, add: boolean, key: string) => {
-    let currValue = router.query[key];
-    if (currValue) {
-      currValue = Array.isArray(currValue) ? currValue : [currValue];
-    } else {
-      currValue = [];
-    }
-
-    const newValue: string[] | undefined = add
-      ? currValue.concat(value)
-      : currValue.filter((i) => i !== value);
-
-    const newState = { ...contentFilters, [key]: newValue };
-    const newQuery = { ...router.query, [key]: newValue };
-
-    if (!newValue.length) {
-      delete newState[key];
-      delete newQuery[key];
-    }
-
-    // setCourseFilters(newState);
-    router.push({ query: newQuery });
-  };
-
+const Categories = () => {
   return (
-    <div>
-      <h3>Courses</h3>
-      <div className="grid grid-cols-5 gap-4">
-        {/* Filters */}
-        <div>
-          <h5>Filters</h5>
-          <div className="flex flex-col gap-6">
-            {techs && (
-              <ContentFilter
-                filterName="Technology"
-                filterKey="technologies"
-                filterOptions={techs}
-                filterValues={contentFilters.technologies}
-                updateFilter={updateFilter}
-              />
-            )}
-            {levels && (
-              <ContentFilter
-                filterName="Level"
-                filterKey="levels"
-                filterOptions={levels}
-                filterValues={contentFilters.levels}
-                updateFilter={updateFilter}
-              />
-            )}
-            {tags && (
-              <ContentFilter
-                filterName="Tags"
-                filterKey="tags"
-                filterOptions={tags}
-                filterValues={contentFilters.tags}
-                updateFilter={updateFilter}
-              />
-            )}
-            {/* <TechFilter
-              filterValues={courseFilters.technologies}
-              updateFilter={updateFilter}
-            />
-            <LevelFilter
-              filterValues={courseFilters.levels}
-              updateFilter={updateFilter}
-            />
-            <TagFilter
-              filterValues={courseFilters.tags}
-              updateFilter={updateFilter}
-            /> */}
+    <div className="px-[5.5rem]">
+      <h1 className="mb-2 mt-2 text-4xl">Courses</h1>
+      <div className="flex gap-8">
+        <div className="grid w-[66%] grid-cols-2 gap-6">
+          {/* 1st col */}
+          <div className="flex flex-col gap-8">
+            <div>
+              <p className="mb-4 text-xl font-bold">Frontend</p>
+              <div className="flex flex-col gap-2">
+                {bigResourceList1.map((courseName, i) => (
+                  <div
+                    className="flex justify-between rounded-md bg-main-gray-light py-2 px-4"
+                    key={`${i}-${courseName}`}
+                  >
+                    <p className="">{courseName}</p>
+                    <p className="font-normal">&#62;</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="mb-4 text-xl font-bold">Backend</p>
+              <div className="flex flex-col gap-2">
+                {bigResourceList2.map((courseName, i) => (
+                  <div
+                    className="flex justify-between rounded-md bg-main-gray-light py-2 px-4"
+                    key={`${i}-${courseName}`}
+                  >
+                    <p className="">{courseName}</p>
+                    <p className="font-normal">&#62;</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="mb-4 text-xl font-bold">FlexBox</p>
+              <div className="flex flex-col gap-2">
+                {bigResourceList3.map((courseName, i) => (
+                  <div
+                    className="flex justify-between rounded-md bg-main-gray-light py-2 px-4"
+                    key={`${i}-${courseName}`}
+                  >
+                    <p className="">{courseName}</p>
+                    <p className="font-normal">&#62;</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          {/* 2nd col */}
+          <div className="flex flex-col gap-8">
+            <div>
+              <p className="mb-4 text-xl font-bold">Solidity</p>
+              <div className="flex flex-col gap-2">
+                {bigResourceList4.map((courseName, i) => (
+                  <div
+                    className="flex justify-between rounded-md bg-main-gray-light py-2 px-4"
+                    key={`${i}-${courseName}`}
+                  >
+                    <p className="">{courseName}</p>
+                    <p className="font-normal">&#62;</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="mb-4 text-xl font-bold">React</p>
+              <div className="flex flex-col gap-2">
+                {bigResourceList4.map((courseName, i) => (
+                  <div
+                    className="flex justify-between rounded-md bg-main-gray-light py-2 px-4"
+                    key={`${i}-${courseName}`}
+                  >
+                    <p className="">{courseName}</p>
+                    <p className="font-normal">&#62;</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="mb-4 text-xl font-bold">Python</p>
+              <div className="flex flex-col gap-2">
+                {bigResourceList5.map((courseName, i) => (
+                  <div
+                    className="flex justify-between rounded-md bg-main-gray-light py-2 px-4"
+                    key={`${i}-${courseName}`}
+                  >
+                    <p className="">{courseName}</p>
+                    <p className="font-normal">&#62;</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Course List */}
-        <div className="col-span-4">
-          {content && <CourseList courses={content} />}
+        {/* Aside */}
+        <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-8 border-b-[3px]  border-b-main-gray-light pb-8">
+            {/* <CourseCard /> */}
+            <div className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
+              <p className="">Something new</p>
+              <p className="font-normal">&#62;</p>
+            </div>
+          </div>
+          <div className="flex flex-col gap-8 border-b-[3px]  border-b-main-gray-light pb-8">
+            {/* <CourseCard /> */}
+            <div className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
+              <p className="">Something new</p>
+              <p className="font-normal">&#62;</p>
+            </div>
+          </div>
+          <div className="flex flex-col gap-8 border-b-[3px]  border-b-main-gray-light pb-8">
+            {/* <CourseCard /> */}
+            <div className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
+              <p className="">Something new</p>
+              <p className="font-normal">&#62;</p>
+            </div>
+          </div>
+          <div className="flex flex-col gap-8 border-b-[3px]  border-b-main-gray-light pb-8">
+            {/* <CourseCard /> */}
+            <div className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
+              <p className="">Something new</p>
+              <p className="font-normal">&#62;</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default Courses;
+export default Categories;

@@ -1,15 +1,14 @@
 import React from 'react';
-import { trpc } from '~/utils/trpc';
+import { Course } from '~/types/types';
 import CourseCard from './CourseCard';
 
 interface Props {
   bgColor?: string;
   title: string;
+  courses: Course[] | undefined;
 }
 
-const CourseCarousel = ({ bgColor, title }: Props) => {
-  const { data: courses, isLoading } = trpc.useQuery(['courses.all']);
-
+const CourseCarousel = ({ bgColor, title, courses }: Props) => {
   return (
     <div className={`my-8 ${bgColor && bgColor}`}>
       <h1 className="mt-8 text-4xl">{title}</h1>
