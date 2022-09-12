@@ -20,10 +20,11 @@ async function main() {
   await seedUserLevels();
   await seedCourses();
   await seedResources();
-  await seedCommunityProjects();
+  //await seedCommunityProjects();
 }
 
 const truncateAllTables = async () => {
+  await prisma.userCourse.deleteMany();
   await prisma.resource.deleteMany();
   await prisma.course.deleteMany();
   await prisma.communityProject.deleteMany();

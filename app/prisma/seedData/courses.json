@@ -5,7 +5,7 @@
     "description": "This course will give you a full introduction into all of the core concepts related to blockchain, smart contracts, Solidity, ERC20s, full-stack Web3 dapps, decentralized finance (DeFi), JavaScript, TypeScript, Chainlink, Ethereum, upgradable smart contracts, DAOs, the graph, moralis, aave, IPFS, and more. Follow along with the videos and you'll be a blockchain wizard in no time!",
     "url": "https://www.youtube.com/watch?v=gyMwXuJrbJQ",
     "xp": 1000,
-    "coverImageUrl": "images/courses/32HR_Course.png",
+    "coverImageUrl": "/images/courses/32HR_Course.png",
     "levels": ["Beginner", "Intermediate"],
     "technologies": [
       "JavaScript",
@@ -22,7 +22,7 @@
     "description": "Learn the fundamentals of Web3, set up your crypto wallet, get into developer mode, and deploy your first smart contract, token, and NFT!",
     "url": "https://learnweb3.io/courses/9a3fafe4-b5eb-4329-bdef-97b2aa6aacc1/lessons",
     "xp": 500,
-    "coverImageUrl": "images/courses/LW3_Freshman.png",
+    "coverImageUrl": "/images/courses/LW3_Freshman.png",
     "levels": ["Beginner"],
     "technologies": ["JavaScript", "Solidity"],
     "tags": ["web3"]
@@ -33,7 +33,7 @@
     "description": "CryptoZombies is an interactive school that teaches you all things technical about blockchains. Learn to write smart contracts by making your own crypto-collectibles game.",
     "url": "https://cryptozombies.io/",
     "xp": 1000,
-    "coverImageUrl": "image/courses/CryptoZombies.png",
+    "coverImageUrl": "/images/courses/CryptoZombies.png",
     "levels": ["Beginner"],
     "technologies": ["Solidity"],
     "tags": ["web3", "blockchain", "games"]
@@ -44,7 +44,7 @@
     "description": "Create a simple NFT to learn basics of scaffold-eth. Use HardHat and React to build an app that lets users purchase and transfer NFTs.",
     "url": "https://speedrunethereum.com/challenge/simple-nft-example",
     "xp": 250,
-    "coverImageUrl": "images/courses/SRE_Challenge0.png",
+    "coverImageUrl": "/images/courses/SRE_Challenge0.png",
     "levels": ["Intermediate"],
     "technologies": [
       "Scaffold-Eth",
@@ -63,7 +63,7 @@
     "description": "Create a decentralized application where users can coordinate a group funding effort. The users only have to trust the code.",
     "url": "https://speedrunethereum.com/challenge/decentralized-staking",
     "xp": 250,
-    "coverImageUrl": "images/courses/SRE_Challenge1.png",
+    "coverImageUrl": "/images/courses/SRE_Challenge1.png",
     "levels": ["Intermediate"],
     "technologies": [
       "Scaffold-Eth",
@@ -82,7 +82,7 @@
     "description": "Build an unstoppable vending machine that will buy and sell ERC20 Tokens. Learn about the 'approve' pattern for ERC20s and how contract to contract interactions work.",
     "url": "https://speedrunethereum.com/challenge/token-vendor",
     "xp": 250,
-    "coverImageUrl": "images/courses/SRE_Challenge2.png",
+    "coverImageUrl": "/images/courses/SRE_Challenge2.png",
     "levels": ["Intermediate"],
     "technologies": [
       "Scaffold-Eth",
@@ -101,7 +101,7 @@
     "description": "Learn advanced computer vision using Python in this full course. You will learn state of the art computer vision techniques by building five projects with libraries such as OpenCV and Mediapipe. If you are a beginner, don't be afraid of the term advance. Even though the concepts are advanced, they are not difficult to follow.",
     "url": "https://www.youtube.com/watch?v=01sAkU_NvOY",
     "xp": 500,
-    "coverImageUrl": "images/courses/Advanced_Computer_Vision.png",
+    "coverImageUrl": "/images/courses/Advanced_Computer_Vision.png",
     "levels": ["Advanced"],
     "technologies": ["OpenCV", "Mediapipe", "Python"],
     "tags": ["web2", "python", "ai"]
@@ -112,7 +112,7 @@
     "description": "Become more productive and professional with your code base using advanced concepts like Interactive Rebase, Cherry-Picking, and Submodules.",
     "url": "https://www.youtube.com/watch?v=qsTthZi23VE",
     "xp": 500,
-    "coverImageUrl": "images/courses/Advanced_Git.png",
+    "coverImageUrl": "/images/courses/Advanced_Git.png",
     "levels": ["Advanced"],
     "technologies": ["Git", "Command Line"],
     "tags": ["web2", "web3"]
