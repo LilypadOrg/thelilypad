@@ -1,4 +1,4 @@
-const LevelPill = ({ level }: { level: string }) => {
+const LevelPill = ({ level, classes }: { level: string; classes?: string }) => {
   let colorClasses;
   if (level === 'Beginner') {
     colorClasses = 'bg-green-200 text-green-600';
@@ -12,7 +12,7 @@ const LevelPill = ({ level }: { level: string }) => {
 
   return (
     <span
-      className={`mr-2 mb-2 inline-block rounded-full px-3 py-1 text-sm font-semibold ${colorClasses}`}
+      className={`mr-2 mb-2 inline-block rounded-full px-3 py-1 text-sm font-semibold ${colorClasses} ${classes}`}
     >
       {level}
     </span>
