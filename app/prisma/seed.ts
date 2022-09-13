@@ -6,7 +6,7 @@ import courses from './seedData/courses.json';
 import resources from './seedData/resources.json';
 import userLevels from './seedData/userLevels.json';
 import contentTypes from './seedData/contentTYpes.json';
-import communityProjects from './seedData/communityProjects.json';
+// import communityProjects from './seedData/communityProjects.json';
 import { slugify } from '../src/utils/formatters';
 
 const prisma = new PrismaClient();
@@ -131,30 +131,30 @@ const seedResources = async () => {
   });
 };
 
-const seedCommunityProjects = async () => {
-  const data = communityProjects.map((c) => ({
-    id: c.id,
-    title: c.title,
-    slug: slugify(c.title),
-    description: c.description,
-    url: c.url,
-    coverImageUrl: c.coverImageUrl,
-    contentType: { connect: { name: 'Community Project' } },
-    technologies: { connect: c.technologies.map((l) => ({ name: l })) },
-    tags: { connect: c.tags.map((l) => ({ name: l })) },
-    communityProjects: {
-      create: {
-        id: c.id,
-        author: c.author,
-        codeUrl: c.codeUrl,
-      },
-    },
-  }));
+// const seedCommunityProjects = async () => {
+//   const data = communityProjects.map((c) => ({
+//     id: c.id,
+//     title: c.title,
+//     slug: slugify(c.title),
+//     description: c.description,
+//     url: c.url,
+//     coverImageUrl: c.coverImageUrl,
+//     contentType: { connect: { name: 'Community Project' } },
+//     technologies: { connect: c.technologies.map((l) => ({ name: l })) },
+//     tags: { connect: c.tags.map((l) => ({ name: l })) },
+//     communityProjects: {
+//       create: {
+//         id: c.id,
+//         author: c.author,
+//         codeUrl: c.codeUrl,
+//       },
+//     },
+//   }));
 
-  data.forEach(async (d) => {
-    await prisma.content.create({ data: d });
-  });
-};
+//   data.forEach(async (d) => {
+//     await prisma.content.create({ data: d });
+//   });
+// };
 
 main()
   .then(async () => {

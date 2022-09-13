@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { createRouter } from '~/server/createRouter';
 import { prisma } from '~/server/prisma';
 import { ContentType } from '~/types/types';
+import { BROWSE_COURSES_ITEMS } from '~/utils/constants';
 
 const defaultCourseSelect = Prisma.validator<Prisma.ContentSelect>()({
   id: true,
@@ -30,6 +31,7 @@ export const courseRouter = createRouter()
         tags: z.array(z.string()).or(z.string()).optional(),
         technologies: z.array(z.string()).or(z.string()).optional(),
         levels: z.array(z.string()).or(z.string()).optional(),
+        take: z.number().min(1).max(100).optional(),
       })
       .optional(),
     async resolve({ input }) {
@@ -57,6 +59,7 @@ export const courseRouter = createRouter()
               ? { course: { levels: { some: { slug: { in: input.levels } } } } }
               : {}),
           },
+          take: input?.take || BROWSE_COURSES_ITEMS,
           select: defaultCourseSelect,
         });
         return courses;

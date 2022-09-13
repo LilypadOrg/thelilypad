@@ -15,11 +15,13 @@ datasource db {
 model User {
   id Int @id @default(autoincrement())
   address String @unique
-  name String @unique
+  username String @unique
+  bio String?
   xp Int @default(0)
   level UserLevel @relation(fields: [levelNumber], references: [number])
   levelNumber Int
   courses UserCourse[]
+  technologies Technology[]
   cratedAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -63,6 +65,7 @@ model Technology {
   name String @unique
   slug String @unique
   contents Content[]
+  users User[]
 }
 
 model Course {
