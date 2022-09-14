@@ -29,24 +29,14 @@ const coursesList = [
 const bigResourceList = [...coursesList];
 
 const Home: NextPage = () => {
-  const { data: techs } = trpc.useQuery(
-    ['technologies.byContentTYpe', { contentType: ContentType.COURSE }],
-    {
-      onSuccess: (data) => {
-        console.log('techs');
-        console.log(data);
-      },
-    }
-  );
-  const { data: tags } = trpc.useQuery(
-    ['tags.byContentTYpe', { contentType: ContentType.COURSE }],
-    {
-      onSuccess: (data) => {
-        console.log('tags');
-        console.log(data);
-      },
-    }
-  );
+  const { data: techs } = trpc.useQuery([
+    'technologies.byContentTYpe',
+    { contentType: ContentType.COURSE },
+  ]);
+  const { data: tags } = trpc.useQuery([
+    'tags.byContentTYpe',
+    { contentType: ContentType.COURSE },
+  ]);
 
   const { data: courses } = trpc.useQuery(['courses.all']);
 
@@ -118,12 +108,12 @@ const Home: NextPage = () => {
             </div>
             {/* List */}
             <div className="mt-4 grid grid-cols-2 gap-2">
-              <div className="col-span-2 flex justify-between rounded-md bg-white py-2 px-4">
-                <p className="">
-                  <Link href="courses">All Courses</Link>
-                </p>
-                <p className="font-normal">&#62;</p>
-              </div>
+              <Link href="courses">
+                <button className="col-span-2 flex justify-between rounded-md bg-white py-2 px-4">
+                  <p className="">All Courses</p>
+                  <p className="font-normal">&#62;</p>
+                </button>
+              </Link>
 
               {tags &&
                 techs &&
@@ -133,21 +123,17 @@ const Home: NextPage = () => {
                   .sort((a, b) => b._count.contents - a._count.contents)
                   .slice(0, HOMEPAGE_COURSE_FILTERS)
                   .map((courseFilter) => (
-                    <div
-                      className="flex justify-between rounded-md bg-white py-2 px-4"
+                    <Link
+                      href={`/courses/browse/${courseFilter.type}/${courseFilter.slug}`}
                       key={`home-coursefilter-${courseFilter.slug}`}
                     >
-                      <p className="">
-                        <Link
-                          href={`/courses/browse/${courseFilter.type}/${courseFilter.slug}`}
-                        >
-                          <a>
-                            {courseFilter.name} ({courseFilter._count.contents})
-                          </a>
-                        </Link>
-                      </p>
-                      <p className="font-normal">&#62;</p>
-                    </div>
+                      <button className="flex justify-between rounded-md bg-white py-2 px-4">
+                        <p className="">
+                          {courseFilter.name} ({courseFilter._count.contents})
+                        </p>
+                        <p className="font-normal">&#62;</p>
+                      </button>
+                    </Link>
                   ))}
             </div>
           </div>

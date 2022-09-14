@@ -1,26 +1,14 @@
 import type { NextPage } from 'next';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import CourseCard from '~/components/CourseCard';
 import CourseCarousel from '~/components/CourseCarousel';
+import { ContentType } from '~/types/types';
+import {
+  BROWSE_COURSES_CAT_FILTERS,
+  BROWSE_COURSES_ITEMS,
+} from '~/utils/constants';
 import { trpc } from '~/utils/trpc';
-
-const coursesList = [
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-];
-
-const bigResourceList = [...coursesList];
 
 const CourseCategories: NextPage = () => {
   const router = useRouter();
@@ -36,14 +24,51 @@ const CourseCategories: NextPage = () => {
     },
   ]);
 
-  console.log('courses');
-  console.log(courses);
+  const { data: tagTitle } = trpc.useQuery(
+    ['tags.bySlug', { slug: Array.isArray(slug) ? slug[0] : slug || '' }],
+    {
+      enabled: !!slug && type === 'tag',
+    }
+  );
+
+  const { data: techTitle } = trpc.useQuery(
+    [
+      'technologies.bySlug',
+      { slug: Array.isArray(slug) ? slug[0] : slug || '' },
+    ],
+    {
+      enabled: !!slug && type === 'tech',
+    }
+  );
+
+  const { data: levelTitle } = trpc.useQuery(
+    [
+      'courseLevels.bySlug',
+      { slug: Array.isArray(slug) ? slug[0] : slug || '' },
+    ],
+    {
+      enabled: !!slug && type === 'level',
+    }
+  );
+
+  const { data: techs } = trpc.useQuery([
+    'technologies.byContentTYpe',
+    { contentType: ContentType.COURSE },
+  ]);
+  const { data: tags } = trpc.useQuery([
+    'tags.byContentTYpe',
+    { contentType: ContentType.COURSE },
+  ]);
+
+  const topic = tagTitle?.name || techTitle?.name || levelTitle?.name || '';
 
   return (
     <div>
       {/* Header */}
       <div className="flex flex-col py-8 px-[5.5rem]">
-        <h1 className="mb-4 text-5xl font-bold">So You want to learn {slug}</h1>
+        <h1 className="mb-4 text-5xl font-bold">
+          So You want to learn {topic}
+        </h1>
         <p className="max-w-lg font-light">
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Placeat
           suscipit.
@@ -52,7 +77,7 @@ const CourseCategories: NextPage = () => {
       {/* Course Carousel */}
       <div className="bg-main-gray-light pt-2 pb-4">
         <div className="px-[5.5rem]">
-          <CourseCarousel title="Top 10 Solidity Courses" courses={courses} />
+          <CourseCarousel title={`Top 10 ${topic} Courses`} courses={courses} />
         </div>
       </div>
       {/* Course Grid */}
@@ -60,7 +85,7 @@ const CourseCategories: NextPage = () => {
         {/* header */}
         <div className="flex flex-col py-8">
           <h1 className="mb-4 text-4xl font-bold">
-            So You want to learn Solidity
+            So You want to learn {topic}
           </h1>
           <p className="max-w-lg font-light">
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Placeat
@@ -74,22 +99,37 @@ const CourseCategories: NextPage = () => {
           ))}
         </div>
         {/* show more */}
-        <div className="my-10 w-full bg-main-gray-light py-2 text-center text-xl font-medium">
-          Show More Courses
-        </div>
+        {/* TODO: manage pagination properly */}
+        {courses?.length === BROWSE_COURSES_ITEMS && (
+          <div className="my-10 w-full bg-main-gray-light py-2 text-center text-xl font-medium">
+            Show More Courses
+          </div>
+        )}
         {/* Other Categories */}
         <div className="my-10 w-full space-y-4">
           <h1 className="mt-8 text-4xl">Other Categories</h1>
           <div className="grid grid-cols-3 gap-4">
-            {bigResourceList.map((courseName, i) => (
-              <div
-                className="flex justify-between rounded-md bg-main-gray-light py-2 px-4"
-                key={`${i}-${courseName}`}
-              >
-                <p className="">{courseName}</p>
-                <p className="font-normal">&#62;</p>
-              </div>
-            ))}
+            {tags &&
+              techs &&
+              tags
+                .map((t) => ({ ...t, type: 'tag' }))
+                .concat(techs.map((t) => ({ ...t, type: 'tech' })))
+                .filter((t) => t.slug !== slug)
+                .sort((a, b) => b._count.contents - a._count.contents)
+                .slice(0, BROWSE_COURSES_CAT_FILTERS)
+                .map((courseFilter) => (
+                  <Link
+                    href={`/courses/browse/${courseFilter.type}/${courseFilter.slug}`}
+                    key={`home-coursefilter-${courseFilter.slug}`}
+                  >
+                    <button className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
+                      <p className="">
+                        {courseFilter.name} ({courseFilter._count.contents})
+                      </p>
+                      <p className="font-normal">&#62;</p>
+                    </button>
+                  </Link>
+                ))}
           </div>
         </div>
         {/* Event I suck at titles */}

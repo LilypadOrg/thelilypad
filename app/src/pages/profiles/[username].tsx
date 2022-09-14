@@ -1,267 +1,188 @@
 import { NextPage } from 'next';
-import { toast } from 'react-toastify';
-import {
-  useContractRead,
-  useContractWrite,
-  usePrepareContractWrite,
-  useQuery,
-  useWaitForTransaction,
-} from 'wagmi';
-import { trpc } from '~/utils/trpc';
-import {
-  MAIN_CONTRACT_ADDRESS,
-  MAIN_CONTRACT_ABI,
-  SBT_CONTRACT_ADDRESS,
-  SBT_CONTRACT_ABI,
-} from '~/utils/contracts';
-import { useSession } from 'next-auth/react';
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { ethers } from 'ethers';
-import {
-  SBT_MINT_FEE,
-  USERNAME_MAX_LENGTH,
-  USERNAME_MIN_LENGTH,
-} from '~/utils/constants';
+import Link from 'next/link';
+import Image from 'next/image';
+import React from 'react';
+import LevelPill from '../../components/ui/LevelPill';
 
-const Profile: NextPage = () => {
-  const { data: session } = useSession();
-  const [newUsername, setNewUsername] = useState<string>('');
-  const utils = trpc.useContext();
-  const router = useRouter();
-  const username = router.query.username as string | undefined;
+const languages = ['javascript', 'solidity', 'react', 'c++', 'python'];
 
-  const { data: userProfile, isLoading: isLoadingProfile } = trpc.useQuery(
-    ['users.byUsername', { username: username! }],
-    { enabled: !!username }
-  );
-
-  const { data: createMemberSignature, error } = trpc.useQuery(
-    [
-      'blockend.signCreateMember',
-      {
-        name: userProfile?.name || '',
-        xp: userProfile?.xp || 0,
-        courses: userProfile?.courses.map((c) => c.course.id) || [],
-      },
-    ],
-    {
-      enabled: !!userProfile,
-      onSuccess: (data) => {
-        console.log('singnature');
-        console.log(data);
-      },
-    }
-  );
-
-  const {
-    data: onChainProfile,
-    refetch: refetchGetMember,
-    isLoading: isLoadingOnchainProfile,
-  } = useContractRead({
-    addressOrName: MAIN_CONTRACT_ADDRESS,
-    contractInterface: MAIN_CONTRACT_ABI,
-    functionName: 'getMember',
-    enabled: !!session?.user,
-    args: [session?.user.address],
-  });
-
-  console.log('onChainProfile');
-  console.log(onChainProfile);
-
-  const { config: createMemberConfig } = usePrepareContractWrite({
-    addressOrName: MAIN_CONTRACT_ADDRESS,
-    contractInterface: MAIN_CONTRACT_ABI,
-    functionName: 'createMember',
-    args: [
-      ethers.utils.toUtf8CodePoints(userProfile?.name || ''), // _name
-      userProfile?.xp, // _initialXP
-      userProfile?.courses.map((c) => c.course.id), // -completedEvents
-      [], // _badges
-      createMemberSignature, // _sig
-    ],
-    enabled: !!userProfile && !!createMemberSignature,
-  });
-
-  console.log('error');
-  console.log(error);
-
-  const { data: createMemberRes, write: createMember } =
-    useContractWrite(createMemberConfig);
-
-  const { isLoading: isLoadingCreateMember } = useWaitForTransaction({
-    hash: createMemberRes?.hash,
-    onSuccess: () => {
-      refetchGetMember();
-    },
-  });
-
-  const { config: mintTokenConfig } = usePrepareContractWrite({
-    addressOrName: MAIN_CONTRACT_ADDRESS,
-    contractInterface: MAIN_CONTRACT_ABI,
-    functionName: 'mintTokenForMember',
-    args: [session?.user.address, SBT_CONTRACT_ADDRESS],
-    overrides: {
-      value: SBT_MINT_FEE,
-    },
-    enabled: onChainProfile?.pathChosen,
-  });
-  const { data: mintTokenRes, write: mintToken } =
-    useContractWrite(mintTokenConfig);
-
-  const { isLoading: isLoadingMintToken } = useWaitForTransaction({
-    hash: mintTokenRes?.hash,
-    onSuccess: () => {
-      refetchGetMember();
-    },
-  });
-
-  const { data: tokenUri } = useContractRead({
-    addressOrName: SBT_CONTRACT_ADDRESS,
-    contractInterface: SBT_CONTRACT_ABI,
-    functionName: 'tokenURI',
-    enabled: onChainProfile?.tokenId._hex !== '0x00',
-    args: [onChainProfile?.tokenId._hex],
-    onSuccess: (data) => {
-      console.log('Data URI');
-      console.log(data);
-    },
-  });
-
-  // if (tokenUri) {
-  //   console.log('tokenUri');
-  //   // @ts-ignore
-  //   console.log(JSON.parse(Buffer.from(tokenUri.substring(29), 'base64')));
-  // }
-
-  useQuery(
-    ['tokenMetadata', tokenUri],
-    () =>
-      fetch(tokenUri?.toString() || '').then((res) => console.log(res.json())),
-    {
-      enabled: !!tokenUri,
-      onSuccess: (data) => {
-        console.log('Token Data');
-        console.log(data);
-      },
-    }
-  );
-
-  const completedCourses = userProfile?.courses.filter(
-    (c) => c.completed === true
-  );
-
-  const enrolledCourses = userProfile?.courses.filter(
-    (c) => c.completed === false && c.enrolled === true
-  );
-
-  const handleProfileCreation = () => {
-    if (createMember) createMember({});
-  };
-
-  const updateUsername = trpc.useMutation(['users.updateUsername'], {
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: () => {
-      utils.invalidateQueries(['users.byUsername', { username: newUsername }]);
-      router.replace(`/profiles/${newUsername}`);
-    },
-  });
-
-  const handleSaveUsername = () => {
-    updateUsername.mutate({ username: newUsername });
-  };
-
+const InfoTile = ({
+  title,
+  tag,
+  linkTitle,
+  link,
+}: {
+  title: string;
+  tag: string;
+  linkTitle: string;
+  link: string;
+}) => {
   return (
-    <div>
-      {isLoadingProfile && <div>Loading profile...</div>}
-      {!isLoadingProfile && !userProfile && <div>Profile not found</div>}
-      {userProfile && (
-        <>
-          <div>{userProfile.name}</div>
-          {userProfile.name === userProfile.address && (
-            <div>
-              <input
-                type="text"
-                value={newUsername}
-                placeholder="Chose a name"
-                onChange={(e) => setNewUsername(e.target.value)}
-              />
-              <button
-                disabled={
-                  newUsername.length < USERNAME_MIN_LENGTH ||
-                  newUsername.length > USERNAME_MAX_LENGTH
-                }
-                onClick={handleSaveUsername}
-              >
-                Save Username
-              </button>
-              {(newUsername && newUsername.length <= USERNAME_MIN_LENGTH) ||
-                (newUsername.length > USERNAME_MAX_LENGTH && (
-                  <div className="text-red-500">
-                    Username must be between 3 and 42 characters
-                  </div>
-                ))}
-            </div>
-          )}
-          {isLoadingOnchainProfile && <div>Loading on-chain profile...</div>}
-          {!onChainProfile?.pathChosen && (
-            <div>
-              <div>You do not have an on-chain profile yet!</div>
-              {userProfile.address === userProfile.name ? (
-                <div>
-                  To create your on-chain profile, first choose a username.
-                </div>
-              ) : (
-                <button
-                  className="border-1"
-                  disabled={!createMember}
-                  onClick={handleProfileCreation}
-                >
-                  {isLoadingCreateMember ? 'Creating...' : 'Create profile'}
-                </button>
-              )}
-            </div>
-          )}
-          {onChainProfile?.pathChosen &&
-            onChainProfile['tokenId']._hex === '0x00' && (
-              <div>
-                <div>{onChainProfile['name']}, you do not have an SBT yet.</div>
-                <button onClick={() => mintToken?.()}>
-                  {isLoadingMintToken ? 'Loading...' : 'Get SBT'}
-                </button>
-              </div>
-            )}
-          {onChainProfile?.pathChosen &&
-            onChainProfile['tokenId']._hex !== '0x00' && (
-              <div>
-                {/* TODO: create type for onChainProfile */}
-                <div>SBT tokenID: {onChainProfile['tokenId'].toString()}</div>
-              </div>
-            )}
-
-          <div>XP: {userProfile?.xp}</div>
-          <div>Level: {userProfile?.level.number}</div>
-          <h6>Completed Courses</h6>
-          {completedCourses && completedCourses.length > 0 ? (
-            completedCourses.map(({ course }) => (
-              <div key={course.id}>{course.content.title}</div>
-            ))
-          ) : (
-            <div>Yo have not completed any course</div>
-          )}
-          <h6>Enrolled Courses</h6>
-          {enrolledCourses && enrolledCourses.length > 0 ? (
-            enrolledCourses.map(({ course }) => (
-              <div key={course.id}>{course.content.title}</div>
-            ))
-          ) : (
-            <div>You are not enrolled in any course</div>
-          )}
-        </>
-      )}
+    <div className="flex items-center justify-between  rounded-md border-2 border-main-gray-light py-3 px-4">
+      <div className="space-y-1">
+        <p className="text-lg font-bold">{title}</p>
+        <LevelPill level={tag} classes="bg-main-gray-light" />
+      </div>
+      <Link href={link}>
+        <a className="text-blue self-end underline">{linkTitle}</a>
+      </Link>
     </div>
   );
 };
-export default Profile;
+
+const LearningPathCards = ({
+  title,
+  img,
+  linkTitle,
+  link,
+}: {
+  title: string;
+  img: string;
+  linkTitle: string;
+  link: string;
+}) => {
+  return (
+    <div className="flex flex-col items-center space-y-4 bg-white p-4 shadow-lg">
+      <div className="flex items-center justify-between space-x-4">
+        <div className="h-6 w-8 rounded-full bg-green-600"></div>
+        <p className="text-md font-semibold leading-5">{title}</p>
+      </div>
+      <div className="my-4 h-24">
+        <Image src={img} alt="froggy" height={'100%'} width={'100%'} />
+      </div>
+      <Link href={link} className="">
+        {linkTitle}
+      </Link>
+    </div>
+  );
+};
+
+const paths = [1, 2, 3, 4, 5];
+
+const events = [
+  {
+    title: 'Hackathon: 4 Vs 1 Who is the best...',
+    id: '1',
+    time: 'Sun 11 september 2022',
+  },
+  {
+    title: 'Hackathon: 4 Vs 1 Who is the best...',
+    id: '2',
+    time: 'Sun 11 september 2022',
+  },
+];
+
+const projects = [
+  {
+    title: 'Hackathon: 4 Vs 1 Who is the best...',
+    id: 'a',
+    time: 'Sun 11 september 2022',
+  },
+  {
+    title: 'Hackathon: 4 Vs 1 Who is the best...',
+    id: 'b',
+    time: 'Sun 11 september 2022',
+  },
+  {
+    title: 'Hackathon: 4 Vs 1 Who is the best...',
+    id: 'c',
+    time: 'Sun 11 september 2022',
+  },
+];
+
+const UserProfile: NextPage = () => {
+  return (
+    <div>
+      <nav className="flex items-center justify-center space-x-10 border border-main-gray-dark">
+        <p className="p-2">Event</p>
+        <p className="p-2">Projects</p>
+        <p className="p-2">Learning Path</p>
+        <p className="p-2">Personal Roadmap</p>
+      </nav>
+      {/* Hero section */}
+      <div className="my-8 flex items-center justify-center px-[5.5rem]">
+        <div className="min-h-[255px] w-[38%] rounded-md bg-main-gray-light p-8 pl-12">
+          <h1 className="text-2xl font-bold">Max Moon</h1>
+          <p className="font-light">
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Expedita
+            quis rem soluta maxime. Dolor qui inventore blanditiis nihil cum eum
+            non ab dignissimos, incidunt aliquid ducimus iusto, quia possimus.
+            Repudiandae, reprehenderit officiis!
+          </p>
+        </div>
+        <div className="space-y-3 bg-main-gray-light">
+          <Image
+            src="/images/profileSBT/frogSBT.png"
+            alt="sbt"
+            layout="intrinsic"
+            objectFit="contain"
+            width={500}
+            height={300}
+          />
+          <button className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white">
+            Mint Your SBT
+          </button>
+        </div>
+        <div className="min-h-[255px] w-[38%] items-stretch rounded-md bg-main-gray-light p-8 pl-12">
+          <h1 className="text-2xl font-bold">My Tech Stack</h1>
+          <div className="grid grid-cols-3 gap-1">
+            {languages.map((language) => (
+              <LevelPill
+                key={language}
+                level={language}
+                classes="justify-self-start"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+      {/* My Events */}
+      <div className="mt-4 flex flex-col space-y-4 px-[5.5rem]">
+        <h1 className="mb-0 text-3xl font-bold">My Events</h1>
+        {events.map((event) => (
+          <InfoTile
+            key={event.id}
+            title={event.title}
+            tag={event.time}
+            link={`/event/${event.id}`}
+            linkTitle={'View Event'}
+          />
+        ))}
+      </div>
+      {/* My Projects */}
+      <div className="my-10 flex flex-col space-y-4 px-[5.5rem]">
+        <h1 className="mb-0 text-3xl font-bold">My Projects</h1>
+        {projects.map((event) => (
+          <InfoTile
+            key={event.id}
+            title={event.title}
+            tag={event.time}
+            link={`/event/${event.id}`}
+            linkTitle={'View Event'}
+          />
+        ))}
+      </div>
+      {/* My Learning Path */}
+      <div className="flex flex-col bg-main-gray-light px-[5.5rem] py-[2.2rem]">
+        <h1 className="mb-1 text-3xl font-bold">My Learning Path</h1>
+        <p className="w-[40%] font-light">
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Expedita
+          quis rem soluta maxime. Dolor qui inventore .
+        </p>
+        <div className="mt-6 flex space-x-6">
+          {paths.map((i) => (
+            <LearningPathCards
+              title="Intro into Web3 : basic steps"
+              link={`/course/${i} `}
+              linkTitle={'View all course'}
+              img={`/images/frongLevels/l${i}.png`}
+              key={i}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default UserProfile;

@@ -55,7 +55,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
             create: {
               address: siwe.address,
               levelNumber: 1,
-              name: siwe.address,
+              username: siwe.address,
             },
           });
           return {

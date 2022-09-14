@@ -29,6 +29,26 @@ export const technologyRouter = createRouter()
       }
     },
   })
+  .query('bySlug', {
+    input: z.object({
+      slug: z.string(),
+    }),
+    async resolve({ input }) {
+      try {
+        const tech = await prisma.tag.findUnique({
+          where: { slug: input.slug },
+          select: defaultTechnologiesSelect,
+        });
+        return tech;
+      } catch (err) {
+        console.error(err);
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Error retrieving data.`,
+        });
+      }
+    },
+  })
   .query('byContentTYpe', {
     input: z.object({
       contentType: z.nativeEnum(ContentType),
