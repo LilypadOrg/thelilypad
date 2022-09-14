@@ -75,6 +75,7 @@ export const userRouter = createRouter()
     input: z.object({
       username: z.string().min(USERNAME_MIN_LENGTH).max(USERNAME_MAX_LENGTH),
       bio: z.string().min(BIO_MIN_LENGTH).max(BIO_MAX_LENGTH),
+      technologies: z.number().array(),
     }),
     async resolve({ ctx, input }) {
       if (!ctx.session?.user) {
@@ -88,7 +89,15 @@ export const userRouter = createRouter()
 
         const user = await prisma.user.update({
           where: { id: userId },
-          data: { username: input.username, bio: input.bio },
+          data: {
+            username: input.username,
+            bio: input.bio,
+            technologies: {
+              connect: input.technologies.map((id) => ({
+                id,
+              })),
+            },
+          },
         });
         return user;
       } catch (err) {

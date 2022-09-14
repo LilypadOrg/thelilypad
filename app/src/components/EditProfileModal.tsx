@@ -1,5 +1,5 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { UserProfile } from '~/types/types';
+import { Techs, UserProfile } from '~/types/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {
@@ -8,18 +8,61 @@ import {
   USERNAME_MAX_LENGTH,
   USERNAME_MIN_LENGTH,
 } from '~/utils/constants';
+import { useEffect, useState } from 'react';
+import { trpc } from '~/utils/trpc';
+import LevelPill from './ui/LevelPill';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 
 const EditProfileModal = ({
   open,
+  mode,
   userProfile,
+  closeModal,
 }: {
   open: boolean;
-  userProfile: UserProfile;
+  mode: 'update' | 'create';
+  userProfile: NonNullable<UserProfile>;
+  closeModal: () => void;
 }) => {
   type Inputs = {
     username: string;
     bio: string;
   };
+
+  const router = useRouter();
+  const utils = trpc.useContext();
+
+  const { data: techs } = trpc.useQuery(['technologies.all']);
+  const { mutate: updateProfile } = trpc.useMutation(['users.updateProfile'], {
+    onError: (err) => {
+      toast.error(err.message);
+    },
+    onSuccess: (data) => {
+      utils.invalidateQueries([
+        'users.byUsername',
+        { username: data.username },
+      ]);
+      router.replace(`/profiles/${data.username}`);
+    },
+  });
+
+  const [selectedSkills, setSelectedSkills] = useState<
+    typeof userProfile.technologies
+  >(userProfile.technologies);
+
+  const [availableSkills, setAvailableSkills] = useState<NonNullable<Techs>>(
+    []
+  );
+
+  useEffect(() => {
+    if (techs) {
+      const selectedSkillsIds = selectedSkills.map((s) => s.id);
+      setAvailableSkills(
+        techs.filter((t) => !selectedSkillsIds.includes(t.id))
+      );
+    }
+  }, [techs]);
 
   const schema = z.object({
     username: z
@@ -48,7 +91,29 @@ const EditProfileModal = ({
     mode: 'onTouched',
     resolver: zodResolver(schema),
   });
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<Inputs> = ({ username, bio }) => {
+    updateProfile({
+      username,
+      bio,
+      technologies: selectedSkills.map((t) => t.id),
+    });
+  };
+
+  const handleSkillSelected = (id: number) => {
+    if (!techs) return;
+    const newTech = techs.find((t) => t.id === id);
+    if (!newTech) return;
+    setSelectedSkills(selectedSkills.concat(newTech));
+    setAvailableSkills(availableSkills.filter((t) => t.id !== id));
+  };
+
+  const handleSkillRemoved = (id: number) => {
+    if (!techs) return;
+    const newTech = techs.find((t) => t.id === id);
+    if (!newTech) return;
+    setAvailableSkills(availableSkills.concat(newTech));
+    setSelectedSkills(selectedSkills.filter((t) => t.id !== id));
+  };
 
   return (
     <div
@@ -85,10 +150,10 @@ const EditProfileModal = ({
                         <label>Username</label>
                         <input
                           placeholder="Username"
-                          value={
+                          defaultValue={
                             userProfile?.username === userProfile?.address
                               ? ''
-                              : userProfile?.username
+                              : userProfile?.username || ''
                           }
                           {...register('username')}
                         />
@@ -96,10 +161,42 @@ const EditProfileModal = ({
                           <span>{errors.username.message}</span>
                         )}
                         <label>Bio</label>
-                        <textarea placeholder="Bio" {...register('bio')}>
-                          {userProfile?.bio}
-                        </textarea>
+                        <textarea
+                          placeholder="Bio"
+                          {...register('bio')}
+                          defaultValue={userProfile.bio || ''}
+                        />
                         {errors.bio && <span>{errors.bio.message}</span>}
+                        <label>Tech Skills Selected</label>
+
+                        <div className="flex">
+                          {selectedSkills.map((ts) => (
+                            <button
+                              key={`selected-skill-${ts.id}`}
+                              onClick={() => handleSkillRemoved(ts.id)}
+                            >
+                              <LevelPill
+                                key={`selected-skill-${ts.id}`}
+                                level={ts.name}
+                                classes="justify-self-start"
+                              />
+                            </button>
+                          ))}
+                        </div>
+                        <div>Select your skills</div>
+                        <div>
+                          {availableSkills?.map((ts) => (
+                            <button
+                              key={`available-skill-${ts.id}`}
+                              onClick={() => handleSkillSelected(ts.id)}
+                            >
+                              <LevelPill
+                                level={ts.name}
+                                classes="justify-self-start"
+                              />
+                            </button>
+                          ))}
+                        </div>
                       </div>
                       <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                         <button
@@ -109,6 +206,7 @@ const EditProfileModal = ({
                           Save Profile
                         </button>
                         <button
+                          onClick={closeModal}
                           type="button"
                           className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                         >

@@ -84,6 +84,10 @@ const UserProfile: NextPage = () => {
   const utils = trpc.useContext();
   const router = useRouter();
   const username = router.query.username as string | undefined;
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [modalMode, setModalMode] = useState<'create' | 'update'>('update');
+
+  console.log(router.query);
 
   const { data: userProfile, isSuccess: isSuccessUserProfile } = trpc.useQuery(
     ['users.byUsername', { username: username! }],
@@ -201,6 +205,15 @@ const UserProfile: NextPage = () => {
   console.log('userProfile');
   console.log(userProfile);
 
+  const openModal = () => {
+    setModalOpen(true);
+    setModalMode(onChainProfile?.pathChosen ? 'update' : 'create');
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
   return (
     <div>
       <nav className="flex items-center justify-center space-x-10 border border-main-gray-dark">
@@ -212,7 +225,12 @@ const UserProfile: NextPage = () => {
       {/* Hero section */}
       {userProfile && (
         <>
-          <EditProfileModal open={true} userProfile={userProfile} />
+          <EditProfileModal
+            open={modalOpen}
+            closeModal={closeModal}
+            userProfile={userProfile}
+            mode={modalMode}
+          />
           <div className="my-8 flex items-center justify-center px-[5.5rem]">
             <div className="min-h-[255px] w-[38%] rounded-md bg-main-gray-light p-8 pl-12">
               <div className="flex items-baseline gap-2">
@@ -221,14 +239,8 @@ const UserProfile: NextPage = () => {
                     ? formatAddress(userProfile.username)
                     : userProfile.username}
                 </h1>
-                {!onChainProfile ? <FaLock /> : <FaEdit />}
               </div>
-              <p className="font-light">
-                pus1 Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                Expedita quis rem soluta maxime. Dolor qui inventore blanditiis
-                nihil cum eum non ab dignissimos, incidunt aliquid ducimus
-                iusto, quia possimus. Repudiandae, reprehenderit officiis!
-              </p>
+              <p className="font-light">{userProfile.bio}</p>
             </div>
             <div className="space-y-3 bg-main-gray-light">
               <Image
@@ -239,6 +251,13 @@ const UserProfile: NextPage = () => {
                 width={500}
                 height={300}
               />
+              (
+              <button
+                onClick={openModal}
+                className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white"
+              >
+                {onChainProfile?.pathChosen ? 'Update' : 'Create'} Profile
+              </button>
               <button className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white">
                 Mint Your SBT
               </button>

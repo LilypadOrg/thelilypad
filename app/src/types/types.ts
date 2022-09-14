@@ -10,3 +10,5 @@ export enum ContentType {
 export type Course = inferQueryOutput<'courses.byId'>;
 export type Courses = inferQueryOutput<'courses.all'>;
 export type UserProfile = inferQueryOutput<'users.byUsername'>;
+export type Tech = inferQueryOutput<'technologies.bySlug'>;
+export type Techs = inferQueryOutput<'technologies.all'>;
