@@ -8,3 +8,7 @@ export function slugify(text: string) {
     .replace(/[^\w\-]+/g, '') // Remove all non-word chars
     .replace(/\-\-+/g, '-'); // Replace multiple - with single -
 }
+
+export const formatAddress = (address: string) => {
+  return address.slice(0, 4) + '...' + address.slice(-4);
+};

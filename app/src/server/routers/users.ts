@@ -3,14 +3,21 @@ import { TRPCError } from '@trpc/server';
 import { createRouter } from '~/server/createRouter';
 import { prisma } from '~/server/prisma';
 import { z } from 'zod';
-import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from '~/utils/constants';
+import {
+  BIO_MAX_LENGTH,
+  BIO_MIN_LENGTH,
+  USERNAME_MAX_LENGTH,
+  USERNAME_MIN_LENGTH,
+} from '~/utils/constants';
 
 const profileUserSelect = Prisma.validator<Prisma.UserSelect>()({
   id: true,
-  name: true,
+  username: true,
+  bio: true,
   address: true,
   xp: true,
   level: true,
+  technologies: true,
   courses: {
     select: {
       completed: true,
@@ -33,7 +40,7 @@ export const userRouter = createRouter()
     async resolve({ input }) {
       try {
         const user = prisma.user.findUnique({
-          where: { name: input.username },
+          where: { username: input.username },
           select: profileUserSelect,
         });
         return user;
@@ -64,9 +71,10 @@ export const userRouter = createRouter()
       }
     },
   })
-  .mutation('updateUsername', {
+  .mutation('updateProfile', {
     input: z.object({
       username: z.string().min(USERNAME_MIN_LENGTH).max(USERNAME_MAX_LENGTH),
+      bio: z.string().min(BIO_MIN_LENGTH).max(BIO_MAX_LENGTH),
     }),
     async resolve({ ctx, input }) {
       if (!ctx.session?.user) {
@@ -80,7 +88,7 @@ export const userRouter = createRouter()
 
         const user = await prisma.user.update({
           where: { id: userId },
-          data: { name: input.username },
+          data: { username: input.username, bio: input.bio },
         });
         return user;
       } catch (err) {

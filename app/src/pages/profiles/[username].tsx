@@ -1,8 +1,34 @@
 import { NextPage } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import React from 'react';
 import LevelPill from '../../components/ui/LevelPill';
+import { toast } from 'react-toastify';
+import {
+  useContractRead,
+  useContractWrite,
+  usePrepareContractWrite,
+  useQuery,
+  useWaitForTransaction,
+} from 'wagmi';
+import { trpc } from '~/utils/trpc';
+import {
+  MAIN_CONTRACT_ADDRESS,
+  MAIN_CONTRACT_ABI,
+  SBT_CONTRACT_ADDRESS,
+  SBT_CONTRACT_ABI,
+} from '~/utils/contracts';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { ethers } from 'ethers';
+import {
+  SBT_MINT_FEE,
+  USERNAME_MAX_LENGTH,
+  USERNAME_MIN_LENGTH,
+} from '~/utils/constants';
+import { FaEdit, FaLock } from 'react-icons/fa';
+import { formatAddress } from '~/utils/formatters';
+import EditProfileModal from '~/components/EditProfileModal';
 
 const languages = ['javascript', 'solidity', 'react', 'c++', 'python'];
 
@@ -91,6 +117,142 @@ const projects = [
 ];
 
 const UserProfile: NextPage = () => {
+  const { data: session } = useSession();
+  const [newUsername, setNewUsername] = useState<string>('');
+  const utils = trpc.useContext();
+  const router = useRouter();
+  const username = router.query.username as string | undefined;
+
+  const {
+    data: userProfile,
+    isLoading: isLoadingProfile,
+    isSuccess: isSuccessUserProfile,
+  } = trpc.useQuery(['users.byUsername', { username: username! }], {
+    enabled: !!username,
+  });
+
+  const { data: createMemberSignature, error } = trpc.useQuery(
+    [
+      'blockend.signCreateMember',
+      {
+        name: userProfile?.name || '',
+        xp: userProfile?.xp || 0,
+        courses: userProfile?.courses.map((c) => c.course.id) || [],
+      },
+    ],
+    {
+      enabled: !!userProfile,
+      onSuccess: (data) => {},
+    }
+  );
+
+  const {
+    data: onChainProfile,
+    refetch: refetchGetMember,
+    isLoading: isLoadingOnchainProfile,
+  } = useContractRead({
+    addressOrName: MAIN_CONTRACT_ADDRESS,
+    contractInterface: MAIN_CONTRACT_ABI,
+    functionName: 'getMember',
+    enabled: !!session?.user,
+    args: [session?.user.address],
+  });
+
+  const { config: createMemberConfig } = usePrepareContractWrite({
+    addressOrName: MAIN_CONTRACT_ADDRESS,
+    contractInterface: MAIN_CONTRACT_ABI,
+    functionName: 'createMember',
+    args: [
+      ethers.utils.toUtf8CodePoints(userProfile?.name || ''), // _name
+      userProfile?.xp, // _initialXP
+      userProfile?.courses.map((c) => c.course.id), // -completedEvents
+      [], // _badges
+      createMemberSignature, // _sig
+    ],
+    enabled: !!userProfile && !!createMemberSignature,
+  });
+
+  const { data: createMemberRes, write: createMember } =
+    useContractWrite(createMemberConfig);
+
+  const { isLoading: isLoadingCreateMember } = useWaitForTransaction({
+    hash: createMemberRes?.hash,
+    onSuccess: () => {
+      refetchGetMember();
+    },
+  });
+
+  const { config: mintTokenConfig } = usePrepareContractWrite({
+    addressOrName: MAIN_CONTRACT_ADDRESS,
+    contractInterface: MAIN_CONTRACT_ABI,
+    functionName: 'mintTokenForMember',
+    args: [session?.user.address, SBT_CONTRACT_ADDRESS],
+    overrides: {
+      value: SBT_MINT_FEE,
+    },
+    enabled: onChainProfile?.pathChosen,
+  });
+  const { data: mintTokenRes, write: mintToken } =
+    useContractWrite(mintTokenConfig);
+
+  const { isLoading: isLoadingMintToken } = useWaitForTransaction({
+    hash: mintTokenRes?.hash,
+    onSuccess: () => {
+      refetchGetMember();
+    },
+  });
+
+  const { data: tokenUri } = useContractRead({
+    addressOrName: SBT_CONTRACT_ADDRESS,
+    contractInterface: SBT_CONTRACT_ABI,
+    functionName: 'tokenURI',
+    enabled: onChainProfile?.tokenId._hex !== '0x00',
+    args: [onChainProfile?.tokenId._hex],
+  });
+
+  useQuery(
+    ['tokenMetadata', tokenUri],
+    () =>
+      fetch(tokenUri?.toString() || '').then((res) => console.log(res.json())),
+    {
+      enabled: !!tokenUri,
+    }
+  );
+
+  const completedCourses = userProfile?.courses.filter(
+    (c) => c.completed === true
+  );
+
+  const enrolledCourses = userProfile?.courses.filter(
+    (c) => c.completed === false && c.enrolled === true
+  );
+
+  const handleProfileCreation = () => {
+    if (createMember) createMember({});
+  };
+
+  const updateUsername = trpc.useMutation(['users.updateUsername'], {
+    onError: (err) => {
+      toast.error(err.message);
+    },
+    onSuccess: () => {
+      utils.invalidateQueries(['users.byUsername', { username: newUsername }]);
+      router.replace(`/profiles/${newUsername}`);
+    },
+  });
+
+  const handleSaveUsername = () => {
+    updateUsername.mutate({ username: newUsername });
+  };
+
+  // TODO: redirect to home if profile doesn't exist
+  if (isSuccessUserProfile && !userProfile) {
+    return <div>Profile not found</div>;
+  }
+
+  console.log('userProfile');
+  console.log(userProfile);
+
   return (
     <div>
       <nav className="flex items-center justify-center space-x-10 border border-main-gray-dark">
@@ -100,42 +262,54 @@ const UserProfile: NextPage = () => {
         <p className="p-2">Personal Roadmap</p>
       </nav>
       {/* Hero section */}
-      <div className="my-8 flex items-center justify-center px-[5.5rem]">
-        <div className="min-h-[255px] w-[38%] rounded-md bg-main-gray-light p-8 pl-12">
-          <h1 className="text-2xl font-bold">Max Moon</h1>
-          <p className="font-light">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Expedita
-            quis rem soluta maxime. Dolor qui inventore blanditiis nihil cum eum
-            non ab dignissimos, incidunt aliquid ducimus iusto, quia possimus.
-            Repudiandae, reprehenderit officiis!
-          </p>
-        </div>
-        <div className="space-y-3 bg-main-gray-light">
-          <Image
-            src="/images/profileSBT/frogSBT.png"
-            alt="sbt"
-            layout="intrinsic"
-            objectFit="contain"
-            width={500}
-            height={300}
-          />
-          <button className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white">
-            Mint Your SBT
-          </button>
-        </div>
-        <div className="min-h-[255px] w-[38%] items-stretch rounded-md bg-main-gray-light p-8 pl-12">
-          <h1 className="text-2xl font-bold">My Tech Stack</h1>
-          <div className="grid grid-cols-3 gap-1">
-            {languages.map((language) => (
-              <LevelPill
-                key={language}
-                level={language}
-                classes="justify-self-start"
+      {userProfile && (
+        <>
+          <EditProfileModal open={true} userProfile={userProfile} />
+          <div className="my-8 flex items-center justify-center px-[5.5rem]">
+            <div className="min-h-[255px] w-[38%] rounded-md bg-main-gray-light p-8 pl-12">
+              <div className="flex items-baseline gap-2">
+                <h1 className="text-2xl font-bold">
+                  {userProfile.username === userProfile.address
+                    ? formatAddress(userProfile.username)
+                    : userProfile.username}
+                </h1>
+                {!onChainProfile ? <FaLock /> : <FaEdit />}
+              </div>
+              <p className="font-light">
+                pus1 Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                Expedita quis rem soluta maxime. Dolor qui inventore blanditiis
+                nihil cum eum non ab dignissimos, incidunt aliquid ducimus
+                iusto, quia possimus. Repudiandae, reprehenderit officiis!
+              </p>
+            </div>
+            <div className="space-y-3 bg-main-gray-light">
+              <Image
+                src="/images/profileSBT/frogSBT.png"
+                alt="sbt"
+                layout="intrinsic"
+                objectFit="contain"
+                width={500}
+                height={300}
               />
-            ))}
+              <button className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white">
+                Mint Your SBT
+              </button>
+            </div>
+            <div className="min-h-[255px] w-[38%] items-stretch rounded-md bg-main-gray-light p-8 pl-12">
+              <h1 className="text-2xl font-bold">My Tech Stack</h1>
+              <div className="grid grid-cols-3 gap-1">
+                {languages.map((language) => (
+                  <LevelPill
+                    key={language}
+                    level={language}
+                    classes="justify-self-start"
+                  />
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
       {/* My Events */}
       <div className="mt-4 flex flex-col space-y-4 px-[5.5rem]">
         <h1 className="mb-0 text-3xl font-bold">My Events</h1>

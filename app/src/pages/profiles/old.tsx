@@ -47,10 +47,6 @@ const Profile: NextPage = () => {
     ],
     {
       enabled: !!userProfile,
-      onSuccess: (data) => {
-        console.log('singnature');
-        console.log(data);
-      },
     }
   );
 
@@ -82,9 +78,6 @@ const Profile: NextPage = () => {
     ],
     enabled: !!userProfile && !!createMemberSignature,
   });
-
-  console.log('error');
-  console.log(error);
 
   const { data: createMemberRes, write: createMember } =
     useContractWrite(createMemberConfig);
@@ -122,17 +115,7 @@ const Profile: NextPage = () => {
     functionName: 'tokenURI',
     enabled: onChainProfile?.tokenId._hex !== '0x00',
     args: [onChainProfile?.tokenId._hex],
-    onSuccess: (data) => {
-      console.log('Data URI');
-      console.log(data);
-    },
   });
-
-  // if (tokenUri) {
-  //   console.log('tokenUri');
-  //   // @ts-ignore
-  //   console.log(JSON.parse(Buffer.from(tokenUri.substring(29), 'base64')));
-  // }
 
   useQuery(
     ['tokenMetadata', tokenUri],
