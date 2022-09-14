@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import React from 'react';
 import { Course } from '~/types/types';
+import { limitStrLength } from '~/utils/formatters';
 import LevelPill from './ui/LevelPill';
 
 const CourseCard = ({ course }: { course: Course }) => {
@@ -23,9 +24,9 @@ const CourseCard = ({ course }: { course: Course }) => {
         ))}
       </div>
       <div className="flex flex-col justify-between px-4 py-4">
-        <div className="mb-2 text-xl font-bold">{course.title}</div>
+        <div className="mb-2 text-lg font-bold">{course.title}</div>
         <div className=" text-ellipsis text-base text-gray-700">
-          {course.description}
+          {limitStrLength(course.description, 80)}
         </div>
       </div>
     </div>

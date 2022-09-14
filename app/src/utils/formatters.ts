@@ -8,3 +8,11 @@ export function slugify(text: string) {
     .replace(/[^\w\-]+/g, '') // Remove all non-word chars
     .replace(/\-\-+/g, '-'); // Replace multiple - with single -
 }
+
+export function limitStrLength(text: string, max_length: number) {
+  if (text.length > max_length - 3) {
+    return text.substring(0, max_length).trimEnd() + '...';
+  } else {
+    return text;
+  }
+}
