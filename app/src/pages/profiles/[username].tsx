@@ -21,16 +21,11 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { ethers } from 'ethers';
-import {
-  SBT_MINT_FEE,
-  USERNAME_MAX_LENGTH,
-  USERNAME_MIN_LENGTH,
-} from '~/utils/constants';
+import { SBT_MINT_FEE } from '~/utils/constants';
 import { FaEdit, FaLock } from 'react-icons/fa';
-import { formatAddress } from '~/utils/formatters';
+import { formatAddress, limitStrLength } from '~/utils/formatters';
 import EditProfileModal from '~/components/EditProfileModal';
-
-const languages = ['javascript', 'solidity', 'react', 'c++', 'python'];
+import CompletedIcon from '~/components/ui/CompletedIcon';
 
 const InfoTile = ({
   title,
@@ -83,74 +78,35 @@ const LearningPathCards = ({
   );
 };
 
-const paths = [1, 2, 3, 4, 5];
-
-const events = [
-  {
-    title: 'Hackathon: 4 Vs 1 Who is the best...',
-    id: '1',
-    time: 'Sun 11 september 2022',
-  },
-  {
-    title: 'Hackathon: 4 Vs 1 Who is the best...',
-    id: '2',
-    time: 'Sun 11 september 2022',
-  },
-];
-
-const projects = [
-  {
-    title: 'Hackathon: 4 Vs 1 Who is the best...',
-    id: 'a',
-    time: 'Sun 11 september 2022',
-  },
-  {
-    title: 'Hackathon: 4 Vs 1 Who is the best...',
-    id: 'b',
-    time: 'Sun 11 september 2022',
-  },
-  {
-    title: 'Hackathon: 4 Vs 1 Who is the best...',
-    id: 'c',
-    time: 'Sun 11 september 2022',
-  },
-];
-
 const UserProfile: NextPage = () => {
   const { data: session } = useSession();
-  const [newUsername, setNewUsername] = useState<string>('');
+  const [newUsername] = useState<string>('');
   const utils = trpc.useContext();
   const router = useRouter();
   const username = router.query.username as string | undefined;
 
-  const {
-    data: userProfile,
-    isLoading: isLoadingProfile,
-    isSuccess: isSuccessUserProfile,
-  } = trpc.useQuery(['users.byUsername', { username: username! }], {
-    enabled: !!username,
-  });
+  const { data: userProfile, isSuccess: isSuccessUserProfile } = trpc.useQuery(
+    ['users.byUsername', { username: username! }],
+    {
+      enabled: !!username,
+    }
+  );
 
-  const { data: createMemberSignature, error } = trpc.useQuery(
+  const { data: createMemberSignature } = trpc.useQuery(
     [
       'blockend.signCreateMember',
       {
-        name: userProfile?.name || '',
+        name: userProfile?.username || '',
         xp: userProfile?.xp || 0,
         courses: userProfile?.courses.map((c) => c.course.id) || [],
       },
     ],
     {
       enabled: !!userProfile,
-      onSuccess: (data) => {},
     }
   );
 
-  const {
-    data: onChainProfile,
-    refetch: refetchGetMember,
-    isLoading: isLoadingOnchainProfile,
-  } = useContractRead({
+  const { data: onChainProfile, refetch: refetchGetMember } = useContractRead({
     addressOrName: MAIN_CONTRACT_ADDRESS,
     contractInterface: MAIN_CONTRACT_ABI,
     functionName: 'getMember',
@@ -163,7 +119,7 @@ const UserProfile: NextPage = () => {
     contractInterface: MAIN_CONTRACT_ABI,
     functionName: 'createMember',
     args: [
-      ethers.utils.toUtf8CodePoints(userProfile?.name || ''), // _name
+      ethers.utils.toUtf8CodePoints(userProfile?.username || ''), // _name
       userProfile?.xp, // _initialXP
       userProfile?.courses.map((c) => c.course.id), // -completedEvents
       [], // _badges
@@ -175,7 +131,7 @@ const UserProfile: NextPage = () => {
   const { data: createMemberRes, write: createMember } =
     useContractWrite(createMemberConfig);
 
-  const { isLoading: isLoadingCreateMember } = useWaitForTransaction({
+  useWaitForTransaction({
     hash: createMemberRes?.hash,
     onSuccess: () => {
       refetchGetMember();
@@ -219,10 +175,6 @@ const UserProfile: NextPage = () => {
     }
   );
 
-  const completedCourses = userProfile?.courses.filter(
-    (c) => c.completed === true
-  );
-
   const enrolledCourses = userProfile?.courses.filter(
     (c) => c.completed === false && c.enrolled === true
   );
@@ -231,19 +183,15 @@ const UserProfile: NextPage = () => {
     if (createMember) createMember({});
   };
 
-  const updateUsername = trpc.useMutation(['users.updateUsername'], {
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: () => {
-      utils.invalidateQueries(['users.byUsername', { username: newUsername }]);
-      router.replace(`/profiles/${newUsername}`);
-    },
-  });
-
-  const handleSaveUsername = () => {
-    updateUsername.mutate({ username: newUsername });
-  };
+  // const updateUsername = trpc.useMutation(['users.updateUsername'], {
+  //   onError: (err) => {
+  //     toast.error(err.message);
+  //   },
+  //   onSuccess: () => {
+  //     utils.invalidateQueries(['users.byUsername', { username: newUsername }]);
+  //     router.replace(`/profiles/${newUsername}`);
+  //   },
+  // });
 
   // TODO: redirect to home if profile doesn't exist
   if (isSuccessUserProfile && !userProfile) {
