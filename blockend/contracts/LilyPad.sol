@@ -34,20 +34,20 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
     using StringsUpgradeable for uint256;
 
     //art Variables
-    string private constant base64EncodedSvgPrefix = "data:image/svg+xml;base64,";
+    //string private constant base64EncodedSvgPrefix = "data:image/svg+xml;base64,";
     uint256 maxLevel;
     CountersUpgradeable.Counter private _eventIdCounter;
     CountersUpgradeable.Counter private _journeyIdCounter;
 
     address public safeCaller;
-    mapping(uint256 => Level) public levels;
-    mapping(uint256 => EventType) public eventTypes;
+    mapping(uint256 => Level) private levels;
+    mapping(uint256 => EventType) private eventTypes;
 
     mapping(address => Member) private addressToMember;
     mapping(address => uint256[]) private memberJourneys;
 
-    mapping(uint256 => Journey) public journeys;
-    mapping(uint256 => JourneyNode[]) public journeyNodes;
+    mapping(uint256 => Journey) private journeys;
+    mapping(uint256 => JourneyNode[]) private journeyNodes;
 
     mapping(address => uint256) private addressToTokenId;
     mapping(uint256 => address) private tokenIdToAddress;
@@ -104,11 +104,12 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         require(recoverSigner(message, sig) == safeCaller, "I don't take orders from you");
     }
 
-    function getAccoladesStr(Accolade[] memory _accolades) internal pure  returns(string memory) {
+    function getAccoladesStr(Accolade[] memory _accolades) internal pure returns(string memory) {
         string memory _string;
         for (uint256 idx = 0; idx < _accolades.length; idx++) {
             _string = string(abi.encodePacked(_string,_accolades[idx].eventId.toString(), _accolades[idx].title, _accolades[idx].badge));
         }
+
         return _string;
     }
     //LEVEL FUNCTIONS
@@ -174,6 +175,8 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
     /**
      *@notice Submite a Course or Event to be featured in the Lilypad Platform
      *IN
+     *@param _eventTypeId: event type id
+     *@param _eventName: event name byteslike
      *@param _xp: xp given by course completion
      *@param _accolades: list of accolades of the event
      *@param _sig: signatura from safeCaller
@@ -181,15 +184,17 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      */
     function submitEvent(
         uint256 _eventTypeId,
+        bytes memory _eventName,
         uint256 _xp,
         Accolade[] memory _accolades,
         bytes memory _sig
-    ) public onlySafeCaller(prefixed(keccak256(abi.encodePacked(_eventTypeId, _xp, getAccoladesStr(_accolades)))), _sig) {
+    ) public onlySafeCaller(prefixed(keccak256(abi.encodePacked(_eventTypeId, _eventName, _xp, getAccoladesStr(_accolades)))), _sig) {
         _eventIdCounter.increment();
 
         eventIdToEvent[_eventIdCounter.current()].id = _eventIdCounter.current();
         eventIdToEvent[_eventIdCounter.current()].eventTypeId = _eventTypeId;
         eventIdToEvent[_eventIdCounter.current()].xp = _xp;
+        eventIdToEvent[_eventIdCounter.current()].eventName = _eventName;
 
         for (uint256 idx = 0; idx < _accolades.length; idx++) {
             eventIdToEvent[_eventIdCounter.current()].accolades.push(
@@ -206,10 +211,10 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
                 title: _accolades[idx].title,
                 badge: _accolades[idx].badge
             });
-            //accoladeTitleToEventId[_accolades[idx].title] = _eventIdCounter.current();
-            //eventIdToAccoladeTitles[_eventIdCounter.current()].push(_accolades[idx].title);
+
         }
-        emit EventSubmited(msg.sender, _eventIdCounter.current());
+
+        emit EventSubmited(msg.sender, _eventIdCounter.current(), _eventTypeId, _eventName);
     }
 
     /**
@@ -249,6 +254,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
     function updateEvent(
         uint256 _id,
         uint256 _eventTypeId,
+        bytes memory _eventName,
         uint256 _xp,
         Accolade[] memory _accolades,
         bytes memory _sig
@@ -258,9 +264,10 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
     {
         eventIdToEvent[_id].xp = _xp;
         eventIdToEvent[_id].eventTypeId = _eventTypeId;
+        eventIdToEvent[_id].eventName = _eventName;
 
         delete eventIdToEvent[_id].accolades;
-        //delete eventIdToAccoladeTitles[_id];
+
         for (uint256 idx = 0; idx < _accolades.length; idx++) {
             if (_accolades[idx].eventId != _id) revert("Invalid event id in accolade!");
 
@@ -279,10 +286,10 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
                 title: _accolades[idx].title,
                 badge: _accolades[idx].badge
             });
-
-            //accoladeTitleToEventId[_accolades[idx].title] = _id;
-            //eventIdToAccoladeTitles[_id].push(_accolades[idx].title);
         }
+
+        //emit EventUpdated(msg.sender, _id, _eventTypeId, _eventName, _xp, _accolades);
+
     }
 
     // MEMBER FUNCTIONS
@@ -290,14 +297,12 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *@notice Insert new Member that chosen to follow The Path
      *@dev in the _badges accolade object there is no need to send the badge data. Just eventId and accoladeTitle
      *IN
-     *@param _name: Name of the course or event
      *@param _initialXp: member initial xp
      *@param _completedEvents: array of complete events ids
      *@param _badges: array of courses ids with earned badges
      *OUT
      */
     function createMember(
-        bytes memory _name,
         uint256 _initialXp,
         uint256[] memory _completedEvents,
         Accolade[] memory _badges,
@@ -305,13 +310,11 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
     )
         public
         onlySafeCaller(
-            prefixed(keccak256(abi.encodePacked(_name, _initialXp, _completedEvents, getAccoladesStr(_badges)))),
+            prefixed(keccak256(abi.encodePacked(_initialXp, _completedEvents, getAccoladesStr(_badges)))),
             _sig
         )
     {
-        require(!addressToMember[msg.sender].pathChosen, "Path Already Chosen");
-
-        _createMember(_name, _initialXp, _completedEvents, _badges);
+        _createMember(msg.sender,_initialXp, _completedEvents, _badges);
     }
 
     // MEMBER FUNCTIONS
@@ -319,32 +322,33 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *@notice Insert new Member that chosen to follow The Path
      *@dev in the _badges accolade object there is no need to send the badge data. Just eventId and accoladeTitle
      *IN
-     *@param _name: Name of the course or event
      *@param _initialXp: member initial xp
      *@param _completedEvents: array of complete events ids
      *@param _badges: array of accolades , byteslike, earned by member
      *OUT
      */
     function _createMember(
-        bytes memory _name,
+        address _memberAddress,
         uint256 _initialXp,
         uint256[] memory _completedEvents,
         Accolade[] memory _badges
     ) internal {
-        addressToMember[msg.sender].pathChosen = true;
-        addressToMember[msg.sender].name = _name;
-        addressToMember[msg.sender].xp = _initialXp;
-        addressToMember[msg.sender].DAO = false;
-        addressToMember[msg.sender].tokenId = 0;
+        require(!addressToMember[_memberAddress].pathChosen, "Path Already Chosen");
+
+        addressToMember[_memberAddress].pathChosen = true;
+        addressToMember[_memberAddress].xp = _initialXp;
+        addressToMember[_memberAddress].DAO = false;
+        addressToMember[_memberAddress].tokenId = 0;
         for (uint256 idx = 0; idx < _completedEvents.length; idx++) {
-            addressToMember[msg.sender].completedEvents.push(_completedEvents[idx]);
+            addressToMember[_memberAddress].completedEvents.push(_completedEvents[idx]);
         }
 
         for (uint256 idx = 0; idx < _badges.length; idx++) {
-            addressToMember[msg.sender].badges.push(_badges[idx]);
+            addressToMember[_memberAddress].badges.push(_badges[idx]);
         }
 
-        updateJourney(msg.sender);
+
+        updateJourney(_memberAddress);
     }
 
     /**
@@ -400,6 +404,8 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
 
         //update journeys
         if (_updateJourney) updateJourney(_member);
+
+        emit EventCompleted(_member, _eventId, string(abi.encodePacked(eventIdToEvent[_eventId].eventName)));
     }
 
     /**
@@ -414,7 +420,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         address _member,
         Accolade[] memory _badges,
         bytes memory _sig
-    ) public onlySafeCaller(prefixed(keccak256(abi.encode(_member, getAccoladesStr(_badges)))), _sig) {
+    ) public onlySafeCaller(prefixed(keccak256(abi.encodePacked(_member, getAccoladesStr(_badges)))), _sig) {
         for (uint256 idx = 0; idx < _badges.length; idx++) {
             if (!badgeEarned(_member, _badges[idx].eventId, _badges[idx].title))
                 _awardBadge(_member, _badges[idx], true);
@@ -446,6 +452,8 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
 
         //update journeys
         if (_updateJourney) updateJourney(_member);
+
+        emit BadgeEarned(_member, _accolade.eventId, _accolade.title, string(abi.encodePacked(_accolade.title)));
     }
 
     /**
@@ -546,18 +554,22 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         override
         returns (
             bool pathChosen,
-            string memory name,
+            uint256 xp,
             uint256 level,
             bool DAO,
-            uint256 tokenId
+            uint256 tokenId,
+            uint256[] memory completedEvents,
+            Accolade[] memory badges
         )
     {
         return (
             addressToMember[_memberAddress].pathChosen,
-            string(abi.encodePacked(addressToMember[_memberAddress].name)),
+            addressToMember[_memberAddress].xp,
             getMemberLevel(_memberAddress),
             addressToMember[_memberAddress].DAO,
-            addressToMember[_memberAddress].tokenId
+            addressToMember[_memberAddress].tokenId,
+            addressToMember[_memberAddress].completedEvents,
+            addressToMember[_memberAddress].badges
         );
     }
 
@@ -581,7 +593,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         returns (
             address memberAddress,
             bool pathChosen,
-            string memory name,
+            uint256 xp,
             uint256 level,
             bool DAO,
             uint256 tokenId,
@@ -593,7 +605,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         return (
             tokenIdToAddress[_tokenId],
             _member.pathChosen,
-            string(abi.encodePacked(_member.name)),
+            _member.xp,
             getMemberLevel(tokenIdToAddress[_tokenId]),
             _member.DAO,
             _member.tokenId,
@@ -620,8 +632,8 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *OUT
      *@return uint256: member level
      */
-    function getMemberLevel(address _memberAddress) internal view returns (uint256) {
-        for (uint256 idx = 0; idx < maxLevel - 1; idx++) {
+    function getMemberLevel(address _memberAddress) public view returns (uint256) {
+        for (uint256 idx = 1; idx <= maxLevel; idx++) {
             if (
                 addressToMember[_memberAddress].xp >= levels[idx].xpInit &&
                 addressToMember[_memberAddress].xp <= levels[idx].xpFin
@@ -637,7 +649,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         bytes memory _name,
         bool _badgeObligatory,
         uint256[] memory _eventId
-    ) public onlyMember returns (Journey memory) {
+    ) external onlyMember returns (Journey memory) {
         (bool _journeyExists, Journey memory _journeyFound) = journeyExists(msg.sender, _eventId);
 
         if (_journeyExists) return _journeyFound;
@@ -680,7 +692,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         bytes memory _name,
         bool _badgeObligatory,
         uint256[] memory _eventsId
-    ) public onlyMember returns (Journey memory) {
+    ) external onlyMember returns (Journey memory) {
         require(journeys[_journeyId].member != address(0), "Journey not found");
         require(journeys[_journeyId].member == msg.sender, "Journey not found");
 
@@ -792,7 +804,6 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *@notice Update all of Member data
      *IN
      *@param _memberAddress: member address
-     *@param _name: name of course or event
      *@param _dao: dao?
      *@param _xp: xp owned by member
      *@param _completedEvents: array of complete courses ids
@@ -801,7 +812,6 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      */
     function updateMember(
         address _memberAddress,
-        bytes memory _name,
         bool _dao,
         uint256 _xp,
         uint256[] memory _completedEvents,
@@ -812,17 +822,16 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         onlySafeCaller(
             prefixed(
                 keccak256(
-                    abi.encode(_memberAddress, _name, _dao, _xp, _completedEvents, getAccoladesStr(_badges))
+                    abi.encodePacked(_memberAddress, _dao, _xp, _completedEvents, getAccoladesStr(_badges))
                 )
             ),
             _sig
         )
     {
         if (!addressToMember[_memberAddress].pathChosen) {
-            _createMember(_name, _xp, _completedEvents, _badges);
+            _createMember(_memberAddress, _xp, _completedEvents, _badges);
         } else {
             addressToMember[_memberAddress].pathChosen = addressToMember[_memberAddress].pathChosen;
-            addressToMember[_memberAddress].name = _name;
             addressToMember[_memberAddress].xp = _xp;
             addressToMember[_memberAddress].DAO = _dao;
             addressToMember[_memberAddress].tokenId = addressToMember[_memberAddress].tokenId;
@@ -867,7 +876,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         (
             address _memberAddress,
             ,
-            string memory _name,
+            ,
             ,
             ,
             ,
@@ -883,9 +892,11 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
                     Base64.encode(
                         bytes(
                             abi.encodePacked(
-                                '{"name":"',
-                                _name,
-                                '", "description":"SBT Token","image_data": "',
+                                '{"name":"PondSBT ',
+                                _tokenId.toString(),
+                                '", "description":"Part of the Soul of ',
+                                StringsUpgradeable.toHexString(uint160(_memberAddress), 20),
+                                '","image_data": "',
                                 string(
                                     abi.encodePacked(
                                         //base64EncodedSvgPrefix,
@@ -901,7 +912,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
                         )
                     )
                 )
-            );
+            );            
     }
 
     function buildAttributes(uint256 _level, uint256[] memory _completedEvents)
@@ -911,7 +922,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
     {
         string memory _attributes = '"attributes": [';
         _attributes = string(
-            abi.encodePacked(_attributes, '{ "trait_type":"Level", "value": ', _level, "}")
+            abi.encodePacked(_attributes, '{ "trait_type":"Level", "value": ', _level.toString(), "}")
         );
         for (uint256 idx = 0; idx < _completedEvents.length; idx++) {
             _attributes = string(abi.encodePacked(_attributes, ',{ "trait_type":"'));
@@ -930,7 +941,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
             _attributes = string(abi.encodePacked(_attributes, '"}'));
         }
 
-        string(abi.encodePacked(_attributes, "]"));
+        _attributes = string(abi.encodePacked(_attributes, "]"));
 
         return _attributes;
     }
@@ -941,7 +952,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
             if (idx > 0) _badgesUri = string(abi.encodePacked(_badgesUri, ',{ "trait_type":"'));
             else _badgesUri = string(abi.encodePacked(_badgesUri, '{ "trait_type":"BADGE"'));
 
-            _badgesUri = string(abi.encodePacked(_badgesUri, '", "value": "'));
+            _badgesUri = string(abi.encodePacked(_badgesUri, ', "value": "'));
             _badgesUri = string(
                 abi.encodePacked(_badgesUri, _badges[idx].title)
             );
@@ -953,7 +964,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
             _badgesUri = string(abi.encodePacked(_badgesUri, '"}'));
         }
 
-        string(abi.encodePacked(_badgesUri, "]"));
+        _badgesUri = string(abi.encodePacked(_badgesUri, "]"));
 
         return _badgesUri;
     }

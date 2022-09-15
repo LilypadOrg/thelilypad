@@ -2,6 +2,7 @@ import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomicfoundation/hardhat-toolbox";
 import "@typechain/hardhat";
+import "@nomiclabs/hardhat-waffle";
 import "hardhat-gas-reporter";
 import "hardhat-deploy";
 import "@nomiclabs/hardhat-ethers";
@@ -97,7 +98,7 @@ const config: HardhatUserConfig = {
         coinmarketcap: COINMARKETCAP_API_KEY,
     },
     contractSizer: {
-        runOnCompile: false,
+        runOnCompile: true,
         only: ["LilyPad", "ERC721", "SBT"],
     },
     namedAccounts: {
@@ -118,7 +119,7 @@ const config: HardhatUserConfig = {
                 settings: {
                     optimizer: {
                         enabled: true,
-                        runs: 600,
+                        runs: 200,
                     },
                 },
             },

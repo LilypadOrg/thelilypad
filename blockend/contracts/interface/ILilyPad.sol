@@ -23,7 +23,10 @@ pragma solidity ^0.8.4;
 import "./IPondSBT.sol";
 
 interface ILilyPad {
-    event EventSubmited(address owner, uint256 eventId);
+    event EventSubmited(address owner, uint256 eventId, uint256 eventTypeId, bytes eventName);
+
+    event EventCompleted(address member, uint256 eventId, string eventName);
+    event BadgeEarned(address member, uint256 eventId, bytes badgeIdentifier, string badgeName);
 
     struct Level {
         uint256 level;
@@ -34,7 +37,6 @@ interface ILilyPad {
 
     struct Member {
         bool pathChosen;
-        bytes name;
         uint256 xp;
         bool DAO;
         uint256 tokenId;
@@ -80,10 +82,12 @@ interface ILilyPad {
         view
         returns (
             bool pathChosen,
-            string memory name,
+            uint256 xp,
             uint256 level,
             bool DAO,
-            uint256 tokenId
+            uint256 tokenId,
+            uint256[] memory completedEvents,
+            Accolade[] memory badges
         );
 
     function getEvent(uint256 eventId)

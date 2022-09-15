@@ -21,5 +21,7 @@ pragma solidity ^0.8.4;
  **********************************************************************/
 
 interface IPondSBT {
+    event SoulBounded(address soulOwner, uint256 tokenId);
+
     function takeFirstSteps(address _member) external payable returns (uint256);
 }

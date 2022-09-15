@@ -11,28 +11,27 @@ import {
 } from "../typechain-types";
 import fs from "fs";
 import { ILilyPad } from "../typechain-types/contracts/LilyPad";
+import { readSvgContent } from "../scripts/svgUtils";
 
 const BASE_FEE = ethers.utils.parseEther("0.25");
 
 //Portrait Description Common
 export function initialLevels(): ILilyPad.LevelStruct[] {
     const { web3 } = require("hardhat");
+    const svgContent = fs.readFileSync("images/level0.svg", { encoding: "ascii" });
+
     return [
         {
             level: 1,
             xpInit: 0,
             xpFin: 100,
-            image: web3.utils.fromAscii(
-                fs.readFileSync("images/level0.svg", { encoding: "ascii" })
-            ),
+            image: web3.utils.fromAscii(readSvgContent("images/level0.svg")),
         },
         {
             level: 2,
             xpInit: 101,
             xpFin: 200,
-            image: web3.utils.fromAscii(
-                fs.readFileSync("images/level1.svg", { encoding: "ascii" })
-            ),
+            image: web3.utils.fromAscii(web3.utils.fromAscii(readSvgContent("images/level1.svg"))),
         },
     ];
 }

@@ -1,26 +1,35 @@
 import { assert, expect } from "chai";
 import { BigNumber } from "ethers";
 import deployLilyPad from "../deploy/03-deploy-lilyPad";
-import { ILilyPad, LilyPad, LilyPad__factory } from "../typechain-types";
+import { ILilyPad, LilyPad, LilyPad__factory, PondSBT, PondSBT__factory } from "../typechain-types";
 import Web3 from "web3";
 import { EventSubmitedEventObject } from "../typechain-types/contracts/LilyPad";
+import deployPondSBT from "../deploy/04-deploy-pondSBT";
+import { readSvgContent } from "../scripts/svgUtils";
 
 const hre = require("hardhat");
 describe("LilyPad", function () {
     const { deployments, getNamedAccounts, web3, ethers } = require("hardhat");
     const { get } = deployments;
-
+    const BASE_FEE = ethers.utils.parseEther("0.25");
     let _lilyPadContract: LilyPad;
+    let _pondSBTContract: PondSBT;
     beforeEach(async function () {
         await deployLilyPad(hre);
-
+        await deployPondSBT(hre);
         const lilypadFactory: LilyPad__factory = await ethers.getContractFactory("LilyPad");
         const _lilyPadProxyContract = await get("LilyPadProxy");
 
         _lilyPadContract = await get("LilyPad");
         _lilyPadContract = await lilypadFactory.attach(_lilyPadProxyContract.address);
 
+        const pondSBTFactory: PondSBT__factory = await ethers.getContractFactory("PondSBT");
+        const _pondSbtProxyContract = await get("PondSBTProxy");
+
+        _pondSBTContract = await pondSBTFactory.attach(_pondSbtProxyContract.address);
+
         assert(_lilyPadContract, "Could not deploy lilyPad");
+        assert(_pondSBTContract, "Could not deploy PondSBT");
     });
     describe("Event functions", function () {
         it("Try to submit course with correct signature from safeCaller. It should work with no problems", async function () {
@@ -44,6 +53,7 @@ describe("LilyPad", function () {
             //console.log(firstValues.join());
             const hash = (web3 as Web3).utils.soliditySha3(
                 { t: "uint256", v: 1 },
+                { t: "bytes", v: web3.utils.fromAscii("Basic Solidity Course") },
                 { t: "uint256", v: 10 },
                 {
                     t: "string",
@@ -54,6 +64,7 @@ describe("LilyPad", function () {
             const signedData = await web3.eth.sign(hash!, safeCaller);
             const courseTx = await _lilyPadContract.submitEvent(
                 1,
+                web3.utils.fromAscii("Basic Solidity Course"),
                 10,
                 [
                     {
@@ -90,6 +101,7 @@ describe("LilyPad", function () {
 
             const hash = await web3.utils.soliditySha3(
                 { t: "uint256", v: 1 },
+                { t: "bytes", v: web3.utils.fromAscii("Basic Solidity Course") },
                 { t: "uint256", v: 10 },
                 {
                     t: "string",
@@ -99,7 +111,13 @@ describe("LilyPad", function () {
             const signedData = web3.eth.sign(hash!, safeCaller);
 
             try {
-                const courseTx = await _lilyPadContract.submitEvent(1, 20, courseArray, signedData);
+                const courseTx = await _lilyPadContract.submitEvent(
+                    1,
+                    web3.utils.fromAscii("Basic Solidity Course"),
+                    20,
+                    courseArray,
+                    signedData
+                );
 
                 const submitCourseReceipt = await courseTx.wait(1);
                 var courseId: BigNumber;
@@ -141,6 +159,7 @@ describe("LilyPad", function () {
             //console.log(flattenedArray.join(""));
             const hash = (web3 as Web3).utils.soliditySha3(
                 { t: "uint256", v: 1 },
+                { t: "bytes", v: web3.utils.fromAscii("Basic Solidity Course") },
                 { t: "uint256", v: 10 },
                 {
                     t: "string",
@@ -149,7 +168,13 @@ describe("LilyPad", function () {
             );
 
             const signedData = await web3.eth.sign(hash!, safeCaller);
-            const courseTx = await _lilyPadContract.submitEvent(1, 10, courseArray, signedData);
+            const courseTx = await _lilyPadContract.submitEvent(
+                1,
+                web3.utils.fromAscii("Basic Solidity Course"),
+                10,
+                courseArray,
+                signedData
+            );
 
             const submitCourseReceipt = await courseTx.wait(1);
             var courseId: BigNumber;
@@ -187,6 +212,7 @@ describe("LilyPad", function () {
             //console.log(flattenedArray.join(""));
             const hash = (web3 as Web3).utils.soliditySha3(
                 { t: "uint256", v: 1 },
+                { t: "bytes", v: web3.utils.fromAscii("Basic Solidity Course") },
                 { t: "uint256", v: 10 },
                 {
                     t: "string",
@@ -195,7 +221,13 @@ describe("LilyPad", function () {
             );
 
             const signedData = await web3.eth.sign(hash!, safeCaller);
-            const courseTx = await _lilyPadContract.submitEvent(1, 10, courseArray, signedData);
+            const courseTx = await _lilyPadContract.submitEvent(
+                1,
+                web3.utils.fromAscii("Basic Solidity Course"),
+                10,
+                courseArray,
+                signedData
+            );
 
             const submitCourseReceipt = await courseTx.wait(1);
             var courseId: BigNumber;
@@ -218,12 +250,12 @@ describe("LilyPad", function () {
                 {
                     eventId: 0,
                     title: web3.utils.fromAscii("BEGINER"),
-                    badge: web3.utils.fromAscii("BEGINER BADGE SVG"),
+                    badge: web3.utils.fromAscii(readSvgContent("images/level0.svg")),
                 },
                 {
                     eventId: 0,
                     title: web3.utils.fromAscii("ADVANCED"),
-                    badge: web3.utils.fromAscii("ADVANCED BADGE SVG"),
+                    badge: web3.utils.fromAscii(readSvgContent("images/level1.svg")),
                 }
             );
 
@@ -236,6 +268,7 @@ describe("LilyPad", function () {
             //console.log(firstValues.join());
             const hash = (web3 as Web3).utils.soliditySha3(
                 { t: "uint256", v: 1 },
+                { t: "bytes", v: web3.utils.fromAscii("Basic Solidity Course") },
                 { t: "uint256", v: 10 },
                 {
                     t: "string",
@@ -244,7 +277,13 @@ describe("LilyPad", function () {
             );
 
             const signedData = await web3.eth.sign(hash!, safeCaller);
-            const courseTx = await _lilyPadContract.submitEvent(1, 10, courseArray, signedData);
+            const courseTx = await _lilyPadContract.submitEvent(
+                1,
+                web3.utils.fromAscii("Basic Solidity Course"),
+                10,
+                courseArray,
+                signedData
+            );
 
             const submitCourseReceipt = await courseTx.wait(1);
             var eventId = 0;
@@ -258,10 +297,193 @@ describe("LilyPad", function () {
         it("Try to submit member with correct signature from safeCaller. It should work with no problems", async function () {
             //create member
             const { deployer, safeCaller } = await getNamedAccounts();
+            const accounts: any[] = await ethers.getSigners();
+            const user = accounts[1];
             const _web3: Web3 = web3;
 
-            const name: string = "Mirthis";
             const initialXp: number = 1000;
+            var completedCourses: number[] = [];
+
+            var badges: any[] = []; //badges is just an accolade array
+            var flattenedBadgesArray = badges.map((i) => {
+                return (
+                    i[0].toString() +
+                    web3.utils.toAscii(i[1].toString()) +
+                    web3.utils.toAscii(i[2].toString())
+                );
+            });
+
+            //generates sig data
+            const hash = (web3 as Web3).utils.soliditySha3(
+                { t: "uint256", v: initialXp },
+                ...completedCourses,
+                {
+                    t: "string",
+                    v: flattenedBadgesArray.join(""),
+                }
+            );
+
+            const signedData = await web3.eth.sign(hash!, safeCaller);
+            const courseTx = await _lilyPadContract
+                .connect(user)
+                .createMember(initialXp, completedCourses, badges, signedData);
+
+            await courseTx.wait(1);
+
+            const _member = await _lilyPadContract.getMember(user.address);
+
+            assert(_member.pathChosen, "Member not created :-(");
+        });
+        it("Try to submit member with incorrect signature from safeCaller. It should revert", async function () {
+            //create member
+            const { deployer, safeCaller } = await getNamedAccounts();
+            const accounts: any[] = await ethers.getSigners();
+            const user = accounts[1];
+            const _web3: Web3 = web3;
+
+            const initialXp: number = 1000;
+            var completedCourses: number[] = [];
+
+            var badges: any[] = []; //badges is just an accolade array
+            var flattenedBadgesArray = badges.map((i) => {
+                return (
+                    i[0].toString() +
+                    web3.utils.toAscii(i[1].toString()) +
+                    web3.utils.toAscii(i[2].toString())
+                );
+            });
+
+            //generates sig data
+            const hash = (web3 as Web3).utils.soliditySha3(
+                { t: "uint256", v: initialXp },
+                ...completedCourses,
+                {
+                    t: "string",
+                    v: flattenedBadgesArray.join(""),
+                }
+            );
+
+            const signedData = await web3.eth.sign(hash!, safeCaller);
+            try {
+                const courseTx = await _lilyPadContract
+                    .connect(user)
+                    .createMember(initialXp * 2, completedCourses, badges, signedData);
+
+                await courseTx.wait(1);
+            } catch (err: any) {
+                console.error(err.message);
+            }
+
+            const _member = await _lilyPadContract.getMember(user.address);
+
+            assert(!_member.pathChosen, "Member created with malicious data :-(");
+        });
+        it("Complete course and checks if it reflects in SBT tokenUri. It should return the complete course data in the token Uri", async function () {
+            //create member
+            const { deployer, safeCaller } = await getNamedAccounts();
+            const accounts: any[] = await ethers.getSigners();
+            const user = accounts[1];
+            const _web3: Web3 = web3;
+
+            const initialXp: number = 0;
+            var completedCourses: number[] = [];
+
+            var badges: any[] = []; //badges is just an accolade array
+            var flattenedBadgesArray = badges.map((i) => {
+                return (
+                    i[0].toString() +
+                    web3.utils.toAscii(i[1].toString()) +
+                    web3.utils.toAscii(i[2].toString())
+                );
+            });
+
+            //generates sig data
+            let hash = (web3 as Web3).utils.soliditySha3(
+                { t: "uint256", v: initialXp },
+                ...completedCourses,
+                {
+                    t: "string",
+                    v: flattenedBadgesArray.join(""),
+                }
+            );
+
+            let signedData = await web3.eth.sign(hash!, safeCaller);
+            const courseTx = await _lilyPadContract
+                .connect(user)
+                .createMember(initialXp, completedCourses, badges, signedData);
+
+            await courseTx.wait(1);
+
+            const _member = await _lilyPadContract.getMember(user.address);
+
+            assert(_member.pathChosen, "Member not created :-(");
+
+            //mint token
+            const mintTx = await _lilyPadContract
+                .connect(user)
+                .mintTokenForMember(user.address, _pondSBTContract.address, { value: BASE_FEE });
+
+            await mintTx.wait(1);
+
+            let memberValues = await _lilyPadContract.getMember(user.address);
+
+            assert(memberValues.tokenId.gt(0), "Token not minted :-(");
+            assert(
+                memberValues.completedEvents.length == 0,
+                "Wrong number of completed events :-("
+            );
+
+            let tokenUri = await _pondSBTContract.tokenURI(memberValues.tokenId);
+
+            let buff = Buffer.from(tokenUri.replace("data:application/json;base64,", ""), "base64");
+            let text = buff.toString("ascii");
+            let initialTokenUri = JSON.parse(text);
+
+            assert(initialTokenUri.attributes.length == 1, "wrong number of attributes");
+
+            //generates sig data
+            hash = (web3 as Web3).utils.soliditySha3(
+                { t: "address", v: user.address },
+                {
+                    t: "uint256",
+                    v: 1,
+                }
+            );
+
+            signedData = await web3.eth.sign(hash!, safeCaller);
+            const completeEventTx = await _lilyPadContract.completeEvent(
+                user.address,
+                1,
+                signedData
+            );
+
+            await completeEventTx.wait(1);
+
+            memberValues = await _lilyPadContract.getMember(user.address);
+
+            assert(
+                memberValues.completedEvents.length == 1,
+                "Wrong number of completed events :-("
+            );
+
+            tokenUri = await _pondSBTContract.tokenURI(memberValues.tokenId);
+
+            buff = Buffer.from(tokenUri.replace("data:application/json;base64,", ""), "base64");
+            text = buff.toString("ascii");
+            let finalTokenUri = JSON.parse(text);
+
+            console.log(`tokenUri: ${text}`);
+
+            assert(finalTokenUri.attributes.length == 2, "Wrong count of attributes");
+        });
+        it("award badge and checks if it reflects in SBT tokenUri. It should return the complete course data in the token Uri", async function () {
+            //create member
+            const { deployer, safeCaller } = await getNamedAccounts();
+            const accounts: any[] = await ethers.getSigners();
+            const user = accounts[1];
+            const _web3: Web3 = web3;
+
+            const initialXp: number = 0;
             var completedCourses: number[] = [1];
 
             var badges: any[] = []; //badges is just an accolade array
@@ -272,10 +494,9 @@ describe("LilyPad", function () {
                     web3.utils.toAscii(i[2].toString())
                 );
             });
-            console.log(flattenedBadgesArray.join(""));
+
             //generates sig data
-            const hash = (web3 as Web3).utils.soliditySha3(
-                { t: "bytes", v: web3.utils.fromAscii(name) },
+            let hash = (web3 as Web3).utils.soliditySha3(
                 { t: "uint256", v: initialXp },
                 ...completedCourses,
                 {
@@ -284,14 +505,86 @@ describe("LilyPad", function () {
                 }
             );
 
-            const signedData = await web3.eth.sign(hash!, safeCaller);
-            const courseTx = await _lilyPadContract.createMember(
-                web3.utils.fromAscii(name),
-                initialXp,
-                completedCourses,
-                badges,
-                signedData
+            let signedData = await web3.eth.sign(hash!, safeCaller);
+            const courseTx = await _lilyPadContract
+                .connect(user)
+                .createMember(initialXp, completedCourses, badges, signedData);
+
+            await courseTx.wait(1);
+
+            const _member = await _lilyPadContract.getMember(user.address);
+
+            assert(_member.pathChosen, "Member not created :-(");
+
+            //mint token
+            const mintTx = await _lilyPadContract
+                .connect(user)
+                .mintTokenForMember(user.address, _pondSBTContract.address, { value: BASE_FEE });
+
+            await mintTx.wait(1);
+
+            let memberValues = await _lilyPadContract.getMember(user.address);
+
+            assert(memberValues.tokenId.gt(0), "Token not minted :-(");
+            assert(
+                memberValues.completedEvents.length == 1,
+                "Wrong number of completed events :-("
             );
+
+            let tokenUri = await _pondSBTContract.tokenURI(memberValues.tokenId);
+
+            let buff = Buffer.from(tokenUri.replace("data:application/json;base64,", ""), "base64");
+            let text = buff.toString("ascii");
+            let initialTokenUri = JSON.parse(text);
+
+            assert(initialTokenUri.attributes.length == 2, "wrong number of attributes");
+
+            //generates sig data
+            var accoladesArray: any[] = [];
+
+            accoladesArray.push([
+                1,
+                web3.utils.fromAscii("BEGINER"),
+                web3.utils.fromAscii(readSvgContent("images/level1.svg")),
+            ]);
+
+            flattenedBadgesArray = accoladesArray.map((i) => {
+                return (
+                    i[0].toString() +
+                    web3.utils.toAscii(i[1].toString()) +
+                    web3.utils.toAscii(i[2].toString())
+                );
+            });
+
+            const badgeAwardHash = (web3 as Web3).utils.soliditySha3(
+                user.address,
+                flattenedBadgesArray.join("")
+            );
+
+            const badgeAwardSignedData = await web3.eth.sign(badgeAwardHash!, safeCaller);
+
+            const awardBadgeTx = await _lilyPadContract.awardBadge(
+                user.address,
+                accoladesArray,
+                badgeAwardSignedData
+            );
+
+            await awardBadgeTx.wait(1);
+
+            memberValues = await _lilyPadContract.getMember(user.address);
+
+            assert(memberValues.badges.length == 1, "Wrong number of badges :-(");
+
+            tokenUri = await _pondSBTContract.tokenURI(memberValues.tokenId);
+
+            buff = Buffer.from(tokenUri.replace("data:application/json;base64,", ""), "base64");
+            text = buff.toString("ascii");
+
+            let finalTokenUri = JSON.parse(text);
+
+            console.log(`tokenUri: ${text}`);
+
+            assert(finalTokenUri.badges.length == 1, "Wrong count of badges");
         });
     });
 });

@@ -1,0 +1,4 @@
+{
+  "solidity.packageDefaultDependenciesContractsDirectory": "",
+  "solidity.packageDefaultDependenciesDirectory": "blockend\\node_modules"
+}

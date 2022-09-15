@@ -91,6 +91,8 @@ contract PondSBT is
 
         _mint(_member, _tokenIdCounter.current());
 
+        emit SoulBounded(_member, _tokenIdCounter.current());
+
         return _tokenIdCounter.current();
     }
 
