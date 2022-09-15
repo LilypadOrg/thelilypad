@@ -24,6 +24,7 @@ import { SBT_MINT_FEE } from '~/utils/constants';
 import { formatAddress, limitStrLength } from '~/utils/formatters';
 import EditProfileModal from '~/components/EditProfileModal';
 import CompletedIcon from '~/components/ui/CompletedIcon';
+import { on } from 'events';
 
 const InfoTile = ({
   title,
@@ -129,21 +130,16 @@ const UserProfile: NextPage = () => {
   console.log('tokenUri');
   console.log(tokenUri);
 
-  useQuery(
+  const { data: tokenMetadata } = useQuery(
     ['tokenMetadata', tokenUri],
-    () =>
-      fetch(tokenUri?.toString() || '').then((res) => console.log(res.json())),
-    {
-      enabled: !!tokenUri,
-      onSuccess: (data) => {
-        console.log('Token Data');
-        console.log(data);
-      },
+    async () => {
+      const data = await (await fetch(tokenUri?.toString() || '')).json();
+      return data;
     }
   );
 
-  // console.log('tokenMetadata');
-  // console.log(tokenMetadata);
+  console.log('tokenMetadata');
+  console.log(tokenMetadata);
 
   const enrolledCourses = userProfile?.courses.filter(
     (c) => c.completed === false && c.enrolled === true
@@ -193,14 +189,30 @@ const UserProfile: NextPage = () => {
               <p className="font-light">{userProfile.bio}</p>
             </div>
             <div className="space-y-3 bg-main-gray-light">
-              <Image
-                src="/images/profileSBT/frogSBT.png"
-                alt="sbt"
-                layout="intrinsic"
-                objectFit="contain"
-                width={500}
-                height={300}
-              />
+              <div className="w-3">
+                {!tokenMetadata && (
+                  <Image
+                    src="/images/profileSBT/frogSBT.png"
+                    alt="sbt"
+                    layout="intrinsic"
+                    objectFit="contain"
+                    width={500}
+                    height={300}
+                  />
+                )}
+                {tokenMetadata && (
+                  // TODO: find a a better way to display and resize SVG
+                  <div
+                    className="w-10"
+                    dangerouslySetInnerHTML={{
+                      __html: tokenMetadata.image_data.replace(
+                        "width='1024px' height='1024px'",
+                        "width='170px' height='170px'"
+                      ),
+                    }}
+                  />
+                )}
+              </div>
               <button
                 onClick={openModal}
                 className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white"
