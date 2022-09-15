@@ -13,6 +13,13 @@ import { trpc } from '~/utils/trpc';
 import LevelPill from './ui/LevelPill';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
+import { ethers } from 'ethers';
+import { MAIN_CONTRACT_ABI, MAIN_CONTRACT_ADDRESS } from '~/utils/contracts';
+import {
+  useContractWrite,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from 'wagmi';
 
 const EditProfileModal = ({
   open,
@@ -34,18 +41,21 @@ const EditProfileModal = ({
   const utils = trpc.useContext();
 
   const { data: techs } = trpc.useQuery(['technologies.all']);
-  const { mutate: updateProfile } = trpc.useMutation(['users.updateProfile'], {
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: (data) => {
-      utils.invalidateQueries([
-        'users.byUsername',
-        { username: data.username },
-      ]);
-      router.replace(`/profiles/${data.username}`);
-    },
-  });
+  const { mutate: updateProfile, isLoading: isLoadingUpateProfile } =
+    trpc.useMutation(['users.updateProfile'], {
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: (data) => {
+        const changeRoute = userProfile.username !== data.username;
+        utils.invalidateQueries([
+          'users.byUsername',
+          { username: data.username },
+        ]);
+        if (changeRoute) router.replace(`/profiles/${data.username}`);
+        closeModal();
+      },
+    });
 
   const [selectedSkills, setSelectedSkills] = useState<
     typeof userProfile.technologies
@@ -54,6 +64,49 @@ const EditProfileModal = ({
   const [availableSkills, setAvailableSkills] = useState<NonNullable<Techs>>(
     []
   );
+
+  const { data: createMemberSignature } = trpc.useQuery(
+    [
+      'blockend.signCreateMember',
+      {
+        name: userProfile?.username || '',
+        xp: userProfile?.xp || 0,
+        courses: userProfile?.courses.map((c) => c.course.id) || [],
+      },
+    ],
+    {
+      enabled: mode === 'create',
+    }
+  );
+
+  const { config: createMemberConfig } = usePrepareContractWrite({
+    addressOrName: MAIN_CONTRACT_ADDRESS,
+    contractInterface: MAIN_CONTRACT_ABI,
+    functionName: 'createMember',
+    args: [
+      ethers.utils.toUtf8CodePoints(userProfile.username || ''), // _name
+      userProfile.xp, // _initialXP
+      userProfile.courses.map((c) => c.course.id), // -completedEvents
+      [], // _badges
+      createMemberSignature, // _sig
+    ],
+    enabled: !!createMemberSignature,
+  });
+
+  const { data: createMemberRes, write: createMember } =
+    useContractWrite(createMemberConfig);
+
+  const { isLoading: isLoadingCreateMember } = useWaitForTransaction({
+    hash: createMemberRes?.hash,
+    onSuccess: () => {
+      const data = getValues();
+      updateProfile({
+        username: data.username,
+        bio: data.bio,
+        technologies: selectedSkills.map((t) => t.id),
+      });
+    },
+  });
 
   useEffect(() => {
     if (techs) {
@@ -86,17 +139,22 @@ const EditProfileModal = ({
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<Inputs>({
     mode: 'onTouched',
     resolver: zodResolver(schema),
   });
   const onSubmit: SubmitHandler<Inputs> = ({ username, bio }) => {
-    updateProfile({
-      username,
-      bio,
-      technologies: selectedSkills.map((t) => t.id),
-    });
+    if (mode === 'create') {
+      if (createMember) createMember({});
+    } else {
+      updateProfile({
+        username,
+        bio,
+        technologies: selectedSkills.map((t) => t.id),
+      });
+    }
   };
 
   const handleSkillSelected = (id: number) => {
@@ -199,7 +257,13 @@ const EditProfileModal = ({
                         </div>
                       </div>
                       <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                        {/* TODO: Show spinner in button when loading */}
                         <button
+                          disabled={
+                            (mode === 'create' && !createMember) ||
+                            isLoadingCreateMember ||
+                            isLoadingUpateProfile
+                          }
                           type="submit"
                           className="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
                         >

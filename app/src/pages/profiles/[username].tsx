@@ -20,9 +20,7 @@ import {
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { ethers } from 'ethers';
 import { SBT_MINT_FEE } from '~/utils/constants';
-import { FaEdit, FaLock } from 'react-icons/fa';
 import { formatAddress, limitStrLength } from '~/utils/formatters';
 import EditProfileModal from '~/components/EditProfileModal';
 import CompletedIcon from '~/components/ui/CompletedIcon';
@@ -80,33 +78,15 @@ const LearningPathCards = ({
 
 const UserProfile: NextPage = () => {
   const { data: session } = useSession();
-  const [newUsername] = useState<string>('');
-  const utils = trpc.useContext();
   const router = useRouter();
   const username = router.query.username as string | undefined;
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [modalMode, setModalMode] = useState<'create' | 'update'>('update');
 
-  console.log(router.query);
-
   const { data: userProfile, isSuccess: isSuccessUserProfile } = trpc.useQuery(
     ['users.byUsername', { username: username! }],
     {
       enabled: !!username,
-    }
-  );
-
-  const { data: createMemberSignature } = trpc.useQuery(
-    [
-      'blockend.signCreateMember',
-      {
-        name: userProfile?.username || '',
-        xp: userProfile?.xp || 0,
-        courses: userProfile?.courses.map((c) => c.course.id) || [],
-      },
-    ],
-    {
-      enabled: !!userProfile,
     }
   );
 
@@ -116,30 +96,6 @@ const UserProfile: NextPage = () => {
     functionName: 'getMember',
     enabled: !!session?.user,
     args: [session?.user.address],
-  });
-
-  const { config: createMemberConfig } = usePrepareContractWrite({
-    addressOrName: MAIN_CONTRACT_ADDRESS,
-    contractInterface: MAIN_CONTRACT_ABI,
-    functionName: 'createMember',
-    args: [
-      ethers.utils.toUtf8CodePoints(userProfile?.username || ''), // _name
-      userProfile?.xp, // _initialXP
-      userProfile?.courses.map((c) => c.course.id), // -completedEvents
-      [], // _badges
-      createMemberSignature, // _sig
-    ],
-    enabled: !!userProfile && !!createMemberSignature,
-  });
-
-  const { data: createMemberRes, write: createMember } =
-    useContractWrite(createMemberConfig);
-
-  useWaitForTransaction({
-    hash: createMemberRes?.hash,
-    onSuccess: () => {
-      refetchGetMember();
-    },
   });
 
   const { config: mintTokenConfig } = usePrepareContractWrite({
@@ -170,40 +126,33 @@ const UserProfile: NextPage = () => {
     args: [onChainProfile?.tokenId._hex],
   });
 
+  console.log('tokenUri');
+  console.log(tokenUri);
+
   useQuery(
     ['tokenMetadata', tokenUri],
     () =>
       fetch(tokenUri?.toString() || '').then((res) => console.log(res.json())),
     {
       enabled: !!tokenUri,
+      onSuccess: (data) => {
+        console.log('Token Data');
+        console.log(data);
+      },
     }
   );
+
+  // console.log('tokenMetadata');
+  // console.log(tokenMetadata);
 
   const enrolledCourses = userProfile?.courses.filter(
     (c) => c.completed === false && c.enrolled === true
   );
 
-  const handleProfileCreation = () => {
-    if (createMember) createMember({});
-  };
-
-  // const updateUsername = trpc.useMutation(['users.updateUsername'], {
-  //   onError: (err) => {
-  //     toast.error(err.message);
-  //   },
-  //   onSuccess: () => {
-  //     utils.invalidateQueries(['users.byUsername', { username: newUsername }]);
-  //     router.replace(`/profiles/${newUsername}`);
-  //   },
-  // });
-
   // TODO: redirect to home if profile doesn't exist
   if (isSuccessUserProfile && !userProfile) {
     return <div>Profile not found</div>;
   }
-
-  console.log('userProfile');
-  console.log(userProfile);
 
   const openModal = () => {
     setModalOpen(true);
@@ -212,6 +161,7 @@ const UserProfile: NextPage = () => {
 
   const closeModal = () => {
     setModalOpen(false);
+    refetchGetMember();
   };
 
   return (
@@ -251,24 +201,34 @@ const UserProfile: NextPage = () => {
                 width={500}
                 height={300}
               />
-              (
               <button
                 onClick={openModal}
                 className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white"
               >
                 {onChainProfile?.pathChosen ? 'Update' : 'Create'} Profile
               </button>
-              <button className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white">
-                Mint Your SBT
-              </button>
+              {/* TODO: Show spinner in button when loading */}
+              {onChainProfile?.['tokenId']._hex === '0x00' && (
+                <button
+                  disabled={
+                    !onChainProfile?.pathChosen ||
+                    !mintToken ||
+                    isLoadingMintToken
+                  }
+                  className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white disabled:bg-gray-500"
+                  onClick={() => mintToken?.()}
+                >
+                  Mint Your SBT
+                </button>
+              )}
             </div>
             <div className="min-h-[255px] w-[38%] items-stretch rounded-md bg-main-gray-light p-8 pl-12">
               <h1 className="text-2xl font-bold">My Tech Stack</h1>
               <div className="grid grid-cols-3 gap-1">
-                {languages.map((language) => (
+                {userProfile.technologies.map((language) => (
                   <LevelPill
-                    key={language}
-                    level={language}
+                    key={`skill-${language.id}`}
+                    level={language.name}
                     classes="justify-self-start"
                   />
                 ))}
@@ -433,8 +393,6 @@ const UserProfile: NextPage = () => {
     </div>
   );
 };
-
-const languages = ['javascript', 'solidity', 'react', 'c++', 'python'];
 
 const interMediateCourses = [
   {

@@ -93,6 +93,7 @@ export const userRouter = createRouter()
             username: input.username,
             bio: input.bio,
             technologies: {
+              set: [],
               connect: input.technologies.map((id) => ({
                 id,
               })),
