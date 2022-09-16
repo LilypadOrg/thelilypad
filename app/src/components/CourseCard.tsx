@@ -3,6 +3,7 @@ import React from 'react';
 import { Course } from '~/types/types';
 import { limitStrLength } from '~/utils/formatters';
 import LevelPill from './ui/LevelPill';
+import AddCourseToRoadmap from './AddCourseToRoadmap';
 
 const CourseCard = ({ course }: { course: Course }) => {
   return (
@@ -16,6 +17,9 @@ const CourseCard = ({ course }: { course: Course }) => {
             objectFit="contain"
           />
         )}
+        <div className="absolute bottom-2 right-2">
+          <AddCourseToRoadmap />
+        </div>
       </div>
 
       <div className="px-4 pt-4 pb-2">

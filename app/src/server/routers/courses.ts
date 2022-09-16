@@ -19,6 +19,7 @@ const defaultCourseSelect = Prisma.validator<Prisma.ContentSelect>()({
       id: true,
       levels: true,
       xp: true,
+      userCourses: true,
     },
   },
 });
@@ -39,8 +40,7 @@ export const courseRouter = createRouter()
        * For pagination you can have a look at this docs site
        * @link https://trpc.io/docs/useInfiniteQuery
        */
-      console.log('query inputs');
-      console.log(input);
+
       try {
         const courses = await prisma.content.findMany({
           where: {

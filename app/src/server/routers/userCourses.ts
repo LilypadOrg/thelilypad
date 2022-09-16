@@ -7,7 +7,7 @@ import { prisma } from '~/server/prisma';
 const singleUserCourseSelect = Prisma.validator<Prisma.UserCourseSelect>()({
   userId: true,
   courseId: true,
-  enrolled: true,
+  roadmap: true,
   completed: true,
   completedOn: true,
 });
@@ -49,10 +49,10 @@ export const userCourseRouter = createRouter()
       }
     },
   })
-  .mutation('enroll', {
+  .mutation('addToRoadmap', {
     input: z.object({
       courseId: z.number(),
-      enrolled: z.boolean(),
+      roadmap: z.boolean(),
     }),
     async resolve({ ctx, input }) {
       if (!ctx.session?.user) {
@@ -62,19 +62,19 @@ export const userCourseRouter = createRouter()
         });
       }
       try {
-        const { courseId, enrolled } = input;
+        const { courseId, roadmap } = input;
         const { userId } = ctx.session.user;
         const userCourse = await prisma.userCourse.upsert({
           where: {
             userId_courseId: { userId, courseId },
           },
           update: {
-            enrolled,
+            roadmap,
           },
           create: {
             userId,
             courseId,
-            enrolled,
+            roadmap,
           },
           select: singleUserCourseSelect,
         });
