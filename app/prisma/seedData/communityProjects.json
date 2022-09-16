@@ -1,13 +1,24 @@
 [
   {
     "id": 30001,
-    "title": "",
-    "description": "",
-    "url": "",
-    "coverImageUrl": "",
-    "technologies": [],
-    "tags": [],
-    "author": "",
-    "codeUrl": ""
+    "title": "🧍‍♂️ EthMan",
+    "description": "ETH Man reacts to live ETH price using Chainlink oracles! He is happy 🙂 when it's up 📈 and sad 🙁 when it's down 📉 than the previous value. (Dynamic face, colors on chain SVG NFT).",
+    "url": "https://ethman-sb.surge.sh/",
+    "coverImageUrl": "https://stratosnft.io/_next/image?url=https%3A%2F%2Ffanbase-1.s3.amazonaws.com%2Fnft_image%2F0x28E1679b0b5CAbd4F494278171cEDcB7134D5DF2%2F1%2F1660575171%2Fimage.svg&w=3840&q=75",
+    "technologies": ["Hardhat", "Ethers JS", "React","Solidity"],
+    "tags": ["NFT", "Web3", "Full-stack", "Github"],
+    "author": "https://twitter.com/ShivBhonde",
+    "codeUrl": "https://github.com/technophile-04/ethMan"
+  },
+  {
+    "id": 30002,
+    "title": "Giffy Search Party",
+    "description": "Sneak peek to your favorite and trendy GIFs!",
+    "url": "https://giff-finder.netlify.app/",
+    "coverImageUrl": "https://i.imgur.com/xTfQv7s.png",
+    "technologies": ["HTML", "JavaScript", "Axios", "React", "React-Bootstrap"],
+    "tags": ["Web2", "Memes", "Front-end"],
+    "author": "https://twitter.com/kelechithe3rd",
+    "codeUrl": "https://github.com/Kizito007/giffy-search"
   }
 ]
