@@ -12,28 +12,53 @@ const singleUserCourseSelect = Prisma.validator<Prisma.UserCourseSelect>()({
   completedOn: true,
 });
 
+const allUserCourseSelect = Prisma.validator<Prisma.UserCourseSelect>()({
+  userId: true,
+  courseId: true,
+  roadmap: true,
+  completed: true,
+  completedOn: true,
+  course: {
+    select: {
+      id: true,
+      levels: true,
+      xp: true,
+      userCourses: {
+        select: {
+          roadmap: true,
+          completed: true,
+          completedOn: true,
+        },
+      },
+      content: {
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          coverImageUrl: true,
+          technologies: true,
+          tags: true,
+          slug: true,
+        },
+      },
+    },
+  },
+});
+
 export const userCourseRouter = createRouter()
   .query('all', {
     input: z.object({
       userId: z.number(),
     }),
-    async resolve({ input, ctx }) {
+    async resolve({ input }) {
       const { userId } = input;
 
       try {
         const userCourse = await prisma.userCourse.findMany({
-          where: { userId_courseId },
-          select: singleUserCourseSelect,
+          where: { userId },
+          select: allUserCourseSelect,
         });
-        if (!userCourse) {
-          return {
-            userId,
-            courseId,
-            enrolled: false,
-            completed: false,
-            completedOn: null,
-          };
-        }
+
         return userCourse;
       } catch (err) {
         throw new TRPCError({

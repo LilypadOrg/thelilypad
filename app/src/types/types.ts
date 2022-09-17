@@ -7,7 +7,7 @@ export enum ContentType {
   COMMUNITY_PROJECT = 'Community Project',
 }
 
-export type Course = inferQueryOutput<'courses.bySlug'>;
+export type Course = inferQueryOutput<'courses.byId'>;
 export type Courses = inferQueryOutput<'courses.all'>;
 export type UserProfile = inferQueryOutput<'users.byUsername'>;
 export type Tech = inferQueryOutput<'technologies.bySlug'>;

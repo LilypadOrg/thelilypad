@@ -5,29 +5,6 @@ import { ContentType } from '~/types/types';
 import { HOMEPAGE_COURSE_FILTERS } from '~/utils/constants';
 import { trpc } from '~/utils/trpc';
 
-const coursesList = [
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-];
-
-const bigResourceList = [...coursesList];
-
 const Home: NextPage = () => {
   const { data: techs } = trpc.useQuery([
     'technologies.byContentTYpe',
@@ -196,7 +173,7 @@ const Home: NextPage = () => {
       <hr className="my-14 w-full bg-main-gray-dark" />
       <div className="px-[5.5rem]">
         {/* Top 10 courses */}
-        <CourseCarousel title="Top 10 Courses" courses={courses} />
+        {courses && <CourseCarousel title="Top 10 Courses" courses={courses} />}
         {/* view AllCourse one tab*/}
         <div className="my-14 w-full">
           <div className="flex w-[30%] justify-between rounded-md bg-main-gray-light py-2 px-4">

@@ -11,13 +11,30 @@ import { trpc } from '~/utils/trpc';
 const categories = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
 const CoursePage: NextPage = () => {
-  const slug = useRouter().query.slug;
-  const { data: course, isLoading } = trpc.useQuery([
-    'courses.bySlug',
-    { slug: Array.isArray(slug) ? slug[0] : slug || '' },
-  ]);
+  const id = Number(useRouter().query.id);
+  const { data: course, isLoading } = trpc.useQuery(['courses.byId', { id }]);
 
   const { data: session } = useSession();
+
+  const { data: userCourses } = trpc.useQuery(
+    ['usercourses.all', { userId: session?.user.userId || -1 }],
+    {
+      enabled: !!session,
+      onSuccess: () => {
+        console.log('Loaded user courses');
+      },
+    }
+  );
+
+  const completed =
+    (course &&
+      !!userCourses?.find((c) => c.courseId === course.id && c.completed)) ||
+    false;
+
+  const inRoadmap =
+    (course &&
+      !!userCourses?.find((c) => c.courseId === course.id && c.roadmap)) ||
+    false;
 
   if (isLoading) {
     return <div>Loading</div>;
@@ -27,7 +44,7 @@ const CoursePage: NextPage = () => {
     <div>
       <div className="px-[5.5rem]">
         <div className="flex flex-col py-8">
-          <h1 className="mb-4 text-4xl font-bold">{course?.title}</h1>
+          <h1 className="mb-4 text-4xl font-bold">{course.content.title}</h1>
           <p className="max-w-xl  font-light">
             {/* Become An Ethereum Blockchain Developer With One Course. Master */}
             Solidity, Web3.JS, Truffle, Metamask, Remix & More!
@@ -51,13 +68,21 @@ const CoursePage: NextPage = () => {
           </div> */}
           <div className="flex flex-col space-y-2">
             <h1 className="mb-0 text-3xl font-semibold">Description</h1>
-            <p className="max-w-5xl font-light">{course?.description}</p>
+            <p className="max-w-5xl font-light">{course.content.description}</p>
           </div>
         </div>
         {session && (
           <>
-            <AddCourseToRoadmap course={course} type="standard" />
-            <CompleteCourse course={course} user={session.user} />
+            <AddCourseToRoadmap
+              courseId={course.id}
+              inRoadmap={inRoadmap}
+              type="standard"
+            />
+            <CompleteCourse
+              courseId={course.id}
+              user={session.user}
+              completed={completed}
+            />
 
             <button className="mt-8 w-full rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500">
               Take final test

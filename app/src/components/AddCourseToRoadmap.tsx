@@ -1,16 +1,19 @@
 import { BiAddToQueue } from 'react-icons/bi';
 import { toast } from 'react-toastify';
-import { Course } from '~/types/types';
 import { trpc } from '~/utils/trpc';
+import { useSession } from 'next-auth/react';
 
 const AddCourseToRoadmap = ({
-  course,
+  courseId,
+  inRoadmap,
   type,
 }: {
-  course: Course;
+  courseId: number;
+  inRoadmap: boolean;
   type: 'small' | 'standard';
 }) => {
   const utils = trpc.useContext();
+  const { data: session } = useSession();
 
   const { mutate: mutateAddToRoadmap } = trpc.useMutation(
     ['usercourses.addToRoadmap'],
@@ -45,18 +48,19 @@ const AddCourseToRoadmap = ({
         toast.error(err.message);
       },
       onSuccess: () => {
-        utils.invalidateQueries(['courses.bySlug', { slug: course.slug }]);
-        utils.invalidateQueries(['courses.all']);
+        utils.invalidateQueries(['courses.byId', { id: courseId }]);
+        utils.invalidateQueries([
+          'usercourses.all',
+          { userId: session?.user.userId || -1 },
+        ]);
         utils.invalidateQueries(['courses.userRoadmap']);
       },
     }
   );
 
-  const inRoadmap = course.course?.userCourses[0]?.roadmap || false;
-
   const handleAddToRoadmap = () => {
     mutateAddToRoadmap({
-      courseId: course.id,
+      courseId,
       roadmap: !inRoadmap,
     });
   };
@@ -71,7 +75,7 @@ const AddCourseToRoadmap = ({
   ) : (
     <button
       onClick={handleAddToRoadmap}
-      className={`absolute bottom-2 right-2 rounded-lg bg-primary-300 p-1 text-xl ${
+      className={`rounded-full border-2 bg-primary-300 p-2 text-lg ${
         inRoadmap
           ? 'text-white hover:text-black'
           : 'text-black hover:text-white'

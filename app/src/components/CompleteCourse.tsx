@@ -7,17 +7,17 @@ import {
 import { Session } from 'next-auth';
 import { MAIN_CONTRACT_ABI, MAIN_CONTRACT_ADDRESS } from '~/utils/contracts';
 import { trpc } from '~/utils/trpc';
-import { Course } from '~/types/types';
 import { toast } from 'react-toastify';
 
 export const CompleteCourse = ({
   user,
-  course,
+  courseId,
+  completed,
 }: {
   user: Session['user'];
-  course: Course;
+  courseId: number;
+  completed: boolean;
 }) => {
-  const completed = course.course?.userCourses[0]?.completed || false;
   const utils = trpc.useContext();
 
   const { data: onChainProfile } = useContractRead({
@@ -32,7 +32,7 @@ export const CompleteCourse = ({
       'blockend.signCompleteEvent',
       {
         address: user.address,
-        courseId: course.id,
+        courseId: courseId,
       },
     ],
     {
@@ -44,7 +44,7 @@ export const CompleteCourse = ({
     addressOrName: MAIN_CONTRACT_ADDRESS,
     contractInterface: MAIN_CONTRACT_ABI,
     functionName: 'completeEvent',
-    args: [user.address, course.id, completeEventSignature],
+    args: [user.address, courseId, completeEventSignature],
     enabled: !!completeEventSignature,
   });
 
@@ -62,13 +62,14 @@ export const CompleteCourse = ({
       toast.error(err.message);
     },
     onSuccess: () => {
-      utils.invalidateQueries(['courses.bySlug', { slug: course.slug }]);
+      utils.invalidateQueries(['courses.byId', { id: courseId }]);
+      utils.invalidateQueries(['usercourses.all', { userId: user.userId }]);
     },
   });
 
   const setCompleted = async () => {
     await mutateCompleted.mutateAsync({
-      courseId: course.id,
+      courseId: courseId,
       completed: true,
     });
     refreshUserStats.mutate();
@@ -102,9 +103,7 @@ export const CompleteCourse = ({
       >
         {isLoadingCompleteCourse && 'Loading...'}
         {completed &&
-          `Course completed on 
-          ${course.course?.userCourses[0].completedOn?.toLocaleDateString(
-            'en-gb',
+          `Course completed',
             {
               year: 'numeric',
               month: 'short',
