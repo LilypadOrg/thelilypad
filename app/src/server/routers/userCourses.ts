@@ -13,6 +13,36 @@ const singleUserCourseSelect = Prisma.validator<Prisma.UserCourseSelect>()({
 });
 
 export const userCourseRouter = createRouter()
+  .query('all', {
+    input: z.object({
+      userId: z.number(),
+    }),
+    async resolve({ input, ctx }) {
+      const { userId } = input;
+
+      try {
+        const userCourse = await prisma.userCourse.findMany({
+          where: { userId_courseId },
+          select: singleUserCourseSelect,
+        });
+        if (!userCourse) {
+          return {
+            userId,
+            courseId,
+            enrolled: false,
+            completed: false,
+            completedOn: null,
+          };
+        }
+        return userCourse;
+      } catch (err) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Error retrieving course status`,
+        });
+      }
+    },
+  })
   .query('status', {
     input: z.object({
       userId: z.number(),

@@ -69,7 +69,7 @@ const EditProfileModal = ({
       'blockend.signCreateMember',
       {
         xp: userProfile?.xp || 0,
-        courses: userProfile?.courses.map((c) => c.course.id) || [],
+        courses: userProfile?.courses.map((c) => c.courseId) || [],
       },
     ],
     {
@@ -83,7 +83,7 @@ const EditProfileModal = ({
     functionName: 'createMember',
     args: [
       userProfile.xp, // _initialXP
-      userProfile.courses.map((c) => c.course.id), // -completedEvents
+      userProfile.courses.map((c) => c.courseId), // -completedEvents
       [], // _badges
       createMemberSignature, // _sig
     ],

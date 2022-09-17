@@ -21,13 +21,19 @@ const profileUserSelect = Prisma.validator<Prisma.UserSelect>()({
   courses: {
     select: {
       completed: true,
-      enrolled: true,
-      course: {
-        select: {
-          id: true,
-          content: true,
-        },
-      },
+      roadmap: true,
+      courseId: true,
+      // course: {
+      //   select: {
+      //     id: true,
+      //     content: true,
+      //     levels: {
+      //       select: {
+      //         name: true,
+      //       },
+      //     },
+      //   },
+      // },
     },
   },
 });
@@ -123,7 +129,7 @@ export const userRouter = createRouter()
         const { userId } = ctx.session.user;
         const xp = await prisma.course.aggregate({
           _sum: { xp: true },
-          where: { users: { some: { completed: true, userId } } },
+          where: { userCourses: { some: { completed: true, userId } } },
         });
 
         const xpVal = xp._sum.xp || 0;

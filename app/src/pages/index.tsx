@@ -200,12 +200,17 @@ const Home: NextPage = () => {
         {/* view AllCourse one tab*/}
         <div className="my-14 w-full">
           <div className="flex w-[30%] justify-between rounded-md bg-main-gray-light py-2 px-4">
-            <p className="font-semibold">View all Courses</p>
-            <p className="font-semibold">&#62;</p>
+            <Link href="courses">
+              <button className="col-span-2 flex justify-between rounded-md bg-white py-2 px-4">
+                <p className="font-semibold">View all Courses</p>
+                <p className="font-semibold">&#62;</p>
+              </button>
+            </Link>
           </div>
         </div>
+
         {/* View all resources  */}
-        <div className="my-10 w-full space-y-4">
+        {/* <div className="my-10 w-full space-y-4">
           <h1 className="mt-8 text-4xl">Or View all resources</h1>
           <div className="grid grid-cols-4 gap-4">
             {bigResourceList.map((courseName, i) => (
@@ -218,7 +223,7 @@ const Home: NextPage = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

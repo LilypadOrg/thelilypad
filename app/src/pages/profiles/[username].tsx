@@ -24,7 +24,8 @@ import { SBT_MINT_FEE } from '~/utils/constants';
 import { formatAddress, limitStrLength } from '~/utils/formatters';
 import EditProfileModal from '~/components/EditProfileModal';
 import CompletedIcon from '~/components/ui/CompletedIcon';
-import { on } from 'events';
+import { Course } from '~/types/types';
+import CourseCard from '~/components/CourseCard';
 
 const InfoTile = ({
   title,
@@ -91,6 +92,16 @@ const UserProfile: NextPage = () => {
     }
   );
 
+  // console.log('userProfile');
+  // console.log(userProfile);
+
+  const { data: userCourses, isSuccess: isSuccessUserCourses } = trpc.useQuery(
+    ['courses.userRoadmap', { userId: userProfile?.id || -1 }],
+    {
+      enabled: !!userProfile,
+    }
+  );
+
   const { data: onChainProfile, refetch: refetchGetMember } = useContractRead({
     addressOrName: MAIN_CONTRACT_ADDRESS,
     contractInterface: MAIN_CONTRACT_ABI,
@@ -127,9 +138,6 @@ const UserProfile: NextPage = () => {
     args: [onChainProfile?.tokenId._hex],
   });
 
-  console.log('tokenUri');
-  console.log(tokenUri);
-
   const { data: tokenMetadata } = useQuery(
     ['tokenMetadata', tokenUri],
     async () => {
@@ -138,12 +146,40 @@ const UserProfile: NextPage = () => {
     }
   );
 
-  console.log('tokenMetadata');
-  console.log(tokenMetadata);
+  type RoadmapCourses =
+    | {
+        beginner: Course[];
+        intermediate: Course[];
+        advanced: Course[];
+      }
+    | undefined;
 
-  const enrolledCourses = userProfile?.courses.filter(
-    (c) => c.completed === false && c.enrolled === true
-  );
+  const initRoadmap: RoadmapCourses = {
+    beginner: [],
+    intermediate: [],
+    advanced: [],
+  };
+
+  const roadmapCourses: RoadmapCourses = userCourses?.reduce((prev, curr) => {
+    const courseLevels = curr.course?.levels.map((l) => l.name);
+    if (!courseLevels) return prev;
+    if (courseLevels.includes('Beginner')) {
+      prev = { ...prev, beginner: [...prev.beginner, curr] };
+    }
+    if (courseLevels.includes('Intermediate')) {
+      prev = { ...prev, intermediate: [...prev.intermediate, curr] };
+    }
+    if (courseLevels.includes('Advanced')) {
+      prev = { ...prev, advanced: [...prev.advanced, curr] };
+    }
+    return prev;
+  }, initRoadmap);
+
+  // console.log('userCourses');
+  // console.log(userCourses);
+
+  // console.log('roadmapCourses');
+  // console.log(roadmapCourses);
 
   // TODO: redirect to home if profile doesn't exist
   if (isSuccessUserProfile && !userProfile) {
@@ -171,12 +207,14 @@ const UserProfile: NextPage = () => {
       {/* Hero section */}
       {userProfile && (
         <>
-          <EditProfileModal
-            open={modalOpen}
-            closeModal={closeModal}
-            userProfile={userProfile}
-            mode={modalMode}
-          />
+          {session && modalOpen && (
+            <EditProfileModal
+              open={modalOpen}
+              closeModal={closeModal}
+              userProfile={userProfile}
+              mode={modalMode}
+            />
+          )}
           <div className="my-8 flex items-center justify-center px-[5.5rem]">
             <div className="min-h-[255px] w-[38%] rounded-md bg-main-gray-light p-8 pl-12">
               <div className="flex items-baseline gap-2">
@@ -189,7 +227,7 @@ const UserProfile: NextPage = () => {
               <p className="font-light">{userProfile.bio}</p>
             </div>
             <div className="space-y-3 bg-main-gray-light">
-              <div className="w-3">
+              <div>
                 {!tokenMetadata && (
                   <Image
                     src="/images/profileSBT/frogSBT.png"
@@ -213,25 +251,29 @@ const UserProfile: NextPage = () => {
                   />
                 )}
               </div>
-              <button
-                onClick={openModal}
-                className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white"
-              >
-                {onChainProfile?.pathChosen ? 'Update' : 'Create'} Profile
-              </button>
-              {/* TODO: Show spinner in button when loading */}
-              {onChainProfile?.['tokenId']._hex === '0x00' && (
-                <button
-                  disabled={
-                    !onChainProfile?.pathChosen ||
-                    !mintToken ||
-                    isLoadingMintToken
-                  }
-                  className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white disabled:bg-gray-500"
-                  onClick={() => mintToken?.()}
-                >
-                  Mint Your SBT
-                </button>
+              {session && session.user.address === userProfile.address && (
+                <>
+                  <button
+                    onClick={openModal}
+                    className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white"
+                  >
+                    {onChainProfile?.pathChosen ? 'Update' : 'Create'} Profile
+                  </button>
+                  {/* TODO: Show spinner in button when loading */}
+                  {onChainProfile?.['tokenId']._hex === '0x00' && (
+                    <button
+                      disabled={
+                        !onChainProfile?.pathChosen ||
+                        !mintToken ||
+                        isLoadingMintToken
+                      }
+                      className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white disabled:bg-gray-500"
+                      onClick={() => mintToken?.()}
+                    >
+                      Mint Your SBT
+                    </button>
+                  )}
+                </>
               )}
             </div>
             <div className="min-h-[255px] w-[38%] items-stretch rounded-md bg-main-gray-light p-8 pl-12">
@@ -249,6 +291,25 @@ const UserProfile: NextPage = () => {
           </div>
         </>
       )}
+      {/* My Learning Path */}
+      <div className="flex flex-col bg-main-gray-light px-[5.5rem] py-[2.2rem]">
+        <h1 className="mb-1 text-3xl font-bold">My Learning Path</h1>
+        <p className="w-[40%] font-light">
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Expedita
+          quis rem soluta maxime. Dolor qui inventore .
+        </p>
+        <div className="mt-6 flex space-x-6">
+          {paths.map((i) => (
+            <LearningPathCards
+              title="Intro into Web3 : basic steps"
+              link={`/course/${i} `}
+              linkTitle={'View all course'}
+              img={`/images/frongLevels/l${i}.png`}
+              key={i}
+            />
+          ))}
+        </div>
+      </div>
       {/* My Events */}
       <div className="mt-4 flex flex-col space-y-4 px-[5.5rem]">
         <h1 className="mb-0 text-3xl font-bold">My Events</h1>
@@ -275,25 +336,7 @@ const UserProfile: NextPage = () => {
           />
         ))}
       </div>
-      {/* My Learning Path */}
-      <div className="flex flex-col bg-main-gray-light px-[5.5rem] py-[2.2rem]">
-        <h1 className="mb-1 text-3xl font-bold">My Learning Path</h1>
-        <p className="w-[40%] font-light">
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Expedita
-          quis rem soluta maxime. Dolor qui inventore .
-        </p>
-        <div className="mt-6 flex space-x-6">
-          {paths.map((i) => (
-            <LearningPathCards
-              title="Intro into Web3 : basic steps"
-              link={`/course/${i} `}
-              linkTitle={'View all course'}
-              img={`/images/frongLevels/l${i}.png`}
-              key={i}
-            />
-          ))}
-        </div>
-      </div>
+
       {/* My personal roadmap */}
       <div className="flex flex-col px-[5.5rem] py-[2.2rem]">
         <h1 className="mb-1 text-3xl font-bold">My Personal Roadmap</h1>
@@ -315,6 +358,19 @@ const UserProfile: NextPage = () => {
             level={'Completed on August 12 2022'}
             classes="bg-main-gray-light mt-2"
           />
+          {roadmapCourses?.beginner.map((course) => (
+            /* Its same as CourseCard component */
+            <div
+              className="min-w-[20rem]  rounded-lg shadow-lg"
+              key={`roadmap-courwse-${course.id}`}
+            >
+              <div className="relative h-[182px]  w-full rounded-tr-lg rounded-tl-lg bg-main-gray-dark"></div>
+
+              <div className="flex flex-col justify-between px-4 py-3">
+                <div className="mb-2 text-lg font-bold">{course.title}</div>
+              </div>
+            </div>
+          ))}
         </div>
         <button className="rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
           More Beginner Roadmap
@@ -336,22 +392,16 @@ const UserProfile: NextPage = () => {
             </button>
           </div>
           <div className="mt-14 flex space-x-4">
-            {interMediateCourses.map((course, i) => (
+            {roadmapCourses?.intermediate.map((course) => (
               /* Its same as CourseCard component */
               <div
                 className="min-w-[20rem]  rounded-lg shadow-lg"
-                key={`${course.title}-${i}`}
+                key={`roadmap-courwse-${course.id}`}
               >
                 <div className="relative h-[182px]  w-full rounded-tr-lg rounded-tl-lg bg-main-gray-dark"></div>
-                <div className="flex items-center space-x-3 px-4 pt-4">
-                  {course.isCompleted && <CompletedIcon />}
-                  <LevelPill level={course.level} classes="mt-2" />
-                </div>
+
                 <div className="flex flex-col justify-between px-4 py-3">
                   <div className="mb-2 text-lg font-bold">{course.title}</div>
-                  <div className=" text-ellipsis text-base text-gray-700">
-                    {limitStrLength(course.description, 80)}
-                  </div>
                 </div>
               </div>
             ))}
@@ -377,22 +427,16 @@ const UserProfile: NextPage = () => {
             </button>
           </div>
           <div className="mt-14 flex space-x-4">
-            {interMediateCourses.map((course, i) => (
+            {roadmapCourses?.advanced.map((course) => (
               /* Its same as CourseCard component */
               <div
                 className="min-w-[20rem]  rounded-lg shadow-lg"
-                key={`${course.title}-${i}`}
+                key={`roadmap-courwse-${course.id}`}
               >
                 <div className="relative h-[182px]  w-full rounded-tr-lg rounded-tl-lg bg-main-gray-dark"></div>
 
-                <div className="flex items-center space-x-3 px-4 pt-4">
-                  <LevelPill level={'Advanced'} classes="mt-2" />
-                </div>
                 <div className="flex flex-col justify-between px-4 py-3">
                   <div className="mb-2 text-lg font-bold">{course.title}</div>
-                  <div className=" text-ellipsis text-base text-gray-700">
-                    {limitStrLength(course.description, 80)}
-                  </div>
                 </div>
               </div>
             ))}

@@ -1,18 +1,35 @@
+import { NextPage } from 'next';
+import { useSession } from 'next-auth/react';
+
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React from 'react';
+import AddCourseToRoadmap from '~/components/AddCourseToRoadmap';
+import { CompleteCourse } from '~/components/CompleteCourse';
+import { trpc } from '~/utils/trpc';
 
 const categories = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
-const Categories = () => {
-  return (
+const CoursePage: NextPage = () => {
+  const slug = useRouter().query.slug;
+  const { data: course, isLoading } = trpc.useQuery([
+    'courses.bySlug',
+    { slug: Array.isArray(slug) ? slug[0] : slug || '' },
+  ]);
+
+  const { data: session } = useSession();
+
+  if (isLoading) {
+    return <div>Loading</div>;
+  }
+
+  return course ? (
     <div>
       <div className="px-[5.5rem]">
         <div className="flex flex-col py-8">
-          <h1 className="mb-4 text-4xl font-bold">
-            Ethereum Blockchain Developer Bootcamp With Solidity
-          </h1>
+          <h1 className="mb-4 text-4xl font-bold">{course?.title}</h1>
           <p className="max-w-xl  font-light">
-            Become An Ethereum Blockchain Developer With One Course. Master
+            {/* Become An Ethereum Blockchain Developer With One Course. Master */}
             Solidity, Web3.JS, Truffle, Metamask, Remix & More!
           </p>
         </div>
@@ -23,7 +40,7 @@ const Categories = () => {
         </div>
         {/* Intro and desc */}
         <div className="mt-6 flex flex-col space-y-6">
-          <div className="flex flex-col space-y-2">
+          {/* <div className="flex flex-col space-y-2">
             <h1 className="mb-0 text-3xl font-semibold">Introduction</h1>
             <p className="max-w-5xl font-light">
               Lorem ipsum dolor sit amet, consectetur adipisicing elit.
@@ -31,20 +48,22 @@ const Categories = () => {
               veritatis, asperiores vel quae qui quia praesentium blanditiis,
               itaque quam ipsum deserunt placeat porro. Vitae, ipsa cumque?
             </p>
-          </div>
+          </div> */}
           <div className="flex flex-col space-y-2">
             <h1 className="mb-0 text-3xl font-semibold">Description</h1>
-            <p className="max-w-5xl font-light">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-              Distinctio, nulla impedit quaerat debitis cupiditate omnis
-              veritatis, asperiores vel quae qui quia praesentium blanditiis,
-              itaque quam ipsum deserunt placeat porro. Vitae, ipsa cumque?
-            </p>
+            <p className="max-w-5xl font-light">{course?.description}</p>
           </div>
         </div>
-        <button className="mt-8 w-full rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500">
-          Take final test
-        </button>
+        {session && (
+          <>
+            <AddCourseToRoadmap course={course} type="standard" />
+            <CompleteCourse course={course} user={session.user} />
+
+            <button className="mt-8 w-full rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500">
+              Take final test
+            </button>
+          </>
+        )}
       </div>
       {/* Course Carousel */}
       {/* 
@@ -97,7 +116,9 @@ const Categories = () => {
         </div>
       </div>
     </div>
+  ) : (
+    <div>No course found</div>
   );
 };
 
-export default Categories;
+export default CoursePage;
