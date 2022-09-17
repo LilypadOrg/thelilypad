@@ -1,5 +1,7 @@
 import React from 'react';
 import CourseCard from '~/components/CourseCard';
+import { ContentType } from '~/types/types';
+import { trpc } from '~/utils/trpc';
 
 const coursesList = [
   'Something',
@@ -40,7 +42,15 @@ const bigResourceList5 = [
   coursesList[3],
 ];
 
-const Categories = () => {
+const Courses = () => {
+  const { data: techs } = trpc.useQuery([
+    'technologies.byContentTYpe',
+    { contentType: ContentType.COURSE, tags: ['web3'] },
+  ]);
+
+  console.log('techs');
+  console.log(techs);
+
   return (
     <div className="px-[5.5rem]">
       <h1 className="mb-2 mt-2 text-4xl">Courses</h1>
@@ -173,4 +183,4 @@ const Categories = () => {
   );
 };
 
-export default Categories;
+export default Courses;

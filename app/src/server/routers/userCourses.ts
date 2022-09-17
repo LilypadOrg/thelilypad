@@ -12,7 +12,7 @@ const singleUserCourseSelect = Prisma.validator<Prisma.UserCourseSelect>()({
   completedOn: true,
 });
 
-const allUserCourseSelect = Prisma.validator<Prisma.UserCourseSelect>()({
+const defaultUserCourseSelect = Prisma.validator<Prisma.UserCourseSelect>()({
   userId: true,
   courseId: true,
   roadmap: true,
@@ -56,7 +56,7 @@ export const userCourseRouter = createRouter()
       try {
         const userCourse = await prisma.userCourse.findMany({
           where: { userId },
-          select: allUserCourseSelect,
+          select: defaultUserCourseSelect,
         });
 
         return userCourse;
@@ -68,7 +68,7 @@ export const userCourseRouter = createRouter()
       }
     },
   })
-  .query('status', {
+  .query('single', {
     input: z.object({
       userId: z.number(),
       courseId: z.number(),
@@ -84,17 +84,8 @@ export const userCourseRouter = createRouter()
       try {
         const userCourse = await prisma.userCourse.findUnique({
           where: { userId_courseId: { userId, courseId } },
-          select: singleUserCourseSelect,
+          select: defaultUserCourseSelect,
         });
-        if (!userCourse) {
-          return {
-            userId,
-            courseId,
-            enrolled: false,
-            completed: false,
-            completedOn: null,
-          };
-        }
         return userCourse;
       } catch (err) {
         throw new TRPCError({

@@ -52,19 +52,27 @@ export const technologyRouter = createRouter()
   .query('byContentTYpe', {
     input: z.object({
       contentType: z.nativeEnum(ContentType),
+      tags: z.string().array().optional(),
     }),
     async resolve({ input }) {
       try {
         const techs = await prisma.technology.findMany({
           where: {
-            contents: { some: { contentType: { name: input.contentType } } },
+            contents: {
+              some: { contentType: { name: input.contentType } },
+            },
           },
           select: {
             ...defaultTechnologiesSelect,
             _count: {
               select: {
                 contents: {
-                  where: { contentType: { name: input.contentType } },
+                  where: {
+                    contentType: { name: input.contentType },
+                    ...(input.tags
+                      ? { tags: { some: { name: { in: input.tags } } } }
+                      : {}),
+                  },
                 },
               },
             },

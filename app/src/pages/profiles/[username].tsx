@@ -2,7 +2,6 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import LevelPill from '../../components/ui/LevelPill';
-import { toast } from 'react-toastify';
 import {
   useContractRead,
   useContractWrite,
@@ -21,10 +20,9 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { SBT_MINT_FEE } from '~/utils/constants';
-import { formatAddress, limitStrLength } from '~/utils/formatters';
+import { formatAddress } from '~/utils/formatters';
 import EditProfileModal from '~/components/EditProfileModal';
-import CompletedIcon from '~/components/ui/CompletedIcon';
-import { Course } from '~/types/types';
+import { UserCourse } from '~/types/types';
 import CourseCard from '~/components/CourseCard';
 
 const InfoTile = ({
@@ -95,8 +93,8 @@ const UserProfile: NextPage = () => {
   // console.log('userProfile');
   // console.log(userProfile);
 
-  const { data: userCourses, isSuccess: isSuccessUserCourses } = trpc.useQuery(
-    ['courses.userRoadmap', { userId: userProfile?.id || -1 }],
+  const { data: userCourses } = trpc.useQuery(
+    ['usercourses.all', { userId: userProfile?.id || -1 }],
     {
       enabled: !!userProfile,
     }
@@ -146,13 +144,11 @@ const UserProfile: NextPage = () => {
     }
   );
 
-  type RoadmapCourses =
-    | {
-        beginner: Course[];
-        intermediate: Course[];
-        advanced: Course[];
-      }
-    | undefined;
+  type RoadmapCourses = {
+    beginner: UserCourse[];
+    intermediate: UserCourse[];
+    advanced: UserCourse[];
+  };
 
   const initRoadmap: RoadmapCourses = {
     beginner: [],
@@ -160,26 +156,23 @@ const UserProfile: NextPage = () => {
     advanced: [],
   };
 
-  const roadmapCourses: RoadmapCourses = userCourses?.reduce((prev, curr) => {
-    const courseLevels = curr.course?.levels.map((l) => l.name);
-    if (!courseLevels) return prev;
-    if (courseLevels.includes('Beginner')) {
-      prev = { ...prev, beginner: [...prev.beginner, curr] };
-    }
-    if (courseLevels.includes('Intermediate')) {
-      prev = { ...prev, intermediate: [...prev.intermediate, curr] };
-    }
-    if (courseLevels.includes('Advanced')) {
-      prev = { ...prev, advanced: [...prev.advanced, curr] };
-    }
-    return prev;
-  }, initRoadmap);
-
-  // console.log('userCourses');
-  // console.log(userCourses);
-
-  // console.log('roadmapCourses');
-  // console.log(roadmapCourses);
+  const roadmapCourses: RoadmapCourses =
+    userCourses
+      ?.filter((c) => c.roadmap)
+      .reduce((prev, curr) => {
+        const courseLevels = curr.course.levels.map((l) => l.name);
+        if (!courseLevels) return prev;
+        if (courseLevels.includes('Beginner')) {
+          prev = { ...prev, beginner: [...prev.beginner, curr] };
+        }
+        if (courseLevels.includes('Intermediate')) {
+          prev = { ...prev, intermediate: [...prev.intermediate, curr] };
+        }
+        if (courseLevels.includes('Advanced')) {
+          prev = { ...prev, advanced: [...prev.advanced, curr] };
+        }
+        return prev;
+      }, initRoadmap) || initRoadmap;
 
   // TODO: redirect to home if profile doesn't exist
   if (isSuccessUserProfile && !userProfile) {
@@ -295,8 +288,9 @@ const UserProfile: NextPage = () => {
       <div className="flex flex-col bg-main-gray-light px-[5.5rem] py-[2.2rem]">
         <h1 className="mb-1 text-3xl font-bold">My Learning Path</h1>
         <p className="w-[40%] font-light">
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Expedita
-          quis rem soluta maxime. Dolor qui inventore .
+          These are the most recent Accolades you have earned (or will earn once
+          holding a Pond Token). Great job! Click on each to learn more and
+          share badges you have earned!
         </p>
         <div className="mt-6 flex space-x-6">
           {paths.map((i) => (
@@ -341,39 +335,42 @@ const UserProfile: NextPage = () => {
       <div className="flex flex-col px-[5.5rem] py-[2.2rem]">
         <h1 className="mb-1 text-3xl font-bold">My Personal Roadmap</h1>
         <p className="w-[40%] font-light">
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Expedita
-          quis rem soluta maxime. Dolor qui inventore .
+          Populate this personal roadmap with courses of your choosing to set
+          milestones for yourself and track your progress on a custom path!
         </p>
       </div>
       {/* Beginner */}
-      <div className="mt-14 flex justify-between border-t-2 border-main-gray-dark px-[5.5rem] py-12">
-        <div className="flex items-center space-x-14">
-          <div className="flex items-center justify-between space-x-4">
-            <CompletedIcon />
+      <div className="flex flex-col space-y-10 border-t-2 border-main-gray-dark px-[5.5rem] py-12">
+        <div className="flex justify-between space-x-8">
+          <div className="flex flex-col space-y-6">
             <p className="text-md font-semibold leading-5 underline">
-              Beginner 3/3
+              Beginner{' '}
+              {roadmapCourses.beginner.filter((f) => f?.completed).length || 0}{' '}
+              / {roadmapCourses.beginner.length || 0}
             </p>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque
+              ipsam praesentium esse!
+            </p>
+            <button className="self-start rounded-md bg-main-gray-light px-12 py-2 font-semibold">
+              Take final test
+            </button>
           </div>
-          <LevelPill
-            level={'Completed on August 12 2022'}
-            classes="bg-main-gray-light mt-2"
-          />
-          {roadmapCourses?.beginner.map((course) => (
-            /* Its same as CourseCard component */
-            <div
-              className="min-w-[20rem]  rounded-lg shadow-lg"
-              key={`roadmap-courwse-${course.id}`}
-            >
-              <div className="relative h-[182px]  w-full rounded-tr-lg rounded-tl-lg bg-main-gray-dark"></div>
-
-              <div className="flex flex-col justify-between px-4 py-3">
-                <div className="mb-2 text-lg font-bold">{course.title}</div>
-              </div>
-            </div>
-          ))}
+          <div className="mt-14 flex space-x-4">
+            {roadmapCourses.beginner.map((course) => (
+              /* Its same as CourseCard component */
+              <CourseCard
+                key={`roadmap-course-${course!.courseId}`}
+                course={course!.course}
+                type="simple"
+              />
+            ))}
+          </div>
         </div>
-        <button className="rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
-          More Beginner Roadmap
+        <button className="ml-auto rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
+          <Link href="/courses/browse/level/beginner">
+            More Beginner Course
+          </Link>
         </button>
       </div>
       {/* Intermediate */}
@@ -381,7 +378,10 @@ const UserProfile: NextPage = () => {
         <div className="flex justify-between space-x-8">
           <div className="flex flex-col space-y-6">
             <p className="text-md font-semibold leading-5 underline">
-              Intermediate 1/3
+              Intermediate{' '}
+              {roadmapCourses.intermediate.filter((f) => f?.completed).length ||
+                0}{' '}
+              / {roadmapCourses.intermediate.length || 0}
             </p>
             <p>
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque
@@ -392,23 +392,20 @@ const UserProfile: NextPage = () => {
             </button>
           </div>
           <div className="mt-14 flex space-x-4">
-            {roadmapCourses?.intermediate.map((course) => (
+            {roadmapCourses.intermediate.map((course) => (
               /* Its same as CourseCard component */
-              <div
-                className="min-w-[20rem]  rounded-lg shadow-lg"
-                key={`roadmap-courwse-${course.id}`}
-              >
-                <div className="relative h-[182px]  w-full rounded-tr-lg rounded-tl-lg bg-main-gray-dark"></div>
-
-                <div className="flex flex-col justify-between px-4 py-3">
-                  <div className="mb-2 text-lg font-bold">{course.title}</div>
-                </div>
-              </div>
+              <CourseCard
+                key={`roadmap-course-${course!.courseId}`}
+                course={course!.course}
+                type="simple"
+              />
             ))}
           </div>
         </div>
         <button className="ml-auto rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
-          More Intermediate Roadmap
+          <Link href="/courses/browse/level/intermediate">
+            More Intermediate Courses
+          </Link>
         </button>
       </div>
       {/* Advanced */}
@@ -416,7 +413,9 @@ const UserProfile: NextPage = () => {
         <div className="flex justify-between space-x-8">
           <div className="flex flex-col space-y-6">
             <p className="text-md font-semibold leading-5 underline">
-              Advanced 0/3
+              Advanced{' '}
+              {roadmapCourses.advanced.filter((f) => f?.completed).length || 0}{' '}
+              / {roadmapCourses.advanced.length || 0}
             </p>
             <p>
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque
@@ -427,49 +426,25 @@ const UserProfile: NextPage = () => {
             </button>
           </div>
           <div className="mt-14 flex space-x-4">
-            {roadmapCourses?.advanced.map((course) => (
+            {roadmapCourses.advanced.map((course) => (
               /* Its same as CourseCard component */
-              <div
-                className="min-w-[20rem]  rounded-lg shadow-lg"
-                key={`roadmap-courwse-${course.id}`}
-              >
-                <div className="relative h-[182px]  w-full rounded-tr-lg rounded-tl-lg bg-main-gray-dark"></div>
-
-                <div className="flex flex-col justify-between px-4 py-3">
-                  <div className="mb-2 text-lg font-bold">{course.title}</div>
-                </div>
-              </div>
+              <CourseCard
+                key={`roadmap-course-${course!.courseId}`}
+                course={course!.course}
+                type="simple"
+              />
             ))}
           </div>
         </div>
         <button className="ml-auto rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
-          More Intermediate Roadmap
+          <Link href="/courses/browse/level/advanced">
+            More Intermediate Courses
+          </Link>
         </button>
       </div>
     </div>
   );
 };
-
-const interMediateCourses = [
-  {
-    level: 'intermediate',
-    isCompleted: false,
-    title: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-    description: 'Lorem ipsum dolor sit amet consectetur.',
-  },
-  {
-    level: 'intermediate',
-    isCompleted: false,
-    title: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-    description: 'Lorem ipsum dolor sit amet consectetur.',
-  },
-  {
-    level: 'intermediate',
-    isCompleted: true,
-    title: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-    description: 'Lorem ipsum dolor sit amet consectetur.',
-  },
-];
 
 const paths = [1, 2, 3, 4, 5];
 
