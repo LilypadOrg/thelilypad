@@ -24,6 +24,8 @@ import { formatAddress } from '~/utils/formatters';
 import EditProfileModal from '~/components/EditProfileModal';
 import { UserCourse } from '~/types/types';
 import CourseCard from '~/components/CourseCard';
+import { TiTick } from 'react-icons/ti';
+import { LearningPathCards } from '~/components/ui/userProfile';
 
 const InfoTile = ({
   title,
@@ -44,33 +46,6 @@ const InfoTile = ({
       </div>
       <Link href={link}>
         <a className="text-blue self-end underline">{linkTitle}</a>
-      </Link>
-    </div>
-  );
-};
-
-const LearningPathCards = ({
-  title,
-  img,
-  linkTitle,
-  link,
-}: {
-  title: string;
-  img: string;
-  linkTitle: string;
-  link: string;
-}) => {
-  return (
-    <div className="flex flex-col items-center space-y-4 bg-white p-4 shadow-lg">
-      <div className="flex items-center justify-between space-x-4">
-        <div className="h-6 w-8 rounded-full bg-green-600"></div>
-        <p className="text-md font-semibold leading-5">{title}</p>
-      </div>
-      <div className="my-4 h-24">
-        <Image src={img} alt="froggy" height={'100%'} width={'100%'} />
-      </div>
-      <Link href={link} className="">
-        {linkTitle}
       </Link>
     </div>
   );
@@ -292,7 +267,7 @@ const UserProfile: NextPage = () => {
           holding a Pond Token). Great job! Click on each to learn more and
           share badges you have earned!
         </p>
-        <div className="mt-6 flex space-x-6">
+        <div className="mt-6 flex space-x-8">
           {paths.map((i) => (
             <LearningPathCards
               title="Intro into Web3 : basic steps"
