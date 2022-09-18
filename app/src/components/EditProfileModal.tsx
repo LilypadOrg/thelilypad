@@ -51,6 +51,10 @@ const EditProfileModal = ({
           'users.byUsername',
           { username: data.username },
         ]);
+        utils.invalidateQueries([
+          'users.byAddress',
+          { address: userProfile.address },
+        ]);
         if (changeRoute) router.replace(`/profiles/${data.username}`);
         closeModal();
       },

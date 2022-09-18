@@ -240,7 +240,17 @@ const UserProfile: NextPage = () => {
                     className="opacity-25"
                   />
                 )}
-                {tokenMetadata && userProfile.level.number === 1 && (
+                {tokenMetadata && (
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: tokenMetadata.image_data.replace(
+                        "width='12",
+                        "width='370px' height='370px'"
+                      ),
+                    }}
+                  />
+                )}
+                {/* {tokenMetadata && userProfile.level.number === 1 && (
                   // TODO: find a a better way to display and resize SVG
                   <Image
                     src="/images/profileSBT/level1-gray.svg"
@@ -248,15 +258,6 @@ const UserProfile: NextPage = () => {
                     layout="fill"
                     objectFit="contain"
                   />
-
-                  // <div
-                  //   dangerouslySetInnerHTML={{
-                  //     __html: tokenMetadata.image_data.replace(
-                  //       "width='12",
-                  //       "width='370px' height='370px'"
-                  //     ),
-                  //   }}
-                  // />
                 )}
                 {tokenMetadata && userProfile.level.number === 2 && (
                   // TODO: find a a better way to display and resize SVG
@@ -266,7 +267,7 @@ const UserProfile: NextPage = () => {
                     layout="fill"
                     objectFit="contain"
                   />
-                )}
+                )} */}
               </div>
             </Tilt>
             <div className="min-h-[255px] w-[38%] items-stretch rounded-md bg-main-gray-light p-8 pl-12">
