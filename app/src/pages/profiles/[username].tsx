@@ -28,6 +28,7 @@ import MintSBTModal from '~/components/MintSBTModal';
 import { TiTick } from 'react-icons/ti';
 import { LearningPathCards } from '~/components/ui/userProfile';
 import Tilt from 'react-parallax-tilt';
+import TagsPill from '~/components/TagsPill';
 
 const InfoTile = ({
   title,
@@ -97,7 +98,7 @@ const UserProfile: NextPage = () => {
     overrides: {
       value: SBT_MINT_FEE,
     },
-    enabled: onChainProfile?.pathChosen,
+    enabled: !!onChainProfile && onChainProfile.pathChosen,
   });
   const { data: mintTokenRes, write: mintToken } =
     useContractWrite(mintTokenConfig);
@@ -246,9 +247,9 @@ const UserProfile: NextPage = () => {
               <h1 className="text-2xl font-bold">My Tech Stack</h1>
               <div className="grid grid-cols-3 gap-1">
                 {userProfile.technologies.map((language) => (
-                  <LevelPill
+                  <TagsPill
                     key={`skill-${language.id}`}
-                    level={language.name}
+                    name={language.name}
                     classes="justify-self-start"
                   />
                 ))}
@@ -271,8 +272,8 @@ const UserProfile: NextPage = () => {
                       !mintToken ||
                       isLoadingMintToken
                     }
-                    className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white disabled:bg-gray-500"
-                    onClick={() => mintToken?.()}
+                    className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white hover:bg-primary-400 disabled:bg-gray-500"
+                    onClick={() => setMintModalOpen(true)}
                   >
                     Mint Your SBT
                   </button>

@@ -18,7 +18,7 @@ const Home: NextPage = () => {
   ]);
 
   const { data: courses } = trpc.useQuery(['courses.all']);
-  const { data: projects } = trpc.useQuery(['projects.all', { take: 5 }]);
+  const { data: projects } = trpc.useQuery(['projects.all', { take: 6 }]);
 
   return (
     <div>
@@ -33,10 +33,11 @@ const Home: NextPage = () => {
                 alt="Home banner"
                 layout="fill"
                 objectFit="cover"
+                className="rounded-lg"
               />
               <div className=" absolute bottom-4 right-4 max-w-[25%] space-y-2 rounded-lg bg-primary-400 p-4">
                 <h1 className="mb-0 text-lg">The Lily Pad</h1>
-                <p className=" break-all text-sm font-light leading-[1.1]">
+                <p className="text-sm font-light leading-[1.1]">
                   A community endeavouring to guide those self-learning in web3{' '}
                 </p>
                 <p className="text-sm font-light">#goForYou</p>
@@ -127,23 +128,30 @@ const Home: NextPage = () => {
         {/* Collection */}
         <div className="my-8">
           {/* First three collection */}
-          <div className="grid grid-cols-3  gap-8">
-            {projects?.slice(0, 3).map((p) => (
+          <div className="grid grid-cols-3 gap-8">
+            {projects?.slice(0, 6).map((p, index: number) => (
               <div
                 key={`featured-${p.content.title}`}
-                className="relative h-[320px] rounded-lg border-2 border-main-gray-dark bg-main-gray-dark "
+                className="relative flex items-center justify-center rounded-lg border-[0.1rem] border-primary-600 bg-primary-600"
               >
                 {p.content.coverImageUrl && (
                   <Image
                     src={p.content.coverImageUrl}
                     alt={`${p.content.title} thumbnail`}
-                    layout="fill"
-                    objectFit="cover"
+                    height={320}
+                    width={420}
+                    className="rounded-lg transition-all hover:scale-95"
                   />
                 )}
-                <div className=" absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg bg-primary-400 p-4 text-white">
-                  <h1 className="mb-0 text-lg">{p.content.title}</h1>
-                  <p className=" break-all text-sm font-light leading-[1.1]">
+                <div
+                  className={` absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg p-4 text-white  ${
+                    index % 2 ? 'bg-primary-500' : 'bg-secondary-400'
+                  }`}
+                >
+                  <h1 className="mb-0 break-words text-[0.9rem]">
+                    {p.content.title}
+                  </h1>
+                  <p className="text-sm font-light leading-[1.1]">
                     {limitStrLength(p.content.description, 50)}
                   </p>
                   {/* <p className="text-sm font-light">#goForYou</p> */}
@@ -152,30 +160,6 @@ const Home: NextPage = () => {
             ))}
           </div>
           {/* Next two collection */}
-          <div className="mt-6 grid grid-cols-2 gap-4">
-            {projects?.slice(3, 5).map((p) => (
-              <div
-                key={`featured-${p.content.title}`}
-                className="relative h-[320px] rounded-lg border-2  border-main-gray-dark bg-main-gray-dark"
-              >
-                {p.content.coverImageUrl && (
-                  <Image
-                    src={p.content.coverImageUrl}
-                    alt={`${p.content.title} thumbnail`}
-                    layout="fill"
-                    objectFit="cover"
-                  />
-                )}
-                <div className="absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg bg-primary-400 p-4 text-white">
-                  <h1 className="mb-0 text-lg">{p.content.title}</h1>
-                  <p className=" break-all text-sm font-light leading-[1.1]">
-                    {limitStrLength(p.content.description, 20)}
-                  </p>
-                  {/* <p className="text-sm font-light">#goForYou</p> */}
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
       <hr className="my-14 w-full bg-main-gray-dark" />
