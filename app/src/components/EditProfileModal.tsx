@@ -13,7 +13,6 @@ import { trpc } from '~/utils/trpc';
 import LevelPill from './ui/LevelPill';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
-import { ethers } from 'ethers';
 import { MAIN_CONTRACT_ABI, MAIN_CONTRACT_ADDRESS } from '~/utils/contracts';
 import {
   useContractWrite,
@@ -69,9 +68,8 @@ const EditProfileModal = ({
     [
       'blockend.signCreateMember',
       {
-        name: userProfile?.username || '',
         xp: userProfile?.xp || 0,
-        courses: userProfile?.courses.map((c) => c.course.id) || [],
+        courses: userProfile?.courses.map((c) => c.courseId) || [],
       },
     ],
     {
@@ -84,9 +82,8 @@ const EditProfileModal = ({
     contractInterface: MAIN_CONTRACT_ABI,
     functionName: 'createMember',
     args: [
-      ethers.utils.toUtf8CodePoints(userProfile.username || ''), // _name
       userProfile.xp, // _initialXP
-      userProfile.courses.map((c) => c.course.id), // -completedEvents
+      userProfile.courses.map((c) => c.courseId), // -completedEvents
       [], // _badges
       createMemberSignature, // _sig
     ],

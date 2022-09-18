@@ -1,32 +1,11 @@
 import type { NextPage } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import CourseCarousel from '~/components/CourseCarousel';
 import { ContentType } from '~/types/types';
 import { HOMEPAGE_COURSE_FILTERS } from '~/utils/constants';
 import { trpc } from '~/utils/trpc';
-
-const coursesList = [
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-  'Something',
-];
-
-const bigResourceList = [...coursesList];
+import { limitStrLength } from '~/utils/formatters';
 
 const Home: NextPage = () => {
   const { data: techs } = trpc.useQuery([
@@ -39,6 +18,7 @@ const Home: NextPage = () => {
   ]);
 
   const { data: courses } = trpc.useQuery(['courses.all']);
+  const { data: projects } = trpc.useQuery(['projects.all', { take: 6 }]);
 
   return (
     <div>
@@ -48,9 +28,16 @@ const Home: NextPage = () => {
           <div className="col-span-2 flex flex-col space-y-4 ">
             {/* Hero Image */}
             <div className="relative min-h-[353px]  rounded-lg bg-main-gray-dark text-white">
+              <Image
+                src="/images/homeBanner.jpg"
+                alt="Home banner"
+                layout="fill"
+                objectFit="cover"
+                className="rounded-lg"
+              />
               <div className=" absolute bottom-4 right-4 max-w-[25%] space-y-2 rounded-lg bg-primary-400 p-4">
                 <h1 className="mb-0 text-lg">The Lily Pad</h1>
-                <p className=" break-all text-sm font-light leading-[1.1]">
+                <p className="text-sm font-light leading-[1.1]">
                   A community endeavouring to guide those self-learning in web3{' '}
                 </p>
                 <p className="text-sm font-light">#goForYou</p>
@@ -141,71 +128,58 @@ const Home: NextPage = () => {
         {/* Collection */}
         <div className="my-8">
           {/* First three collection */}
-          <div className="grid grid-cols-3  gap-8">
-            <div className="relative h-[320px] rounded-lg bg-main-gray-dark ">
-              <div className=" absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg bg-primary-400 p-4 text-white">
-                <h1 className="mb-0 text-lg">The Lily Pad</h1>
-                <p className=" break-all text-sm font-light leading-[1.1]">
-                  A community endeavouring to guide those self-learning in web3{' '}
-                </p>
-                <p className="text-sm font-light">#goForYou</p>
+          <div className="grid grid-cols-3 gap-8">
+            {projects?.slice(0, 6).map((p, index: number) => (
+              <div
+                key={`featured-${p.content.title}`}
+                className="relative flex items-center justify-center rounded-lg border-[0.1rem] border-primary-600 bg-primary-600"
+              >
+                {p.content.coverImageUrl && (
+                  <Image
+                    src={p.content.coverImageUrl}
+                    alt={`${p.content.title} thumbnail`}
+                    height={320}
+                    width={420}
+                    className="rounded-lg transition-all hover:scale-95"
+                  />
+                )}
+                <div
+                  className={` absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg p-4 text-white  ${
+                    index % 2 ? 'bg-primary-500' : 'bg-secondary-400'
+                  }`}
+                >
+                  <h1 className="mb-0 break-words text-[0.9rem]">
+                    {p.content.title}
+                  </h1>
+                  <p className="text-sm font-light leading-[1.1]">
+                    {limitStrLength(p.content.description, 50)}
+                  </p>
+                  {/* <p className="text-sm font-light">#goForYou</p> */}
+                </div>
               </div>
-            </div>
-            <div className="relative h-[320px] rounded-lg bg-main-gray-dark">
-              <div className=" absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg bg-secondary-400 p-4 text-white">
-                <h1 className="mb-0 text-lg">The Lily Pad</h1>
-                <p className=" break-all text-sm font-light leading-[1.1]">
-                  A community endeavouring to guide those self-learning in web3{' '}
-                </p>
-                <p className="text-sm font-light">#goForYou</p>
-              </div>
-            </div>
-            <div className="relative h-[320px] rounded-lg bg-main-gray-dark">
-              <div className=" absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg bg-primary-400 p-4 text-white">
-                <h1 className="mb-0 text-lg">The Lily Pad</h1>
-                <p className=" break-all text-sm font-light leading-[1.1]">
-                  A community endeavouring to guide those self-learning in web3{' '}
-                </p>
-                <p className="text-sm font-light">#goForYou</p>
-              </div>
-            </div>
+            ))}
           </div>
           {/* Next two collection */}
-          <div className="mt-6 grid grid-cols-2 gap-4">
-            <div className="relative h-[320px] rounded-lg  bg-main-gray-dark">
-              <div className="absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg bg-primary-400 p-4 text-white">
-                <h1 className="mb-0 text-lg">The Lily Pad</h1>
-                <p className=" break-all text-sm font-light leading-[1.1]">
-                  A community endeavouring to guide those self-learning in web3{' '}
-                </p>
-                <p className="text-sm font-light">#goForYou</p>
-              </div>
-            </div>
-            <div className="relative h-[320px] rounded-lg  bg-main-gray-dark">
-              <div className=" absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg bg-primary-400 p-4 text-white">
-                <h1 className="mb-0 text-lg">The Lily Pad</h1>
-                <p className=" break-all text-sm font-light leading-[1.1]">
-                  A community endeavouring to guide those self-learning in web3{' '}
-                </p>
-                <p className="text-sm font-light">#goForYou</p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
       <hr className="my-14 w-full bg-main-gray-dark" />
       <div className="px-[5.5rem]">
         {/* Top 10 courses */}
-        <CourseCarousel title="Top 10 Courses" courses={courses} />
+        {courses && <CourseCarousel title="Top 10 Courses" courses={courses} />}
         {/* view AllCourse one tab*/}
         <div className="my-14 w-full">
           <div className="flex w-[30%] justify-between rounded-md bg-main-gray-light py-2 px-4">
-            <p className="font-semibold">View all Courses</p>
-            <p className="font-semibold">&#62;</p>
+            <Link href="courses">
+              <button className="col-span-2 flex justify-between rounded-md bg-white py-2 px-4">
+                <p className="font-semibold">View all Courses</p>
+                <p className="font-semibold">&#62;</p>
+              </button>
+            </Link>
           </div>
         </div>
+
         {/* View all resources  */}
-        <div className="my-10 w-full space-y-4">
+        {/* <div className="my-10 w-full space-y-4">
           <h1 className="mt-8 text-4xl">Or View all resources</h1>
           <div className="grid grid-cols-4 gap-4">
             {bigResourceList.map((courseName, i) => (
@@ -218,7 +192,7 @@ const Home: NextPage = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

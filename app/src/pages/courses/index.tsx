@@ -1,5 +1,8 @@
 import React from 'react';
 import CourseCard from '~/components/CourseCard';
+import { ContentType } from '~/types/types';
+import { COURSES_HOME_ITEMS } from '~/utils/constants';
+import { trpc } from '~/utils/trpc';
 
 const coursesList = [
   'Something',
@@ -40,7 +43,12 @@ const bigResourceList5 = [
   coursesList[3],
 ];
 
-const Categories = () => {
+const Courses = () => {
+  const { data: courses } = trpc.useQuery([
+    'courses.all',
+    { take: COURSES_HOME_ITEMS },
+  ]);
+
   return (
     <div className="px-[5.5rem]">
       <h1 className="mb-2 mt-2 text-4xl">Courses</h1>
@@ -139,38 +147,13 @@ const Categories = () => {
         </div>
         {/* Aside */}
         <div className="flex flex-col gap-10">
-          <div className="flex flex-col gap-8 border-b-[3px]  border-b-main-gray-light pb-8">
-            {/* <CourseCard /> */}
-            <div className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
-              <p className="">Something new</p>
-              <p className="font-normal">&#62;</p>
-            </div>
-          </div>
-          <div className="flex flex-col gap-8 border-b-[3px]  border-b-main-gray-light pb-8">
-            {/* <CourseCard /> */}
-            <div className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
-              <p className="">Something new</p>
-              <p className="font-normal">&#62;</p>
-            </div>
-          </div>
-          <div className="flex flex-col gap-8 border-b-[3px]  border-b-main-gray-light pb-8">
-            {/* <CourseCard /> */}
-            <div className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
-              <p className="">Something new</p>
-              <p className="font-normal">&#62;</p>
-            </div>
-          </div>
-          <div className="flex flex-col gap-8 border-b-[3px]  border-b-main-gray-light pb-8">
-            {/* <CourseCard /> */}
-            <div className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
-              <p className="">Something new</p>
-              <p className="font-normal">&#62;</p>
-            </div>
-          </div>
+          {courses?.map((c) => (
+            <CourseCard key={`courses-${c.id}`} course={c} />
+          ))}
         </div>
       </div>
     </div>
   );
 };
 
-export default Categories;
+export default Courses;

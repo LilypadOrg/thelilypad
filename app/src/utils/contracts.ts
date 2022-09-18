@@ -9,6 +9,62 @@ export const MAIN_CONTRACT_ABI = [
       {
         indexed: false,
         internalType: 'address',
+        name: 'member',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'eventId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'bytes',
+        name: 'badgeIdentifier',
+        type: 'bytes',
+      },
+      {
+        indexed: false,
+        internalType: 'string',
+        name: 'badgeName',
+        type: 'string',
+      },
+    ],
+    name: 'BadgeEarned',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'member',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'eventId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'string',
+        name: 'eventName',
+        type: 'string',
+      },
+    ],
+    name: 'EventCompleted',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'address',
         name: 'owner',
         type: 'address',
       },
@@ -17,6 +73,18 @@ export const MAIN_CONTRACT_ABI = [
         internalType: 'uint256',
         name: 'eventId',
         type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'eventTypeId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'bytes',
+        name: 'eventName',
+        type: 'bytes',
       },
     ],
     name: 'EventSubmited',
@@ -306,11 +374,6 @@ export const MAIN_CONTRACT_ABI = [
   {
     inputs: [
       {
-        internalType: 'bytes',
-        name: '_name',
-        type: 'bytes',
-      },
-      {
         internalType: 'uint256',
         name: '_initialXp',
         type: 'uint256',
@@ -351,30 +414,6 @@ export const MAIN_CONTRACT_ABI = [
     name: 'createMember',
     outputs: [],
     stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    name: 'eventTypes',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: 'id',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bytes',
-        name: 'name',
-        type: 'bytes',
-      },
-    ],
-    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -511,53 +550,9 @@ export const MAIN_CONTRACT_ABI = [
         type: 'bool',
       },
       {
-        internalType: 'string',
-        name: 'name',
-        type: 'string',
-      },
-      {
         internalType: 'uint256',
-        name: 'level',
+        name: 'xp',
         type: 'uint256',
-      },
-      {
-        internalType: 'bool',
-        name: 'DAO',
-        type: 'bool',
-      },
-      {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_tokenId',
-        type: 'uint256',
-      },
-    ],
-    name: 'getMemberByTokenId',
-    outputs: [
-      {
-        internalType: 'address',
-        name: 'memberAddress',
-        type: 'address',
-      },
-      {
-        internalType: 'bool',
-        name: 'pathChosen',
-        type: 'bool',
-      },
-      {
-        internalType: 'string',
-        name: 'name',
-        type: 'string',
       },
       {
         internalType: 'uint256',
@@ -600,6 +595,96 @@ export const MAIN_CONTRACT_ABI = [
         internalType: 'struct ILilyPad.Accolade[]',
         name: 'badges',
         type: 'tuple[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_tokenId',
+        type: 'uint256',
+      },
+    ],
+    name: 'getMemberByTokenId',
+    outputs: [
+      {
+        internalType: 'address',
+        name: 'memberAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'bool',
+        name: 'pathChosen',
+        type: 'bool',
+      },
+      {
+        internalType: 'uint256',
+        name: 'xp',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'level',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bool',
+        name: 'DAO',
+        type: 'bool',
+      },
+      {
+        internalType: 'uint256',
+        name: 'tokenId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256[]',
+        name: 'completedEvents',
+        type: 'uint256[]',
+      },
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'eventId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'title',
+            type: 'bytes',
+          },
+          {
+            internalType: 'bytes',
+            name: 'badge',
+            type: 'bytes',
+          },
+        ],
+        internalType: 'struct ILilyPad.Accolade[]',
+        name: 'badges',
+        type: 'tuple[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_memberAddress',
+        type: 'address',
+      },
+    ],
+    name: 'getMemberLevel',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -684,79 +769,6 @@ export const MAIN_CONTRACT_ABI = [
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    name: 'journeyNodes',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: 'step',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'eventId',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bool',
-        name: 'done',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    name: 'journeys',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: 'id',
-        type: 'uint256',
-      },
-      {
-        internalType: 'address',
-        name: 'member',
-        type: 'address',
-      },
-      {
-        internalType: 'bytes',
-        name: 'name',
-        type: 'bytes',
-      },
-      {
-        internalType: 'bool',
-        name: 'done',
-        type: 'bool',
-      },
-      {
-        internalType: 'bool',
-        name: 'badgeObligatory',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
         internalType: 'address',
         name: '_member',
         type: 'address',
@@ -775,40 +787,6 @@ export const MAIN_CONTRACT_ABI = [
     name: 'levelMember',
     outputs: [],
     stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    name: 'levels',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: 'level',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'xpInit',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'xpFin',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bytes',
-        name: 'image',
-        type: 'bytes',
-      },
-    ],
-    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -868,6 +846,11 @@ export const MAIN_CONTRACT_ABI = [
         internalType: 'uint256',
         name: '_eventTypeId',
         type: 'uint256',
+      },
+      {
+        internalType: 'bytes',
+        name: '_eventName',
+        type: 'bytes',
       },
       {
         internalType: 'uint256',
@@ -931,6 +914,11 @@ export const MAIN_CONTRACT_ABI = [
         internalType: 'uint256',
         name: '_eventTypeId',
         type: 'uint256',
+      },
+      {
+        internalType: 'bytes',
+        name: '_eventName',
+        type: 'bytes',
       },
       {
         internalType: 'uint256',
@@ -1060,11 +1048,6 @@ export const MAIN_CONTRACT_ABI = [
         internalType: 'address',
         name: '_memberAddress',
         type: 'address',
-      },
-      {
-        internalType: 'bytes',
-        name: '_name',
-        type: 'bytes',
       },
       {
         internalType: 'bool',
@@ -1269,6 +1252,25 @@ export const SBT_CONTRACT_ABI = [
       },
     ],
     name: 'OwnershipTransferred',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'soulOwner',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'tokenId',
+        type: 'uint256',
+      },
+    ],
+    name: 'SoulBounded',
     type: 'event',
   },
   {

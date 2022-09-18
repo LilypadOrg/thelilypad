@@ -67,7 +67,9 @@ const CourseCategories: NextPage = () => {
       {/* Header */}
       <div className="flex flex-col py-8 px-[5.5rem]">
         <h1 className="mb-4 text-5xl font-bold">
-          So You want to learn {topic}
+          {type !== 'level'
+            ? `So You want to learn ${topic}`
+            : `${topic} Courses`}
         </h1>
         <p className="max-w-lg font-light">
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Placeat
@@ -77,7 +79,12 @@ const CourseCategories: NextPage = () => {
       {/* Course Carousel */}
       <div className="bg-main-gray-light pt-2 pb-4">
         <div className="px-[5.5rem]">
-          <CourseCarousel title={`Top 10 ${topic} Courses`} courses={courses} />
+          {courses && (
+            <CourseCarousel
+              title={`Top 10 ${topic} Courses`}
+              courses={courses}
+            />
+          )}
         </div>
       </div>
       {/* Course Grid */}
@@ -85,7 +92,9 @@ const CourseCategories: NextPage = () => {
         {/* header */}
         <div className="flex flex-col py-8">
           <h1 className="mb-4 text-4xl font-bold">
-            So You want to learn {topic}
+            {type !== 'level'
+              ? `So You want to learn ${topic}`
+              : `${topic} Courses`}
           </h1>
           <p className="max-w-lg font-light">
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Placeat

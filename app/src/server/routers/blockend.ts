@@ -7,7 +7,6 @@ import { env } from '~/server/env';
 export const blockenRouter = createRouter()
   .query('signCreateMember', {
     input: z.object({
-      name: z.string(),
       xp: z.number(),
       courses: z.number().array(),
     }),
@@ -21,7 +20,7 @@ export const blockenRouter = createRouter()
       try {
         const web3 = new Web3();
         const hash = web3.utils.soliditySha3(
-          { t: 'bytes', v: web3.utils.fromAscii(input.name) },
+          // { t: 'bytes', v: web3.utils.fromAscii(input.name) },
           { t: 'uint256', v: input.xp },
           ...input.courses,
           { t: 'string', v: '' }
@@ -33,7 +32,6 @@ export const blockenRouter = createRouter()
         ).signature;
         return signature;
       } catch (err) {
-        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Something went wrong'`,
@@ -66,7 +64,6 @@ export const blockenRouter = createRouter()
         ).signature;
         return signature;
       } catch (err) {
-        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Something went wrong'`,

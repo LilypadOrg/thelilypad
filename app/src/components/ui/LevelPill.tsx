@@ -1,5 +1,16 @@
-const LevelPill = ({ level, classes }: { level: string; classes?: string }) => {
-  let colorClasses;
+import Link from 'next/link';
+
+const LevelPill = ({
+  level,
+  classes,
+  url,
+}: {
+  level: string;
+  classes?: string;
+  url?: string;
+}) => {
+  let colorClasses: string;
+
   if (level === 'Beginner') {
     colorClasses = 'bg-green-200 text-green-600';
   } else if (level === 'Intermediate') {
@@ -10,12 +21,22 @@ const LevelPill = ({ level, classes }: { level: string; classes?: string }) => {
     colorClasses = `bg-main-gray-dark text-black`;
   }
 
-  return (
+  const InnerPill = () => (
     <span
       className={`mr-2 mb-2 inline-block rounded-full px-3 py-1 text-sm font-semibold ${colorClasses} ${classes}`}
     >
       {level}
     </span>
+  );
+
+  return url ? (
+    <Link href={url}>
+      <button>
+        <InnerPill />
+      </button>
+    </Link>
+  ) : (
+    <InnerPill />
   );
 };
 
