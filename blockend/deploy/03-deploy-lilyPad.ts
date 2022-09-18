@@ -31,7 +31,7 @@ export function initialLevels(): ILilyPad.LevelStruct[] {
             level: 2,
             xpInit: 1000,
             xpFin: 1999,
-            image: web3.utils.fromAscii(web3.utils.fromAscii(readSvgContent("images/level2.svg"))),
+            image: web3.utils.fromAscii(web3.utils.fromAscii(readSvgContent("images/level1.svg"))),
         },
         {
             level: 3,

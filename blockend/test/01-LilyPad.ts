@@ -533,7 +533,6 @@ describe("LilyPad", function () {
             let buff = Buffer.from(tokenUri.replace("data:application/json;base64,", ""), "base64");
             let text = buff.toString("ascii");
 
-            console.log(text);
             let initialTokenUri = JSON.parse(text);
 
             assert(initialTokenUri.attributes.length == 2, "wrong number of attributes");
