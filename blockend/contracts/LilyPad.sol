@@ -294,6 +294,37 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
 
     // MEMBER FUNCTIONS
     /**
+     *@notice Return member object associated to given address
+     *IN
+     *@param _memberAddress: member address
+     *OUT
+     */
+    function getMember(address _memberAddress)
+        public
+        view
+        override
+        returns (
+            bool pathChosen,
+            uint256 xp,
+            uint256 level,
+            bool DAO,
+            uint256 tokenId,
+            uint256[] memory completedEvents,
+            Accolade[] memory badges
+        )
+    {
+        return (
+            addressToMember[_memberAddress].pathChosen,
+            addressToMember[_memberAddress].xp,
+            getMemberLevel(_memberAddress),
+            addressToMember[_memberAddress].DAO,
+            addressToMember[_memberAddress].tokenId,
+            addressToMember[_memberAddress].completedEvents,
+            addressToMember[_memberAddress].badges
+        );
+    }
+
+    /**
      *@notice Insert new Member that chosen to follow The Path
      *@dev in the _badges accolade object there is no need to send the badge data. Just eventId and accoladeTitle
      *IN
@@ -352,6 +383,73 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
     }
 
     /**
+     *@notice Update all of Member data
+     *IN
+     *@param _memberAddress: member address
+     *@param _dao: dao?
+     *@param _xp: xp owned by member
+     *@param _completedEvents: array of complete courses ids
+     *@param _badges: array of courses ids with earned badges
+     *OUT
+     */
+    function updateMember(
+        address _memberAddress,
+        bool _dao,
+        uint256 _xp,
+        uint256[] memory _completedEvents,
+        Accolade[] memory _badges,
+        bytes memory _sig
+    )
+        public
+        onlySafeCaller(
+            prefixed(
+                keccak256(
+                    abi.encodePacked(_memberAddress, _dao, _xp, _completedEvents, getAccoladesStr(_badges))
+                )
+            ),
+            _sig
+        )
+    {
+        if (!addressToMember[_memberAddress].pathChosen) {
+            _createMember(_memberAddress, _xp, _completedEvents, _badges);
+        } else {
+            addressToMember[_memberAddress].pathChosen = addressToMember[_memberAddress].pathChosen;
+            addressToMember[_memberAddress].xp = _xp;
+            addressToMember[_memberAddress].DAO = _dao;
+            addressToMember[_memberAddress].tokenId = addressToMember[_memberAddress].tokenId;
+
+            delete addressToMember[_memberAddress].completedEvents;
+
+            for (uint256 idx = 0; idx < _completedEvents.length; idx++) {
+                addressToMember[_memberAddress].completedEvents.push(_completedEvents[idx]);
+            }
+
+            for (uint256 idx = 0; idx < _completedEvents.length; idx++) {
+                if (!completedEvent(_memberAddress, _completedEvents[idx]))
+                    _completeEvent(_memberAddress, _completedEvents[idx], false);
+            }
+
+            for (uint256 idx = 0; idx < _badges.length; idx++) {
+                    if (
+                        !badgeEarned(
+                            _memberAddress,
+                            _badges[idx].eventId,
+                            _badges[idx].title
+                        )
+                    ) {
+                        _awardBadge(
+                            _memberAddress,
+                            _badges[idx],
+                            false
+                        );
+                    }
+            }
+
+            updateJourney(_memberAddress);
+        }
+    }
+
+    /**
      *@notice Update member XP. Require member created for given address
      *IN
      *@param _member: member address
@@ -372,7 +470,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *@notice update Member event completion
      *IN
      *@param _member: member address
-     *@param _eventId: id of event or event
+     *@param _eventId: id of completed event
      *OUT
      */
     function completeEvent(
@@ -380,10 +478,18 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         uint256 _eventId,
         bytes memory _sig
     ) public onlySafeCaller(prefixed(keccak256(abi.encodePacked(_member, _eventId))), _sig) {
+        //TODO: make it batch prepared
         require(addressToMember[_member].pathChosen, "Path not chosen!");
-        require(!completedEvent(_member, _eventId), "Event already Completed");
+        if (!completedEvent(_member, _eventId))
+            _completeEvent(_member, _eventId, true);
 
-        _completeEvent(_member, _eventId, true);
+        //for (uint256 idx = 0; idx < _eventsId.length; idx++) {
+        //    if (!completedEvent(_member, _eventsId[idx]))
+        //        _completeEvent(_member, _eventsId[idx], false);
+        //}
+
+        //update journeys
+        //updateJourney(_member);
     }
 
     /**
@@ -400,12 +506,20 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         uint256 _eventId,
         bool _updateJourney
     ) internal {
+        //check member current level
+        uint256 currentLevel = getMemberLevel(_member);
         addressToMember[_member].completedEvents.push(_eventId);
-
+        addressToMember[_member].xp +=  eventIdToEvent[_eventId].xp;
         //update journeys
         if (_updateJourney) updateJourney(_member);
 
         emit EventCompleted(_member, _eventId, string(abi.encodePacked(eventIdToEvent[_eventId].eventName)));
+        //check member new level
+        uint256 newLevel = getMemberLevel(_member);
+
+        if (newLevel > currentLevel)
+            emit LevelReached(_member, addressToMember[_member].xp, newLevel);
+
     }
 
     /**
@@ -464,7 +578,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *OUT
      *@return bool: if event was already completed
      */
-    function completedEvent(address _member, uint256 _eventId) internal view returns (bool) {
+    function completedEvent(address _member, uint256 _eventId) public view returns (bool) {
         for (uint256 idx = 0; idx < addressToMember[_member].completedEvents.length; idx++) {
             if (addressToMember[_member].completedEvents[idx] == _eventId) return true;
         }
@@ -484,7 +598,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         address _member,
         uint256 _eventId,
         bytes memory _accoladeTitle
-    ) internal view returns (bool) {
+    ) public view returns (bool) {
         for (uint256 idx = 0; idx < addressToMember[_member].badges.length; idx++) {
             if (
                 addressToMember[_member].badges[idx].eventId == _eventId &&
@@ -512,18 +626,6 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         return true;
     }
 
-    // ! there should be some checks here !!!!
-    function updateFirstStep(
-        address _memberAddress,
-        bool _firstStepTaken,
-        bytes memory _sig
-    )
-        public
-        onlySafeCaller(prefixed(keccak256(abi.encodePacked(_memberAddress, _firstStepTaken))), _sig)
-    {
-        addressToMember[_memberAddress].pathChosen = _firstStepTaken;
-    }
-
     /**
      *@notice Mint SBT
      *IN
@@ -533,44 +635,13 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      */
     function mintTokenForMember(address _memberAddress, IPondSBT _sbtAddress) public payable {
         require(addressToMember[_memberAddress].tokenId == 0, "SBT already defined!");
-        //
+
         try _sbtAddress.takeFirstSteps{value: msg.value}(_memberAddress) returns (uint256 tokenId) {
             addressToMember[_memberAddress].tokenId = tokenId;
             tokenIdToAddress[tokenId] = _memberAddress;
         } catch Error(string memory err) {
             revert(err);
         }
-    }
-
-    /**
-     *@notice Return member object associated to given address
-     *IN
-     *@param _memberAddress: member address
-     *OUT
-     */
-    function getMember(address _memberAddress)
-        public
-        view
-        override
-        returns (
-            bool pathChosen,
-            uint256 xp,
-            uint256 level,
-            bool DAO,
-            uint256 tokenId,
-            uint256[] memory completedEvents,
-            Accolade[] memory badges
-        )
-    {
-        return (
-            addressToMember[_memberAddress].pathChosen,
-            addressToMember[_memberAddress].xp,
-            getMemberLevel(_memberAddress),
-            addressToMember[_memberAddress].DAO,
-            addressToMember[_memberAddress].tokenId,
-            addressToMember[_memberAddress].completedEvents,
-            addressToMember[_memberAddress].badges
-        );
     }
 
     /**
@@ -797,73 +868,6 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
             }
 
             if (!havePendingSteps) journeys[journeyId].done = true;
-        }
-    }
-
-    /**
-     *@notice Update all of Member data
-     *IN
-     *@param _memberAddress: member address
-     *@param _dao: dao?
-     *@param _xp: xp owned by member
-     *@param _completedEvents: array of complete courses ids
-     *@param _badges: array of courses ids with earned badges
-     *OUT
-     */
-    function updateMember(
-        address _memberAddress,
-        bool _dao,
-        uint256 _xp,
-        uint256[] memory _completedEvents,
-        Accolade[] memory _badges,
-        bytes memory _sig
-    )
-        public
-        onlySafeCaller(
-            prefixed(
-                keccak256(
-                    abi.encodePacked(_memberAddress, _dao, _xp, _completedEvents, getAccoladesStr(_badges))
-                )
-            ),
-            _sig
-        )
-    {
-        if (!addressToMember[_memberAddress].pathChosen) {
-            _createMember(_memberAddress, _xp, _completedEvents, _badges);
-        } else {
-            addressToMember[_memberAddress].pathChosen = addressToMember[_memberAddress].pathChosen;
-            addressToMember[_memberAddress].xp = _xp;
-            addressToMember[_memberAddress].DAO = _dao;
-            addressToMember[_memberAddress].tokenId = addressToMember[_memberAddress].tokenId;
-
-            delete addressToMember[_memberAddress].completedEvents;
-
-            for (uint256 idx = 0; idx < _completedEvents.length; idx++) {
-                addressToMember[_memberAddress].completedEvents.push(_completedEvents[idx]);
-            }
-
-            for (uint256 idx = 0; idx < _completedEvents.length; idx++) {
-                if (!completedEvent(_memberAddress, _completedEvents[idx]))
-                    _completeEvent(_memberAddress, _completedEvents[idx], false);
-            }
-
-            for (uint256 idx = 0; idx < _badges.length; idx++) {
-                    if (
-                        !badgeEarned(
-                            _memberAddress,
-                            _badges[idx].eventId,
-                            _badges[idx].title
-                        )
-                    ) {
-                        _awardBadge(
-                            msg.sender,
-                            _badges[idx],
-                            false
-                        );
-                    }
-            }
-
-            updateJourney(_memberAddress);
         }
     }
 

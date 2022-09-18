@@ -24,14 +24,26 @@ export function initialLevels(): ILilyPad.LevelStruct[] {
         {
             level: 1,
             xpInit: 0,
-            xpFin: 100,
+            xpFin: 999,
             image: web3.utils.fromAscii(readSvgContent("images/level0.svg")),
         },
         {
             level: 2,
-            xpInit: 101,
-            xpFin: 200,
-            image: web3.utils.fromAscii(web3.utils.fromAscii(readSvgContent("images/level1.svg"))),
+            xpInit: 1000,
+            xpFin: 1999,
+            image: web3.utils.fromAscii(web3.utils.fromAscii(readSvgContent("images/level2.svg"))),
+        },
+        {
+            level: 3,
+            xpInit: 2000,
+            xpFin: 2999,
+            image: web3.utils.fromAscii(web3.utils.fromAscii(readSvgContent("images/level2.svg"))),
+        },
+        {
+            level: 4,
+            xpInit: 3000,
+            xpFin: 3999,
+            image: web3.utils.fromAscii(web3.utils.fromAscii(readSvgContent("images/level3.svg"))),
         },
     ];
 }
@@ -85,12 +97,14 @@ const deployLilyPad: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
     //get instance of contract
     lilypadContract = await lilypadFactory.attach(lilyPadProxyContract.address);
     //initialize proxy
-    var tx = await lilypadContract.initialize(
-        await initialLevels(),
-        await initialEventTypes(),
-        safeCaller
-    );
+    var tx = await lilypadContract.initialize([], await initialEventTypes(), safeCaller);
     const txReceipt = await tx.wait(1);
+
+    for (const lev of initialLevels()) {
+        console.log(`uploading lev ${lev.level}`);
+        const createLevelTx = await lilypadContract.createLevel([lev]);
+        await createLevelTx.wait(1);
+    }
 
     const lilyPadArtifact = await deployments.getArtifact("LilyPad");
     const lilyPadProxyArtifact = await deployments.getArtifact("LilyPadProxy");

@@ -139,7 +139,7 @@ describe("PondSBT", function () {
             badges: memberValues.badges,
         };
     });
-    describe("Mint Functions", function () {
+    describe("MintFunctions", function () {
         it("Try to mint pondSBT to member. It should work with no problems", async function () {
             const { deployer, safeCaller } = await getNamedAccounts();
             const accounts: any[] = await ethers.getSigners();
@@ -165,6 +165,13 @@ describe("PondSBT", function () {
 
             console.log(
                 `Member Level: ${(await _lilyPadContract.getMemberLevel(user.address)).toString()}`
+            );
+
+            console.log(
+                `PondBT Contract funds: ${await _web3.eth.getBalance(_pondSBTContract.address)}`
+            );
+            console.log(
+                `Lilypad Contract funds: ${await _web3.eth.getBalance(_lilyPadContract.address)}`
             );
 
             assert(memberValues.tokenId.gt(0), "Token not minted");

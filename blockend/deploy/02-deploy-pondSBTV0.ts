@@ -19,7 +19,7 @@ const deployMocks: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const mintFee = ethers.utils.parseEther("0.1");
     const levelSVGs = [
         fs.readFileSync("images/level0.svg", { encoding: "utf8" }),
-        fs.readFileSync("images/level1.svg", { encoding: "utf8" }),
+        //fs.readFileSync("images/level1.svg", { encoding: "utf8" }),
     ];
     const args = [mintFee, levelSVGs, main.address];
 

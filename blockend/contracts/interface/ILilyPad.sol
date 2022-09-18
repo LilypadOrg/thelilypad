@@ -28,6 +28,8 @@ interface ILilyPad {
     event EventCompleted(address member, uint256 eventId, string eventName);
     event BadgeEarned(address member, uint256 eventId, bytes badgeIdentifier, string badgeName);
 
+    event LevelReached(address member, uint256 currentXp, uint256 level);
+
     struct Level {
         uint256 level;
         uint256 xpInit;
@@ -99,13 +101,13 @@ interface ILilyPad {
             Accolade[] memory accolades
         );
 
-    function mintTokenForMember(address _memberAddress, IPondSBT _sbtAddress) external payable;
+    function completedEvent(address _member, uint256 _eventId) external view returns (bool);
 
-    function updateFirstStep(
-        address _memberAddress,
-        bool _firstStepTaken,
-        bytes memory _sig
-    ) external;
+    function badgeEarned(
+        address _member,
+        uint256 _eventId,
+        bytes memory _accoladeTitle
+    ) external view returns (bool);
 
     function constructTokenUri(uint256 _tokenId, string memory _baseUri)
         external
