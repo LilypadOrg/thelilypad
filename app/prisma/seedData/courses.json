@@ -25,7 +25,7 @@
     "coverImageUrl": "/images/courses/LW3_Freshman.png",
     "levels": ["Beginner"],
     "technologies": ["JavaScript", "Solidity"],
-    "tags": ["Web3"]
+    "tags": ["Web3", "Full-stack"]
   },
   {
     "id": 10003,

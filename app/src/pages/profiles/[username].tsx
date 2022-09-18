@@ -25,7 +25,6 @@ import EditProfileModal from '~/components/EditProfileModal';
 import { UserCourse } from '~/types/types';
 import CourseCard from '~/components/CourseCard';
 import MintSBTModal from '~/components/MintSBTModal';
-import { TiTick } from 'react-icons/ti';
 import { LearningPathCards } from '~/components/ui/userProfile';
 import Tilt from 'react-parallax-tilt';
 import TagsPill from '~/components/TagsPill';
@@ -98,8 +97,12 @@ const UserProfile: NextPage = () => {
     overrides: {
       value: SBT_MINT_FEE,
     },
-    enabled: !!onChainProfile && onChainProfile.pathChosen,
+    enabled:
+      !!onChainProfile &&
+      onChainProfile.pathChosen &&
+      onChainProfile.tokenId._hex === '0x00',
   });
+
   const { data: mintTokenRes, write: mintToken } =
     useContractWrite(mintTokenConfig);
 
@@ -119,13 +122,20 @@ const UserProfile: NextPage = () => {
     args: [onChainProfile?.tokenId._hex],
   });
 
-  const { data: tokenMetadata } = useQuery(
+  console.log('tokenUri');
+  console.log(tokenUri);
+
+  const { data: tokenMetadata, error: metadataError } = useQuery(
     ['tokenMetadata', tokenUri],
     async () => {
       const data = await (await fetch(tokenUri?.toString() || '')).json();
       return data;
-    }
+    },
+    { enabled: !!tokenUri }
   );
+
+  console.log('tokenMetadata');
+  console.log(tokenMetadata);
 
   type RoadmapCourses = {
     beginner: UserCourse[];
@@ -223,29 +233,45 @@ const UserProfile: NextPage = () => {
               <div className="relative h-[425px] w-[380px] cursor-pointer">
                 {!tokenMetadata && (
                   <Image
-                    src="/images/profileSBT/frogSBT.png"
+                    src="/images/profileSBT/level1-gray.svg"
+                    alt="sbt"
+                    layout="fill"
+                    objectFit="contain"
+                    className="opacity-25"
+                  />
+                )}
+                {tokenMetadata && userProfile.level.number === 1 && (
+                  // TODO: find a a better way to display and resize SVG
+                  <Image
+                    src="/images/profileSBT/level1-gray.svg"
                     alt="sbt"
                     layout="fill"
                     objectFit="contain"
                   />
+
+                  // <div
+                  //   dangerouslySetInnerHTML={{
+                  //     __html: tokenMetadata.image_data.replace(
+                  //       "width='12",
+                  //       "width='370px' height='370px'"
+                  //     ),
+                  //   }}
+                  // />
                 )}
-                {tokenMetadata && (
+                {tokenMetadata && userProfile.level.number === 2 && (
                   // TODO: find a a better way to display and resize SVG
-                  <div
-                    className="w-10"
-                    dangerouslySetInnerHTML={{
-                      __html: tokenMetadata.image_data.replace(
-                        "width='1024px' height='1024px'",
-                        "width='170px' height='170px'"
-                      ),
-                    }}
+                  <Image
+                    src="/images/profileSBT/level2-gray.svg"
+                    alt="sbt"
+                    layout="fill"
+                    objectFit="contain"
                   />
                 )}
               </div>
             </Tilt>
             <div className="min-h-[255px] w-[38%] items-stretch rounded-md bg-main-gray-light p-8 pl-12">
               <h1 className="text-2xl font-bold">My Tech Stack</h1>
-              <div className="grid grid-cols-3 gap-1">
+              <div className="grid grid-cols-2 gap-1">
                 {userProfile.technologies.map((language) => (
                   <TagsPill
                     key={`skill-${language.id}`}
@@ -462,19 +488,14 @@ const events = [
 
 const projects = [
   {
-    title: 'Hackathon: 4 Vs 1 Who is the best...',
+    title: 'Perfi',
     id: 'a',
-    time: 'Sun 11 september 2022',
+    time: 'Sun 11 September 2022',
   },
   {
-    title: 'Hackathon: 4 Vs 1 Who is the best...',
+    title: 'QueenE DAO',
     id: 'b',
-    time: 'Sun 11 september 2022',
-  },
-  {
-    title: 'Hackathon: 4 Vs 1 Who is the best...',
-    id: 'c',
-    time: 'Sun 11 september 2022',
+    time: 'Sat 06 August 2022',
   },
 ];
 

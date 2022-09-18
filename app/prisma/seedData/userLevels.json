@@ -2,21 +2,21 @@
   {
     "number": 1,
     "xpFrom": 0,
-    "xpTo": 1000
+    "xpTo": 999
   },
   {
     "number": 2,
-    "xpFrom": 1001,
-    "xpTo": 2000
+    "xpFrom": 1000,
+    "xpTo": 1999
   },
   {
     "number": 3,
-    "xpFrom": 2001,
-    "xpTo": 3000
+    "xpFrom": 2000,
+    "xpTo": 2999
   },
   {
     "number": 4,
-    "xpFrom": 3001,
-    "xpTo": 4000
+    "xpFrom": 3000,
+    "xpTo": 3999
   }
 ]

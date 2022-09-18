@@ -4,14 +4,18 @@ const LevelPill = ({
   level,
   classes,
   url,
+  noColor,
 }: {
   level: string;
   classes?: string;
   url?: string;
+  noColor?: boolean;
 }) => {
   let colorClasses: string;
 
-  if (level === 'Beginner') {
+  if (noColor) {
+    colorClasses = '';
+  } else if (level === 'Beginner') {
     colorClasses = 'bg-green-200 text-green-600';
   } else if (level === 'Intermediate') {
     colorClasses = 'bg-yellow-200 text-yellow-600';
