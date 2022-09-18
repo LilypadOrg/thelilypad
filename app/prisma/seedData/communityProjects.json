@@ -39,7 +39,7 @@
     "url": "https://medichain.vercel.app/",
     "coverImageUrl": "src/images/MediChain.png",
     "technologies": ["Solidity", "Hardhat", "IPFS", "The Graph", "Next JS", "JavaScript"],
-    "tags": ["Blockchain", "Storage", "Full-stack"],
+    "tags": ["Blockchain", "Storage", "Full-stack", "Web3"],
     "author": "@sadityakumar921",
     "codeUrl": "https://github.com/sadityakumar9211/medichain-hardhat"
   },
@@ -50,7 +50,7 @@
     "url": "https://multisigcreator-sb.surge.sh/",
     "coverImageUrl": "src/images/MultiSigWallet.png",
     "technologies": ["Hardhat", "Ethers JS", "React","Solidity"],
-    "tags": ["Full-stack", "Defi", "Blockchain"],
+    "tags": ["Full-stack", "Defi", "Blockchain", "Web3"],
     "author": "@ShivBhonde",
     "codeUrl": "https://github.com/technophile-04/MultiSigWalletCreator"
   },
@@ -61,7 +61,7 @@
     "url": "http://lwd-xbuild-space.vercel.app/",
     "coverImageUrl": "src/images/LW3DxBuildSpace.png",
     "technologies": ["Ethers JS", "TypeScript", "Next JS", "Alchemy-SDK"],
-    "tags": ["NFT", "Full-stack", ],
+    "tags": ["NFT", "Full-stack", "Web3"],
     "author": "@ShivBhonde",
     "codeUrl": "https://github.com/technophile-04/lwdXbuildSpace"
   },
@@ -76,4 +76,15 @@
     "author": "@Vinicius_Rod",
     "codeUrl": "https://github.com/rodriguesmvinicius"
   },
+  {
+    "id": 30008,
+    "title": "Vin Rodrigues Profile",
+    "description": "Vin Rodrigues Profile",
+    "url": "https://github.com/rodriguesmvinicius/profile/blob/HEAD/README.md",
+    "coverImageUrl": "src/images/VinProfile.png",
+    "technologies": ["JavaScript", "Node JS", "React"],
+    "tags": ["Full-stack", "Web2"],
+    "author": "@socMecanica",
+    "codeUrl": "https://github.com/rodriguesmvinicius"
+  }
 ]
