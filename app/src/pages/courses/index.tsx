@@ -48,9 +48,6 @@ const Courses = () => {
     { contentType: ContentType.COURSE, tags: ['web3'] },
   ]);
 
-  console.log('techs');
-  console.log(techs);
-
   return (
     <div className="px-[5.5rem]">
       <h1 className="mb-2 mt-2 text-4xl">Courses</h1>

@@ -86,7 +86,6 @@ export const CompleteCourse = ({
   });
 
   const handleSetCompleted = async () => {
-    console.log('handler called');
     if (completeCourse) {
       completeCourse();
     } else {
@@ -99,18 +98,10 @@ export const CompleteCourse = ({
       <button
         disabled={isLoadingCompleteCourse || completed}
         onClick={handleSetCompleted}
-        className="mt-8 w-full rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500"
+        className="mt-8 w-96 rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500"
       >
         {isLoadingCompleteCourse && 'Loading...'}
-        {completed &&
-          `Course completed',
-            {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-            }
-          )}
-        `}
+        {completed && 'Course completed'}
         {!isLoadingCompleteCourse && !completed && 'Mark as complete'}
       </button>
     </div>

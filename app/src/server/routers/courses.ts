@@ -111,55 +111,82 @@ export const courseRouter = createRouter()
     },
   })
   .query('related', {
-    input: z
-      .object({
-        tags: z.array(z.string()).or(z.string()).optional(),
-        technologies: z.array(z.string()).or(z.string()).optional(),
-        levels: z.array(z.string()).or(z.string()).optional(),
-      })
-      .optional(),
+    input: z.object({
+      tags: z.array(z.string()).or(z.string()).optional(),
+      technologies: z.array(z.string()).or(z.string()).optional(),
+      excludeCourseId: z.number().optional(),
+    }),
     async resolve({ input }) {
       /**
        * For pagination you can have a look at this docs site
        * @link https://trpc.io/docs/useInfiniteQuery
        */
       try {
-        const courses = await prisma.content.findMany({
-          where:
-            input?.tags || input?.technologies || input?.levels
+        const courses = await prisma.course.findMany({
+          where: {
+            ...(input.excludeCourseId
+              ? { id: { not: input.excludeCourseId } }
+              : {}),
+            ...(input.tags || input.technologies
               ? {
-                  contentType: { name: ContentType.COURSE },
                   OR: [
                     {
                       ...(input?.tags
                         ? {
-                            tags: { some: { slug: { in: input.tags } } },
+                            content: {
+                              tags: { some: { slug: { in: input.tags } } },
+                            },
                           }
                         : {}),
                     },
                     {
                       ...(input?.technologies
                         ? {
-                            technologies: {
-                              some: { slug: { in: input.technologies } },
-                            },
-                          }
-                        : {}),
-                    },
-                    {
-                      ...(input?.levels
-                        ? {
-                            course: {
-                              levels: { some: { slug: { in: input.levels } } },
+                            content: {
+                              technologies: {
+                                some: { slug: { in: input.technologies } },
+                              },
                             },
                           }
                         : {}),
                     },
                   ],
                 }
-              : {
-                  contentType: { name: ContentType.COURSE },
-                },
+              : {}),
+
+            //   content: {
+            //     OR: [
+            //       {
+            // ...(input?.tags
+            //   ? {
+            //       tags: { some: { slug: { in: input.tags } } },
+            //     }
+            //   : {}),
+            //       },
+            // {
+            //   ...(input?.technologies
+            //     ? {
+            //         technologies: {
+            //           some: { slug: { in: input.technologies } },
+            //         },
+            //       }
+            //     : {}),
+            // },
+            //       {
+            //         ...(input?.levels
+            //           ? {
+            //               course: {
+            //                 levels: {
+            //                   some: { slug: { in: input.levels } },
+            //                 },
+            //               },
+            //             }
+            //           : {}),
+            //       },
+            //     ],
+            //   },
+            // }
+          },
           select: defaultCourseSelect,
         });
         return courses;

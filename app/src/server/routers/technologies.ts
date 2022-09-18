@@ -35,7 +35,7 @@ export const technologyRouter = createRouter()
     }),
     async resolve({ input }) {
       try {
-        const tech = await prisma.tag.findUnique({
+        const tech = await prisma.technology.findUnique({
           where: { slug: input.slug },
           select: defaultTechnologiesSelect,
         });

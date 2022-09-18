@@ -1,14 +1,19 @@
 import { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 import AddCourseToRoadmap from '~/components/AddCourseToRoadmap';
 import { CompleteCourse } from '~/components/CompleteCourse';
+import CourseCard from '~/components/CourseCard';
+import LevelPill from '~/components/ui/LevelPill';
+import { BROWSE_COURSES_ITEMS } from '~/utils/constants';
 import { trpc } from '~/utils/trpc';
-
-const categories = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+import { FaCogs } from 'react-icons/fa';
+import { AiFillTags } from 'react-icons/ai';
+import { MdGrade } from 'react-icons/md';
 
 const CoursePage: NextPage = () => {
   const id = Number(useRouter().query.id);
@@ -20,9 +25,33 @@ const CoursePage: NextPage = () => {
     ['usercourses.all', { userId: session?.user.userId || -1 }],
     {
       enabled: !!session,
-      onSuccess: () => {
-        console.log('Loaded user courses');
+    }
+  );
+
+  const { data: relatedResources } = trpc.useQuery(
+    [
+      'resources.related',
+      {
+        tags: course?.content.tags.map((t) => t.slug),
+        technologies: course?.content.technologies.map((t) => t.slug),
       },
+    ],
+    {
+      enabled: !!course,
+    }
+  );
+
+  const { data: relatedCourses } = trpc.useQuery(
+    [
+      'courses.related',
+      {
+        tags: course?.content.tags.map((t) => t.slug),
+        technologies: course?.content.technologies.map((t) => t.slug),
+        excludeCourseId: course?.id,
+      },
+    ],
+    {
+      enabled: !!course,
     }
   );
 
@@ -43,15 +72,53 @@ const CoursePage: NextPage = () => {
   return course ? (
     <div>
       <div className="px-[5.5rem]">
-        <div className="flex flex-col py-8">
+        <div className="flex flex-col py-8 ">
           <h1 className="mb-4 text-4xl font-bold">{course.content.title}</h1>
-          <p className="max-w-xl  font-light">
+          <div className="flex-start flex items-center gap-x-4">
+            <div className="flex gap-x-2">
+              <MdGrade className="text-2xl text-secondary-500" />
+              {course.levels.map((t) => (
+                <LevelPill
+                  key={`course-tech-${t.id}`}
+                  level={t.name}
+                  url={`/courses/browse/level/${t.slug}`}
+                />
+              ))}
+            </div>
+
             {/* Become An Ethereum Blockchain Developer With One Course. Master */}
-            Solidity, Web3.JS, Truffle, Metamask, Remix & More!
-          </p>
+            <div className="flex gap-x-2">
+              <FaCogs className="text-2xl text-secondary-500" />
+              {course.content.technologies.map((t) => (
+                <LevelPill
+                  key={`course-tech-${t.id}`}
+                  level={t.name}
+                  url={`/courses/browse/tech/${t.slug}`}
+                />
+              ))}
+            </div>
+            <div className="flex gap-x-2">
+              <AiFillTags className="text-2xl text-secondary-500" />
+              {course.content.tags.map((t) => (
+                <LevelPill
+                  key={`course-tech-${t.id}`}
+                  level={t.name}
+                  url={`/courses/browse/tag/${t.slug}`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
         {/* hero image */}
-        <div className="flex h-[600px] w-full items-center justify-center rounded-md bg-main-gray-light">
+        <div className="relative flex h-[200px] w-full items-center justify-center rounded-md bg-main-gray-light sm:h-[300px] md:h-[400px] lg:h-[600px]">
+          {course.content.coverImageUrl && (
+            <Image
+              alt="thumbnail"
+              src={course.content.coverImageUrl}
+              layout="fill"
+              objectFit="contain"
+            />
+          )}
           {/* play button */}
           {/* <div className="h-14 w-14 rounded-full bg-secondary-400 shadow-md"></div> */}
         </div>
@@ -72,7 +139,7 @@ const CoursePage: NextPage = () => {
           </div>
         </div>
         {session && (
-          <>
+          <div className="grid 2xl:grid-cols-3">
             <AddCourseToRoadmap
               courseId={course.id}
               inRoadmap={inRoadmap}
@@ -84,34 +151,56 @@ const CoursePage: NextPage = () => {
               completed={completed}
             />
 
-            <button className="mt-8 w-full rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500">
+            <button className="mt-8 w-96 rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500">
               Take final test
             </button>
-          </>
+          </div>
         )}
       </div>
       {/* Course Carousel */}
       {/* 
-          <div className="bg-main-gray-light pt-2 pb-4">
-            <div className="px-[5.5rem]">
-              <CourseCarousel title={`Top 10 ${topic} Courses`} courses={courses} />
-            </div>
-          </div> 
-      */}
+      <div className="bg-main-gray-light pt-2 pb-4">
+        <div className="px-[5.5rem]">
+          <CourseCarousel title={`Top 10 ${topic} Courses`} courses={courses} />
+        </div>
+      </div> */}
+
+      {/* Related courses */}
+      <div className="px-[5.5rem]">
+        {/* header */}
+        <div className="flex flex-col py-8">
+          <h1 className="mt-8 text-4xl">Related Courses</h1>
+        </div>
+        {/* Grid */}
+        <div className="grid grid-cols-3 gap-6">
+          {relatedCourses?.map((course) => (
+            <CourseCard key={`related-courses-${course.id}`} course={course} />
+          ))}
+        </div>
+        {/* show more */}
+        {/* TODO: manage pagination properly */}
+        {relatedCourses?.length === BROWSE_COURSES_ITEMS && (
+          <div className="my-10 w-full bg-main-gray-light py-2 text-center text-xl font-medium">
+            Show More Courses
+          </div>
+        )}
+      </div>
+
+      {/* Related resources */}
       <div className="px-[5.5rem]">
         <div className="my-10 w-full space-y-4">
-          <h1 className="mt-8 text-4xl">Other Categories</h1>
+          <h1 className="mt-8 text-4xl">Related Resources</h1>
           <div className="grid grid-cols-3 gap-4">
-            {categories.map((cat) => {
-              return (
-                <Link href={`/courses/browse/`} key={cat}>
-                  <button className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
-                    <p className="">Something (1)</p>
-                    <p className="font-normal">&#62;</p>
-                  </button>
-                </Link>
-              );
-            })}
+            {relatedResources?.map((res) => (
+              <Link
+                href={`/resources/${res.id}/${res.slug}`}
+                key={`related-resources-${res.id}`}
+              >
+                <button className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
+                  <p className="">{res.title}</p>
+                </button>
+              </Link>
+            ))}
           </div>
         </div>
         <div className="mt-8 flex flex-col">
