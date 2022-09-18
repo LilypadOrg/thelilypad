@@ -24,6 +24,7 @@ import { formatAddress } from '~/utils/formatters';
 import EditProfileModal from '~/components/EditProfileModal';
 import { UserCourse } from '~/types/types';
 import CourseCard from '~/components/CourseCard';
+import MintSBTModal from '~/components/MintSBTModal';
 import { TiTick } from 'react-icons/ti';
 import { LearningPathCards } from '~/components/ui/userProfile';
 import Tilt from 'react-parallax-tilt';
@@ -56,8 +57,12 @@ const UserProfile: NextPage = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const username = router.query.username as string | undefined;
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [modalMode, setModalMode] = useState<'create' | 'update'>('update');
+  const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
+  const [editModalMode, setEditModalMode] = useState<'create' | 'update'>(
+    'update'
+  );
+
+  const [mintModalOpen, setMintModalOpen] = useState<boolean>(false);
 
   const { data: userProfile, isSuccess: isSuccessUserProfile } = trpc.useQuery(
     ['users.byUsername', { username: username! }],
@@ -101,6 +106,7 @@ const UserProfile: NextPage = () => {
     hash: mintTokenRes?.hash,
     onSuccess: () => {
       refetchGetMember();
+      closeMintModal();
     },
   });
 
@@ -156,13 +162,17 @@ const UserProfile: NextPage = () => {
   }
 
   const openModal = () => {
-    setModalOpen(true);
-    setModalMode(onChainProfile?.pathChosen ? 'update' : 'create');
+    setEditModalOpen(true);
+    setEditModalMode(onChainProfile?.pathChosen ? 'update' : 'create');
   };
 
-  const closeModal = () => {
-    setModalOpen(false);
+  const closeEditModal = () => {
+    setEditModalOpen(false);
     refetchGetMember();
+  };
+
+  const closeMintModal = () => {
+    setMintModalOpen(false);
   };
 
   return (
@@ -176,15 +186,23 @@ const UserProfile: NextPage = () => {
       {/* Hero section */}
       {userProfile && (
         <>
-          {session && modalOpen && (
+          {session && editModalOpen && (
             <EditProfileModal
-              open={modalOpen}
-              closeModal={closeModal}
+              open={editModalOpen}
+              closeModal={closeEditModal}
               userProfile={userProfile}
-              mode={modalMode}
+              mode={editModalMode}
             />
           )}
-          <div className="mt-8 flex items-center justify-center px-[5.5rem]">
+          {session && mintModalOpen && (
+            <MintSBTModal
+              open={mintModalOpen}
+              closeModal={closeMintModal}
+              mintFunction={mintToken}
+              mintIsLoading={isLoadingMintToken}
+            />
+          )}
+          <div className="my-8 flex items-center justify-center px-[5.5rem]">
             <div className="min-h-[255px] w-[38%] rounded-md bg-main-gray-light p-8 pl-12">
               <div className="flex items-baseline gap-2">
                 <h1 className="text-2xl font-bold">

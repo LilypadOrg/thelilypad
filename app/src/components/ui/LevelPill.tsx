@@ -9,7 +9,8 @@ const LevelPill = ({
   classes?: string;
   url?: string;
 }) => {
-  let colorClasses;
+  let colorClasses: string;
+
   if (level === 'Beginner') {
     colorClasses = 'bg-green-200 text-green-600';
   } else if (level === 'Intermediate') {

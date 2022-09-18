@@ -1,6 +1,7 @@
 import React from 'react';
 import CourseCard from '~/components/CourseCard';
 import { ContentType } from '~/types/types';
+import { COURSES_HOME_ITEMS } from '~/utils/constants';
 import { trpc } from '~/utils/trpc';
 
 const coursesList = [
@@ -43,9 +44,9 @@ const bigResourceList5 = [
 ];
 
 const Courses = () => {
-  const { data: techs } = trpc.useQuery([
-    'technologies.byContentTYpe',
-    { contentType: ContentType.COURSE, tags: ['web3'] },
+  const { data: courses } = trpc.useQuery([
+    'courses.all',
+    { take: COURSES_HOME_ITEMS },
   ]);
 
   return (
@@ -146,34 +147,9 @@ const Courses = () => {
         </div>
         {/* Aside */}
         <div className="flex flex-col gap-10">
-          <div className="flex flex-col gap-8 border-b-[3px]  border-b-main-gray-light pb-8">
-            {/* <CourseCard /> */}
-            <div className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
-              <p className="">Something new</p>
-              <p className="font-normal">&#62;</p>
-            </div>
-          </div>
-          <div className="flex flex-col gap-8 border-b-[3px]  border-b-main-gray-light pb-8">
-            {/* <CourseCard /> */}
-            <div className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
-              <p className="">Something new</p>
-              <p className="font-normal">&#62;</p>
-            </div>
-          </div>
-          <div className="flex flex-col gap-8 border-b-[3px]  border-b-main-gray-light pb-8">
-            {/* <CourseCard /> */}
-            <div className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
-              <p className="">Something new</p>
-              <p className="font-normal">&#62;</p>
-            </div>
-          </div>
-          <div className="flex flex-col gap-8 border-b-[3px]  border-b-main-gray-light pb-8">
-            {/* <CourseCard /> */}
-            <div className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
-              <p className="">Something new</p>
-              <p className="font-normal">&#62;</p>
-            </div>
-          </div>
+          {courses?.map((c) => (
+            <CourseCard key={`courses-${c.id}`} course={c} />
+          ))}
         </div>
       </div>
     </div>
