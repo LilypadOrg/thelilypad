@@ -24,6 +24,7 @@ import { formatAddress } from '~/utils/formatters';
 import EditProfileModal from '~/components/EditProfileModal';
 import { UserCourse } from '~/types/types';
 import CourseCard from '~/components/CourseCard';
+import MintSBTModal from '~/components/MintSBTModal';
 
 const InfoTile = ({
   title,
@@ -80,8 +81,12 @@ const UserProfile: NextPage = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const username = router.query.username as string | undefined;
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [modalMode, setModalMode] = useState<'create' | 'update'>('update');
+  const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
+  const [editModalMode, setEditModalMode] = useState<'create' | 'update'>(
+    'update'
+  );
+
+  const [mintModalOpen, setMintModalOpen] = useState<boolean>(false);
 
   const { data: userProfile, isSuccess: isSuccessUserProfile } = trpc.useQuery(
     ['users.byUsername', { username: username! }],
@@ -125,6 +130,7 @@ const UserProfile: NextPage = () => {
     hash: mintTokenRes?.hash,
     onSuccess: () => {
       refetchGetMember();
+      closeMintModal();
     },
   });
 
@@ -180,13 +186,17 @@ const UserProfile: NextPage = () => {
   }
 
   const openModal = () => {
-    setModalOpen(true);
-    setModalMode(onChainProfile?.pathChosen ? 'update' : 'create');
+    setEditModalOpen(true);
+    setEditModalMode(onChainProfile?.pathChosen ? 'update' : 'create');
   };
 
-  const closeModal = () => {
-    setModalOpen(false);
+  const closeEditModal = () => {
+    setEditModalOpen(false);
     refetchGetMember();
+  };
+
+  const closeMintModal = () => {
+    setMintModalOpen(false);
   };
 
   return (
@@ -200,12 +210,20 @@ const UserProfile: NextPage = () => {
       {/* Hero section */}
       {userProfile && (
         <>
-          {session && modalOpen && (
+          {session && editModalOpen && (
             <EditProfileModal
-              open={modalOpen}
-              closeModal={closeModal}
+              open={editModalOpen}
+              closeModal={closeEditModal}
               userProfile={userProfile}
-              mode={modalMode}
+              mode={editModalMode}
+            />
+          )}
+          {session && mintModalOpen && (
+            <MintSBTModal
+              open={mintModalOpen}
+              closeModal={closeMintModal}
+              mintFunction={mintToken}
+              mintIsLoading={isLoadingMintToken}
             />
           )}
           <div className="my-8 flex items-center justify-center px-[5.5rem]">
@@ -255,13 +273,14 @@ const UserProfile: NextPage = () => {
                   {/* TODO: Show spinner in button when loading */}
                   {onChainProfile?.['tokenId']._hex === '0x00' && (
                     <button
-                      disabled={
-                        !onChainProfile?.pathChosen ||
-                        !mintToken ||
-                        isLoadingMintToken
-                      }
+                      // disabled={
+                      //   !onChainProfile?.pathChosen ||
+                      //   !mintToken ||
+                      //   isLoadingMintToken
+                      // }
+                      onClick={() => setMintModalOpen(true)}
                       className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white disabled:bg-gray-500"
-                      onClick={() => mintToken?.()}
+                      // onClick={() => mintToken?.()}
                     >
                       Mint Your SBT
                     </button>

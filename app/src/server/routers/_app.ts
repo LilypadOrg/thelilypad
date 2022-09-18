@@ -11,6 +11,7 @@ import { technologyRouter } from './technologies';
 import { courseLevelRouter } from './courseLevels';
 import { resourceRouter } from './resources';
 import { blockenRouter } from './blockend';
+import { projectsRouter } from './projects';
 
 /**
  * Create your application's root router
@@ -47,6 +48,7 @@ export const appRouter = createRouter()
   .merge('technologies.', technologyRouter)
   .merge('courseLevels.', courseLevelRouter)
   .merge('resources.', resourceRouter)
+  .merge('projects.', projectsRouter)
   .merge('blockend.', blockenRouter);
 
 export type AppRouter = typeof appRouter;
