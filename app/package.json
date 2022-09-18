@@ -26,6 +26,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.35.0",
     "react-icons": "^4.4.0",
+    "react-parallax-tilt": "^1.7.65",
     "react-toastify": "^9.0.8",
     "superjson": "^1.9.1",
     "wagmi": "^0.6.4",

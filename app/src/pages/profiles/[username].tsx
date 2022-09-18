@@ -26,6 +26,7 @@ import { UserCourse } from '~/types/types';
 import CourseCard from '~/components/CourseCard';
 import { TiTick } from 'react-icons/ti';
 import { LearningPathCards } from '~/components/ui/userProfile';
+import Tilt from 'react-parallax-tilt';
 
 const InfoTile = ({
   title,
@@ -183,7 +184,7 @@ const UserProfile: NextPage = () => {
               mode={modalMode}
             />
           )}
-          <div className="my-8 flex items-center justify-center px-[5.5rem]">
+          <div className="mt-8 flex items-center justify-center px-[5.5rem]">
             <div className="min-h-[255px] w-[38%] rounded-md bg-main-gray-light p-8 pl-12">
               <div className="flex items-baseline gap-2">
                 <h1 className="text-2xl font-bold">
@@ -194,16 +195,19 @@ const UserProfile: NextPage = () => {
               </div>
               <p className="font-light">{userProfile.bio}</p>
             </div>
-            <div className="space-y-3 bg-main-gray-light">
-              <div>
+            <Tilt
+              className="parallax-effect-glare-scale"
+              glareEnable={true}
+              glareMaxOpacity={0.35}
+              scale={1.02}
+            >
+              <div className="relative h-[425px] w-[380px] cursor-pointer">
                 {!tokenMetadata && (
                   <Image
                     src="/images/profileSBT/frogSBT.png"
                     alt="sbt"
-                    layout="intrinsic"
+                    layout="fill"
                     objectFit="contain"
-                    width={500}
-                    height={300}
                   />
                 )}
                 {tokenMetadata && (
@@ -219,31 +223,7 @@ const UserProfile: NextPage = () => {
                   />
                 )}
               </div>
-              {session && session.user.address === userProfile.address && (
-                <>
-                  <button
-                    onClick={openModal}
-                    className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white"
-                  >
-                    {onChainProfile?.pathChosen ? 'Update' : 'Create'} Profile
-                  </button>
-                  {/* TODO: Show spinner in button when loading */}
-                  {onChainProfile?.['tokenId']._hex === '0x00' && (
-                    <button
-                      disabled={
-                        !onChainProfile?.pathChosen ||
-                        !mintToken ||
-                        isLoadingMintToken
-                      }
-                      className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white disabled:bg-gray-500"
-                      onClick={() => mintToken?.()}
-                    >
-                      Mint Your SBT
-                    </button>
-                  )}
-                </>
-              )}
-            </div>
+            </Tilt>
             <div className="min-h-[255px] w-[38%] items-stretch rounded-md bg-main-gray-light p-8 pl-12">
               <h1 className="text-2xl font-bold">My Tech Stack</h1>
               <div className="grid grid-cols-3 gap-1">
@@ -256,6 +236,31 @@ const UserProfile: NextPage = () => {
                 ))}
               </div>
             </div>
+          </div>
+          <div className="mb-6 -mt-1 flex items-center justify-center">
+            {session && session.user.address === userProfile.address && (
+              <div className="space-y-4">
+                <button
+                  onClick={openModal}
+                  className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white"
+                >
+                  {onChainProfile?.pathChosen ? 'Update' : 'Create'} Profile
+                </button>
+                {onChainProfile?.['tokenId']._hex === '0x00' && (
+                  <button
+                    disabled={
+                      !onChainProfile?.pathChosen ||
+                      !mintToken ||
+                      isLoadingMintToken
+                    }
+                    className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white disabled:bg-gray-500"
+                    onClick={() => mintToken?.()}
+                  >
+                    Mint Your SBT
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </>
       )}
@@ -331,7 +336,7 @@ const UserProfile: NextPage = () => {
               Take final test
             </button>
           </div>
-          <div className="mt-14 flex space-x-4">
+          <div className="mt-14 flex justify-start space-x-4">
             {roadmapCourses.beginner.map((course) => (
               /* Its same as CourseCard component */
               <CourseCard
