@@ -39,7 +39,9 @@ const CourseCard = ({
     // TODO: remove fix heigth
     // ${type === 'full' ? 'min-h-[500px]' : 'min-h-[350px]'}
     <div
-      className={`flex min-w-[20rem] flex-col justify-between self-start rounded-lg shadow-lg `}
+      className={`flex min-w-[20rem] ${
+        type === 'simple' && 'max-w-[20rem]'
+      } flex-col justify-between self-start rounded-lg shadow-lg `}
     >
       <div className="flex flex-col justify-start">
         <div className="relative h-[182px] w-full rounded-tr-lg rounded-tl-lg bg-main-gray-dark">

@@ -214,7 +214,7 @@ const UserProfile: NextPage = () => {
             />
           )}
           <div className="my-8 flex items-center justify-center px-[5.5rem]">
-            <div className="min-h-[255px] w-[38%] rounded-md bg-main-gray-light p-8 pl-12">
+            <div className="-mr-3 min-h-[255px] w-[38%] rounded-lg bg-primary-500 p-8 pl-12 text-white shadow-sm">
               <div className="flex items-baseline gap-2">
                 <h1 className="text-2xl font-bold">
                   {userProfile.username === userProfile.address
@@ -227,17 +227,17 @@ const UserProfile: NextPage = () => {
             <Tilt
               className="parallax-effect-glare-scale"
               glareEnable={true}
-              glareMaxOpacity={0.35}
+              glareMaxOpacity={0.55}
               scale={1.02}
             >
-              <div className="relative h-[425px] w-[380px] cursor-pointer">
+              <div className="relative flex h-[425px] w-[380px] cursor-pointer items-center justify-center rounded-lg bg-secondary-300 p-4 shadow-xl">
                 {!tokenMetadata && (
                   <Image
                     src="/images/profileSBT/level1-gray.svg"
                     alt="sbt"
                     layout="fill"
                     objectFit="contain"
-                    className="opacity-25"
+                    className="rounded-lg opacity-25"
                   />
                 )}
                 {tokenMetadata && (
@@ -270,9 +270,9 @@ const UserProfile: NextPage = () => {
                 )} */}
               </div>
             </Tilt>
-            <div className="min-h-[255px] w-[38%] items-stretch rounded-md bg-main-gray-light p-8 pl-12">
+            <div className="-ml-3 min-h-[255px] w-[38%] items-stretch rounded-lg bg-primary-500 p-8 pl-12 text-white shadow-sm">
               <h1 className="text-2xl font-bold">My Tech Stack</h1>
-              <div className="grid grid-cols-2 gap-1">
+              <div className="grid max-w-[80%] grid-cols-3">
                 {userProfile.technologies.map((language) => (
                   <TagsPill
                     key={`skill-${language.id}`}
@@ -367,7 +367,7 @@ const UserProfile: NextPage = () => {
       </div>
       {/* Beginner */}
       <div className="flex flex-col space-y-10 border-t-2 border-main-gray-dark px-[5.5rem] py-12">
-        <div className="flex justify-between space-x-8">
+        <div className="flex space-x-8">
           <div className="flex flex-col space-y-6">
             <p className="text-md font-semibold leading-5 underline">
               Beginner{' '}
@@ -401,7 +401,7 @@ const UserProfile: NextPage = () => {
       </div>
       {/* Intermediate */}
       <div className="flex flex-col space-y-10 border-t-2 border-main-gray-dark px-[5.5rem] py-12">
-        <div className="flex justify-between space-x-8">
+        <div className="flex space-x-8">
           <div className="flex flex-col space-y-6">
             <p className="text-md font-semibold leading-5 underline">
               Intermediate{' '}
@@ -417,7 +417,7 @@ const UserProfile: NextPage = () => {
               Take final test
             </button>
           </div>
-          <div className="mt-14 flex space-x-4">
+          <div className="mt-14 flex justify-start space-x-4">
             {roadmapCourses.intermediate.map((course) => (
               /* Its same as CourseCard component */
               <CourseCard
@@ -436,7 +436,7 @@ const UserProfile: NextPage = () => {
       </div>
       {/* Advanced */}
       <div className="flex flex-col space-y-10 border-t-2 border-main-gray-dark px-[5.5rem] py-12">
-        <div className="flex justify-between space-x-8">
+        <div className="flex space-x-8">
           <div className="flex flex-col space-y-6">
             <p className="text-md font-semibold leading-5 underline">
               Advanced{' '}
