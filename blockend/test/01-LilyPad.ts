@@ -53,6 +53,7 @@ describe("LilyPad", function () {
             //console.log(firstValues.join());
             const hash = (web3 as Web3).utils.soliditySha3(
                 { t: "uint256", v: 1 },
+                { t: "uint256", v: 1 },
                 { t: "bytes", v: web3.utils.fromAscii("Basic Solidity Course") },
                 { t: "uint256", v: 10 },
                 {
@@ -63,6 +64,7 @@ describe("LilyPad", function () {
 
             const signedData = await web3.eth.sign(hash!, safeCaller);
             const courseTx = await _lilyPadContract.submitEvent(
+                1,
                 1,
                 web3.utils.fromAscii("Basic Solidity Course"),
                 10,
@@ -101,6 +103,7 @@ describe("LilyPad", function () {
 
             const hash = await web3.utils.soliditySha3(
                 { t: "uint256", v: 1 },
+                { t: "uint256", v: 1 },
                 { t: "bytes", v: web3.utils.fromAscii("Basic Solidity Course") },
                 { t: "uint256", v: 10 },
                 {
@@ -112,6 +115,7 @@ describe("LilyPad", function () {
 
             try {
                 const courseTx = await _lilyPadContract.submitEvent(
+                    1,
                     1,
                     web3.utils.fromAscii("Basic Solidity Course"),
                     20,
@@ -159,6 +163,7 @@ describe("LilyPad", function () {
             //console.log(flattenedArray.join(""));
             const hash = (web3 as Web3).utils.soliditySha3(
                 { t: "uint256", v: 1 },
+                { t: "uint256", v: 1 },
                 { t: "bytes", v: web3.utils.fromAscii("Basic Solidity Course") },
                 { t: "uint256", v: 10 },
                 {
@@ -169,6 +174,7 @@ describe("LilyPad", function () {
 
             const signedData = await web3.eth.sign(hash!, safeCaller);
             const courseTx = await _lilyPadContract.submitEvent(
+                1,
                 1,
                 web3.utils.fromAscii("Basic Solidity Course"),
                 10,
@@ -212,6 +218,7 @@ describe("LilyPad", function () {
             //console.log(flattenedArray.join(""));
             const hash = (web3 as Web3).utils.soliditySha3(
                 { t: "uint256", v: 1 },
+                { t: "uint256", v: 1 },
                 { t: "bytes", v: web3.utils.fromAscii("Basic Solidity Course") },
                 { t: "uint256", v: 10 },
                 {
@@ -222,6 +229,7 @@ describe("LilyPad", function () {
 
             const signedData = await web3.eth.sign(hash!, safeCaller);
             const courseTx = await _lilyPadContract.submitEvent(
+                1,
                 1,
                 web3.utils.fromAscii("Basic Solidity Course"),
                 10,
@@ -239,61 +247,6 @@ describe("LilyPad", function () {
         });
     });
     describe("Memberfunctions", function () {
-        beforeEach(async function () {
-            //deploy some courses
-            const { deployer, safeCaller } = await getNamedAccounts();
-            const _web3: Web3 = web3;
-
-            var courseArray: ILilyPad.AccoladeStruct[] = [];
-
-            courseArray.push(
-                {
-                    eventId: 0,
-                    title: web3.utils.fromAscii("BEGINER"),
-                    badge: web3.utils.fromAscii(readSvgContent("images/level0.svg")),
-                } /*,
-                {
-                    eventId: 0,
-                    title: web3.utils.fromAscii("ADVANCED"),
-                    badge: web3.utils.fromAscii(readSvgContent("images/level1.svg")),
-                }*/
-            );
-
-            var flattenedArray = courseArray.map((i) => {
-                return (
-                    i.eventId.toString() + web3.utils.toAscii(i.title) + web3.utils.toAscii(i.badge)
-                );
-            });
-
-            //console.log(firstValues.join());
-            const hash = (web3 as Web3).utils.soliditySha3(
-                { t: "uint256", v: 1 },
-                { t: "bytes", v: web3.utils.fromAscii("Basic Solidity Course") },
-                { t: "uint256", v: 10 },
-                {
-                    t: "string",
-                    v: flattenedArray.join(""),
-                }
-            );
-
-            const signedData = await web3.eth.sign(hash!, safeCaller);
-            const courseTx = await _lilyPadContract.submitEvent(
-                1,
-                web3.utils.fromAscii("Basic Solidity Course"),
-                10,
-                courseArray,
-                signedData
-            );
-
-            const submitCourseReceipt = await courseTx.wait(1);
-            var eventId = 0;
-            for (const ev of submitCourseReceipt.events!) {
-                if (ev.event == "EventSubmited") {
-                    eventId = ev.args!.eventId;
-                }
-            }
-            assert(eventId == 1, "Event not Submited!");
-        });
         it("Try to submit member with correct signature from safeCaller. It should work with no problems", async function () {
             //create member
             const { deployer, safeCaller } = await getNamedAccounts();
@@ -417,7 +370,6 @@ describe("LilyPad", function () {
             const _member = await _lilyPadContract.getMember(user.address);
 
             assert(_member.pathChosen, "Member not created :-(");
-
             //mint token
             const mintTx = await _lilyPadContract
                 .connect(user)
@@ -428,6 +380,7 @@ describe("LilyPad", function () {
             let memberValues = await _lilyPadContract.getMember(user.address);
 
             assert(memberValues.tokenId.gt(0), "Token not minted :-(");
+
             assert(
                 memberValues.completedEvents.length == 0,
                 "Wrong number of completed events :-("
@@ -440,24 +393,26 @@ describe("LilyPad", function () {
             let initialTokenUri = JSON.parse(text);
 
             assert(initialTokenUri.attributes.length == 1, "wrong number of attributes");
-            let completedEvents = [1];
+            let completedEvent = 10003;
             //generates sig data
             hash = (web3 as Web3).utils.soliditySha3(
                 { t: "address", v: user.address },
-                ...completedEvents
+                { t: "uint256", v: completedEvent }
             );
 
             signedData = await web3.eth.sign(hash!, safeCaller);
+
+            console.log(`Signed data: ${signedData}`);
             const completeEventTx = await _lilyPadContract.completeEvent(
                 user.address,
-                completedEvents,
+                completedEvent,
                 signedData
             );
 
             await completeEventTx.wait(1);
 
             memberValues = await _lilyPadContract.getMember(user.address);
-
+            console.log(`Member xp after course completion: ${memberValues.xp}`);
             assert(
                 memberValues.completedEvents.length == 1,
                 "Wrong number of completed events :-("
@@ -481,7 +436,7 @@ describe("LilyPad", function () {
             const _web3: Web3 = web3;
 
             const initialXp: number = 0;
-            var completedCourses: number[] = [1];
+            var completedCourses: number[] = [];
 
             var badges: any[] = []; //badges is just an accolade array
             var flattenedBadgesArray = badges.map((i) => {
@@ -524,7 +479,7 @@ describe("LilyPad", function () {
 
             assert(memberValues.tokenId.gt(0), "Token not minted :-(");
             assert(
-                memberValues.completedEvents.length == 1,
+                memberValues.completedEvents.length == 0,
                 "Wrong number of completed events :-("
             );
 
@@ -535,15 +490,33 @@ describe("LilyPad", function () {
 
             let initialTokenUri = JSON.parse(text);
 
-            assert(initialTokenUri.attributes.length == 2, "wrong number of attributes");
+            assert(initialTokenUri.attributes.length == 1, "wrong number of attributes");
+
+            let completedEvent = 10003;
+            //generates sig data
+            hash = (web3 as Web3).utils.soliditySha3(
+                { t: "address", v: user.address },
+                { t: "uint256", v: completedEvent }
+            );
+
+            signedData = await web3.eth.sign(hash!, safeCaller);
+
+            console.log(`Signed data: ${signedData}`);
+            const completeEventTx = await _lilyPadContract.completeEvent(
+                user.address,
+                completedEvent,
+                signedData
+            );
+
+            await completeEventTx.wait(1);
 
             //generates sig data
             var accoladesArray: any[] = [];
 
             accoladesArray.push([
-                1,
-                web3.utils.fromAscii("BEGINER"),
-                web3.utils.fromAscii(readSvgContent("images/level1.svg")),
+                10003,
+                web3.utils.fromAscii("Beginner"),
+                web3.utils.fromAscii("N/A"),
             ]);
 
             flattenedBadgesArray = accoladesArray.map((i) => {

@@ -62,6 +62,7 @@ describe("PondSBT", function () {
 
         let hash = _web3.utils.soliditySha3(
             { t: "uint256", v: 1 },
+            { t: "uint256", v: 1 },
             { t: "bytes", v: web3.utils.fromAscii("Basic Solidity Course") },
             { t: "uint256", v: 10 },
             {
@@ -73,6 +74,7 @@ describe("PondSBT", function () {
         console.log("Signing course data...");
         let signedData = await _web3.eth.sign(hash!, safeCaller);
         const courseTx = await _lilyPadContract.submitEvent(
+            1,
             1,
             web3.utils.fromAscii("Basic Solidity Course"),
             10,
@@ -156,7 +158,13 @@ describe("PondSBT", function () {
             const memberValues = await _lilyPadContract.getMember(user.address);
 
             console.log(`Member ${user.address} minted token ${memberValues.tokenId}`);
-            let buff = Buffer.from(await _lilyPadContract.constructTokenUri(1, ""), "base64");
+
+            let buff = Buffer.from(
+                await (
+                    await _lilyPadContract.constructTokenUri(1, "ipfs://")
+                ).replace("data:application/json;base64,", ""),
+                "base64"
+            );
             let text = buff.toString("ascii");
             console.log(`tokenUri: ${text}`);
             console.log(

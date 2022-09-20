@@ -76,7 +76,7 @@ contract PondSBT is
     }
 
     function _baseURI() internal pure override returns (string memory) {
-        return "data:application/json;base64,";
+        return "ipfs://";
     }
 
     function takeFirstSteps(address _member) public payable onlyMinter returns (uint256) {

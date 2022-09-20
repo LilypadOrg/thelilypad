@@ -1,4 +1,15 @@
 {
   "solidity.packageDefaultDependenciesContractsDirectory": "",
-  "solidity.packageDefaultDependenciesDirectory": "blockend\\node_modules"
+  "solidity.packageDefaultDependenciesDirectory": "blockend\\node_modules",
+  "restoreTerminals.terminals": [
+    {
+      "splitTerminals": [
+        {
+          "name": "contracts-hh",
+          "commands": ["cd ./blockend"],
+          "shouldRunCommands": true
+        }
+      ]
+    }
+  ]
 }
