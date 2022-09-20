@@ -55,6 +55,11 @@ const CoursePage: NextPage = () => {
     }
   );
 
+  const { data: projects } = trpc.useQuery(['projects.all']);
+
+  // TODO: pull rigght content
+  const project = projects?.find((p) => p.id === 30003);
+
   const completed =
     (course &&
       !!userCourses?.find((c) => c.courseId === course.id && c.completed)) ||
@@ -135,11 +140,11 @@ const CoursePage: NextPage = () => {
           </div> */}
           <div className="flex flex-col space-y-2">
             <h1 className="mb-0 text-3xl font-semibold">Description</h1>
-            <p className="max-w-5xl font-light">{course.content.description}</p>
+            <p className="font-light">{course.content.description}</p>
           </div>
         </div>
         {session && (
-          <div className="grid 2xl:grid-cols-3">
+          <div className="grid grid-cols-3">
             <AddCourseToRoadmap
               courseId={course.id}
               inRoadmap={inRoadmap}
@@ -206,21 +211,20 @@ const CoursePage: NextPage = () => {
         <div className="mt-8 flex flex-col">
           <h1 className="text-4xl">Something about the community</h1>
           <div className="flex space-x-8">
-            <div className="min-h-[353px] min-w-[60%]  rounded-lg bg-main-gray-dark text-white"></div>
+            <div className="relative min-h-[353px] min-w-[51.2%] rounded-lg border-[0.15rem] border-primary-600 bg-primary-600 text-white ">
+              {project?.content.coverImageUrl && (
+                <Image
+                  src={project.content.coverImageUrl}
+                  alt="community project thumbnail"
+                  layout="fill"
+                  objectFit="contain"
+                  className="rounded-lg transition-all hover:scale-95"
+                />
+              )}
+            </div>
             <div className="flex flex-col space-y-4">
-              <p className="font-semibold">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry&apos;s standard
-                dummy text ever since the.
-              </p>
-              <p className="font-[350]">
-                There are many variations of passages of Lorem Ipsum available,
-                but the majority have suffered alteration in some form, by
-                injected humour, or randomised words which don&apos;t look even
-                slightly believable. If you are going to use a passage of Lorem
-                Ipsum, you need to be sure there isn&apos;t anything
-                embarrassing hidden in the middle of text.
-              </p>
+              <h4 className="font-bold">{project?.content.title}</h4>
+              <p className="font-[350]">{project?.content.description}</p>
               <div className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
                 <p>Go somewhere else</p>
                 <p className="font-normal">&#62;</p>

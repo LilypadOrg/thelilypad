@@ -1,7 +1,7 @@
 export const MAIN_CONTRACT_ADDRESS =
   '0x0165878A594ca255338adfa4d48449f69242Eb8F';
 export const SBT_CONTRACT_ADDRESS =
-  '0x610178dA211FEF7D417bC0e6FeD39F05609AD788';
+  '0x9A676e781A523b5d0C0e43731313A708CB607508';
 export const MAIN_CONTRACT_ABI = [
   {
     anonymous: false,
@@ -101,6 +101,31 @@ export const MAIN_CONTRACT_ABI = [
       },
     ],
     name: 'Initialized',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'member',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'currentXp',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'level',
+        type: 'uint256',
+      },
+    ],
+    name: 'LevelReached',
     type: 'event',
   },
   {
@@ -222,6 +247,35 @@ export const MAIN_CONTRACT_ABI = [
       },
       {
         internalType: 'bytes',
+        name: '_accoladeTitle',
+        type: 'bytes',
+      },
+    ],
+    name: 'badgeEarned',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_member',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_eventId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes',
         name: '_sig',
         type: 'bytes',
       },
@@ -229,6 +283,30 @@ export const MAIN_CONTRACT_ABI = [
     name: 'completeEvent',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_member',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_eventId',
+        type: 'uint256',
+      },
+    ],
+    name: 'completedEvent',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -954,29 +1032,6 @@ export const MAIN_CONTRACT_ABI = [
       },
     ],
     name: 'updateEvent',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_memberAddress',
-        type: 'address',
-      },
-      {
-        internalType: 'bool',
-        name: '_firstStepTaken',
-        type: 'bool',
-      },
-      {
-        internalType: 'bytes',
-        name: '_sig',
-        type: 'bytes',
-      },
-    ],
-    name: 'updateFirstStep',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

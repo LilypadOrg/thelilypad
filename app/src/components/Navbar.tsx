@@ -67,6 +67,9 @@ const Navbar = () => {
             ))}
           </ul>
           <div className="flex items-center justify-evenly gap-4">
+            <button className="text-p rounded-lg border-2 border-primary-500  bg-primary-400 p-2 font-bold text-white shadow-md shadow-gray-500">
+              Froggy DAO Treasury: 23.421 ETH
+            </button>
             <ConnectWallet />
             <AccountWidget />
           </div>

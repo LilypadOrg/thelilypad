@@ -51,6 +51,10 @@ const EditProfileModal = ({
           'users.byUsername',
           { username: data.username },
         ]);
+        utils.invalidateQueries([
+          'users.byAddress',
+          { address: userProfile.address },
+        ]);
         if (changeRoute) router.replace(`/profiles/${data.username}`);
         closeModal();
       },
@@ -189,8 +193,8 @@ const EditProfileModal = ({
       >
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
           {/* Modal panel, show/hide based on modal state. */}
-          <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <div className="relative transform overflow-hidden rounded-lg bg-secondary-400 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+            <div className="bg-secondary-400 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
               <div className="sm:flex sm:items-start">
                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                   <h3
@@ -201,9 +205,12 @@ const EditProfileModal = ({
                   </h3>
                   <div className="mt-2">
                     <form onSubmit={handleSubmit(onSubmit)}>
-                      <div className="flex flex-col gap-2">
-                        <label>Username</label>
+                      <div className="flex flex-col gap-4">
+                        <label className="font-bold uppercase tracking-widest">
+                          Username
+                        </label>
                         <input
+                          className="rounded-lg bg-secondary-300 p-2 placeholder:text-gray-500"
                           placeholder="Username"
                           defaultValue={
                             userProfile?.username === userProfile?.address
@@ -215,14 +222,19 @@ const EditProfileModal = ({
                         {errors.username && (
                           <span>{errors.username.message}</span>
                         )}
-                        <label>Bio</label>
+                        <label className="font-bold uppercase tracking-widest">
+                          Bio
+                        </label>
                         <textarea
+                          className="rounded-lg bg-secondary-300 p-2 placeholder:text-gray-500"
                           placeholder="Bio"
                           {...register('bio')}
                           defaultValue={userProfile.bio || ''}
                         />
                         {errors.bio && <span>{errors.bio.message}</span>}
-                        <label>Tech Skills Selected</label>
+                        <label className="font-bold uppercase tracking-widest">
+                          Your Skills
+                        </label>
 
                         <div className="flex">
                           {selectedSkills.map((ts) => (
@@ -233,12 +245,15 @@ const EditProfileModal = ({
                               <LevelPill
                                 key={`selected-skill-${ts.id}`}
                                 level={ts.name}
-                                classes="justify-self-start"
+                                noColor={true}
+                                classes="justify-self-start bg-white"
                               />
                             </button>
                           ))}
                         </div>
-                        <div>Select your skills</div>
+                        <div className="font-bold uppercase tracking-widest">
+                          Select Skills
+                        </div>
                         <div>
                           {availableSkills?.map((ts) => (
                             <button
@@ -253,7 +268,7 @@ const EditProfileModal = ({
                           ))}
                         </div>
                       </div>
-                      <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                      <div className="bg-transparent px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                         {/* TODO: Show spinner in button when loading */}
                         <button
                           disabled={
@@ -262,7 +277,7 @@ const EditProfileModal = ({
                             isLoadingUpateProfile
                           }
                           type="submit"
-                          className="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                          className="inline-flex w-full justify-center rounded-md border border-transparent bg-primary-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
                         >
                           Save Profile
                         </button>
