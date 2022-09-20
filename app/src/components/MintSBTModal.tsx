@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Tilt from 'react-parallax-tilt';
 
 const MintSBTModal = ({
-  open,
   closeModal,
   mintFunction,
   mintIsLoading,
@@ -13,6 +12,7 @@ const MintSBTModal = ({
   closeModal: () => void;
   mintFunction: ContractWriteFn | undefined;
   mintIsLoading: boolean;
+  fireCelebration: () => void;
 }) => {
   const handleMint = () => {
     if (mintFunction) {
@@ -61,7 +61,7 @@ const MintSBTModal = ({
             </p>
             <button
               type="submit"
-              disabled={!mintFunction}
+              // disabled={!mintFunction}
               onClick={handleMint}
               className="inline-flex w-full justify-center rounded-md border border-transparent bg-primary-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
             >

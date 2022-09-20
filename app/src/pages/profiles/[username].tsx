@@ -17,7 +17,7 @@ import {
   SBT_CONTRACT_ABI,
 } from '~/utils/contracts';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { SBT_MINT_FEE } from '~/utils/constants';
 import { formatAddress } from '~/utils/formatters';
@@ -28,6 +28,12 @@ import MintSBTModal from '~/components/MintSBTModal';
 import { LearningPathCards } from '~/components/ui/userProfile';
 import Tilt from 'react-parallax-tilt';
 import TagsPill from '~/components/TagsPill';
+import ReactCanvasConfetti from 'react-canvas-confetti';
+import { CreateTypes } from 'canvas-confetti';
+
+function randomInRange(min: number, max: number): number {
+  return Math.random() * (max - min) + min;
+}
 
 const InfoTile = ({
   title,
@@ -63,6 +69,43 @@ const UserProfile: NextPage = () => {
   );
 
   const [mintModalOpen, setMintModalOpen] = useState<boolean>(false);
+
+  /* Animation stuff */
+  const [fire, setFire] = useState<boolean>(false);
+  const refAnimationInstance = useRef<CreateTypes | null>(null);
+  const [intervalId, setIntervalId] = useState<number | null>(null);
+
+  const getInstance = useCallback((confetti: CreateTypes) => {
+    refAnimationInstance.current = confetti;
+  }, []);
+
+  const nextTickAnimation = useCallback(() => {
+    if (refAnimationInstance.current) {
+      refAnimationInstance.current(getAnimationSettings(0.1, 0.3));
+      refAnimationInstance.current(getAnimationSettings(0.7, 0.9));
+    }
+  }, []);
+
+  const stopAnimation = useCallback(() => {
+    clearInterval(intervalId?.toString());
+    setIntervalId(null);
+    refAnimationInstance.current && refAnimationInstance.current.reset();
+  }, [intervalId]);
+
+  const startAnimation = useCallback(() => {
+    if (!intervalId) {
+      setIntervalId(window.setInterval(nextTickAnimation, 400));
+      setTimeout(stopAnimation, 4000);
+    }
+  }, [intervalId, nextTickAnimation, stopAnimation]);
+
+  useEffect(() => {
+    return () => {
+      clearInterval(intervalId?.toString());
+    };
+  }, [intervalId]);
+
+  /* Animation stuff */
 
   const { data: userProfile, isSuccess: isSuccessUserProfile } = trpc.useQuery(
     ['users.byUsername', { username: username! }],
@@ -111,6 +154,7 @@ const UserProfile: NextPage = () => {
     onSuccess: () => {
       refetchGetMember();
       closeMintModal();
+      fireCelebration();
     },
   });
 
@@ -186,8 +230,43 @@ const UserProfile: NextPage = () => {
     setMintModalOpen(false);
   };
 
+  /* Animation Stuff */
+
+  function getAnimationSettings(originXA: number, originXB: number) {
+    return {
+      startVelocity: 30,
+      spread: 360,
+      ticks: 60,
+      zIndex: 0,
+      particleCount: 150,
+      colors: [
+        '#0fc6fd',
+        '#9844fd',
+        '#fe4e71',
+        '#70ff37',
+        '#f8fb2b',
+        '#f79916',
+        '#fc1dfc',
+      ],
+      origin: {
+        x: randomInRange(originXA, originXB),
+        y: Math.random() - 0.2,
+      },
+    };
+  }
+
+  const fireCelebration = () => {
+    startAnimation();
+  };
+
   return (
     <div>
+      <ReactCanvasConfetti
+        className="pointer-events-none fixed top-0 left-0 z-[1000] h-full w-full"
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore next-line
+        refConfetti={getInstance}
+      />
       <nav className="flex items-center justify-center space-x-10 border border-main-gray-dark">
         <p className="p-2">Event</p>
         <p className="p-2">Projects</p>
@@ -211,6 +290,7 @@ const UserProfile: NextPage = () => {
               closeModal={closeMintModal}
               mintFunction={mintToken}
               mintIsLoading={isLoadingMintToken}
+              fireCelebration={fireCelebration}
             />
           )}
           <div className="my-8 flex items-center justify-center px-[5.5rem]">
@@ -272,7 +352,7 @@ const UserProfile: NextPage = () => {
             </Tilt>
             <div className="-ml-3 min-h-[255px] w-[38%] items-stretch rounded-lg bg-primary-500 p-8 pl-12 text-white shadow-sm">
               <h1 className="text-2xl font-bold">My Tech Stack</h1>
-              <div className="grid max-w-[80%] grid-cols-3">
+              <div className="grid max-w-[80%] grid-cols-3 gap-2">
                 {userProfile.technologies.map((language) => (
                   <TagsPill
                     key={`skill-${language.id}`}
@@ -292,6 +372,7 @@ const UserProfile: NextPage = () => {
                 >
                   {onChainProfile?.pathChosen ? 'Update' : 'Create'} Profile
                 </button>
+
                 {onChainProfile?.['tokenId']._hex === '0x00' && (
                   <button
                     disabled={
