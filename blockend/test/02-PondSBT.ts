@@ -1,10 +1,10 @@
 import { assert, expect } from "chai";
 import { BigNumber } from "ethers";
-import deployLilyPad from "../deploy/03-deploy-lilyPad";
+import deployLilyPad from "../deploy/01-deploy-lilyPad";
 import { ILilyPad, LilyPad, LilyPad__factory, PondSBT, PondSBT__factory } from "../typechain-types";
 import Web3 from "web3";
 import { EventSubmitedEventObject } from "../typechain-types/contracts/LilyPad";
-import deployPondSBT from "../deploy/04-deploy-pondSBT";
+import deployPondSBT from "../deploy/02-deploy-pondSBT";
 import { MemberStruct } from "../types/contractTypes";
 
 const hre = require("hardhat");
