@@ -128,8 +128,8 @@ const UserProfile: NextPage = () => {
     addressOrName: MAIN_CONTRACT_ADDRESS,
     contractInterface: MAIN_CONTRACT_ABI,
     functionName: 'getMember',
-    enabled: !!session?.user,
-    args: [session?.user.address],
+    enabled: !!userProfile,
+    args: [userProfile?.address],
   });
 
   const { config: mintTokenConfig } = usePrepareContractWrite({
