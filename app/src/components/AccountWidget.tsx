@@ -63,7 +63,9 @@ const AccountWidget = () => {
       enabled: !!tokenUri,
       onSuccess: (data) => {
         console.log('updating SBT state');
-        const sbtURL = data.image.replace('ipfs://', 'https://ipfs.io/ipfs/');
+        const sbtURL = data.image
+          .replace('ipfs:', 'https:')
+          .concat('.ipfs.nftstorage.link/');
         if (sbtURL !== currentSBT) {
           setPrevSBT(currentSBT);
           setCurrentSBT(sbtURL);

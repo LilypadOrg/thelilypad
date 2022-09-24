@@ -258,11 +258,11 @@ const UserProfile: NextPage = () => {
     .replace('ipfs:', 'https:')
     .concat('.ipfs.nftstorage.link/');
 
-  console.log('onChainProfile');
-  console.log(onChainProfile);
+  // console.log('onChainProfile');
+  // console.log(onChainProfile);
 
-  console.log('tokenMetadata');
-  console.log(tokenMetadata);
+  // console.log('tokenMetadata');
+  // console.log(tokenMetadata);
 
   return (
     <div>
@@ -273,10 +273,18 @@ const UserProfile: NextPage = () => {
         refConfetti={getInstance}
       />
       <nav className="flex items-center justify-center space-x-10 border border-main-gray-dark">
-        <p className="p-2">Event</p>
-        <p className="p-2">Projects</p>
-        <p className="p-2">Learning Path</p>
-        <p className="p-2">Personal Roadmap</p>
+        <Link href="#events">
+          <p className="p-2">Events</p>
+        </Link>
+        <Link href="#projects">
+          <p className="p-2">Projects</p>
+        </Link>
+        <Link href="#path">
+          <p className="p-2">Learning Path</p>
+        </Link>
+        <Link href="#roadmap">
+          <p className="p-2">Personal Roadmap</p>
+        </Link>
       </nav>
       {/* Hero section */}
       {userProfile && (
@@ -400,7 +408,10 @@ const UserProfile: NextPage = () => {
         </>
       )}
       {/* My Learning Path */}
-      <div className="flex flex-col bg-main-gray-light px-[5.5rem] py-[2.2rem]">
+      <div
+        id="path"
+        className="flex flex-col bg-main-gray-light px-[5.5rem] py-16"
+      >
         <h1 className="mb-1 text-3xl font-bold">My Learning Path</h1>
         <p className="w-[40%] font-light">
           These are the most recent Accolades you have earned (or will earn once
@@ -420,7 +431,10 @@ const UserProfile: NextPage = () => {
         </div>
       </div>
       {/* My Events */}
-      <div className="mt-4 flex flex-col space-y-4 px-[5.5rem]">
+      <div
+        id="events"
+        className="mt-4 flex flex-col space-y-4 px-[5.5rem] py-16"
+      >
         <h1 className="mb-0 text-3xl font-bold">My Events</h1>
         {events.map((event) => (
           <InfoTile
@@ -433,7 +447,10 @@ const UserProfile: NextPage = () => {
         ))}
       </div>
       {/* My Projects */}
-      <div className="my-10 flex flex-col space-y-4 px-[5.5rem]">
+      <div
+        id="projects"
+        className="my-10 flex flex-col space-y-4 px-[5.5rem] py-16"
+      >
         <h1 className="mb-0 text-3xl font-bold">My Projects</h1>
         {projects.map((event) => (
           <InfoTile
@@ -447,7 +464,7 @@ const UserProfile: NextPage = () => {
       </div>
 
       {/* My personal roadmap */}
-      <div className="flex flex-col px-[5.5rem] py-[2.2rem]">
+      <div id="roadmap" className="flex flex-col px-[5.5rem] py-16">
         <h1 className="mb-1 text-3xl font-bold">My Personal Roadmap</h1>
         <p className="w-[40%] font-light">
           Populate this personal roadmap with courses of your choosing to set
