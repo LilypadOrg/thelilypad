@@ -254,10 +254,15 @@ const UserProfile: NextPage = () => {
     startAnimation();
   };
 
-  const sbtImageUri = tokenMetadata?.image.replace(
-    'ipfs://',
-    'https://ipfs.io/ipfs/'
-  );
+  const sbtImageUri = tokenMetadata?.image
+    .replace('ipfs:', 'https:')
+    .concat('.ipfs.nftstorage.link/');
+
+  console.log('onChainProfile');
+  console.log(onChainProfile);
+
+  console.log('tokenMetadata');
+  console.log(tokenMetadata);
 
   return (
     <div>
@@ -323,7 +328,7 @@ const UserProfile: NextPage = () => {
                   </div>
                 )}
                 {tokenMetadata && (
-                  <div className="relative flex h-[425px] w-[380px] cursor-pointer items-center justify-center rounded-lg p-4 shadow-xl">
+                  <div className="relative flex h-[380px] w-[380px] cursor-pointer items-center justify-center rounded-lg border-4 border-black p-4 shadow-xl">
                     <Image
                       loader={() => sbtImageUri}
                       src={sbtImageUri}

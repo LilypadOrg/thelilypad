@@ -6,7 +6,7 @@ interface Props {
   bgColor?: string;
   title: string;
   courses: Courses;
-  type: 'simple' | 'full';
+  type?: 'simple' | 'full';
 }
 
 const CourseCarousel = ({ bgColor, title, courses, type = 'full' }: Props) => {

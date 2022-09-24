@@ -87,12 +87,15 @@ const EditProfileModal = ({
     functionName: 'createMember',
     args: [
       userProfile.xp, // _initialXP
-      userProfile.courses.map((c) => c.courseId), // -completedEvents
+      userProfile.courses.filter((c) => c.completed).map((c) => c.courseId), // -completedEvents
       [], // _badges
       createMemberSignature, // _sig
     ],
     enabled: !!createMemberSignature,
   });
+
+  console.log('userProfile.courses');
+  console.log(userProfile.courses.filter((c) => c.completed));
 
   const { data: createMemberRes, write: createMember } =
     useContractWrite(createMemberConfig);

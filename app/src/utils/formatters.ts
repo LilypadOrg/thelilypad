@@ -20,3 +20,7 @@ export function limitStrLength(text: string, max_length: number) {
 export const formatAddress = (address: string) => {
   return address.slice(0, 4) + '...' + address.slice(-4);
 };
+
+export const formatNumber = (input: string | number) => {
+  return input.toLocaleString('en-US');
+};

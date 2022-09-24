@@ -14,6 +14,7 @@ import { trpc } from '~/utils/trpc';
 import { FaCogs } from 'react-icons/fa';
 import { AiFillTags } from 'react-icons/ai';
 import { MdGrade } from 'react-icons/md';
+import { formatNumber } from '~/utils/formatters';
 
 const CoursePage: NextPage = () => {
   const id = Number(useRouter().query.id);
@@ -79,40 +80,6 @@ const CoursePage: NextPage = () => {
       <div className="px-[5.5rem]">
         <div className="flex flex-col py-8 ">
           <h1 className="mb-4 text-4xl font-bold">{course.content.title}</h1>
-          <div className="flex-start flex items-center gap-x-4">
-            <div className="flex gap-x-2">
-              <MdGrade className="text-2xl text-secondary-500" />
-              {course.levels.map((t) => (
-                <LevelPill
-                  key={`course-tech-${t.id}`}
-                  level={t.name}
-                  url={`/courses/browse/level/${t.slug}`}
-                />
-              ))}
-            </div>
-
-            {/* Become An Ethereum Blockchain Developer With One Course. Master */}
-            <div className="flex gap-x-2">
-              <FaCogs className="text-2xl text-secondary-500" />
-              {course.content.technologies.map((t) => (
-                <LevelPill
-                  key={`course-tech-${t.id}`}
-                  level={t.name}
-                  url={`/courses/browse/tech/${t.slug}`}
-                />
-              ))}
-            </div>
-            <div className="flex gap-x-2">
-              <AiFillTags className="text-2xl text-secondary-500" />
-              {course.content.tags.map((t) => (
-                <LevelPill
-                  key={`course-tech-${t.id}`}
-                  level={t.name}
-                  url={`/courses/browse/tag/${t.slug}`}
-                />
-              ))}
-            </div>
-          </div>
         </div>
         {/* hero image */}
         <div className="relative flex h-[200px] w-full items-center justify-center rounded-md bg-main-gray-light sm:h-[300px] md:h-[400px] lg:h-[600px]">
@@ -127,6 +94,38 @@ const CoursePage: NextPage = () => {
           {/* play button */}
           {/* <div className="h-14 w-14 rounded-full bg-secondary-400 shadow-md"></div> */}
         </div>
+        <div className="mt-4 flex gap-x-4">
+          <div className="flex gap-x-2">
+            <MdGrade className="text-2xl text-secondary-500" />
+            {course.levels.map((t) => (
+              <LevelPill
+                key={`course-tech-${t.id}`}
+                level={t.name}
+                url={`/courses/browse/level/${t.slug}`}
+              />
+            ))}
+          </div>
+          <div className="flex gap-x-2">
+            <FaCogs className="text-2xl text-secondary-500" />
+            {course.content.technologies.map((t) => (
+              <LevelPill
+                key={`course-tech-${t.id}`}
+                level={t.name}
+                url={`/courses/browse/tech/${t.slug}`}
+              />
+            ))}
+          </div>
+          <div className="flex gap-x-2">
+            <AiFillTags className="text-2xl text-secondary-500" />
+            {course.content.tags.map((t) => (
+              <LevelPill
+                key={`course-tech-${t.id}`}
+                level={t.name}
+                url={`/courses/browse/tag/${t.slug}`}
+              />
+            ))}
+          </div>
+        </div>
         {/* Intro and desc */}
         <div className="mt-6 flex flex-col space-y-6">
           {/* <div className="flex flex-col space-y-2">
@@ -138,29 +137,54 @@ const CoursePage: NextPage = () => {
               itaque quam ipsum deserunt placeat porro. Vitae, ipsa cumque?
             </p>
           </div> */}
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col space-y-6">
+            <h1 className="mb-0 text-3xl font-semibold">Awards</h1>
+            <div className="flex justify-center">
+              <div className="grid w-[75%] grid-cols-3 gap-4">
+                <div className="flex flex-col gap-4 bg-gray-200 p-4 text-center">
+                  <p className="text-xl font-bold">XP</p>
+                  <div className="flex h-full items-center justify-center rounded-lg bg-gray-400">
+                    <p className="text-4xl">{formatNumber(course.xp)}</p>
+                  </div>
+                </div>
+                <div className="col-span-2 flex flex-col gap-4 bg-gray-200 p-4 text-center">
+                  <p className="text-xl font-bold">Accolades</p>
+                  <div className="flex h-full items-center justify-center gap-x-4 rounded-lg bg-gray-400 py-2">
+                    <Image
+                      alt="badge"
+                      src="/images/badges/badge.png"
+                      layout="fixed"
+                      width="120px"
+                      height="150px"
+                      className=""
+                    />
+                    <p className="text-4xl">[Whew...you made it!]</p>
+                  </div>
+                </div>
+              </div>
+            </div>
             <h1 className="mb-0 text-3xl font-semibold">Description</h1>
             <p className="font-light">{course.content.description}</p>
+            {session && (
+              <div className="grid grid-cols-3 gap-4">
+                <AddCourseToRoadmap
+                  courseId={course.id}
+                  inRoadmap={inRoadmap}
+                  type="standard"
+                />
+                <CompleteCourse
+                  courseId={course.id}
+                  user={session.user}
+                  completed={completed}
+                />
+
+                <button className="mt-8 rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500">
+                  Take final test
+                </button>
+              </div>
+            )}
           </div>
         </div>
-        {session && (
-          <div className="grid grid-cols-3">
-            <AddCourseToRoadmap
-              courseId={course.id}
-              inRoadmap={inRoadmap}
-              type="standard"
-            />
-            <CompleteCourse
-              courseId={course.id}
-              user={session.user}
-              completed={completed}
-            />
-
-            <button className="mt-8 w-96 rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500">
-              Take final test
-            </button>
-          </div>
-        )}
       </div>
       {/* Course Carousel */}
       {/* 
