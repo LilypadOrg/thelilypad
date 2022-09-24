@@ -28,7 +28,7 @@ export function initialLevels(): ILilyPad.LevelStruct[] {
             xpInit: 0,
             xpFin: 999,
             image: web3.utils.fromAscii(
-                "bafkreigufxhhrmek6ijekgjlmeiwzapshlnj4by3nwmwjkvw5xz72kpcay"
+                "bafkreid5wecvxn5mecr7y4yd5ln5txecssta3rbu3nmrinyt2a7i7bivcu"
             ),
         },
         {
@@ -36,7 +36,7 @@ export function initialLevels(): ILilyPad.LevelStruct[] {
             xpInit: 1000,
             xpFin: 1999,
             image: web3.utils.fromAscii(
-                "bafybeiddnx4zcpxwuawbtmrqftcrznjo2jkmfhjgxzxmcypnl6v23ctpum"
+                "bafybeigeorcqattgtnhpodx5qizim6uibrer3qincicxr2zaktmomzsjqa"
             ),
         },
         {
@@ -44,7 +44,7 @@ export function initialLevels(): ILilyPad.LevelStruct[] {
             xpInit: 2000,
             xpFin: 2999,
             image: web3.utils.fromAscii(
-                "bafybeidfjwnam45tefj5db7dfxbicwyqwrzvxkpvvtqukk4zggpmb3flt4"
+                "bafybeihwzknzd6x3jhg7wevpiummrpr3jbs5ompja337eskrfm2jyxxece"
             ),
         },
         {
