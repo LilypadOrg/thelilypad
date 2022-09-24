@@ -14,6 +14,7 @@ const AccountWidget = () => {
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
   const { data: session } = useSession();
+  const [prevSBT, setPrevSBT] = useState<string>();
   const [currentSBT, setCurrentSBT] = useState<string>();
 
   useEffect(() => {
@@ -27,6 +28,7 @@ const AccountWidget = () => {
     {
       enabled: !!session?.user,
       onSuccess: (data) => {
+        console.log('user.byAddress successfull');
         if (!data) {
           disconnect();
         }
@@ -60,18 +62,25 @@ const AccountWidget = () => {
     {
       enabled: !!tokenUri,
       onSuccess: (data) => {
-        setCurrentSBT(data.image.replace('ipfs://', 'https://ipfs.io/ipfs/'));
+        console.log('updating SBT state');
+        const sbtURL = data.image.replace('ipfs://', 'https://ipfs.io/ipfs/');
+        if (sbtURL !== currentSBT) {
+          setPrevSBT(currentSBT);
+          setCurrentSBT(sbtURL);
+        }
       },
     }
   );
 
+  console.log('prevSBT');
+  console.log(prevSBT);
   console.log('currentSBT');
   console.log(currentSBT);
 
   return user ? (
     <div>
       <Link href={`/profiles/${user.username}`}>
-        <button className="text-p rounded-lg border-2 border-secondary-500  bg-secondary-400 p-2 font-bold text-white shadow-md shadow-gray-500">
+        <button className="text-p rounded-lg  bg-secondary-400 p-2 font-bold text-white shadow-md shadow-gray-300">
           Lvl: {user?.level.number} / XP: {user?.xp}
         </button>
       </Link>

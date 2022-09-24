@@ -28,6 +28,13 @@ export const navItems = [
     footerSec: false,
   },
   {
+    text: 'Events',
+    path: '/events',
+    navBar: true,
+    footerMain: true,
+    footerSec: false,
+  },
+  {
     text: 'About',
     path: '/about',
     navBar: false,

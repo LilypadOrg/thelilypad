@@ -1,7 +1,7 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 // import Layout from '../components/Layout';
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit';
 import {
   GetSiweMessageOptions,
   RainbowKitSiweNextAuthProvider,
@@ -59,7 +59,6 @@ export default withTRPC<AppRouter>({
       //     queries: { staleTime: 60 },
       //     queryCache: new QueryCache({
       //       onSuccess: () => {
-      //         console.log('Fuuuuuuck');
       //       },
       //     }),
       //   },

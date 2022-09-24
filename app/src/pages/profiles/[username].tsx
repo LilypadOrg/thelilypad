@@ -30,6 +30,7 @@ import Tilt from 'react-parallax-tilt';
 import TagsPill from '~/components/TagsPill';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import { CreateTypes } from 'canvas-confetti';
+import CourseCarousel from '~/components/CourseCarousel';
 
 function randomInRange(min: number, max: number): number {
   return Math.random() * (max - min) + min;
@@ -306,27 +307,31 @@ const UserProfile: NextPage = () => {
             <Tilt
               className="parallax-effect-glare-scale"
               glareEnable={true}
-              glareMaxOpacity={0.55}
+              glareMaxOpacity={1}
               scale={1.02}
             >
-              <div className="relative flex h-[425px] w-[380px] cursor-pointer items-center justify-center rounded-lg bg-secondary-300 p-4 shadow-xl">
+              <>
                 {!tokenMetadata && (
-                  <Image
-                    src="/images/profileSBT/level1-gray.svg"
-                    alt="sbt"
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-lg opacity-25"
-                  />
+                  <div className="relative flex h-[425px] w-[380px] cursor-pointer items-center justify-center rounded-lg bg-gray-400 p-4 shadow-xl">
+                    <Image
+                      src="/images/profileSBT/level1-gray.jpg"
+                      alt="sbt"
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-lg opacity-25"
+                    />
+                  </div>
                 )}
                 {tokenMetadata && (
-                  <Image
-                    loader={() => sbtImageUri}
-                    src={sbtImageUri}
-                    alt="sbt"
-                    layout="fill"
-                    objectFit="contain"
-                  />
+                  <div className="relative flex h-[425px] w-[380px] cursor-pointer items-center justify-center rounded-lg p-4 shadow-xl">
+                    <Image
+                      loader={() => sbtImageUri}
+                      src={sbtImageUri}
+                      alt="sbt"
+                      layout="fill"
+                      objectFit="contain"
+                    />
+                  </div>
                 )}
                 {/* {tokenMetadata && userProfile.level.number === 1 && (
                   // TODO: find a a better way to display and resize SVG
@@ -346,11 +351,11 @@ const UserProfile: NextPage = () => {
                     objectFit="contain"
                   />
                 )} */}
-              </div>
+              </>
             </Tilt>
             <div className="-ml-3 min-h-[255px] w-[38%] items-stretch rounded-lg bg-primary-500 p-8 pl-12 text-white shadow-sm">
               <h1 className="text-2xl font-bold">My Tech Stack</h1>
-              <div className="grid max-w-[80%] grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 {userProfile.technologies.map((language) => (
                   <TagsPill
                     key={`skill-${language.id}`}
@@ -453,15 +458,10 @@ const UserProfile: NextPage = () => {
               {roadmapCourses.beginner.filter((f) => f?.completed).length || 0}{' '}
               / {roadmapCourses.beginner.length || 0}
             </p>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque
-              ipsam praesentium esse!
-            </p>
-            <button className="self-start rounded-md bg-main-gray-light px-12 py-2 font-semibold">
-              Take final test
-            </button>
           </div>
-          <div className="mt-14 flex justify-start space-x-4">
+
+          {/* TODO: replace with carousel component for all courses level */}
+          <div className="mt-8 flex space-x-8 overflow-x-auto px-2 py-2">
             {roadmapCourses.beginner.map((course) => (
               /* Its same as CourseCard component */
               <CourseCard
@@ -472,11 +472,17 @@ const UserProfile: NextPage = () => {
             ))}
           </div>
         </div>
-        <button className="ml-auto rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
-          <Link href="/courses/browse/level/beginner">
-            More Beginner Course
-          </Link>
-        </button>
+        <div className="flex justify-end gap-x-4">
+          <button className=" rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
+            <Link href="/courses/browse/level/beginner">Take final test</Link>
+          </button>
+
+          <button className="rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
+            <Link href="/courses/browse/level/beginner">
+              More Beginner Course
+            </Link>
+          </button>
+        </div>
       </div>
       {/* Intermediate */}
       <div className="flex flex-col space-y-10 border-t-2 border-main-gray-dark px-[5.5rem] py-12">
@@ -488,15 +494,8 @@ const UserProfile: NextPage = () => {
                 0}{' '}
               / {roadmapCourses.intermediate.length || 0}
             </p>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque
-              ipsam praesentium esse!
-            </p>
-            <button className="self-start rounded-md bg-main-gray-light px-12 py-2 font-semibold">
-              Take final test
-            </button>
           </div>
-          <div className="mt-14 flex justify-start space-x-4">
+          <div className="mt-8 flex space-x-8 overflow-x-auto px-2 py-2">
             {roadmapCourses.intermediate.map((course) => (
               /* Its same as CourseCard component */
               <CourseCard
@@ -507,11 +506,17 @@ const UserProfile: NextPage = () => {
             ))}
           </div>
         </div>
-        <button className="ml-auto rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
-          <Link href="/courses/browse/level/intermediate">
-            More Intermediate Courses
-          </Link>
-        </button>
+        <div className="flex justify-end gap-x-4">
+          <button className=" rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
+            <Link href="/courses/browse/level/beginner">Take final test</Link>
+          </button>
+
+          <button className="rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
+            <Link href="/courses/browse/level/intermediate">
+              More Intermediate Courses
+            </Link>
+          </button>
+        </div>
       </div>
       {/* Advanced */}
       <div className="flex flex-col space-y-10 border-t-2 border-main-gray-dark px-[5.5rem] py-12">
@@ -530,7 +535,7 @@ const UserProfile: NextPage = () => {
               Take final test
             </button>
           </div>
-          <div className="mt-14 flex space-x-4">
+          <div className="mt-8 flex space-x-8 overflow-x-auto px-2 py-2">
             {roadmapCourses.advanced.map((course) => (
               /* Its same as CourseCard component */
               <CourseCard
@@ -541,11 +546,17 @@ const UserProfile: NextPage = () => {
             ))}
           </div>
         </div>
-        <button className="ml-auto rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
-          <Link href="/courses/browse/level/advanced">
-            More Intermediate Courses
-          </Link>
-        </button>
+        <div className="flex justify-end gap-x-4">
+          <button className=" rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
+            <Link href="/courses/browse/level/beginner">Take final test</Link>
+          </button>
+
+          <button className=" rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
+            <Link href="/courses/browse/level/advanced">
+              More Intermediate Courses
+            </Link>
+          </button>
+        </div>
       </div>
     </div>
   );

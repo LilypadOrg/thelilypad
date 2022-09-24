@@ -53,6 +53,7 @@ export const CompleteCourse = ({
       toast.error(err.message);
     },
     onSuccess: () => {
+      console.log('user stats updated. invalidating user.byAddress....');
       utils.invalidateQueries(['users.byAddress', { address: user.address }]);
     },
   });
@@ -63,7 +64,6 @@ export const CompleteCourse = ({
     },
     onSuccess: () => {
       utils.invalidateQueries(['courses.byId', { id: courseId }]);
-      utils.invalidateQueries(['usercourses.all', { userId: user.userId }]);
     },
   });
 
@@ -81,9 +81,13 @@ export const CompleteCourse = ({
   const { isLoading: isLoadingCompleteCourse } = useWaitForTransaction({
     hash: completeCourseRes?.hash,
     onSuccess: () => {
+      console.log('course completed onChain. saving to db...');
       setCompleted();
     },
   });
+
+  console.log('isLoadingCompleteCourse');
+  console.log(isLoadingCompleteCourse);
 
   const handleSetCompleted = async () => {
     if (completeCourse) {

@@ -236,7 +236,7 @@ const EditProfileModal = ({
                           Your Skills
                         </label>
 
-                        <div className="flex">
+                        <div className="flex flex-wrap">
                           {selectedSkills.map((ts) => (
                             <button
                               key={`selected-skill-${ts.id}`}

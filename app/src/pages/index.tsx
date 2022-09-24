@@ -58,28 +58,28 @@ const Home: NextPage = () => {
               <div className="mt-4 grid  w-[85%] grid-cols-2 gap-8 ">
                 <div className="flex space-x-3">
                   <p className="font-normal">&#62;</p>
+                  <p className="underline">About the Lily Pad</p>
+                </div>
+                <div className="flex space-x-3">
+                  <p className="font-normal">&#62;</p>
+                  <p className="underline">Meet the team</p>
+                </div>
+                <div className="flex space-x-3">
+                  <p className="font-normal">&#62;</p>
+                  <p className="underline">What is a Soulbound token?</p>
+                </div>
+                <div className="flex space-x-3">
+                  <p className="font-normal">&#62;</p>
+                  <p className="underline">The Lily Pad White Paper</p>
+                </div>
+                {/* <div className="flex space-x-3">
+                  <p className="font-normal">&#62;</p>
                   <p className="underline">Lorem ipsum dolor sit amet</p>
                 </div>
                 <div className="flex space-x-3">
                   <p className="font-normal">&#62;</p>
-                  <p className="underline">RandoLorem ipsum dolor sit amet</p>
-                </div>
-                <div className="flex space-x-3">
-                  <p className="font-normal">&#62;</p>
                   <p className="underline">Lorem ipsum dolor sit amet</p>
-                </div>
-                <div className="flex space-x-3">
-                  <p className="font-normal">&#62;</p>
-                  <p className="underline">Lorem ipsum dolor sit amet</p>
-                </div>
-                <div className="flex space-x-3">
-                  <p className="font-normal">&#62;</p>
-                  <p className="underline">Lorem ipsum dolor sit amet</p>
-                </div>
-                <div className="flex space-x-3">
-                  <p className="font-normal">&#62;</p>
-                  <p className="underline">Lorem ipsum dolor sit amet</p>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

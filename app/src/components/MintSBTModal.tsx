@@ -17,7 +17,6 @@ const MintSBTModal = ({
   const handleMint = () => {
     if (mintFunction) {
       mintFunction();
-      closeModal();
     }
   };
 
@@ -26,9 +25,9 @@ const MintSBTModal = ({
       <div className="min animate-fade-in-down relative w-7/12 rounded-2xl bg-secondary-400 p-5">
         <div className="flex flex-row items-center space-x-4 text-gray-800">
           <Tilt>
-            <div className="flex items-center justify-center rounded-xl bg-primary-500 p-2 shadow-2xl">
+            <div className="flex items-center justify-center rounded-xl bg-black p-2 shadow-2xl">
               <Image
-                src={'/images/profileSBT/frogSBT.png'}
+                src={'/images/profileSBT/level1.jpg'}
                 alt={'nft'}
                 width="700"
                 height="700"
