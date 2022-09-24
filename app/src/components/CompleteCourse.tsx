@@ -54,7 +54,7 @@ export const CompleteCourse = ({
     },
     onSuccess: () => {
       console.log('user stats updated. invalidating user.byAddress....');
-      utils.invalidateQueries(['users.byAddress', { address: user.address }]);
+      utils.refetchQueries(['users.byAddress']);
     },
   });
 
@@ -63,7 +63,7 @@ export const CompleteCourse = ({
       toast.error(err.message);
     },
     onSuccess: () => {
-      utils.invalidateQueries(['courses.byId', { id: courseId }]);
+      utils.refetchQueries(['courses.byId', { id: courseId }]);
     },
   });
 
