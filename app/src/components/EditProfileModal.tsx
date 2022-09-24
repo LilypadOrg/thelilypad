@@ -8,7 +8,7 @@ import {
   USERNAME_MAX_LENGTH,
   USERNAME_MIN_LENGTH,
 } from '~/utils/constants';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { trpc } from '~/utils/trpc';
 import LevelPill from './ui/LevelPill';
 import { toast } from 'react-toastify';
@@ -38,6 +38,7 @@ const EditProfileModal = ({
 
   const router = useRouter();
   const utils = trpc.useContext();
+  const modalRef = useRef(null);
 
   const { data: techs } = trpc.useQuery(['technologies.all']);
   const { mutate: updateProfile, isLoading: isLoadingUpateProfile } =
@@ -112,6 +113,34 @@ const EditProfileModal = ({
     },
   });
 
+  /* ---- Modal Stuff ----- */
+
+  const hideModal = (e: React.MouseEvent<HTMLElement>) => {
+    console.log('Hello');
+
+    if (modalRef.current === e.target) {
+      console.log('Hello');
+      closeModal();
+    }
+  };
+
+  const keyPress = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && open) {
+        closeModal();
+        console.log('Esc pressed');
+      }
+    },
+    [closeModal, open]
+  );
+
+  useEffect(() => {
+    document.addEventListener('keydown', keyPress);
+    return () => document.removeEventListener('keydown', keyPress);
+  }, [keyPress]);
+
+  /* ---- Modal Stuff ----- */
+
   useEffect(() => {
     if (techs) {
       const selectedSkillsIds = selectedSkills.map((s) => s.id);
@@ -179,122 +208,105 @@ const EditProfileModal = ({
 
   return (
     <div
-      className="relative z-10"
-      aria-labelledby="modal-title"
-      role="dialog"
-      aria-modal="true"
+      className="fixed top-0 left-0 z-50 flex h-full w-full items-center justify-center overflow-auto bg-[rgba(0,0,0,0.5)] p-1"
+      ref={modalRef}
+      onClick={hideModal}
     >
-      {/* Background backdrop, show/hide based on modal state. */}
-      <div
-        className={`${
-          open ? 'fixed' : 'hidden'
-        } inset-0 bg-gray-500 bg-opacity-75 transition-opacity`}
-      ></div>
+      <div className="relative mt-20 transform overflow-hidden rounded-lg bg-secondary-400 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+        <div className="bg-secondary-400 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <div className="sm:flex sm:items-start">
+            <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+              <h3
+                className="text-lg font-medium leading-6 text-gray-900"
+                id="modal-title"
+              >
+                Edit Profile
+              </h3>
+              <div className="mt-2">
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <div className="flex flex-col gap-4">
+                    <label className="font-bold uppercase tracking-widest">
+                      Username
+                    </label>
+                    <input
+                      className="rounded-lg bg-secondary-300 p-2 placeholder:text-gray-500"
+                      placeholder="Username"
+                      defaultValue={
+                        userProfile?.username === userProfile?.address
+                          ? ''
+                          : userProfile?.username || ''
+                      }
+                      {...register('username')}
+                    />
+                    {errors.username && <span>{errors.username.message}</span>}
+                    <label className="font-bold uppercase tracking-widest">
+                      Bio
+                    </label>
+                    <textarea
+                      className="rounded-lg bg-secondary-300 p-2 placeholder:text-gray-500"
+                      placeholder="Bio"
+                      {...register('bio')}
+                      defaultValue={userProfile.bio || ''}
+                    />
+                    {errors.bio && <span>{errors.bio.message}</span>}
+                    <label className="font-bold uppercase tracking-widest">
+                      Your Skills
+                    </label>
 
-      <div
-        className={`${open ? 'fixed' : 'hidden'} inset-0 z-10 overflow-y-auto`}
-      >
-        <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-          {/* Modal panel, show/hide based on modal state. */}
-          <div className="relative transform overflow-hidden rounded-lg bg-secondary-400 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-            <div className="bg-secondary-400 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <div className="sm:flex sm:items-start">
-                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                  <h3
-                    className="text-lg font-medium leading-6 text-gray-900"
-                    id="modal-title"
-                  >
-                    Edit Profile
-                  </h3>
-                  <div className="mt-2">
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                      <div className="flex flex-col gap-4">
-                        <label className="font-bold uppercase tracking-widest">
-                          Username
-                        </label>
-                        <input
-                          className="rounded-lg bg-secondary-300 p-2 placeholder:text-gray-500"
-                          placeholder="Username"
-                          defaultValue={
-                            userProfile?.username === userProfile?.address
-                              ? ''
-                              : userProfile?.username || ''
-                          }
-                          {...register('username')}
-                        />
-                        {errors.username && (
-                          <span>{errors.username.message}</span>
-                        )}
-                        <label className="font-bold uppercase tracking-widest">
-                          Bio
-                        </label>
-                        <textarea
-                          className="rounded-lg bg-secondary-300 p-2 placeholder:text-gray-500"
-                          placeholder="Bio"
-                          {...register('bio')}
-                          defaultValue={userProfile.bio || ''}
-                        />
-                        {errors.bio && <span>{errors.bio.message}</span>}
-                        <label className="font-bold uppercase tracking-widest">
-                          Your Skills
-                        </label>
-
-                        <div className="flex flex-wrap">
-                          {selectedSkills.map((ts) => (
-                            <button
-                              key={`selected-skill-${ts.id}`}
-                              onClick={() => handleSkillRemoved(ts.id)}
-                            >
-                              <LevelPill
-                                key={`selected-skill-${ts.id}`}
-                                level={ts.name}
-                                noColor={true}
-                                classes="justify-self-start bg-white"
-                              />
-                            </button>
-                          ))}
-                        </div>
-                        <div className="font-bold uppercase tracking-widest">
-                          Select Skills
-                        </div>
-                        <div>
-                          {availableSkills?.map((ts) => (
-                            <button
-                              key={`available-skill-${ts.id}`}
-                              onClick={() => handleSkillSelected(ts.id)}
-                            >
-                              <LevelPill
-                                level={ts.name}
-                                classes="justify-self-start"
-                              />
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="bg-transparent px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                        {/* TODO: Show spinner in button when loading */}
+                    <div className="flex flex-wrap">
+                      {selectedSkills.map((ts) => (
                         <button
-                          disabled={
-                            (mode === 'create' && !createMember) ||
-                            isLoadingCreateMember ||
-                            isLoadingUpateProfile
-                          }
-                          type="submit"
-                          className="inline-flex w-full justify-center rounded-md border border-transparent bg-primary-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                          key={`selected-skill-${ts.id}`}
+                          onClick={() => handleSkillRemoved(ts.id)}
                         >
-                          Save Profile
+                          <LevelPill
+                            key={`selected-skill-${ts.id}`}
+                            level={ts.name}
+                            noColor={true}
+                            classes="justify-self-start bg-white"
+                          />
                         </button>
+                      ))}
+                    </div>
+                    <div className="font-bold uppercase tracking-widest">
+                      Select Skills
+                    </div>
+                    <div>
+                      {availableSkills?.map((ts) => (
                         <button
-                          onClick={closeModal}
-                          type="button"
-                          className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                          key={`available-skill-${ts.id}`}
+                          onClick={() => handleSkillSelected(ts.id)}
                         >
-                          Cancel
+                          <LevelPill
+                            level={ts.name}
+                            classes="justify-self-start"
+                          />
                         </button>
-                      </div>
-                    </form>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                  <div className="bg-transparent px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                    {/* TODO: Show spinner in button when loading */}
+                    <button
+                      disabled={
+                        (mode === 'create' && !createMember) ||
+                        isLoadingCreateMember ||
+                        isLoadingUpateProfile
+                      }
+                      type="submit"
+                      className="inline-flex w-full justify-center rounded-md border border-transparent bg-primary-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                    >
+                      Save Profile
+                    </button>
+                    <button
+                      onClick={closeModal}
+                      type="button"
+                      className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
