@@ -1,7 +1,7 @@
 export const MAIN_CONTRACT_ADDRESS =
-  '0x0165878A594ca255338adfa4d48449f69242Eb8F';
+  '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
 export const SBT_CONTRACT_ADDRESS =
-  '0x9A676e781A523b5d0C0e43731313A708CB607508';
+  '0x68B1D87F95878fE05B998F19b66F4baba5De1aed';
 export const MAIN_CONTRACT_ABI = [
   {
     anonymous: false,
@@ -360,6 +360,11 @@ export const MAIN_CONTRACT_ABI = [
   },
   {
     inputs: [
+      {
+        internalType: 'uint256',
+        name: '_journeyId',
+        type: 'uint256',
+      },
       {
         internalType: 'bytes',
         name: '_name',
@@ -920,6 +925,11 @@ export const MAIN_CONTRACT_ABI = [
   },
   {
     inputs: [
+      {
+        internalType: 'uint256',
+        name: '_eventId',
+        type: 'uint256',
+      },
       {
         internalType: 'uint256',
         name: '_eventTypeId',
