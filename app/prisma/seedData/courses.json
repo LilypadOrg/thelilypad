@@ -120,18 +120,18 @@
   {
     "id": 10009,
     "title": "Portfolio Website",
-    "description":"Follow along as I Build a NEXT JS Portfolio Website With Tailwind CSS.",
+    "description": "Follow along as I Build a NEXT JS Portfolio Website With Tailwind CSS.",
     "url": "https://www.youtube.com/watch?v=CMx51wpd7g4",
     "xp": 500,
     "coverImageUrl": "/images/courses/NextPortfolio.png",
     "levels": ["Beginner"],
-    "technologies": ["Next JS", "TailwindCSS"],
+    "technologies": ["Next JS", "Tailwind CSS"],
     "tags": ["Web2", "Front-end"]
   },
   {
     "id": 100010,
     "title": "Git and GitHub for Beginners - Crash Course",
-    "description":"Learn about Git and GitHub in this tutorial. These are important tools for all developers to understand. Git and GitHub make it easier to manage different software versions and make it easier for multiple people to work on the same software project.",
+    "description": "Learn about Git and GitHub in this tutorial. These are important tools for all developers to understand. Git and GitHub make it easier to manage different software versions and make it easier for multiple people to work on the same software project.",
     "url": "https://www.youtube.com/watch?v=RGOj5yH7evk",
     "xp": 250,
     "coverImageUrl": "/images/courses/GitHubCC.png",
@@ -142,7 +142,7 @@
   {
     "id": 100011,
     "title": "Deep Reinforcement Learning in Python Tutorial",
-    "description":"In this intermediate deep learning tutorial, you will learn how to go from reading a paper on deep deterministic policy gradients to implementing the concepts in Tensorflow. This process can be applied to any deep learning paper, not just deep reinforcement learning.",
+    "description": "In this intermediate deep learning tutorial, you will learn how to go from reading a paper on deep deterministic policy gradients to implementing the concepts in Tensorflow. This process can be applied to any deep learning paper, not just deep reinforcement learning.",
     "url": "https://www.youtube.com/watch?v=GJJc1t0rtSU",
     "xp": 800,
     "coverImageUrl": "/images/courses/DeepLearning.png",
@@ -153,13 +153,12 @@
   {
     "id": 100012,
     "title": "Python Object Oriented Programming (OOP)",
-    "description":"In this beginner object oriented programming tutorial I will be covering everything you need to know about classes, objects and OOP in python. This tutorial is designed for beginner python programmers and will give you a strong foundation in object oriented principles.",
+    "description": "In this beginner object oriented programming tutorial I will be covering everything you need to know about classes, objects and OOP in python. This tutorial is designed for beginner python programmers and will give you a strong foundation in object oriented principles.",
     "url": "https://www.youtube.com/watch?v=JeznW_7DlB0",
     "xp": 250,
     "coverImageUrl": "/images/courses/Python.png",
     "levels": ["Beginner"],
     "technologies": ["Python"],
     "tags": ["Web2"]
-  },
-  
+  }
 ]

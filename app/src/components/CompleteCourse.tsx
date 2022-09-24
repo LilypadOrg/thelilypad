@@ -48,31 +48,34 @@ export const CompleteCourse = ({
     enabled: !!completeEventSignature,
   });
 
-  const refreshUserStats = trpc.useMutation(['users.updateXPandLevel'], {
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: () => {
-      console.log('user stats updated. invalidating user.byAddress....');
-      utils.refetchQueries(['users.byAddress']);
-    },
-  });
+  const { mutate: refreshUserStats, isLoading: isLoadingrefreshUserStats } =
+    trpc.useMutation(['users.updateXPandLevel'], {
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: () => {
+        console.log('user stats updated. invalidating user.byAddress....');
+        utils.refetchQueries(['users.byAddress', { address: user.address }]);
+      },
+    });
 
-  const mutateCompleted = trpc.useMutation(['usercourses.complete'], {
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: () => {
-      utils.refetchQueries(['courses.byId', { id: courseId }]);
-    },
-  });
+  const { mutateAsync: mutateCompleted, isLoading: isLoadingMutateCompleted } =
+    trpc.useMutation(['usercourses.complete'], {
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: () => {
+        console.log('refetching course');
+        utils.refetchQueries(['usercourses.all', { userId: user.userId }]);
+      },
+    });
 
   const setCompleted = async () => {
-    await mutateCompleted.mutateAsync({
+    await mutateCompleted({
       courseId: courseId,
       completed: true,
     });
-    refreshUserStats.mutate();
+    refreshUserStats();
   };
 
   const { data: completeCourseRes, write: completeCourse } =
@@ -86,8 +89,8 @@ export const CompleteCourse = ({
     },
   });
 
-  console.log('isLoadingCompleteCourse');
-  console.log(isLoadingCompleteCourse);
+  console.log('completeCourse');
+  console.log(completeCourse);
 
   const handleSetCompleted = async () => {
     if (completeCourse) {
@@ -104,7 +107,9 @@ export const CompleteCourse = ({
         onClick={handleSetCompleted}
         className="mt-8 w-full rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500"
       >
-        {isLoadingCompleteCourse && 'Loading...'}
+        {isLoadingCompleteCourse ||
+          isLoadingMutateCompleted ||
+          (isLoadingrefreshUserStats && 'Loading...')}
         {completed && 'Course completed'}
         {!isLoadingCompleteCourse && !completed && 'Mark as complete'}
       </button>

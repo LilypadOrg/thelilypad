@@ -41,8 +41,8 @@ const AccountWidget = () => {
     addressOrName: MAIN_CONTRACT_ADDRESS,
     contractInterface: MAIN_CONTRACT_ABI,
     functionName: 'getMember',
-    enabled: !!session?.user,
-    args: [session?.user.address],
+    enabled: !!user,
+    args: [user?.address],
   });
 
   const { data: tokenUri } = useContractRead({
