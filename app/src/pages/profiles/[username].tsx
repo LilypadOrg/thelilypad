@@ -71,7 +71,7 @@ const UserProfile: NextPage = () => {
   const [mintModalOpen, setMintModalOpen] = useState<boolean>(false);
 
   /* Animation stuff */
-  const [fire, setFire] = useState<boolean>(false);
+  // const [fire, setFire] = useState<boolean>(false);
   const refAnimationInstance = useRef<CreateTypes | null>(null);
   const [intervalId, setIntervalId] = useState<number | null>(null);
 
@@ -166,10 +166,7 @@ const UserProfile: NextPage = () => {
     args: [onChainProfile?.tokenId._hex],
   });
 
-  console.log('tokenUri');
-  console.log(tokenUri);
-
-  const { data: tokenMetadata, error: metadataError } = useQuery(
+  const { data: tokenMetadata } = useQuery(
     ['tokenMetadata', tokenUri],
     async () => {
       const data = await (await fetch(tokenUri?.toString() || '')).json();
@@ -177,9 +174,6 @@ const UserProfile: NextPage = () => {
     },
     { enabled: !!tokenUri }
   );
-
-  console.log('tokenMetadata');
-  console.log(tokenMetadata);
 
   type RoadmapCourses = {
     beginner: UserCourse[];
@@ -213,7 +207,7 @@ const UserProfile: NextPage = () => {
 
   // TODO: redirect to home if profile doesn't exist
   if (isSuccessUserProfile && !userProfile) {
-    return <div>Profile not found</div>;
+    router.replace({ pathname: '/' });
   }
 
   const openModal = () => {
@@ -258,6 +252,11 @@ const UserProfile: NextPage = () => {
   const fireCelebration = () => {
     startAnimation();
   };
+
+  const sbtImageUri = tokenMetadata?.image.replace(
+    'ipfs://',
+    'https://ipfs.io/ipfs/'
+  );
 
   return (
     <div>
@@ -316,18 +315,17 @@ const UserProfile: NextPage = () => {
                     src="/images/profileSBT/level1-gray.svg"
                     alt="sbt"
                     layout="fill"
-                    objectFit="contain"
+                    objectFit="cover"
                     className="rounded-lg opacity-25"
                   />
                 )}
                 {tokenMetadata && (
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: tokenMetadata.image_data.replace(
-                        "width='12",
-                        "width='370px' height='370px'"
-                      ),
-                    }}
+                  <Image
+                    loader={() => sbtImageUri}
+                    src={sbtImageUri}
+                    alt="sbt"
+                    layout="fill"
+                    objectFit="contain"
                   />
                 )}
                 {/* {tokenMetadata && userProfile.level.number === 1 && (

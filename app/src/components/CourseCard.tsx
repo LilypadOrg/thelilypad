@@ -22,9 +22,6 @@ const CourseCard = ({
     ['usercourses.all', { userId: session?.user.userId || -1 }],
     {
       enabled: !!session,
-      onSuccess: () => {
-        console.log('Loaded user courses');
-      },
     }
   );
 
