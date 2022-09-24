@@ -10,7 +10,7 @@ const Courses = () => {
     // { take: COURSES_HOME_ITEMS },
   ]);
 
-  const filterTags = ['blockchain', 'web3'];
+  const filterTags = ['web2', 'web3'];
 
   const { data: tags } = trpc.useQuery(['tags.all', { tags: filterTags }]);
 
@@ -27,7 +27,7 @@ const Courses = () => {
             courses &&
             tags.map((t) => {
               const filteredCourses = courses.filter((c) =>
-                c.content.tags.filter((t2) => t2.slug === t.slug)
+                !!c.content.tags.find((t2) => t2.slug === t.slug)
               );
               if (filteredCourses)
                 return (

@@ -274,16 +274,16 @@ const UserProfile: NextPage = () => {
       />
       <nav className="flex items-center justify-center space-x-10 border border-main-gray-dark">
         <Link href="#events">
-          <p className="p-2">Events</p>
+          <p className="p-2 hover:cursor-pointer">Events</p>
         </Link>
         <Link href="#projects">
-          <p className="p-2">Projects</p>
+          <p className="p-2 hover:cursor-pointer">Projects</p>
         </Link>
         <Link href="#path">
-          <p className="p-2">Learning Path</p>
+          <p className="p-2 hover:cursor-pointer">Learning Path</p>
         </Link>
         <Link href="#roadmap">
-          <p className="p-2">Personal Roadmap</p>
+          <p className="p-2 hover:cursor-pointer">Personal Roadmap</p>
         </Link>
       </nav>
       {/* Hero section */}
@@ -548,10 +548,6 @@ const UserProfile: NextPage = () => {
               Advanced{' '}
               {roadmapCourses.advanced.filter((f) => f?.completed).length || 0}{' '}
               / {roadmapCourses.advanced.length || 0}
-            </p>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque
-              ipsam praesentium esse!
             </p>
             <button className="self-start rounded-md bg-main-gray-light px-12 py-2 font-semibold">
               Take final test
