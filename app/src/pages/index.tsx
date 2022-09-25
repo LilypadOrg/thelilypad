@@ -7,20 +7,28 @@ import { HOMEPAGE_COURSE_FILTERS } from '~/utils/constants';
 import { trpc } from '~/utils/trpc';
 import { limitStrLength } from '~/utils/formatters';
 import { useSession } from 'next-auth/react';
+import { SpotLightCards } from '~/components/ui/Home';
+import { SpotLightCardsLoading, StripLoading } from '~/components/ui/Loaders';
+import { HiChevronRight } from 'react-icons/hi';
 
 const Home: NextPage = () => {
-  const { data: techs } = trpc.useQuery([
+  const { data: techs, isLoading: techsLoading } = trpc.useQuery([
     'technologies.byContentTYpe',
     { contentType: ContentType.COURSE },
   ]);
-  const { data: tags } = trpc.useQuery([
+  const { data: tags, isLoading: tagsLoading } = trpc.useQuery([
     'tags.byContentTYpe',
     { contentType: ContentType.COURSE },
   ]);
 
   const { data: session } = useSession();
-  const { data: courses } = trpc.useQuery(['courses.all']);
-  const { data: projects } = trpc.useQuery(['projects.all', { take: 6 }]);
+  const { data: courses, isLoading: coursesLoading } = trpc.useQuery([
+    'courses.all',
+  ]);
+  const { data: projects, isLoading: projectsLoading } = trpc.useQuery([
+    'projects.all',
+    { take: 6 },
+  ]);
 
   const { data: user } = trpc.useQuery(
     ['users.byAddress', { address: session?.user.address || '' }],
@@ -65,21 +73,37 @@ const Home: NextPage = () => {
               </div>
               {/* List */}
               <div className="mt-4 grid  w-[85%] grid-cols-2 gap-8 ">
-                <div className="flex space-x-3">
-                  <p className="font-normal">&#62;</p>
-                  <p className="underline">About the Lily Pad</p>
+                <div className="flex space-x-2">
+                  <p className="mt-[0.1rem] text-2xl font-bold">
+                    <HiChevronRight />
+                  </p>
+                  <p className="font-medium underline underline-offset-2">
+                    About the Lily Pad
+                  </p>
                 </div>
-                <div className="flex space-x-3">
-                  <p className="font-normal">&#62;</p>
-                  <p className="underline">Meet the team</p>
+                <div className="flex space-x-2">
+                  <p className="mt-[0.1rem] text-2xl font-bold">
+                    <HiChevronRight />
+                  </p>
+                  <p className="font-medium underline underline-offset-2">
+                    Meet the team
+                  </p>
                 </div>
-                <div className="flex space-x-3">
-                  <p className="font-normal">&#62;</p>
-                  <p className="underline">What is a Soulbound token?</p>
+                <div className="flex space-x-2">
+                  <p className="mt-[0.1rem] text-2xl font-bold">
+                    <HiChevronRight />
+                  </p>
+                  <p className="font-medium underline underline-offset-2">
+                    What is a Soulbound token?
+                  </p>
                 </div>
-                <div className="flex space-x-3">
-                  <p className="font-normal">&#62;</p>
-                  <p className="underline">The Lily Pad White Paper</p>
+                <div className="flex space-x-2">
+                  <p className="mt-[0.1rem] text-2xl font-bold">
+                    <HiChevronRight />
+                  </p>
+                  <p className="font-medium underline underline-offset-2">
+                    The Lily Pad White Paper
+                  </p>
                 </div>
                 {/* <div className="flex space-x-3">
                   <p className="font-normal">&#62;</p>
@@ -105,11 +129,17 @@ const Home: NextPage = () => {
             {/* List */}
             <div className="mt-4 grid grid-cols-2 gap-2">
               <Link href="courses">
-                <button className="col-span-2 flex justify-between rounded-md bg-white py-2 px-4">
+                <button className="col-span-2 flex items-center justify-between rounded-md bg-white py-2 px-4">
                   <p className="">All Courses</p>
-                  <p className="font-normal">&#62;</p>
+                  <p className="mt-[0.1rem] text-xl font-bold">
+                    <HiChevronRight />
+                  </p>
                 </button>
               </Link>
+
+              {tagsLoading &&
+                techsLoading &&
+                [1, 2, 3, 4, 5, 6, 7, 8].map((i) => <StripLoading key={i} />)}
 
               {tags &&
                 techs &&
@@ -119,15 +149,18 @@ const Home: NextPage = () => {
                   .sort((a, b) => b._count.contents - a._count.contents)
                   .slice(0, HOMEPAGE_COURSE_FILTERS)
                   .map((courseFilter) => (
+                    /* Needs to be abstracted */
                     <Link
                       href={`/courses/browse/${courseFilter.type}/${courseFilter.slug}`}
                       key={`home-coursefilter-${courseFilter.slug}`}
                     >
-                      <button className="flex justify-between rounded-md bg-white py-2 px-4">
+                      <button className="flex items-center justify-between rounded-md bg-white py-2 px-4">
                         <p className="">
                           {courseFilter.name} ({courseFilter._count.contents})
                         </p>
-                        <p className="font-normal">&#62;</p>
+                        <p className="mt-[0.1rem] text-xl font-bold">
+                          <HiChevronRight />
+                        </p>
                       </button>
                     </Link>
                   ))}
@@ -161,34 +194,17 @@ const Home: NextPage = () => {
         <div className="my-8">
           {/* First three collection */}
           <div className="grid grid-cols-3 gap-8">
+            {/* TODO : Handle error and improve logic */}
+            {projectsLoading &&
+              [1, 2, 3, 4, 5, 6].map((i) => <SpotLightCardsLoading key={i} />)}
             {projects?.slice(0, 6).map((p, index: number) => (
-              <div
-                key={`featured-${p.content.title}`}
-                className="relative flex items-center justify-center rounded-lg border-[0.1rem] border-primary-600 bg-primary-600"
-              >
-                {p.content.coverImageUrl && (
-                  <Image
-                    src={p.content.coverImageUrl}
-                    alt={`${p.content.title} thumbnail`}
-                    height={320}
-                    width={420}
-                    className="rounded-lg transition-all hover:scale-95"
-                  />
-                )}
-                <div
-                  className={` absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg p-4 text-white  ${
-                    index % 2 ? 'bg-primary-500' : 'bg-secondary-400'
-                  }`}
-                >
-                  <h1 className="mb-0 break-words text-[0.9rem]">
-                    {limitStrLength(p.content.title, 25)}
-                  </h1>
-                  <p className="text-sm font-light leading-[1.1]">
-                    {limitStrLength(p.content.description, 50)}
-                  </p>
-                  {/* <p className="text-sm font-light">#goForYou</p> */}
-                </div>
-              </div>
+              <SpotLightCards
+                key={p.id}
+                teal={Boolean(index % 2)}
+                title={p.content.title}
+                description={p.content.description}
+                coverImageUrl={p.content.coverImageUrl}
+              />
             ))}
           </div>
           {/* Next two collection */}
@@ -197,14 +213,20 @@ const Home: NextPage = () => {
       <hr className="my-14 w-full bg-main-gray-dark" />
       <div className="px-[5.5rem]">
         {/* Top 10 courses */}
-        {courses && <CourseCarousel title="Top 10 Courses" courses={courses} />}
+        <CourseCarousel
+          title="Top 10 Courses"
+          courses={courses}
+          isLoading={coursesLoading}
+        />
         {/* view AllCourse one tab*/}
         <div className="my-14 w-full">
           <div className="flex w-[30%] justify-between rounded-md bg-main-gray-light py-2 px-4">
             <Link href="courses">
-              <button className="col-span-2 flex justify-between rounded-md bg-white py-2 px-4">
+              <button className="col-span-2 flex items-center justify-between rounded-md py-2 px-4">
                 <p className="font-semibold">View all Courses</p>
-                <p className="font-semibold">&#62;</p>
+                <p className="mt-[0.1rem] text-xl font-bold">
+                  <HiChevronRight />
+                </p>
               </button>
             </Link>
           </div>

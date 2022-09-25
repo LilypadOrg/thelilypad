@@ -272,18 +272,22 @@ const UserProfile: NextPage = () => {
         // @ts-ignore next-line
         refConfetti={getInstance}
       />
-      <nav className="flex items-center justify-center space-x-10 border border-main-gray-dark">
+      <nav className="flex items-center justify-center space-x-10 border border-main-gray-light">
         <Link href="#events">
-          <p className="p-2 hover:cursor-pointer">Events</p>
+          <p className="p-2 font-semibold hover:cursor-pointer">Events</p>
         </Link>
         <Link href="#projects">
-          <p className="p-2 hover:cursor-pointer">Projects</p>
+          <p className="p-2 font-semibold hover:cursor-pointer">Projects</p>
         </Link>
         <Link href="#path">
-          <p className="p-2 hover:cursor-pointer">Learning Path</p>
+          <p className="p-2 font-semibold hover:cursor-pointer">
+            Learning Path
+          </p>
         </Link>
         <Link href="#roadmap">
-          <p className="p-2 hover:cursor-pointer">Personal Roadmap</p>
+          <p className="p-2 font-semibold hover:cursor-pointer">
+            Personal Roadmap
+          </p>
         </Link>
       </nav>
       {/* Hero section */}
@@ -571,7 +575,7 @@ const UserProfile: NextPage = () => {
 
           <button className=" rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
             <Link href="/courses/browse/level/advanced">
-              More Intermediate Courses
+              More Advance Courses
             </Link>
           </button>
         </div>

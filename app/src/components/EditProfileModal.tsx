@@ -212,7 +212,7 @@ const EditProfileModal = ({
       ref={modalRef}
       onClick={hideModal}
     >
-      <div className="relative mt-20 transform overflow-hidden rounded-lg bg-secondary-400 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+      <div className="relative mt-20 transform overflow-hidden rounded-lg bg-secondary-400 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
         <div className="bg-secondary-400 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
           <div className="sm:flex sm:items-start">
             <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
@@ -294,9 +294,37 @@ const EditProfileModal = ({
                         isLoadingUpateProfile
                       }
                       type="submit"
-                      className="inline-flex w-full justify-center rounded-md border border-transparent bg-primary-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                      className={`inline-flex w-full justify-center rounded-md border border-transparent bg-primary-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
+                        isLoadingUpateProfile && 'cursor-not-allowed'
+                      }`}
                     >
-                      Save Profile
+                      {isLoadingUpateProfile ? (
+                        <>
+                          <svg
+                            className="mr-3 -ml-1 h-5 w-5 animate-spin text-indigo-500"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          Saving profile
+                        </>
+                      ) : (
+                        'Save Profile'
+                      )}
                     </button>
                     <button
                       onClick={closeModal}

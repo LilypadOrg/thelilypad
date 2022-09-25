@@ -61,7 +61,7 @@ const Navbar = () => {
                 className="ml-10 text-sm uppercase"
               >
                 <Link href={link.path}>
-                  <a>{link.text}</a>
+                  <a className="font-bold">{link.text}</a>
                 </Link>
               </li>
             ))}
@@ -115,7 +115,7 @@ const Navbar = () => {
                     className="py-4 text-sm"
                   >
                     <Link href={link.path}>
-                      <a>{link.text}</a>
+                      <a className="font-bold">{link.text}</a>
                     </Link>
                   </li>
                 ))}

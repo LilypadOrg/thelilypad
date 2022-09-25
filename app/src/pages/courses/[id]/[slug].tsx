@@ -72,7 +72,17 @@ const CoursePage: NextPage = () => {
     false;
 
   if (isLoading) {
-    return <div>Loading</div>;
+    return (
+      <div className="px-[5.5rem]">
+        <div className="flex animate-pulse flex-col py-8">
+          <h1 className="mb-2 w-[30%] rounded-md bg-gray-400 text-4xl font-bold text-transparent">
+            RandomText
+          </h1>
+        </div>
+        {/* hero image */}
+        <div className="relative flex h-[200px] w-full animate-pulse items-center justify-center rounded-md bg-main-gray-dark sm:h-[300px] md:h-[400px] lg:h-[600px]"></div>
+      </div>
+    );
   }
 
   return course ? (

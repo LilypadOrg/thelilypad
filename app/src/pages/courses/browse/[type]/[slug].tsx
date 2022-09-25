@@ -1,8 +1,10 @@
 import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { HiChevronRight } from 'react-icons/hi';
 import CourseCard from '~/components/CourseCard';
 import CourseCarousel from '~/components/CourseCarousel';
+import { CourseCardLoading } from '~/components/ui/Loaders';
 import { ContentType } from '~/types/types';
 import {
   BROWSE_COURSES_CAT_FILTERS,
@@ -15,7 +17,7 @@ const CourseCategories: NextPage = () => {
 
   const { type, slug } = router.query;
 
-  const { data: courses } = trpc.useQuery([
+  const { data: courses, isLoading: coursesLoading } = trpc.useQuery([
     'courses.all',
     {
       tags: type === 'tag' ? slug : undefined,
@@ -79,12 +81,11 @@ const CourseCategories: NextPage = () => {
       {/* Course Carousel */}
       <div className="bg-main-gray-light pt-2 pb-4">
         <div className="px-[5.5rem]">
-          {courses && (
-            <CourseCarousel
-              title={`Top 10 ${topic} Courses`}
-              courses={courses}
-            />
-          )}
+          <CourseCarousel
+            title={`Top 10 ${topic} Courses`}
+            courses={courses}
+            isLoading={coursesLoading}
+          />
         </div>
       </div>
       {/* Course Grid */}
@@ -103,6 +104,9 @@ const CourseCategories: NextPage = () => {
         </div>
         {/* Grid */}
         <div className="grid grid-cols-3 gap-6">
+          {/* TODO : Handle error and improve logic */}
+          {coursesLoading &&
+            [1, 2, 3, 4, 5].map((i) => <CourseCardLoading key={i} />)}
           {courses?.map((data) => (
             <CourseCard key={`course-${data.id}`} course={data} />
           ))}
@@ -131,11 +135,13 @@ const CourseCategories: NextPage = () => {
                     href={`/courses/browse/${courseFilter.type}/${courseFilter.slug}`}
                     key={`home-coursefilter-${courseFilter.slug}`}
                   >
-                    <button className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
+                    <button className="flex items-center justify-between rounded-md bg-main-gray-light py-2 px-4">
                       <p className="">
                         {courseFilter.name} ({courseFilter._count.contents})
                       </p>
-                      <p className="font-normal">&#62;</p>
+                      <p className="mt-[0.1rem] text-xl font-bold">
+                        <HiChevronRight />
+                      </p>
                     </button>
                   </Link>
                 ))}

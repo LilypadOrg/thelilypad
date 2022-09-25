@@ -1,18 +1,38 @@
 import React from 'react';
 import CourseCard from '~/components/CourseCard';
 import CourseCarousel from '~/components/CourseCarousel';
+import { CourseCardLoading } from '~/components/ui/Loaders';
 import { COURSES_HOME_ITEMS } from '~/utils/constants';
 import { trpc } from '~/utils/trpc';
 
+const Loader = () => {
+  return (
+    <div className={`my-8`}>
+      <h1 className="mt-8 w-[30%] rounded-md bg-gray-400 text-4xl text-transparent">
+        Web3 Courses
+      </h1>
+      {/* Card Container */}
+      <div className="mt-8 flex space-x-8 overflow-x-auto px-2 py-2">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <CourseCardLoading key={i} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const Courses = () => {
-  const { data: courses } = trpc.useQuery([
+  const { data: courses, isLoading: coursesLoading } = trpc.useQuery([
     'courses.all',
     // { take: COURSES_HOME_ITEMS },
   ]);
 
   const filterTags = ['web2', 'web3'];
 
-  const { data: tags } = trpc.useQuery(['tags.all', { tags: filterTags }]);
+  const { data: tags, isLoading: tagsLoading } = trpc.useQuery([
+    'tags.all',
+    { tags: filterTags },
+  ]);
 
   // const courses = trpc.useQuery(['courses.all', { tags: tags }], {
   //   enabled: filterTags,
@@ -23,11 +43,12 @@ const Courses = () => {
       <h1 className="mb-2 mt-2 text-4xl">Courses</h1>
       <div className="grid grid-cols-4 gap-10">
         <div className="col-span-3">
+          {(tagsLoading || coursesLoading) && <Loader />}
           {tags &&
             courses &&
             tags.map((t) => {
-              const filteredCourses = courses.filter((c) =>
-                !!c.content.tags.find((t2) => t2.slug === t.slug)
+              const filteredCourses = courses.filter(
+                (c) => !!c.content.tags.find((t2) => t2.slug === t.slug)
               );
               if (filteredCourses)
                 return (
@@ -35,6 +56,7 @@ const Courses = () => {
                     <CourseCarousel
                       title={`${t.name} courses`}
                       courses={filteredCourses}
+                      isLoading={tagsLoading && coursesLoading}
                     />
                   </div>
                 );
@@ -43,6 +65,8 @@ const Courses = () => {
         {/* Aside */}
         <div className="flex flex-col gap-10">
           <h1 className="mt-8 text-4xl">Top courses</h1>
+          {coursesLoading &&
+            [1, 2, 3, 4].map((i) => <CourseCardLoading key={i} />)}
           {courses?.slice(0, COURSES_HOME_ITEMS).map((c) => (
             <CourseCard key={`courses-${c.id}`} course={c} />
           ))}
