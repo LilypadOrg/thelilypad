@@ -19,7 +19,7 @@ const LevelPill = ({
     colorClasses = 'bg-green-200 text-green-600';
   } else if (level === 'Intermediate') {
     colorClasses = 'bg-yellow-200 text-yellow-600';
-  } else if (level === 'Intermediate') {
+  } else if (level === 'Advanced') {
     colorClasses = 'bg-red-200 text-red-600';
   } else {
     colorClasses = `bg-main-gray-dark text-black`;

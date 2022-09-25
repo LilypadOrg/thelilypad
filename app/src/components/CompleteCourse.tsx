@@ -48,18 +48,17 @@ export const CompleteCourse = ({
     enabled: !!completeEventSignature,
   });
 
-  const { mutate: refreshUserStats, isLoading: isLoadingrefreshUserStats } =
-    trpc.useMutation(['users.updateXPandLevel'], {
-      onError: (err) => {
-        toast.error(err.message);
-      },
-      onSuccess: () => {
-        console.log('user stats updated. invalidating user.byAddress....');
-        utils.refetchQueries(['users.byAddress']);
-      },
-    });
+  // const { mutate: refreshUserStats, isLoading: isLoadingrefreshUserStats } =
+  //   trpc.useMutation(['users.updateXPandLevel'], {
+  //     onError: (err) => {
+  //       toast.error(err.message);
+  //     },
+  //     onSuccess: () => {
+  //       console.log('user stats updated. invalidating user.byAddress....');
+  //     },
+  //   });
 
-  const { mutateAsync: mutateCompleted, isLoading: isLoadingMutateCompleted } =
+  const { mutate: mutateCompleted, isLoading: isLoadingMutateCompleted } =
     trpc.useMutation(['usercourses.complete'], {
       onError: (err) => {
         toast.error(err.message);
@@ -67,15 +66,19 @@ export const CompleteCourse = ({
       onSuccess: () => {
         console.log('refetching course');
         utils.refetchQueries(['usercourses.all', { userId: user.userId }]);
+        console.log('refetching user');
+        setTimeout(() => {
+          utils.refetchQueries(['users.byAddress', { address: user.address }]);
+        }, 1000);
       },
     });
 
   const setCompleted = async () => {
-    await mutateCompleted({
+    mutateCompleted({
       courseId: courseId,
       completed: true,
     });
-    refreshUserStats();
+    // refreshUserStats();
   };
 
   const { data: completeCourseRes, write: completeCourse } =
@@ -97,10 +100,7 @@ export const CompleteCourse = ({
     }
   };
 
-  const isLoading =
-    isLoadingCompleteCourse ||
-    isLoadingMutateCompleted ||
-    isLoadingrefreshUserStats;
+  const isLoading = isLoadingCompleteCourse || isLoadingMutateCompleted;
 
   return (
     <div>

@@ -149,7 +149,7 @@ export const userCourseRouter = createRouter()
         const { courseId, completed } = input;
         const { userId } = ctx.session.user;
 
-        const userCourse = await prisma.userCourse.upsert({
+        await prisma.userCourse.upsert({
           where: {
             userId_courseId: { userId, courseId },
           },
@@ -165,7 +165,24 @@ export const userCourseRouter = createRouter()
           },
           select: singleUserCourseSelect,
         });
-        return userCourse;
+
+        const xp = await prisma.course.aggregate({
+          _sum: { xp: true },
+          where: { userCourses: { some: { completed: true, userId } } },
+        });
+
+        const xpVal = xp._sum.xp || 0;
+        const level = await prisma.userLevel.findFirst({
+          where: { AND: { xpFrom: { lte: xpVal }, xpTo: { gte: xpVal } } },
+        });
+
+        if (!level) throw new Error();
+        const user = await prisma.user.update({
+          where: { id: userId },
+          data: { xp: xpVal, levelNumber: level.number },
+        });
+
+        return user;
       } catch (err) {
         throw new TRPCError({
           code: 'BAD_REQUEST',

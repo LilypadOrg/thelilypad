@@ -5,7 +5,6 @@ import CourseCarousel from '~/components/CourseCarousel';
 import { ContentType } from '~/types/types';
 import { HOMEPAGE_COURSE_FILTERS } from '~/utils/constants';
 import { trpc } from '~/utils/trpc';
-import { limitStrLength } from '~/utils/formatters';
 import { useSession } from 'next-auth/react';
 import { SpotLightCards } from '~/components/ui/Home';
 import { SpotLightCardsLoading, StripLoading } from '~/components/ui/Loaders';

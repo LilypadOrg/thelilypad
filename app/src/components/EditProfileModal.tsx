@@ -95,9 +95,6 @@ const EditProfileModal = ({
     enabled: !!createMemberSignature,
   });
 
-  console.log('userProfile.courses');
-  console.log(userProfile.courses.filter((c) => c.completed));
-
   const { data: createMemberRes, write: createMember } =
     useContractWrite(createMemberConfig);
 

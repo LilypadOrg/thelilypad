@@ -30,7 +30,6 @@ import Tilt from 'react-parallax-tilt';
 import TagsPill from '~/components/TagsPill';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import { CreateTypes } from 'canvas-confetti';
-import CourseCarousel from '~/components/CourseCarousel';
 
 function randomInRange(min: number, max: number): number {
   return Math.random() * (max - min) + min;
@@ -329,7 +328,7 @@ const UserProfile: NextPage = () => {
             >
               <>
                 {!tokenMetadata && (
-                  <div className="relative flex h-[425px] w-[380px] cursor-pointer items-center justify-center rounded-lg bg-gray-400 p-4 shadow-xl">
+                  <div className="relative flex h-[425px] w-[380px] cursor-pointer items-center justify-center rounded-lg border-4 border-black bg-gray-400 p-4 shadow-xl">
                     <Image
                       src="/images/profileSBT/level1-gray.jpg"
                       alt="sbt"

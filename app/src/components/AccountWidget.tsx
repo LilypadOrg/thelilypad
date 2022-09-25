@@ -16,7 +16,7 @@ const AccountWidget = () => {
   const { disconnect } = useDisconnect();
   const { data: session } = useSession();
   const [prevSBT, setPrevSBT] = useState<string>();
-  const [currentSBT, setCurrentSBT] = useState<string>();
+  const [currSBT, setCurrSBT] = useState<string>();
   const [levelUpModalOpen, setLevelUpModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const AccountWidget = () => {
       onSuccess: (data) => {
         console.log('user.byAddress successfull');
         console.log('User data');
-        console.log(user);
+        console.log(data);
         if (!data) {
           disconnect();
         }
@@ -41,6 +41,9 @@ const AccountWidget = () => {
           refetchOnchain();
           refetchTokenUri();
         }
+      },
+      context: {
+        skipBatch: true,
       },
     }
   );
@@ -79,9 +82,6 @@ const AccountWidget = () => {
     }
   );
 
-  console.log('tokenMedata');
-  console.log(tokenMedata);
-
   useEffect(() => {
     if (tokenMedata) {
       console.log(tokenMedata);
@@ -89,31 +89,35 @@ const AccountWidget = () => {
       const sbtURL = tokenMedata.image
         .replace('ipfs:', 'https:')
         .concat('.ipfs.nftstorage.link/');
-      if (sbtURL !== currentSBT) {
-        console.log('prevSBT');
-        console.log(prevSBT);
-
-        console.log('currentSBT');
-        console.log(currentSBT);
-        // Avoid level up when initialized
-        if (currentSBT) {
-          console.log('Leveling up!!!!!!!!!!!!!!!');
-          setLevelUpModalOpen(true);
-        }
-        setPrevSBT(currentSBT);
-        setCurrentSBT(sbtURL);
+      if (sbtURL !== currSBT) {
+        setPrevSBT(currSBT);
+        setCurrSBT(sbtURL);
       }
     }
   }, [tokenMedata]);
 
+  useEffect(() => {
+    if (prevSBT && currSBT) {
+      console.log('Leveling up!!!!!!!!!!!!!!!');
+      setLevelUpModalOpen(true);
+    }
+  }, [prevSBT, currSBT]);
+
   const closeLevelUpModal = () => {
     setLevelUpModalOpen(false);
+    setPrevSBT(undefined);
   };
 
   return user ? (
     <div>
-      {levelUpModalOpen && (
-        <LevelUpModal open={levelUpModalOpen} closeModal={closeLevelUpModal} />
+      {levelUpModalOpen && prevSBT && currSBT && (
+        <LevelUpModal
+          open={levelUpModalOpen}
+          closeModal={closeLevelUpModal}
+          prevSBT={prevSBT}
+          currSBT={currSBT}
+          reachedLevel={user.level.number}
+        />
       )}
       <Link href={`/profiles/${user.username}`}>
         <button className="text-p rounded-lg  bg-secondary-400 p-2 font-bold text-white shadow-md shadow-gray-300">
