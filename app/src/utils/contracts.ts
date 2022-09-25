@@ -1,11 +1,22 @@
+/*--------- Localhost --------- */
+/* export const MAIN_CONTRACT_ADDRESS =
+'0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
+
+export const SBT_CONTRACT_ADDRESS =
+'0x68B1D87F95878fE05B998F19b66F4baba5De1aed'; */
+
+/*--------- MUMBAI --------- */
+export const MAIN_CONTRACT_ADDRESS =
+  '0xE5D181Ea111d502EEd7017413092a40E3d28Efbc';
+export const SBT_CONTRACT_ADDRESS =
+  '0x947D4f6c992ACe2A41A71B2b78A2e98801996d29';
+
+/* previous */
 // export const MAIN_CONTRACT_ADDRESS =
 //   '0x745d7986Ad1380d41426F89e43EAEF8c93888b4E';
-export const MAIN_CONTRACT_ADDRESS =
-  '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
 // export const SBT_CONTRACT_ADDRESS =
 //   '0x812f04DA6cCE546E1Bf3027ec7A8FAD55186eC1a';
-export const SBT_CONTRACT_ADDRESS =
-  '0x68B1D87F95878fE05B998F19b66F4baba5De1aed';
+
 export const MAIN_CONTRACT_ABI = [
   {
     anonymous: false,

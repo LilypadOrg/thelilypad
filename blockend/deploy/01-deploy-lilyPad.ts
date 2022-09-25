@@ -248,7 +248,7 @@ const deployLilyPad: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
     //get instance of contract
     lilypadContract = await lilypadFactory.attach(lilyPadProxyContract.address);
     //initialize proxy
-    var tx = await lilypadContract.initialize([], await initialEventTypes(), safeCaller);
+    var tx = await lilypadContract.initialize([], await initialEventTypes(), deployer);
     const txReceipt = await tx.wait(1);
 
     for (const lev of initialLevels()) {
@@ -277,7 +277,7 @@ const deployLilyPad: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
             }
         );
 
-        const signedData = await web3.eth.sign(hash!, safeCaller);
+        const signedData = await web3.eth.sign(hash!, deployer);
 
         console.log(`uploading course ${course.id}`);
 
