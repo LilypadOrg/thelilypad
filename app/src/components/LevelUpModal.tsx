@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useRef } from 'react';
+
 const LevelUpModal = ({
   open,
   closeModal,
@@ -5,29 +7,45 @@ const LevelUpModal = ({
   open: boolean;
   closeModal: () => void;
 }) => {
+  const modalRef = useRef(null);
+
+  const hideModal = (e: React.MouseEvent<HTMLElement>) => {
+    if (modalRef.current === e.target) {
+      closeModal();
+    }
+  };
+
+  const keyPress = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && open) {
+        closeModal();
+        console.log('Esc pressed');
+      }
+    },
+    [closeModal, open]
+  );
+
+  useEffect(() => {
+    document.addEventListener('keydown', keyPress);
+    return () => document.removeEventListener('keydown', keyPress);
+  }, [keyPress]);
+
   return (
     <div
-      className="relative z-10"
-      aria-labelledby="modal-title"
-      role="dialog"
-      aria-modal="true"
+      className="fixed top-0 left-0 z-50 flex h-full w-full items-center justify-center overflow-auto bg-[rgba(0,0,0,0.5)] p-1"
+      ref={modalRef}
+      onClick={hideModal}
     >
-      {/* Background backdrop, show/hide based on modal state. */}
-      <div
-        className={`${
-          open ? 'fixed' : 'hidden'
-        } inset-0 bg-gray-500 bg-opacity-75 transition-opacity`}
-      ></div>
-
-      <div
-        className={`${open ? 'fixed' : 'hidden'} inset-0 z-10 overflow-y-auto`}
-      >
-        <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-          {/* Modal panel, show/hide based on modal state. */}
-          <div className="relative transform overflow-hidden rounded-lg bg-secondary-400 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-            Modal
-          </div>
+      <div className="min animate-fade-in-down relative w-7/12 rounded-2xl bg-secondary-400 p-5">
+        <div className="flex flex-row items-center space-x-4 text-gray-800">
+          Levelling up!
         </div>
+        <span
+          className="absolute top-0 right-0 cursor-pointer rounded-full pt-2 pr-5 text-xl font-bold"
+          onClick={closeModal}
+        >
+          &times;
+        </span>
       </div>
     </div>
   );

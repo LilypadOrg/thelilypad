@@ -7,7 +7,7 @@ import { publicProvider } from 'wagmi/providers/public';
 
 const availableChains =
   process.env.NODE_ENV === 'production'
-    ? [chain.polygon]
+    ? [chain.polygon, chain.polygonMumbai, chain.localhost]
     : [chain.polygon, chain.polygonMumbai, chain.localhost];
 
 const { chains, provider } = configureChains(availableChains, [

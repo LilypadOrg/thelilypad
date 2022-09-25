@@ -18,5 +18,10 @@
     "number": 4,
     "xpFrom": 3000,
     "xpTo": 3999
+  },
+  {
+    "number": 5,
+    "xpFrom": 4000,
+    "xpTo": 4999
   }
 ]

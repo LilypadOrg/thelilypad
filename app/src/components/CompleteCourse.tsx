@@ -55,7 +55,7 @@ export const CompleteCourse = ({
       },
       onSuccess: () => {
         console.log('user stats updated. invalidating user.byAddress....');
-        utils.refetchQueries(['users.byAddress', { address: user.address }]);
+        utils.refetchQueries(['users.byAddress']);
       },
     });
 
@@ -89,9 +89,6 @@ export const CompleteCourse = ({
     },
   });
 
-  console.log('completeCourse');
-  console.log(completeCourse);
-
   const handleSetCompleted = async () => {
     if (completeCourse) {
       completeCourse();
@@ -100,6 +97,11 @@ export const CompleteCourse = ({
     }
   };
 
+  const isLoading =
+    isLoadingCompleteCourse ||
+    isLoadingMutateCompleted ||
+    isLoadingrefreshUserStats;
+
   return (
     <div>
       <button
@@ -107,11 +109,9 @@ export const CompleteCourse = ({
         onClick={handleSetCompleted}
         className="mt-8 w-full rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500"
       >
-        {isLoadingCompleteCourse ||
-          isLoadingMutateCompleted ||
-          (isLoadingrefreshUserStats && 'Loading...')}
+        {isLoading && 'Loading...'}
         {completed && 'Course completed'}
-        {!isLoadingCompleteCourse && !completed && 'Mark as complete'}
+        {!isLoading && !completed && 'Mark as complete'}
       </button>
     </div>
   );

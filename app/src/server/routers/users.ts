@@ -144,6 +144,7 @@ export const userRouter = createRouter()
         });
         return user;
       } catch (err) {
+        console.error(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Something went wrong'`,
