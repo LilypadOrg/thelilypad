@@ -203,6 +203,8 @@ const EditProfileModal = ({
     setSelectedSkills(selectedSkills.filter((t) => t.id !== id));
   };
 
+  const isLoading = isLoadingCreateMember || isLoadingUpateProfile;
+
   return (
     <div
       className="fixed top-0 left-0 z-50 flex h-full w-full items-center justify-center overflow-auto bg-[rgba(0,0,0,0.5)] p-1"
@@ -286,16 +288,14 @@ const EditProfileModal = ({
                     {/* TODO: Show spinner in button when loading */}
                     <button
                       disabled={
-                        (mode === 'create' && !createMember) ||
-                        isLoadingCreateMember ||
-                        isLoadingUpateProfile
+                        (mode === 'create' && !createMember) || isLoading
                       }
                       type="submit"
                       className={`inline-flex w-full justify-center rounded-md border border-transparent bg-primary-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
-                        isLoadingUpateProfile && 'cursor-not-allowed'
+                        isLoading && 'cursor-not-allowed'
                       }`}
                     >
-                      {isLoadingUpateProfile ? (
+                      {isLoading ? (
                         <>
                           <svg
                             className="mr-3 -ml-1 h-5 w-5 animate-spin text-indigo-500"
