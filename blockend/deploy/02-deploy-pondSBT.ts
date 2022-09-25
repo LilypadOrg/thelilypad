@@ -15,7 +15,7 @@ import {
 import fs from "fs";
 import { ILilyPad } from "../typechain-types/contracts/LilyPad";
 
-const BASE_FEE = ethers.utils.parseEther("0.25");
+const BASE_FEE = ethers.utils.parseEther("0.05");
 
 // Calculated value based on the gas price on the chain
 const GAS_PRICE_LINK = 1e9;
