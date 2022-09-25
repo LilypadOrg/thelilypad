@@ -39,7 +39,7 @@ const Courses = () => {
   // });
 
   return (
-    <div className="px-[5.5rem]">
+    <div className="gradient-bg-top-courses px-[5.5rem] pt-2">
       <h1 className="mb-2 mt-2 text-4xl">Courses</h1>
       <div className="grid grid-cols-4 gap-10">
         <div className="col-span-3">

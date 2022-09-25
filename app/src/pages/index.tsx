@@ -39,7 +39,7 @@ const Home: NextPage = () => {
   return (
     <div>
       {/* Hero and cards */}
-      <div className="px-[5.5rem]">
+      <div className="gradient-bg-top px-[5.5rem] pt-8">
         <div className="grid grid-cols-3 gap-8">
           <div className="col-span-2 flex flex-col space-y-4 ">
             {/* Hero Image */}
@@ -210,7 +210,7 @@ const Home: NextPage = () => {
         </div>
       </div>
       <hr className="my-14 w-full bg-main-gray-dark" />
-      <div className="px-[5.5rem]">
+      <div className="gradient-bg-bottom px-[5.5rem] pb-12">
         {/* Top 10 courses */}
         <CourseCarousel
           title="Top 10 Courses"
@@ -218,7 +218,7 @@ const Home: NextPage = () => {
           isLoading={coursesLoading}
         />
         {/* view AllCourse one tab*/}
-        <div className="my-14 w-full">
+        <div className="mt-14 w-full">
           <div className="flex w-[30%] justify-between rounded-md bg-main-gray-light py-2 px-4">
             <Link href="courses">
               <button className="col-span-2 flex items-center justify-between rounded-md py-2 px-4">

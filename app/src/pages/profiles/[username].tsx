@@ -271,145 +271,146 @@ const UserProfile: NextPage = () => {
         // @ts-ignore next-line
         refConfetti={getInstance}
       />
-      <nav className="flex items-center justify-center space-x-10 border border-main-gray-light">
-        <Link href="#events">
-          <p className="p-2 font-semibold hover:cursor-pointer">Events</p>
-        </Link>
-        <Link href="#projects">
-          <p className="p-2 font-semibold hover:cursor-pointer">Projects</p>
-        </Link>
-        <Link href="#path">
-          <p className="p-2 font-semibold hover:cursor-pointer">
-            Learning Path
-          </p>
-        </Link>
-        <Link href="#roadmap">
-          <p className="p-2 font-semibold hover:cursor-pointer">
-            Personal Roadmap
-          </p>
-        </Link>
-      </nav>
-      {/* Hero section */}
-      {userProfile && (
-        <>
-          {session && editModalOpen && (
-            <EditProfileModal
-              open={editModalOpen}
-              closeModal={closeEditModal}
-              userProfile={userProfile}
-              mode={editModalMode}
-            />
-          )}
-          {session && mintModalOpen && (
-            <MintSBTModal
-              open={mintModalOpen}
-              closeModal={closeMintModal}
-              mintFunction={mintToken}
-              mintIsLoading={isLoadingMintToken}
-              fireCelebration={fireCelebration}
-            />
-          )}
-          <div className="my-8 flex items-center justify-center px-[5.5rem]">
-            <div className="-mr-3 min-h-[255px] w-[38%] rounded-lg bg-primary-500 p-8 pl-12 text-white shadow-sm">
-              <div className="flex items-baseline gap-2">
-                <h1 className="text-2xl font-bold">
-                  {userProfile.username === userProfile.address
-                    ? formatAddress(userProfile.username)
-                    : userProfile.username}
-                </h1>
+      <div className="gradient-bg-top pt-2">
+        <nav className="flex items-center justify-center space-x-10">
+          <Link href="#events">
+            <p className="p-2 font-semibold hover:cursor-pointer">Events</p>
+          </Link>
+          <Link href="#projects">
+            <p className="p-2 font-semibold hover:cursor-pointer">Projects</p>
+          </Link>
+          <Link href="#path">
+            <p className="p-2 font-semibold hover:cursor-pointer">
+              Learning Path
+            </p>
+          </Link>
+          <Link href="#roadmap">
+            <p className="p-2 font-semibold hover:cursor-pointer">
+              Personal Roadmap
+            </p>
+          </Link>
+        </nav>
+        {/* Hero section */}
+        {userProfile && (
+          <>
+            {session && editModalOpen && (
+              <EditProfileModal
+                open={editModalOpen}
+                closeModal={closeEditModal}
+                userProfile={userProfile}
+                mode={editModalMode}
+              />
+            )}
+            {session && mintModalOpen && (
+              <MintSBTModal
+                open={mintModalOpen}
+                closeModal={closeMintModal}
+                mintFunction={mintToken}
+                mintIsLoading={isLoadingMintToken}
+                fireCelebration={fireCelebration}
+              />
+            )}
+            <div className="gradient-bg-top my-8 flex items-center justify-center px-[5.5rem]">
+              <div className="-mr-3 min-h-[255px] w-[38%] rounded-lg bg-primary-500 p-8 pl-12 text-white shadow-sm">
+                <div className="flex items-baseline gap-2">
+                  <h1 className="text-2xl font-bold">
+                    {userProfile.username === userProfile.address
+                      ? formatAddress(userProfile.username)
+                      : userProfile.username}
+                  </h1>
+                </div>
+                <p className="font-light">{userProfile.bio}</p>
               </div>
-              <p className="font-light">{userProfile.bio}</p>
-            </div>
-            <Tilt
-              className="parallax-effect-glare-scale"
-              glareEnable={true}
-              glareMaxOpacity={1}
-              scale={1.02}
-            >
-              <>
-                {!tokenMetadata && (
-                  <div className="relative flex h-[425px] w-[380px] cursor-pointer items-center justify-center rounded-lg border-4 border-black bg-gray-400 p-4 shadow-xl">
+              <Tilt
+                className="parallax-effect-glare-scale"
+                glareEnable={true}
+                glareMaxOpacity={1}
+                scale={1.02}
+              >
+                <>
+                  {!tokenMetadata && (
+                    <div className="relative flex h-[425px] w-[380px] cursor-pointer items-center justify-center rounded-lg border-4 border-black bg-gray-400 p-4 shadow-xl">
+                      <Image
+                        src="/images/profileSBT/level1-gray.jpg"
+                        alt="sbt"
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-lg opacity-25"
+                      />
+                    </div>
+                  )}
+                  {tokenMetadata && (
+                    <div className="relative flex h-[380px] w-[380px] cursor-pointer items-center justify-center rounded-lg border-4 border-black p-4 shadow-xl">
+                      <Image
+                        loader={() => sbtImageUri}
+                        src={sbtImageUri}
+                        alt="sbt"
+                        layout="fill"
+                        objectFit="contain"
+                      />
+                    </div>
+                  )}
+                  {/* {tokenMetadata && userProfile.level.number === 1 && (
+                    // TODO: find a a better way to display and resize SVG
                     <Image
-                      src="/images/profileSBT/level1-gray.jpg"
-                      alt="sbt"
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded-lg opacity-25"
-                    />
-                  </div>
-                )}
-                {tokenMetadata && (
-                  <div className="relative flex h-[380px] w-[380px] cursor-pointer items-center justify-center rounded-lg border-4 border-black p-4 shadow-xl">
-                    <Image
-                      loader={() => sbtImageUri}
-                      src={sbtImageUri}
+                      src="/images/profileSBT/level1-gray.svg"
                       alt="sbt"
                       layout="fill"
                       objectFit="contain"
                     />
-                  </div>
-                )}
-                {/* {tokenMetadata && userProfile.level.number === 1 && (
-                  // TODO: find a a better way to display and resize SVG
-                  <Image
-                    src="/images/profileSBT/level1-gray.svg"
-                    alt="sbt"
-                    layout="fill"
-                    objectFit="contain"
-                  />
-                )}
-                {tokenMetadata && userProfile.level.number === 2 && (
-                  // TODO: find a a better way to display and resize SVG
-                  <Image
-                    src="/images/profileSBT/level2-gray.svg"
-                    alt="sbt"
-                    layout="fill"
-                    objectFit="contain"
-                  />
-                )} */}
-              </>
-            </Tilt>
-            <div className="-ml-3 min-h-[255px] w-[38%] items-stretch rounded-lg bg-primary-500 p-8 pl-12 text-white shadow-sm">
-              <h1 className="text-2xl font-bold">My Tech Stack</h1>
-              <div className="grid grid-cols-3 gap-2">
-                {userProfile.technologies.map((language) => (
-                  <TagsPill
-                    key={`skill-${language.id}`}
-                    name={language.name}
-                    classes="justify-self-start"
-                  />
-                ))}
+                  )}
+                  {tokenMetadata && userProfile.level.number === 2 && (
+                    // TODO: find a a better way to display and resize SVG
+                    <Image
+                      src="/images/profileSBT/level2-gray.svg"
+                      alt="sbt"
+                      layout="fill"
+                      objectFit="contain"
+                    />
+                  )} */}
+                </>
+              </Tilt>
+              <div className="-ml-3 min-h-[255px] w-[38%] items-stretch rounded-lg bg-primary-500 p-8 pl-12 text-white shadow-sm">
+                <h1 className="text-2xl font-bold">My Tech Stack</h1>
+                <div className="grid grid-cols-3 gap-2">
+                  {userProfile.technologies.map((language) => (
+                    <TagsPill
+                      key={`skill-${language.id}`}
+                      name={language.name}
+                      classes="justify-self-start"
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-          <div className="mb-6 -mt-1 flex items-center justify-center">
-            {session && session.user.address === userProfile.address && (
-              <div className="space-y-4">
-                <button
-                  onClick={openModal}
-                  className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white"
-                >
-                  {onChainProfile?.pathChosen ? 'Update' : 'Create'} Profile
-                </button>
-
-                {onChainProfile?.['tokenId']._hex === '0x00' && (
+            <div className="mb-6 -mt-1 flex items-center justify-center">
+              {session && session.user.address === userProfile.address && (
+                <div className="space-y-4">
                   <button
-                    disabled={
-                      !onChainProfile?.pathChosen ||
-                      !mintToken ||
-                      isLoadingMintToken
-                    }
-                    className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white hover:bg-primary-400 disabled:bg-gray-500"
-                    onClick={() => setMintModalOpen(true)}
+                    onClick={openModal}
+                    className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white"
                   >
-                    Mint Your SBT
+                    {onChainProfile?.pathChosen ? 'Update' : 'Create'} Profile
                   </button>
-                )}
-              </div>
-            )}
-          </div>
-        </>
-      )}
+                  {onChainProfile?.['tokenId']._hex === '0x00' && (
+                    <button
+                      disabled={
+                        !onChainProfile?.pathChosen ||
+                        !mintToken ||
+                        isLoadingMintToken
+                      }
+                      className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white hover:bg-primary-400 disabled:bg-gray-500"
+                      onClick={() => setMintModalOpen(true)}
+                    >
+                      Mint Your SBT
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
       {/* My Learning Path */}
       <div
         id="path"
@@ -544,7 +545,7 @@ const UserProfile: NextPage = () => {
         </div>
       </div>
       {/* Advanced */}
-      <div className="flex flex-col space-y-10 border-t-2 border-main-gray-dark px-[5.5rem] py-12">
+      <div className="gradient-bg-bottom flex flex-col space-y-10 border-t-2 border-main-gray-dark px-[5.5rem] py-12">
         <div className="flex space-x-8">
           <div className="flex flex-col space-y-6">
             <p className="text-md font-semibold leading-5 underline">

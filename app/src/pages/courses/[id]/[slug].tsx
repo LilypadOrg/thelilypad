@@ -73,7 +73,7 @@ const CoursePage: NextPage = () => {
 
   if (isLoading) {
     return (
-      <div className="px-[5.5rem]">
+      <div className="gradient-bg-top px-[5.5rem]">
         <div className="flex animate-pulse flex-col py-8">
           <h1 className="mb-2 w-[30%] rounded-md bg-gray-400 text-4xl font-bold text-transparent">
             RandomText
@@ -87,7 +87,7 @@ const CoursePage: NextPage = () => {
 
   return course ? (
     <div>
-      <div className="px-[5.5rem]">
+      <div className="gradient-bg-top-course px-[5.5rem]">
         <div className="flex flex-col py-8 ">
           <h1 className="mb-4 text-4xl font-bold">{course.content.title}</h1>
         </div>
@@ -226,7 +226,7 @@ const CoursePage: NextPage = () => {
       </div>
 
       {/* Related resources */}
-      <div className="px-[5.5rem]">
+      <div className="gradient-bg-bottom px-[5.5rem] pb-14">
         <div className="my-10 w-full space-y-4">
           <h1 className="mt-8 text-4xl">Related Resources</h1>
           <div className="grid grid-cols-3 gap-4">

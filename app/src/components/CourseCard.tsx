@@ -39,7 +39,7 @@ const CourseCard = ({
         type === 'simple' && 'max-w-[20rem]'
       } flex-col justify-between self-start rounded-lg shadow-lg ${
         type === 'full' ? 'min-h-[500px]' : 'min-h-[350px]'
-      }`}
+      } bg-white`}
     >
       <div className="flex flex-col justify-start">
         <div className="relative h-[182px] w-full rounded-tr-lg rounded-tl-lg bg-main-gray-dark">
