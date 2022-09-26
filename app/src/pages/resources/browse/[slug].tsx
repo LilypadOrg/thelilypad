@@ -8,7 +8,6 @@ const Resource: NextPage = () => {
   const router = useRouter();
 
   const { slug } = router.query;
-  console.log('⚡️ ~ file: [slug].tsx ~ line 9 ~ slug', slug);
 
   /* didn't work :( 
   const { data: resources } = trpc.useQuery([

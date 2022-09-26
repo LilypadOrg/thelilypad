@@ -48,7 +48,6 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
           }
 
           await siwe.validate(credentials?.signature || '');
-          console.log('Upserting user in database as part of session creation');
           const user = await prisma.user.upsert({
             where: { address: siwe.address },
             update: {},

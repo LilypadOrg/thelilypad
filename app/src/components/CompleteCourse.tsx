@@ -64,9 +64,7 @@ export const CompleteCourse = ({
         toast.error(err.message);
       },
       onSuccess: () => {
-        console.log('refetching course');
         utils.refetchQueries(['usercourses.all', { userId: user.userId }]);
-        console.log('refetching user');
         setTimeout(() => {
           utils.refetchQueries(['users.byAddress', { address: user.address }]);
         }, 1000);
@@ -87,7 +85,6 @@ export const CompleteCourse = ({
   const { isLoading: isLoadingCompleteCourse } = useWaitForTransaction({
     hash: completeCourseRes?.hash,
     onSuccess: () => {
-      console.log('course completed onChain. saving to db...');
       setCompleted();
     },
   });

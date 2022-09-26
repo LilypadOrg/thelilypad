@@ -113,10 +113,7 @@ const EditProfileModal = ({
   /* ---- Modal Stuff ----- */
 
   const hideModal = (e: React.MouseEvent<HTMLElement>) => {
-    console.log('Hello');
-
     if (modalRef.current === e.target) {
-      console.log('Hello');
       closeModal();
     }
   };
@@ -125,7 +122,6 @@ const EditProfileModal = ({
     (e: KeyboardEvent) => {
       if (e.key === 'Escape' && open) {
         closeModal();
-        console.log('Esc pressed');
       }
     },
     [closeModal, open]

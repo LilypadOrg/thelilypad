@@ -30,14 +30,10 @@ const AccountWidget = () => {
     {
       enabled: !!session?.user,
       onSuccess: (data) => {
-        console.log('user.byAddress successfull');
-        console.log('User data');
-        console.log(data);
         if (!data) {
           disconnect();
         }
         if (onChainProfile) {
-          console.log('refetching onChain data');
           refetchOnchain();
           refetchTokenUri();
         }
@@ -55,9 +51,6 @@ const AccountWidget = () => {
     functionName: 'getMember',
     enabled: !!user,
     args: [user?.address],
-    onSuccess: () => {
-      console.log('fetchin onchain profile');
-    },
   });
 
   const { data: tokenUri, refetch: refetchTokenUri } = useContractRead({
@@ -66,9 +59,6 @@ const AccountWidget = () => {
     functionName: 'tokenURI',
     enabled: onChainProfile?.tokenId._hex !== '0x00',
     args: [onChainProfile?.tokenId._hex],
-    onSuccess: () => {
-      console.log('fetching tokenUri');
-    },
   });
 
   const { data: tokenMedata } = useQuery(
@@ -84,8 +74,6 @@ const AccountWidget = () => {
 
   useEffect(() => {
     if (tokenMedata) {
-      console.log(tokenMedata);
-      console.log('updating SBT state');
       const sbtURL = tokenMedata.image
         .replace('ipfs:', 'https:')
         .concat('.ipfs.nftstorage.link/');
@@ -98,7 +86,6 @@ const AccountWidget = () => {
 
   useEffect(() => {
     if (prevSBT && currSBT) {
-      console.log('Leveling up!!!!!!!!!!!!!!!');
       setLevelUpModalOpen(true);
     }
   }, [prevSBT, currSBT]);

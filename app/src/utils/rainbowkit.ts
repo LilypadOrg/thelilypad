@@ -2,16 +2,16 @@
 
 import { getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { chain, configureChains, createClient } from 'wagmi';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
+// import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
 const availableChains =
   process.env.NODE_ENV === 'production'
-    ? [chain.polygon, chain.polygonMumbai, chain.localhost]
+    ? [chain.polygonMumbai]
     : [chain.polygon, chain.polygonMumbai, chain.localhost];
 
 const { chains, provider } = configureChains(availableChains, [
-  alchemyProvider({ apiKey: process.env.ALCHEMY_API_KEY }),
+  // alchemyProvider({ apiKey: process.env.ALCHEMY_API_KEY }),
   publicProvider(),
 ]);
 

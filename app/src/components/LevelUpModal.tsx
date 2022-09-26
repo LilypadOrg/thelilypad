@@ -84,7 +84,6 @@ const LevelUpModal = ({
     (e: KeyboardEvent) => {
       if (e.key === 'Escape' && open) {
         closeModal();
-        console.log('Esc pressed');
       }
     },
     [closeModal, open]
