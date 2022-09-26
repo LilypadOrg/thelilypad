@@ -103,9 +103,9 @@ const seedCourses = async () => {
     },
   }));
 
-  data.forEach(async (course) => {
-    await prisma.content.create({ data: course });
-  });
+  for (let i = 0; i < data.length; i++) {
+    await prisma.content.create({ data: data[i] });
+  }
 
   console.log(`Courses created ${data.length}`);
 };
@@ -127,9 +127,9 @@ const seedResources = async () => {
     },
   }));
 
-  data.forEach(async (d) => {
-    await prisma.content.create({ data: d });
-  });
+  for (let i = 0; i < data.length; i++) {
+    await prisma.content.create({ data: data[i] });
+  }
 
   console.log(`Resources created ${data.length}`);
 };
@@ -154,9 +154,9 @@ const seedCommunityProjects = async () => {
     },
   }));
 
-  data.forEach(async (d) => {
-    await prisma.content.create({ data: d });
-  });
+  for (let i = 0; i < data.length; i++) {
+    await prisma.content.create({ data: data[i] });
+  }
 
   console.log(`Community projects created ${data.length}`);
 };
