@@ -14,12 +14,18 @@ import { AppRouter } from '~/server/routers/_app';
 import superjson from 'superjson';
 import Navbar from '~/components/Navbar';
 import Footer from '~/components/Footer';
+import { Session } from 'next-auth';
 
 const getSiweMessageOptions: GetSiweMessageOptions = () => ({
   statement: 'Sign in to The Lily Pad',
 });
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
+const MyApp = ({
+  Component,
+  pageProps,
+}: AppProps<{
+  session: Session;
+}>) => {
   return (
     <WagmiConfig client={wagmiClient}>
       <SessionProvider refetchInterval={0} session={pageProps.session}>
