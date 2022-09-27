@@ -9,6 +9,7 @@ import { useSession } from 'next-auth/react';
 import { SpotLightCards } from '~/components/ui/Home';
 import { SpotLightCardsLoading, StripLoading } from '~/components/ui/Loaders';
 import { HiChevronRight } from 'react-icons/hi';
+import AboutHomeLinks from '~/components/AboutHomeLinks';
 
 const Home: NextPage = () => {
   const { data: techs, isLoading: techsLoading } = trpc.useQuery([
@@ -60,60 +61,7 @@ const Home: NextPage = () => {
               </div>
             </div>
             {/* we help you grow */}
-            <div className="flex h-full flex-col rounded-lg bg-main-gray-light p-6">
-              {/* Heading and sub */}
-              <div>
-                <h1 className="mb-0 text-2xl">
-                  We help you grow, learn & excell
-                </h1>
-                <span className="text-sm font-light">
-                  Discover what we are all about
-                </span>
-              </div>
-              {/* List */}
-              <div className="mt-4 grid  w-[85%] grid-cols-2 gap-8 ">
-                <div className="flex space-x-2">
-                  <p className="mt-[0.1rem] text-2xl font-bold">
-                    <HiChevronRight />
-                  </p>
-                  <p className="font-medium underline underline-offset-2">
-                    About the Lily Pad
-                  </p>
-                </div>
-                <div className="flex space-x-2">
-                  <p className="mt-[0.1rem] text-2xl font-bold">
-                    <HiChevronRight />
-                  </p>
-                  <p className="font-medium underline underline-offset-2">
-                    Meet the team
-                  </p>
-                </div>
-                <div className="flex space-x-2">
-                  <p className="mt-[0.1rem] text-2xl font-bold">
-                    <HiChevronRight />
-                  </p>
-                  <p className="font-medium underline underline-offset-2">
-                    What is a Soulbound token?
-                  </p>
-                </div>
-                <div className="flex space-x-2">
-                  <p className="mt-[0.1rem] text-2xl font-bold">
-                    <HiChevronRight />
-                  </p>
-                  <p className="font-medium underline underline-offset-2">
-                    The Lily Pad White Paper
-                  </p>
-                </div>
-                {/* <div className="flex space-x-3">
-                  <p className="font-normal">&#62;</p>
-                  <p className="underline">Lorem ipsum dolor sit amet</p>
-                </div>
-                <div className="flex space-x-3">
-                  <p className="font-normal">&#62;</p>
-                  <p className="underline">Lorem ipsum dolor sit amet</p>
-                </div> */}
-              </div>
-            </div>
+            <AboutHomeLinks />
           </div>
           {/* Side List */}
           <div className="h-full rounded-lg  bg-main-gray-light py-5 px-6">

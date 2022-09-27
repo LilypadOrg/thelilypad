@@ -35,6 +35,13 @@ export const navItems = [
     footerSec: false,
   },
   {
+    text: 'SBT',
+    path: '/sbt',
+    navBar: false,
+    footerMain: false,
+    footerSec: true,
+  },
+  {
     text: 'About',
     path: '/about',
     navBar: false,
