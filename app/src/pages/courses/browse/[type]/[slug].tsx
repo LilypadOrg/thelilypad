@@ -2,6 +2,7 @@ import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { HiChevronRight } from 'react-icons/hi';
+import BrowseCoursesLink from '~/components/BrowseCoursesLink';
 import CourseCard from '~/components/CourseCard';
 import CourseCarousel from '~/components/CourseCarousel';
 import { CourseCardLoading } from '~/components/ui/Loaders';
@@ -131,19 +132,10 @@ const CourseCategories: NextPage = () => {
                 .sort((a, b) => b._count.contents - a._count.contents)
                 .slice(0, BROWSE_COURSES_CAT_FILTERS)
                 .map((courseFilter) => (
-                  <Link
-                    href={`/courses/browse/${courseFilter.type}/${courseFilter.slug}`}
+                  <BrowseCoursesLink
                     key={`home-coursefilter-${courseFilter.slug}`}
-                  >
-                    <button className="flex items-center justify-between rounded-md bg-main-gray-light py-2 px-4">
-                      <p className="">
-                        {courseFilter.name} ({courseFilter._count.contents})
-                      </p>
-                      <p className="mt-[0.1rem] text-xl font-bold">
-                        <HiChevronRight />
-                      </p>
-                    </button>
-                  </Link>
+                    courseFilter={courseFilter}
+                  />
                 ))}
           </div>
         </div>

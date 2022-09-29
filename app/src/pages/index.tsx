@@ -3,13 +3,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import CourseCarousel from '~/components/CourseCarousel';
 import { ContentType } from '~/types/types';
-import { HOMEPAGE_COURSE_FILTERS } from '~/utils/constants';
+import {
+  HOMEPAGE_COURSE_FILTERS,
+  HOMEPAGE_FEATURED_ITEMS,
+} from '~/utils/constants';
 import { trpc } from '~/utils/trpc';
 import { useSession } from 'next-auth/react';
 import { SpotLightCards } from '~/components/ui/Home';
 import { SpotLightCardsLoading, StripLoading } from '~/components/ui/Loaders';
 import { HiChevronRight } from 'react-icons/hi';
 import AboutHomeLinks from '~/components/AboutHomeLinks';
+import BrowseCoursesLink from '~/components/BrowseCoursesLink';
 
 const Home: NextPage = () => {
   const { data: techs, isLoading: techsLoading } = trpc.useQuery([
@@ -27,7 +31,7 @@ const Home: NextPage = () => {
   ]);
   const { data: projects, isLoading: projectsLoading } = trpc.useQuery([
     'projects.all',
-    { take: 6 },
+    { take: HOMEPAGE_FEATURED_ITEMS },
   ]);
 
   const { data: user } = trpc.useQuery(
@@ -97,19 +101,10 @@ const Home: NextPage = () => {
                   .slice(0, HOMEPAGE_COURSE_FILTERS)
                   .map((courseFilter) => (
                     /* Needs to be abstracted */
-                    <Link
-                      href={`/courses/browse/${courseFilter.type}/${courseFilter.slug}`}
+                    <BrowseCoursesLink
                       key={`home-coursefilter-${courseFilter.slug}`}
-                    >
-                      <button className="flex items-center justify-between rounded-md bg-white py-2 px-4">
-                        <p className="">
-                          {courseFilter.name} ({courseFilter._count.contents})
-                        </p>
-                        <p className="mt-[0.1rem] text-xl font-bold">
-                          <HiChevronRight />
-                        </p>
-                      </button>
-                    </Link>
+                      courseFilter={courseFilter}
+                    />
                   ))}
             </div>
             <div className="mt-4 flex gap-x-4 rounded-lg bg-gray-300 p-2">
@@ -144,7 +139,7 @@ const Home: NextPage = () => {
             {/* TODO : Handle error and improve logic */}
             {projectsLoading &&
               [1, 2, 3, 4, 5, 6].map((i) => <SpotLightCardsLoading key={i} />)}
-            {projects?.slice(0, 6).map((p, index: number) => (
+            {projects?.map((p, index: number) => (
               <SpotLightCards
                 key={p.id}
                 teal={Boolean(index % 2)}
