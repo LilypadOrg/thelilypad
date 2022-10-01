@@ -1,15 +1,10 @@
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { useAccount, useContractRead, useDisconnect, useQuery } from 'wagmi';
+import { useAccount, useDisconnect } from 'wagmi';
 import { useEffect, useState } from 'react';
 import { trpc } from '~/utils/trpc';
-import {
-  MAIN_CONTRACT_ABI,
-  MAIN_CONTRACT_ADDRESS,
-  SBT_CONTRACT_ABI,
-  SBT_CONTRACT_ADDRESS,
-} from '~/utils/contracts';
 import LevelUpModal from './LevelUpModal';
+import { useOnChainProfile } from '~/hooks/useOnChainProfile';
 
 const AccountWidget = () => {
   const { address } = useAccount();
@@ -35,7 +30,6 @@ const AccountWidget = () => {
         }
         if (onChainProfile) {
           refetchOnchain();
-          refetchTokenUri();
         }
       },
       context: {
@@ -44,37 +38,13 @@ const AccountWidget = () => {
     }
   );
 
-  // TODO: move all code related to onChain profile to a custom hook to be used here and in profile page
-  const { data: onChainProfile, refetch: refetchOnchain } = useContractRead({
-    addressOrName: MAIN_CONTRACT_ADDRESS,
-    contractInterface: MAIN_CONTRACT_ABI,
-    functionName: 'getMember',
-    enabled: !!user,
-    args: [user?.address],
-  });
-
-  const { data: tokenUri, refetch: refetchTokenUri } = useContractRead({
-    addressOrName: SBT_CONTRACT_ADDRESS,
-    contractInterface: SBT_CONTRACT_ABI,
-    functionName: 'tokenURI',
-    enabled: onChainProfile?.tokenId._hex !== '0x00',
-    args: [onChainProfile?.tokenId._hex],
-  });
-
-  const { data: tokenMedata } = useQuery(
-    ['tokenMetadata', tokenUri],
-    async () => {
-      const data = await (await fetch(tokenUri?.toString() || '')).json();
-      return data;
-    },
-    {
-      enabled: !!tokenUri,
-    }
+  const { data: onChainProfile, refetch: refetchOnchain } = useOnChainProfile(
+    user?.address
   );
 
   useEffect(() => {
-    if (tokenMedata) {
-      const sbtURL = tokenMedata.image
+    if (onChainProfile?.tokenMetadata) {
+      const sbtURL = onChainProfile.tokenMetadata.image
         .replace('ipfs:', 'https:')
         .concat('.ipfs.nftstorage.link/');
       if (sbtURL !== currSBT) {
@@ -82,7 +52,7 @@ const AccountWidget = () => {
         setCurrSBT(sbtURL);
       }
     }
-  }, [tokenMedata]);
+  }, [onChainProfile]);
 
   useEffect(() => {
     if (prevSBT && currSBT) {

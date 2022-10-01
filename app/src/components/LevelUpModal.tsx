@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactCanvasConfetti from 'react-canvas-confetti';
-import { CreateTypes } from 'canvas-confetti';
+import { useConfetti } from '~/hooks/useConfetti';
 
 const LevelUpModal = ({
   open,
@@ -22,57 +22,7 @@ const LevelUpModal = ({
     curr: boolean;
   }>({ prev: true, curr: false });
 
-  /* Animation stuff */
-  // const [fire, setFire] = useState<boolean>(false);
-  const [intervalId, setIntervalId] = useState<number | null>(null);
-
-  const refAnimationInstance = useRef<CreateTypes | null>(null);
-
-  const getInstance = useCallback((confetti: CreateTypes) => {
-    refAnimationInstance.current = confetti;
-  }, []);
-
-  const nextTickAnimation = useCallback(() => {
-    if (refAnimationInstance.current) {
-      refAnimationInstance.current(getAnimationSettings(60, 0));
-      refAnimationInstance.current(getAnimationSettings(120, 1));
-    }
-  }, []);
-
-  const stopAnimation = useCallback(() => {
-    clearInterval(intervalId?.toString());
-    setIntervalId(null);
-    refAnimationInstance.current && refAnimationInstance.current.reset();
-  }, [intervalId]);
-
-  const startAnimation = useCallback(() => {
-    if (!intervalId) {
-      setIntervalId(window.setInterval(nextTickAnimation, 250));
-      setTimeout(stopAnimation, 4000);
-    }
-  }, [intervalId, nextTickAnimation, stopAnimation]);
-
-  // Colors [#501694, #8900B1, #36B4A8]
-
-  function getAnimationSettings(angle: number, origin: number) {
-    return {
-      startVelocity: 30,
-      spread: 200,
-      zIndex: 0,
-      angle,
-      particleCount: 80,
-      colors: ['#8900B1', '#36B4A8'],
-      origin: {
-        x: origin,
-      },
-    };
-  }
-
-  useEffect(() => {
-    return () => {
-      clearInterval(intervalId?.toString());
-    };
-  }, [intervalId]);
+  const { fireCelebration, getConfettiInstance } = useConfetti();
 
   const hideModal = (e: React.MouseEvent<HTMLElement>) => {
     if (modalRef.current === e.target) {
@@ -98,7 +48,7 @@ const LevelUpModal = ({
     if (open) {
       setTimeout(() => {
         setSbtVisibility({ prev: false, curr: true });
-        startAnimation();
+        fireCelebration();
       }, 1000);
       // setPrevSBTVisibile(false);
       // setCurrSBTVisibile(true);
@@ -115,7 +65,7 @@ const LevelUpModal = ({
         className="pointer-events-none fixed top-0 left-0 z-[1000] h-full w-full"
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore next-line
-        refConfetti={getInstance}
+        refConfetti={getConfettiInstance}
       />
       <div className="min animate-fade-in-down relative  w-[450px]  rounded-2xl bg-secondary-400 p-5">
         <div className="flex flex-col items-center justify-center gap-4 text-gray-800">

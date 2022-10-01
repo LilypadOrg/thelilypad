@@ -1,13 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useContractRead } from 'wagmi';
 import { useMintSBT } from '~/hooks/useMintSBT';
 import { UserProfile as UserProfileType } from '~/types/types';
-import {
-  MAIN_CONTRACT_ABI,
-  MAIN_CONTRACT_ADDRESS,
-  SBT_CONTRACT_ABI,
-  SBT_CONTRACT_ADDRESS,
-} from '~/utils/contracts';
 import { formatAddress } from '~/utils/formatters';
 import EditProfileModal from './EditProfileModal';
 import MintSBTModal from './MintSBTModal';
@@ -16,8 +9,8 @@ import Image from 'next/image';
 import TagsPill from './TagsPill';
 import { useSession } from 'next-auth/react';
 import ReactCanvasConfetti from 'react-canvas-confetti';
-import { useQuery } from '@tanstack/react-query';
 import { useConfetti } from '~/hooks/useConfetti';
+import { useOnChainProfile } from '~/hooks/useOnChainProfile';
 
 const UserProfile = ({
   userProfile,
@@ -33,13 +26,8 @@ const UserProfile = ({
   const [mintModalOpen, setMintModalOpen] = useState<boolean>(false);
   const { fireCelebration, getConfettiInstance } = useConfetti();
 
-  const { data: onChainProfile, refetch: refetchGetMember } = useContractRead({
-    addressOrName: MAIN_CONTRACT_ADDRESS,
-    contractInterface: MAIN_CONTRACT_ABI,
-    functionName: 'getMember',
-    enabled: !!userProfile,
-    args: [userProfile?.address],
-  });
+  const { data: onChainProfile, refetch: refetchOnChainProfile } =
+    useOnChainProfile(userProfile?.address);
 
   const {
     mintToken,
@@ -52,30 +40,9 @@ const UserProfile = ({
       onChainProfile.tokenId._hex === '0x00'
   );
 
-  const { data: tokenUri } = useContractRead({
-    addressOrName: SBT_CONTRACT_ADDRESS,
-    contractInterface: SBT_CONTRACT_ABI,
-    functionName: 'tokenURI',
-    enabled: onChainProfile?.tokenId._hex !== '0x00',
-    args: [onChainProfile?.tokenId._hex],
-  });
-
-  const { data: tokenMetadata } = useQuery(
-    ['tokenMetadata', tokenUri],
-    async () => {
-      const data = await (await fetch(tokenUri?.toString() || '')).json();
-      return data;
-    },
-    { enabled: !!tokenUri }
-  );
-
-  const sbtImageUri = tokenMetadata?.image
-    .replace('ipfs:', 'https:')
-    .concat('.ipfs.nftstorage.link/');
-
   useEffect(() => {
     if (isSuccessMintToken) {
-      refetchGetMember();
+      refetchOnChainProfile();
       closeMintModal();
       fireCelebration();
     }
@@ -88,12 +55,14 @@ const UserProfile = ({
 
   const closeEditModal = () => {
     setEditModalOpen(false);
-    refetchGetMember();
+    refetchOnChainProfile();
   };
 
   const closeMintModal = () => {
     setMintModalOpen(false);
   };
+
+  const sbtImageUrl = onChainProfile?.sbtImageUrl;
 
   return (
     <>
@@ -138,7 +107,7 @@ const UserProfile = ({
           scale={1.02}
         >
           <>
-            {!tokenMetadata && (
+            {!onChainProfile?.tokenMetadata && (
               <div className="relative flex h-[425px] w-[380px] cursor-pointer items-center justify-center rounded-lg border-4 border-black bg-gray-400 p-4 shadow-xl">
                 <Image
                   src="/images/profileSBT/level1-gray.jpg"
@@ -149,11 +118,11 @@ const UserProfile = ({
                 />
               </div>
             )}
-            {tokenMetadata && (
+            {sbtImageUrl && (
               <div className="relative flex h-[380px] w-[380px] cursor-pointer items-center justify-center rounded-lg border-4 border-black p-4 shadow-xl">
                 <Image
-                  loader={() => sbtImageUri}
-                  src={sbtImageUri}
+                  loader={() => sbtImageUrl}
+                  src={sbtImageUrl}
                   alt="sbt"
                   layout="fill"
                   objectFit="contain"

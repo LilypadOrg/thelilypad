@@ -1,5 +1,4 @@
 import {
-  useContractRead,
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
@@ -8,6 +7,7 @@ import { Session } from 'next-auth';
 import { MAIN_CONTRACT_ABI, MAIN_CONTRACT_ADDRESS } from '~/utils/contracts';
 import { trpc } from '~/utils/trpc';
 import { toast } from 'react-toastify';
+import { useOnChainProfile } from '~/hooks/useOnChainProfile';
 
 export const CompleteCourse = ({
   user,
@@ -20,12 +20,7 @@ export const CompleteCourse = ({
 }) => {
   const utils = trpc.useContext();
 
-  const { data: onChainProfile } = useContractRead({
-    addressOrName: MAIN_CONTRACT_ADDRESS,
-    contractInterface: MAIN_CONTRACT_ABI,
-    functionName: 'getMember',
-    args: [user.address],
-  });
+  const { data: onChainProfile } = useOnChainProfile(user?.address);
 
   const { data: completeEventSignature } = trpc.useQuery(
     [
