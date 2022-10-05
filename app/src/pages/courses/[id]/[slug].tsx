@@ -56,10 +56,12 @@ const CoursePage: NextPage = () => {
     }
   );
 
-  const { data: projects } = trpc.useQuery(['projects.all']);
+  const { data: project } = trpc.useQuery(['projects.random']);
 
   // TODO: pull rigght content
-  const project = projects?.find((p) => p.id === 30003);
+  // const project = projects?.find((p) => p.id === 30003);
+  console.log('project');
+  console.log(project);
 
   const completed =
     (course &&

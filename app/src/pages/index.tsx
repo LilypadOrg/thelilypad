@@ -4,6 +4,7 @@ import Link from 'next/link';
 import CourseCarousel from '~/components/CourseCarousel';
 import { ContentType } from '~/types/types';
 import {
+  HOMEPAGE_COURSE_CAROUSEL,
   HOMEPAGE_COURSE_FILTERS,
   HOMEPAGE_FEATURED_ITEMS,
 } from '~/utils/constants';
@@ -14,32 +15,53 @@ import { SpotLightCardsLoading, StripLoading } from '~/components/ui/Loaders';
 import { HiChevronRight } from 'react-icons/hi';
 import AboutHomeLinks from '~/components/AboutHomeLinks';
 import BrowseCoursesLink from '~/components/BrowseCoursesLink';
+import { useMemo } from 'react';
 
 const Home: NextPage = () => {
+  // Load techs for side bar links - top tags and techs
   const { data: techs, isLoading: techsLoading } = trpc.useQuery([
     'technologies.byContentTYpe',
     { contentType: ContentType.COURSE },
   ]);
+
+  // Load tags for side bar links - top tags and techs
   const { data: tags, isLoading: tagsLoading } = trpc.useQuery([
     'tags.byContentTYpe',
     { contentType: ContentType.COURSE },
   ]);
 
   const { data: session } = useSession();
+
+  // load courses for courses section
   const { data: courses, isLoading: coursesLoading } = trpc.useQuery([
     'courses.all',
+    { take: HOMEPAGE_COURSE_CAROUSEL },
   ]);
+
+  // load projects for featured section
   const { data: projects, isLoading: projectsLoading } = trpc.useQuery([
     'projects.all',
     { take: HOMEPAGE_FEATURED_ITEMS },
   ]);
 
+  // load user data for profile link
   const { data: user } = trpc.useQuery(
     ['users.byAddress', { address: session?.user.address || '' }],
     {
       enabled: !!session?.user,
     }
   );
+
+  // create list of topTags and Techs for top-right sidebar
+  const topTagsTechs = useMemo(() => {
+    if (tags && techs) {
+      return tags
+        .map((t) => ({ ...t, type: 'tag' }))
+        .concat(techs.map((t) => ({ ...t, type: 'tech' })))
+        .sort((a, b) => b._count.contents - a._count.contents)
+        .slice(0, HOMEPAGE_COURSE_FILTERS);
+    }
+  }, [tags, techs]);
 
   return (
     <div>
@@ -88,18 +110,9 @@ const Home: NextPage = () => {
                 </button>
               </Link>
 
-              {tagsLoading &&
-                techsLoading &&
-                [1, 2, 3, 4, 5, 6, 7, 8].map((i) => <StripLoading key={i} />)}
-
-              {tags &&
-                techs &&
-                tags
-                  .map((t) => ({ ...t, type: 'tag' }))
-                  .concat(techs.map((t) => ({ ...t, type: 'tech' })))
-                  .sort((a, b) => b._count.contents - a._count.contents)
-                  .slice(0, HOMEPAGE_COURSE_FILTERS)
-                  .map((courseFilter) => (
+              {tagsLoading && techsLoading
+                ? [1, 2, 3, 4, 5, 6, 7, 8].map((i) => <StripLoading key={i} />)
+                : topTagsTechs?.map((courseFilter) => (
                     /* Needs to be abstracted */
                     <BrowseCoursesLink
                       key={`home-coursefilter-${courseFilter.slug}`}

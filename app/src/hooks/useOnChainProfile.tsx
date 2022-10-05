@@ -1,31 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
 import { useContractRead } from 'wagmi';
+import { OnChainProfile } from '~/types/types';
 import {
   MAIN_CONTRACT_ABI,
   MAIN_CONTRACT_ADDRESS,
   SBT_CONTRACT_ABI,
   SBT_CONTRACT_ADDRESS,
 } from '~/utils/contracts';
-
-interface OnChainProfile {
-  DAO: boolean;
-  pathChosen: boolean;
-  xp: BigNumber;
-  level: BigNumber;
-  tokenId: BigNumber;
-  tokenUri: string | undefined | null;
-  badges?: Array<string>;
-  completedEvents?: Array<number>;
-  tokenMetadata:
-    | {
-        image: string;
-        name: string;
-        description: string;
-      }
-    | undefined;
-  sbtImageUrl: string | undefined | null;
-}
+import { trpc } from '~/utils/trpc';
 
 export const useOnChainProfile = (address: string | undefined) => {
   const {
@@ -48,17 +29,22 @@ export const useOnChainProfile = (address: string | undefined) => {
     args: [onChainProfile?.tokenId._hex],
   });
 
-  console.log('tokenUri');
-  console.log(tokenUri);
+  const { data: tokenMetadata, isFetching: isLoadingTokenMetadata } =
+    trpc.useQuery(
+      ['blockend.getTokenMetadata', { tokenUri: tokenUri?.toString() || '' }],
+      {
+        enabled: !!tokenUri,
+      }
+    );
 
-  const { data: tokenMetadata, isFetching: isLoadingTokenMetadata } = useQuery(
-    ['tokenMetadata', tokenUri],
-    async () => {
-      const data = await (await fetch(tokenUri?.toString() || '')).json();
-      return data;
-    },
-    { enabled: !!tokenUri }
-  );
+  // const { data: tokenMetadata, isFetching: isLoadingTokenMetadata } = useQuery(
+  //   ['tokenMetadata', tokenUri],
+  //   async () => {
+  //     const data = await (await fetch(tokenUri?.toString() || '')).json();
+  //     return data;
+  //   },
+  //   { enabled: !!tokenUri }
+  // );
 
   const isLoading =
     isLoadingOnChainProfile || isLoadingTokenMetadata || isLoadingTokenURI;

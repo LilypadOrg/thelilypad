@@ -1,3 +1,4 @@
+import { NextPage } from 'next';
 import React from 'react';
 import CourseCard from '~/components/CourseCard';
 import CourseCarousel from '~/components/CourseCarousel';
@@ -21,7 +22,7 @@ const Loader = () => {
   );
 };
 
-const Courses = () => {
+const Courses: NextPage = () => {
   const { data: courses, isLoading: coursesLoading } = trpc.useQuery([
     'courses.all',
     // { take: COURSES_HOME_ITEMS },

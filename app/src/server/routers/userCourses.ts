@@ -51,6 +51,7 @@ export const userCourseRouter = createRouter()
       userId: z.number(),
     }),
     async resolve({ input }) {
+      console.log('Getting all user courses');
       const { userId } = input;
 
       try {

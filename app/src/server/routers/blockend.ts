@@ -3,6 +3,7 @@ import { createRouter } from '~/server/createRouter';
 import { z } from 'zod';
 import Web3 from 'web3';
 import { env } from '~/server/env';
+import { TokenMedata } from '~/types/types';
 
 export const blockenRouter = createRouter()
   .query('signCreateMember', {
@@ -63,6 +64,22 @@ export const blockenRouter = createRouter()
           env.SIGNER_PRIVATE_KEY
         ).signature;
         return signature;
+      } catch (err) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Something went wrong'`,
+        });
+      }
+    },
+  })
+  .query('getTokenMetadata', {
+    input: z.object({
+      tokenUri: z.string(),
+    }),
+    async resolve({ input }) {
+      try {
+        const data = await (await fetch(input.tokenUri.toString())).json();
+        return data as TokenMedata;
       } catch (err) {
         throw new TRPCError({
           code: 'BAD_REQUEST',

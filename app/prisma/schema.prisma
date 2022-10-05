@@ -73,6 +73,7 @@ model Course {
   levels CourseLevel[]
   xp Int
   userCourses UserCourse[]
+  accolades Accolade[]
   content Content @relation(fields: [contentId], references: [id])
   contentId Int @unique
 }
@@ -96,7 +97,15 @@ model UserCourse {
   @@unique([userId, courseId])
 }
 
-
+model Accolade {
+  id Int @id
+  description String
+  imageUrl String
+  course Course @relation(fields: [courseId], references: [id])
+  courseId Int
+  cratedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
 model Event {
   id Int @id

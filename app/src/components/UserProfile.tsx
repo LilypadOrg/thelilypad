@@ -26,8 +26,11 @@ const UserProfile = ({
   const [mintModalOpen, setMintModalOpen] = useState<boolean>(false);
   const { fireCelebration, getConfettiInstance } = useConfetti();
 
-  const { data: onChainProfile, refetch: refetchOnChainProfile } =
-    useOnChainProfile(userProfile?.address);
+  const {
+    data: onChainProfile,
+    isLoading: isLoadingOnChainProfile,
+    refetch: refetchOnChainProfile,
+  } = useOnChainProfile(userProfile?.address);
 
   const {
     mintToken,
@@ -46,7 +49,7 @@ const UserProfile = ({
       closeMintModal();
       fireCelebration();
     }
-  }, [isSuccessMintToken]);
+  }, [isSuccessMintToken, refetchOnChainProfile, fireCelebration]);
 
   const openModal = () => {
     setEditModalOpen(true);
@@ -107,6 +110,11 @@ const UserProfile = ({
           scale={1.02}
         >
           <>
+            {isLoadingOnChainProfile && (
+              <div className="relative flex h-[425px] w-[380px] cursor-pointer items-center justify-center rounded-lg border-4 border-black bg-gray-500  shadow-xl">
+                <div className="h-full w-full animate-pulse bg-gray-400"></div>
+              </div>
+            )}
             {!onChainProfile?.tokenMetadata && (
               <div className="relative flex h-[425px] w-[380px] cursor-pointer items-center justify-center rounded-lg border-4 border-black bg-gray-400 p-4 shadow-xl">
                 <Image
@@ -153,7 +161,7 @@ const UserProfile = ({
             >
               {onChainProfile?.pathChosen ? 'Update' : 'Create'} Profile
             </button>
-            {onChainProfile?.['tokenId']._hex === '0x00' && (
+            {onChainProfile?.['tokenId']?._hex === '0x00' && (
               <button
                 disabled={
                   !onChainProfile?.pathChosen ||
