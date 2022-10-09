@@ -33,7 +33,8 @@ describe("LilyPad", function () {
     });
     describe("Eventfunctions", function () {
         it("Try to submit course with correct signature from safeCaller. It should work with no problems", async function () {
-            const { deployer, safeCaller } = await getNamedAccounts();
+            const { deployer } = await getNamedAccounts();
+            const safeCaller = deployer;
             const _web3: Web3 = web3;
 
             var courseArray: ILilyPad.AccoladeStruct[] = [];
@@ -86,7 +87,8 @@ describe("LilyPad", function () {
             assert(course.eventTypeId.eq(1), "Course not created");
         });
         it("Try to submit course with diferente data from signature. It should revert", async function () {
-            const { deployer, safeCaller } = await getNamedAccounts();
+            const { deployer } = await getNamedAccounts();
+            const safeCaller = deployer;
 
             var courseArray: ILilyPad.AccoladeStruct[] = [];
             courseArray.push({
@@ -136,8 +138,9 @@ describe("LilyPad", function () {
             assert(course.accolades.length <= 0, "Course created from malicious request :-(");
         });
         it("Try to submit course with multiple accolades. It should work with no problems", async function () {
-            const { deployer, safeCaller } = await getNamedAccounts();
+            const { deployer } = await getNamedAccounts();
             const _web3: Web3 = web3;
+            const safeCaller = deployer;
 
             var courseArray: ILilyPad.AccoladeStruct[] = [];
 
@@ -191,8 +194,9 @@ describe("LilyPad", function () {
             assert(course.accolades.length > 1, "Course not created with multiple accolades");
         });
         it("Try to subscribe course with multiple accolades with no typing. It should work with no problems", async function () {
-            const { deployer, safeCaller } = await getNamedAccounts();
+            const { deployer } = await getNamedAccounts();
             const _web3: Web3 = web3;
+            const safeCaller = deployer;
 
             var courseArray: any[] = [];
 
@@ -249,7 +253,9 @@ describe("LilyPad", function () {
     describe("Memberfunctions", function () {
         it("Try to submit member with correct signature from safeCaller. It should work with no problems", async function () {
             //create member
-            const { deployer, safeCaller } = await getNamedAccounts();
+            const { deployer } = await getNamedAccounts();
+            const safeCaller = deployer;
+
             const accounts: any[] = await ethers.getSigners();
             const user = accounts[1];
             const _web3: Web3 = web3;
@@ -289,7 +295,8 @@ describe("LilyPad", function () {
         });
         it("Try to submit member with incorrect signature from safeCaller. It should revert", async function () {
             //create member
-            const { deployer, safeCaller } = await getNamedAccounts();
+            const { deployer } = await getNamedAccounts();
+            const safeCaller = deployer;
             const accounts: any[] = await ethers.getSigners();
             const user = accounts[1];
             const _web3: Web3 = web3;
@@ -333,7 +340,8 @@ describe("LilyPad", function () {
         });
         it("Complete course and checks if it reflects in SBT tokenUri. It should return the complete course data in the token Uri", async function () {
             //create member
-            const { deployer, safeCaller } = await getNamedAccounts();
+            const { deployer } = await getNamedAccounts();
+            const safeCaller = deployer;
             const accounts: any[] = await ethers.getSigners();
             const user = accounts[1];
             const _web3: Web3 = web3;
@@ -373,7 +381,7 @@ describe("LilyPad", function () {
             //mint token
             const mintTx = await _lilyPadContract
                 .connect(user)
-                .mintTokenForMember(user.address, _pondSBTContract.address, { value: BASE_FEE });
+                .mintTokenForMember(user.address, { value: BASE_FEE });
 
             await mintTx.wait(1);
 
@@ -430,7 +438,8 @@ describe("LilyPad", function () {
         });
         it("award badge and checks if it reflects in SBT tokenUri. It should return the complete course data in the token Uri", async function () {
             //create member
-            const { deployer, safeCaller } = await getNamedAccounts();
+            const { deployer } = await getNamedAccounts();
+            const safeCaller = deployer;
             const accounts: any[] = await ethers.getSigners();
             const user = accounts[1];
             const _web3: Web3 = web3;
@@ -471,7 +480,7 @@ describe("LilyPad", function () {
             //mint token
             const mintTx = await _lilyPadContract
                 .connect(user)
-                .mintTokenForMember(user.address, _pondSBTContract.address, { value: BASE_FEE });
+                .mintTokenForMember(user.address, { value: BASE_FEE });
 
             await mintTx.wait(1);
 
@@ -559,7 +568,8 @@ describe("LilyPad", function () {
         });
         it("Try to update member with correct signature from safeCaller. It should work with no problems", async function () {
             //create member
-            const { deployer, safeCaller } = await getNamedAccounts();
+            const { deployer } = await getNamedAccounts();
+            const safeCaller = deployer;
             const accounts: any[] = await ethers.getSigners();
             const user = accounts[1];
             const _web3: Web3 = web3;

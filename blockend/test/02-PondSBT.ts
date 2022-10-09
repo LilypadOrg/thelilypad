@@ -177,11 +177,9 @@ describe("PondSBT", function () {
                 )} eth`
             );
 
-            const mintTx = await _lilyPadContract.mintTokenForMember(
-                user.address,
-                _pondSBTContract.address,
-                { value: BASE_FEE }
-            );
+            const mintTx = await _lilyPadContract.mintTokenForMember(user.address, {
+                value: BASE_FEE,
+            });
             await mintTx.wait(1);
 
             const memberValues = await _lilyPadContract.getMember(user.address);
@@ -231,11 +229,9 @@ describe("PondSBT", function () {
             const user = accounts[1];
             const _web3: Web3 = web3;
 
-            const mintTx = await _lilyPadContract.mintTokenForMember(
-                user.address,
-                _pondSBTContract.address,
-                { value: BASE_FEE }
-            );
+            const mintTx = await _lilyPadContract.mintTokenForMember(user.address, {
+                value: BASE_FEE,
+            });
             await mintTx.wait(1);
 
             let memberValues = await _lilyPadContract.getMember(user.address);
