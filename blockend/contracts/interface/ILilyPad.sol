@@ -30,6 +30,8 @@ interface ILilyPad {
 
     event LevelReached(address member, uint256 currentXp, uint256 level);
 
+    event MemberBurned(address member);
+
     struct Level {
         uint256 level;
         uint256 xpInit;
@@ -113,4 +115,6 @@ interface ILilyPad {
         external
         view
         returns (string memory);
+
+    function burnBabyBurn(address member) external;
 }

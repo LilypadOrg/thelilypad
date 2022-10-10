@@ -3,7 +3,7 @@ import { expect, assert } from "chai";
 import { Contract, ContractFactory, Signer } from "ethers";
 import { deployments, ethers, getNamedAccounts, upgrades } from "hardhat";
 import { ContractType } from "hardhat/internal/hardhat-network/stack-traces/model";
-import { Main, MainV2, PondSBT as PondSBTType } from "../typechain-types";
+import { Main, MainV2, PondSBT as PondSBTType } from "./typechain-types";
 import fs from "fs";
 
 describe("Main (proxy)", function () {

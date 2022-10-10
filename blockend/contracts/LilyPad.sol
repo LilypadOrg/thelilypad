@@ -36,6 +36,8 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
     uint256 maxLevel;
 
     address public safeCaller;
+    IPondSBT public sbtAddress;
+
     mapping(uint256 => Level) private levels;
     mapping(uint256 => EventType) private eventTypes;
 
@@ -79,6 +81,10 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
 
     function updateSafeCaller(address _newSafeCaller) external onlyOwner {
         safeCaller = _newSafeCaller;
+    }
+
+    function setSbtAddress(IPondSBT _newSbtAddress) external onlyOwner {
+        sbtAddress = _newSbtAddress;
     }
 
     //MODIFIERS
@@ -627,13 +633,12 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *@notice Mint SBT
      *IN
      *@param _memberAddress: member address
-     *@param _sbtAddress: address of sbt contract to use to mint
      *OUT
      */
-    function mintTokenForMember(address _memberAddress, IPondSBT _sbtAddress) public payable {
+    function mintTokenForMember(address _memberAddress) public payable {
         require(addressToMember[_memberAddress].tokenId == 0, "SBT already defined!");
 
-        try _sbtAddress.takeFirstSteps{value: msg.value}(_memberAddress) returns (uint256 tokenId) {
+        try sbtAddress.takeFirstSteps{value: msg.value}(_memberAddress) returns (uint256 tokenId) {
             addressToMember[_memberAddress].tokenId = tokenId;
             tokenIdToAddress[tokenId] = _memberAddress;
         } catch Error(string memory err) {
@@ -865,6 +870,26 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
 
             if (!havePendingSteps) journeys[journeyId].done = true;
         }
+    }
+
+    /**
+     *@notice Burn member records. Only SBT contract can call it after execute the token burn
+     *IN
+     *@param member: address of member to burn
+     *OUT
+     */
+    function burnBabyBurn(address member) external override{
+        require(msg.sender == address(sbtAddress), "LilyPad::Only SBT Contract can call menbership burn");
+
+        addressToMember[member].pathChosen = false;
+        addressToMember[member].xp = 0;
+        addressToMember[member].tokenId = 0;
+
+        delete addressToMember[member].completedEvents;
+        delete addressToMember[member].badges;
+
+        emit MemberBurned(member);
+
     }
 
     function constructTokenUri(uint256 _tokenId, string memory _baseUri)

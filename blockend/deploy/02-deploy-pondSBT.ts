@@ -1,19 +1,13 @@
-import { artifacts, ethers, network, upgrades } from "hardhat";
+import { ethers, network, upgrades } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { developmentChains } from "../helper-hardhat.config";
-import { asciiToHex, encode_function_data } from "../scripts/utils";
+import { encode_function_data } from "../scripts/utils";
 import {
-    LilyPad,
-    LilyPadProxyAdmin__factory,
-    LilyPadProxy__factory,
     LilyPad__factory,
     PondSBTProxyAdmin__factory,
     PondSBTProxy__factory,
     PondSBT__factory,
 } from "../typechain-types";
-import fs from "fs";
-import { ILilyPad } from "../typechain-types/contracts/LilyPad";
 
 const BASE_FEE = ethers.utils.parseEther("0.05");
 
@@ -60,10 +54,21 @@ const deployPondSBT: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
     pondSbtContract = await pondSbtFactory.attach(PondSBTProxyContract.address);
     //get backbone deployed
     const lilyPadContract = await get("LilyPadProxy");
+    const lilyPadFactory: LilyPad__factory = await ethers.getContractFactory("LilyPad");
+    const lilyPadInstance = lilyPadFactory.attach(lilyPadContract.address);
+
     console.log(`Lilypad Contract: ${lilyPadContract.address}`);
     //initialize proxy
-    var tx = await pondSbtContract.initialize(BASE_FEE, lilyPadContract.address);
+    const devsFeePerc = 5;
+    var tx = await pondSbtContract.initialize(BASE_FEE, devsFeePerc, lilyPadContract.address);
     const txReceipt = await tx.wait(1);
+
+    console.log(`Dev Percentage: ${await pondSbtContract.devPerc()}`);
+    //set sbt address to LilyPad Contract
+    const setSbtTx = await lilyPadInstance.setSbtAddress(PondSBTProxyContract.address);
+    await setSbtTx.wait(1);
+
+    console.log(`Sbt Contract set in LilyPad: ${await lilyPadInstance.sbtAddress()}`);
 
     console.log(`Backbone set on PondSBT contract: ${await pondSbtContract.mainContract()}`);
     const pondSBTArtifact = await deployments.getArtifact("PondSBT");
