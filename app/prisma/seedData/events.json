@@ -1,0 +1,14 @@
+[
+  {
+    "id": 40001,
+    "title": "ETH Online",
+    "description": "blablabla",
+    "url": "https://",
+    "coverImageUrl": "/images/events/",
+    "technologies": ["JavaScript", "Solidity"],
+    "tags": ["Web3", "Full-stack"],
+    "startDate": "2022-04-01",
+    "endDate": "2022-04-02",
+    "location": "Somewhere over the rainbow"
+  }
+]

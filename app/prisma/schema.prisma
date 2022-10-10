@@ -98,7 +98,7 @@ model UserCourse {
 }
 
 model Accolade {
-  id Int @id
+  id Int @id @default(autoincrement())
   description String
   imageUrl String
   course Course @relation(fields: [courseId], references: [id])

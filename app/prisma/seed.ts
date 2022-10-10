@@ -7,6 +7,8 @@ import resources from './seedData/resources.json';
 import userLevels from './seedData/userLevels.json';
 import contentTypes from './seedData/contentTYpes.json';
 import communityProjects from './seedData/communityProjects.json';
+import accolades from './seedData/accolades.json';
+import events from './seedData/events.json';
 import { slugify } from '../src/utils/formatters';
 
 const prisma = new PrismaClient();
@@ -21,20 +23,38 @@ async function main() {
   await seedCourses();
   await seedResources();
   await seedCommunityProjects();
+  await seedAccolades();
+  await seedEvents();
 }
 
 const truncateAllTables = async () => {
-  await prisma.userCourse.deleteMany();
-  await prisma.communityProject.deleteMany();
-  await prisma.resource.deleteMany();
-  await prisma.course.deleteMany();
-  await prisma.communityProject.deleteMany();
-  await prisma.content.deleteMany();
-  await prisma.technology.deleteMany();
-  await prisma.tag.deleteMany();
-  await prisma.courseLevel.deleteMany();
-  await prisma.userLevel.deleteMany();
-  await prisma.contentType.deleteMany();
+  await prisma.$transaction([
+    prisma.userCourse.deleteMany(),
+    prisma.communityProject.deleteMany(),
+    prisma.resource.deleteMany(),
+    prisma.course.deleteMany(),
+    prisma.communityProject.deleteMany(),
+    prisma.content.deleteMany(),
+    prisma.technology.deleteMany(),
+    prisma.tag.deleteMany(),
+    prisma.courseLevel.deleteMany(),
+    prisma.userLevel.deleteMany(),
+    prisma.accolade.deleteMany(),
+    prisma.contentType.deleteMany(),
+  ]);
+
+  // await prisma.userCourse.deleteMany();
+  // await prisma.communityProject.deleteMany();
+  // await prisma.resource.deleteMany();
+  // await prisma.course.deleteMany();
+  // await prisma.communityProject.deleteMany();
+  // await prisma.content.deleteMany();
+  // await prisma.technology.deleteMany();
+  // await prisma.tag.deleteMany();
+  // await prisma.courseLevel.deleteMany();
+  // await prisma.userLevel.deleteMany();
+  // await prisma.accolade.deleteMany();
+  // await prisma.contentType.deleteMany();
 };
 
 const seedTechnologies = async () => {
@@ -159,6 +179,40 @@ const seedCommunityProjects = async () => {
   }
 
   console.log(`Community projects created ${data.length}`);
+};
+
+const seedAccolades = async () => {
+  await prisma.accolade.createMany({ data: accolades });
+
+  console.log(`Accolades created ${accolades.length}`);
+};
+
+const seedEvents = async () => {
+  const data = events.map((c) => ({
+    id: c.id,
+    title: c.title,
+    slug: slugify(c.title),
+    description: c.description,
+    url: c.url,
+    coverImageUrl: c.coverImageUrl,
+    technologies: { connect: c.technologies.map((l) => ({ name: l })) },
+    tags: { connect: c.tags.map((l) => ({ name: l })) },
+    contentType: { connect: { name: 'Event' } },
+    event: {
+      create: {
+        id: c.id,
+        startDate: new Date(c.startDate),
+        endDate: new Date(c.endDate),
+        location: c.location,
+      },
+    },
+  }));
+
+  for (let i = 0; i < data.length; i++) {
+    await prisma.content.create({ data: data[i] });
+  }
+
+  console.log(`Events created ${data.length}`);
 };
 
 main()
