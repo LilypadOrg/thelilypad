@@ -87,4 +87,23 @@ export const technologyRouter = createRouter()
         });
       }
     },
+  })
+  .query('forCourses', {
+    async resolve() {
+      try {
+        const tags = await prisma.technology.findMany({
+          where: {
+            contents: { some: { contentType: { name: ContentType.COURSE } } },
+          },
+          select: defaultTechnologiesSelect,
+        });
+        return tags;
+      } catch (err) {
+        console.error(err);
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Error retrieving data.`,
+        });
+      }
+    },
   });

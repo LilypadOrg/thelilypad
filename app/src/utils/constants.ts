@@ -10,4 +10,5 @@ export const HOMEPAGE_COURSE_CAROUSEL = 10;
 export const HOMEPAGE_FEATURED_ITEMS = 6;
 export const BROWSE_COURSES_CAT_FILTERS = 21;
 export const BROWSE_COURSES_ITEMS = 18;
+
 export const COURSES_HOME_ITEMS = 5;

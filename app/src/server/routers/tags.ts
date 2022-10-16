@@ -88,4 +88,23 @@ export const tagRouter = createRouter()
         });
       }
     },
+  })
+  .query('forCourses', {
+    async resolve() {
+      try {
+        const tags = await prisma.tag.findMany({
+          where: {
+            contents: { some: { contentType: { name: ContentType.COURSE } } },
+          },
+          select: defaultTagsSelect,
+        });
+        return tags;
+      } catch (err) {
+        console.error(err);
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Error retrieving data.`,
+        });
+      }
+    },
   });

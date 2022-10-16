@@ -34,3 +34,7 @@ export interface OnChainProfile {
   tokenMetadata: TokenMedata | undefined;
   sbtImageUrl: string | undefined | null;
 }
+
+export interface ContentFilter {
+  [x: string]: string | string[] | undefined;
+}

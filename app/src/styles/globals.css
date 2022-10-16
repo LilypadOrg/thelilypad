@@ -33,11 +33,11 @@ html {
   }
 
   h4 {
-    @apply text-3xl;
+    @apply text-4xl;
   }
 
   h5 {
-    @apply text-2xl;
+    @apply text-3xl;
   }
 
   h6 {

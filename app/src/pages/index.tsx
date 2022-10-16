@@ -117,6 +117,7 @@ const Home: NextPage = () => {
                     <BrowseCoursesLink
                       key={`home-coursefilter-${courseFilter.slug}`}
                       courseFilter={courseFilter}
+                      courseFilterType={courseFilter.type}
                     />
                   ))}
             </div>
