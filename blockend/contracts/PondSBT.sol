@@ -58,7 +58,7 @@ contract PondSBT is
     ILilyPadTreasure public lilyPadTreasure;
 
     //NFT Variables
-    uint256 internal i_mintFee;
+    uint256 public i_mintFee;
     uint256 public devPerc;
 
     //modifiers
@@ -77,7 +77,7 @@ contract PondSBT is
         uint256 _devPerc,
         ILilyPad mainContractAddress
     ) public initializer {
-        i_mintFee = mintFee;
+        _setMintFee(mintFee);
         devPerc = _devPerc;
         mainContract = mainContractAddress;
         __ERC721sb_init("Path of New Developers", "POND");
@@ -87,8 +87,11 @@ contract PondSBT is
         __ERC721sbVotes_init();
     }
 
-    function _baseURI() internal pure override returns (string memory) {
-        return "ipfs://";
+    /*
+     * @dev set new mint fee
+     */
+    function setMintFee(uint256 newMintFee) external onlyOwner {
+        _setMintFee(newMintFee);
     }
 
     function setTreasureAddress(ILilyPadTreasure _lilyPadTreasure) external onlyOwner {
@@ -126,6 +129,39 @@ contract PondSBT is
         _safeMint(to, _tokenIdCounter.current());
     }
 
+    function burn(uint256 tokenId) public virtual override(ERC721sbBurnableUpgradeable) {
+        super.burn(tokenId);
+        //updates membership data
+        mainContract.burnBabyBurn(msg.sender);
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721sbUpgradeable)
+        returns (string memory)
+    {
+        return mainContract.constructTokenUri(tokenId, _baseURI());
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721sbUpgradeable, ERC721sbEnumerableUpgradeable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
+    /*
+     * @dev set new mint fee
+     */
+    function _setMintFee(uint256 newMintFee) private {
+        emit MintFeeUpdated(i_mintFee, newMintFee);
+
+        i_mintFee = newMintFee;
+    }
+
     // The following functions are overrides required by Solidity.
     function _beforeTokenTransfer(
         address from,
@@ -146,32 +182,12 @@ contract PondSBT is
         super._afterTokenTransfer(from, to, tokenId);
     }
 
-    function burn(uint256 tokenId) public virtual override(ERC721sbBurnableUpgradeable) {
-        super.burn(tokenId);
-        //updates membership data
-        mainContract.burnBabyBurn(msg.sender);
-    }
-
     function _burn(uint256 tokenId) internal override(ERC721sbUpgradeable) {
         //revert("One does not simply burns parts of your soul!");
         super._burn(tokenId);
     }
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721sbUpgradeable)
-        returns (string memory)
-    {
-        return mainContract.constructTokenUri(tokenId, _baseURI());
-    }
-
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721sbUpgradeable, ERC721sbEnumerableUpgradeable)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
+    function _baseURI() internal pure override returns (string memory) {
+        return "ipfs://";
     }
 }

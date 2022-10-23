@@ -88,8 +88,8 @@ contract LilyPadGovernor is
      * @notice Set a new level threshold for proposals.
      * @param _levelThreshold The new level Threshold
      */
-    function setLevelThreshold(uint256 _levelThreshold) public onlyGovernance {
-        require(_levelThreshold != levelThreshold, "Current Value!");
+    function setLevelThreshold(uint256 _levelThreshold) external onlyGovernance {
+        require(_levelThreshold != levelThreshold, "LilyPadGovernor::Current Value!");
 
         levelThreshold = _levelThreshold;
     }
