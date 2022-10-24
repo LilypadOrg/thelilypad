@@ -15,16 +15,16 @@ const prisma = new PrismaClient();
 
 async function main() {
   await truncateAllTables();
-  // await seedTags();
-  // await seedTechnologies();
-  // await seedContentTypes();
-  // await seedLevels();
-  // await seedUserLevels();
-  // await seedCourses();
-  // await seedResources();
-  // await seedCommunityProjects();
-  // await seedAccolades();
-  // await seedEvents();
+  await seedTags();
+  await seedTechnologies();
+  await seedContentTypes();
+  await seedLevels();
+  await seedUserLevels();
+  await seedCourses();
+  await seedResources();
+  await seedCommunityProjects();
+  await seedAccolades();
+  await seedEvents();
   await seedQuestions();
   await seedAnswers();
 }
@@ -236,7 +236,6 @@ const seedQuestions = async () => {
 
   for (let i = 0; i < solIntermediate.length; i++) {
     await prisma.testQuestion.create({ data: solIntermediate[i] });
-    console.log('Questions created');
   }
 
   for (let i = 0; i < solAdvanced.length; i++) {
