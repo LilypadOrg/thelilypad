@@ -1,9 +1,7 @@
 import { inferQueryOutput } from '~/utils/trpc';
 
 type FilterOptions = inferQueryOutput<
-  | 'tags.byContentTYpe'
-  | 'courseLevels.byContentTYpe'
-  | 'technologies.byContentTYpe'
+  'tags.byContentTYpe' | 'levels.byContentTYpe' | 'technologies.byContentTYpe'
 >;
 
 const ContentFilter = ({

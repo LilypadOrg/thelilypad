@@ -66,16 +66,36 @@ model Technology {
   slug String @unique
   contents Content[]
   users User[]
+  questions TestQuestion[]
 }
 
 model Course {
   id Int @id
-  levels CourseLevel[]
+  levels Level[]
   xp Int
   userCourses UserCourse[]
   accolades Accolade[]
   content Content @relation(fields: [contentId], references: [id])
   contentId Int @unique
+}
+
+model TestQuestion {
+  id Int @id @default(autoincrement())
+  code String @unique
+  question String
+  levelId Int
+  level Level @relation(fields: [levelId], references: [id])
+  techId Int
+  technology Technology @relation(fields: [techId], references: [id])
+  answers TestAnswer[]
+}
+
+model TestAnswer {
+  id Int @id @default(autoincrement())
+  answer String
+  correct Boolean
+  questionId Int
+  question TestQuestion @relation(fields: [questionId], references: [id])
 }
 
 model Resource {
@@ -132,11 +152,12 @@ model ContentType {
   contents Content[]
 }
 
-model CourseLevel {
+model Level {
   id Int @id @default(autoincrement())
   name String @unique
   slug String @unique
   courses Course[]
+  questions TestQuestion[]
 }
 
 
