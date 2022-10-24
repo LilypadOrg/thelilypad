@@ -2,6 +2,11 @@ import React from 'react';
 import { Courses } from '~/types/types';
 import CourseCard from './CourseCard';
 import { CourseCardLoading } from './ui/Loaders';
+import { Swiper, SwiperSlide } from 'swiper/react';
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/pagination';
+import { Pagination, Autoplay } from 'swiper';
 
 interface Props {
   bgColor?: string;
@@ -24,7 +29,52 @@ const CourseCarousel = ({
     <div className={`my-8 ${bgColor && bgColor}`}>
       <h4>{title}</h4>
       {/* Card Container */}
-      <div className="mt-8 flex space-x-8 overflow-x-auto px-2 py-2">
+      <Swiper
+        pagination={{
+          clickable: true,
+        }}
+        modules={[Pagination]}
+        breakpoints={{
+          0: {
+            slidesPerView: 1,
+            spaceBetween: 20,
+          },
+          585: {
+            slidesPerView: 1,
+            spaceBetween: 20,
+          },
+          680: {
+            slidesPerView: 1.5,
+            spaceBetween: 20,
+          },
+          1000: {
+            slidesPerView: 2,
+            spaceBetween: 20,
+          },
+          1024: {
+            slidesPerView: 3,
+            spaceBetween: 30,
+          },
+        }}
+        // autoplay={{
+        //   delay: 2500,
+        //   disableOnInteraction: false,
+        // }}
+        className="mySwiper"
+      >
+        {courses &&
+          courses!.map((course) => (
+            <SwiperSlide key={`course-${course.id}`}>
+              <CourseCard
+                key={`course-${course.id}`}
+                course={course}
+                type={type}
+              />
+            </SwiperSlide>
+          ))}
+      </Swiper>
+
+      {/* <div className="mt-8 flex space-x-8 overflow-x-auto px-2 py-2">
         {isLoading && loaders.map((i) => <CourseCardLoading key={i} />)}
         {courses &&
           courses!.map((course) => (
@@ -34,7 +84,7 @@ const CourseCarousel = ({
               type={type}
             />
           ))}
-      </div>
+      </div> */}
     </div>
   );
 };

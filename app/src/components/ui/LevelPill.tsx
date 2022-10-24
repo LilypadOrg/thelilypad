@@ -27,7 +27,7 @@ const LevelPill = ({
 
   const InnerPill = () => (
     <span
-      className={`mr-2 mb-2 inline-block rounded-full px-3 py-1 text-sm font-semibold ${colorClasses} ${classes}`}
+      className={`mr-2 mb-2 inline-block rounded-full px-3 py-1 text-xs  font-semibold lg:text-sm ${colorClasses} ${classes}`}
     >
       {level}
     </span>

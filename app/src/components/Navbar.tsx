@@ -66,8 +66,8 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
-          <div className="flex items-center justify-evenly gap-4">
-            <button className="text-md rounded-lg  border-primary-500  bg-primary-400 p-2 font-bold text-white shadow-md shadow-gray-300">
+          <div className="ml-2 flex items-center justify-evenly gap-4 lg:ml-0">
+            <button className="rounded-lg border-primary-500 bg-primary-400 p-2  text-xs  font-bold text-white shadow-md shadow-gray-300 lg:p-2 lg:text-xl">
               Froggy DAO Treasury: 23.421 ETH
             </button>
             <AccountWidget />

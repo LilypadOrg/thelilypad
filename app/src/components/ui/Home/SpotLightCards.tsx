@@ -33,10 +33,10 @@ export const SpotLightCards = ({
           !teal ? 'bg-primary-500' : 'bg-secondary-400'
         }`}
       >
-        <h1 className="mb-0 break-words text-[0.9rem]">
+        <h1 className="mb-0 break-words text-[0.75rem] lg:text-[0.9rem]">
           {limitStrLength(title, 25)}
         </h1>
-        <p className="text-sm font-light leading-[1.1]">
+        <p className="text-[0.65rem] font-light leading-[1.1] lg:text-sm">
           {limitStrLength(description, 50)}
         </p>
         {/* <p className="text-sm font-light">#goForYou</p> */}

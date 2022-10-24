@@ -26,8 +26,10 @@ const AboutHomeLinks = () => {
     <div className="flex h-full flex-col rounded-lg bg-main-gray-light p-6">
       {/* Heading and sub */}
       <div>
-        <h1 className="mb-0 text-2xl">We help you grow, learn & excell</h1>
-        <span className="text-sm font-light">
+        <h1 className="mb-0 text-[1.15rem] lg:text-2xl">
+          We help you grow, learn & excell
+        </h1>
+        <span className="text-xs font-light lg:text-sm">
           Discover what we are all about
         </span>
       </div>
@@ -37,12 +39,12 @@ const AboutHomeLinks = () => {
           <div key={l.path} className="flex space-x-2">
             {/* <Link href={l.path}>
               <a> */}
-            <p className="mt-[0.1rem] text-2xl font-bold">
+            <p className="mt-[0.1rem] text-xl font-bold lg:text-2xl">
               <HiChevronRight />
             </p>
             <Link href={l.path}>
               <a>
-                <p className="font-medium underline underline-offset-2">
+                <p className="text-xs font-medium underline underline-offset-2 lg:text-xl">
                   About the Lily Pad
                 </p>
               </a>
