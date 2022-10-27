@@ -3,23 +3,22 @@ import { TRPCError } from '@trpc/server';
 import { createRouter } from '~/server/createRouter';
 import { prisma } from '~/server/prisma';
 import { z } from 'zod';
-import { ContentType } from '~/types/types';
 
-const defaultLevelsSelect = Prisma.validator<Prisma.CourseLevelSelect>()({
+const defaultLevelsSelect = Prisma.validator<Prisma.LevelSelect>()({
   id: true,
   name: true,
   slug: true,
 });
 
-export const courseLevelRouter = createRouter()
+export const levelRouter = createRouter()
   // read
   .query('all', {
     async resolve() {
       try {
-        const courseLevels = await prisma.courseLevel.findMany({
+        const levels = await prisma.level.findMany({
           select: defaultLevelsSelect,
         });
-        return courseLevels;
+        return levels;
       } catch (err) {
         console.error(err);
         throw new TRPCError({
@@ -35,7 +34,7 @@ export const courseLevelRouter = createRouter()
     }),
     async resolve({ input }) {
       try {
-        const tag = await prisma.courseLevel.findUnique({
+        const tag = await prisma.level.findUnique({
           where: { slug: input.slug },
           select: defaultLevelsSelect,
         });
@@ -50,13 +49,13 @@ export const courseLevelRouter = createRouter()
     },
   })
   .query('byContentTYpe', {
-    input: z.object({
-      contentType: z.nativeEnum(ContentType),
-      levels: z.string().array().optional(),
-    }),
-    async resolve({ input }) {
+    // input: z.object({
+    //   contentType: z.nativeEnum(ContentType),
+    //   levels: z.string().array().optional(),
+    // }),
+    async resolve() {
       try {
-        const levels = await prisma.courseLevel.findMany({
+        const levels = await prisma.level.findMany({
           where: {
             courses: {
               some: {},
@@ -85,11 +84,11 @@ export const courseLevelRouter = createRouter()
   .query('forCourses', {
     async resolve() {
       try {
-        const courseLevels = await prisma.courseLevel.findMany({
+        const levels = await prisma.level.findMany({
           where: { courses: { some: {} } },
           select: defaultLevelsSelect,
         });
-        return courseLevels;
+        return levels;
       } catch (err) {
         console.error(err);
         throw new TRPCError({

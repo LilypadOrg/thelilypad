@@ -1,7 +1,5 @@
 import type { NextPage } from 'next';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { HiChevronRight } from 'react-icons/hi';
 import BrowseCoursesLink from '~/components/BrowseCoursesLink';
 import CourseCard from '~/components/CourseCard';
 import CourseCarousel from '~/components/CourseCarousel';
@@ -45,10 +43,7 @@ const CourseCategories: NextPage = () => {
   );
 
   const { data: levelTitle } = trpc.useQuery(
-    [
-      'courseLevels.bySlug',
-      { slug: Array.isArray(slug) ? slug[0] : slug || '' },
-    ],
+    ['levels.bySlug', { slug: Array.isArray(slug) ? slug[0] : slug || '' }],
     {
       enabled: !!slug && type === 'level',
     }
@@ -135,6 +130,7 @@ const CourseCategories: NextPage = () => {
                   <BrowseCoursesLink
                     key={`home-coursefilter-${courseFilter.slug}`}
                     courseFilter={courseFilter}
+                    courseFilterType={courseFilter.type}
                   />
                 ))}
           </div>

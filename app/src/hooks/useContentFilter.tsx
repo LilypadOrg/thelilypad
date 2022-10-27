@@ -7,8 +7,7 @@ export const useContentFilter = (contenType: ContentType) => {
   const [contentFilters, setContentFilters] = useState<ContentFilterType>({});
 
   const { data: levels, isLoading: levelsLoading } = trpc.useQuery([
-    'courseLevels.byContentTYpe',
-    { contentType: contenType },
+    'levels.byContentTYpe',
   ]);
 
   const { data: tags, isLoading: tagsLoading } = trpc.useQuery([
