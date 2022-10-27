@@ -27,7 +27,7 @@ const CourseCarousel = ({
 }: Props) => {
   return (
     <div className={`my-8 ${bgColor && bgColor}`}>
-      <h4>{title}</h4>
+      <h4 className="text-2xl md:text-3xl lg:text-4xl">{title}</h4>
       {/* Card Container */}
       <Swiper
         pagination={{

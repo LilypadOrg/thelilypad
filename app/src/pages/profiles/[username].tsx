@@ -88,7 +88,7 @@ const ProfilePage: NextPage = () => {
   return (
     <div>
       <div className="gradient-bg-top pt-2">
-        <nav className="flex items-center justify-center space-x-10">
+        <nav className="flex flex-wrap items-center justify-center  space-x-4 lg:space-x-10">
           <Link href="#events">
             <p className="p-2 font-semibold hover:cursor-pointer">Events</p>
           </Link>
@@ -112,15 +112,15 @@ const ProfilePage: NextPage = () => {
       {/* My Learning Path */}
       <div
         id="path"
-        className="flex flex-col bg-main-gray-light px-[5.5rem] py-16"
+        className="flex flex-col bg-main-gray-light px-[2.5rem]  py-16 lg:px-[5.5rem]"
       >
         <h1 className="mb-1 text-3xl font-bold">My Learning Path</h1>
-        <p className="w-[40%] font-light">
+        <p className="font-light lg:w-[40%]">
           These are the most recent Accolades you have earned (or will earn once
           holding a Pond Token). Great job! Click on each to learn more and
           share badges you have earned!
         </p>
-        <div className="mt-6 flex space-x-8">
+        <div className="mt-6 flex flex-wrap gap-6">
           {paths.map((i) => (
             <LearningPathCards
               title="Intro into Web3 : basic steps"
@@ -135,7 +135,7 @@ const ProfilePage: NextPage = () => {
       {/* My Events */}
       <div
         id="events"
-        className="mt-4 flex flex-col space-y-4 px-[5.5rem] py-16"
+        className="mt-4 flex flex-col space-y-4 px-[2.5rem]  py-16 lg:px-[5.5rem]"
       >
         <h1 className="mb-0 text-3xl font-bold">My Events</h1>
         {events.map((event) => (
@@ -151,7 +151,7 @@ const ProfilePage: NextPage = () => {
       {/* My Projects */}
       <div
         id="projects"
-        className="my-10 flex flex-col space-y-4 px-[5.5rem] py-16"
+        className="my-4 flex flex-col space-y-4 px-[2.5rem]  py-16 lg:my-10 lg:px-[5.5rem]"
       >
         <h1 className="mb-0 text-3xl font-bold">My Projects</h1>
         {projects.map((event) => (
@@ -166,15 +166,18 @@ const ProfilePage: NextPage = () => {
       </div>
 
       {/* My personal roadmap */}
-      <div id="roadmap" className="flex flex-col px-[5.5rem] py-16">
+      <div
+        id="roadmap"
+        className="flex flex-col px-[2.5rem]  py-16 lg:px-[5.5rem]"
+      >
         <h1 className="mb-1 text-3xl font-bold">My Personal Roadmap</h1>
-        <p className="w-[40%] font-light">
+        <p className="font-light lg:w-[40%]">
           Populate this personal roadmap with courses of your choosing to set
           milestones for yourself and track your progress on a custom path!
         </p>
       </div>
       {/* Beginner */}
-      <div className="flex flex-col space-y-10 border-t-2 border-main-gray-dark px-[5.5rem] py-12">
+      <div className="flex flex-col space-y-10 border-t-2 border-main-gray-dark px-[2.5rem]  py-12 lg:px-[5.5rem]">
         <div className="flex space-x-8">
           <div className="flex flex-col space-y-6">
             <p className="text-md font-semibold leading-5 underline">
@@ -209,7 +212,7 @@ const ProfilePage: NextPage = () => {
         </div>
       </div>
       {/* Intermediate */}
-      <div className="flex flex-col space-y-10 border-t-2 border-main-gray-dark px-[5.5rem] py-12">
+      <div className="flex flex-col space-y-10 border-t-2 border-main-gray-dark px-[2.5rem]  py-12 lg:px-[5.5rem]">
         <div className="flex space-x-8">
           <div className="flex flex-col space-y-6">
             <p className="text-md font-semibold leading-5 underline">
@@ -243,7 +246,7 @@ const ProfilePage: NextPage = () => {
         </div>
       </div>
       {/* Advanced */}
-      <div className="gradient-bg-bottom flex flex-col space-y-10 border-t-2 border-main-gray-dark px-[5.5rem] py-12">
+      <div className="gradient-bg-bottom flex flex-col space-y-10 border-t-2 border-main-gray-dark px-[2.5rem]  py-12 lg:px-[5.5rem]">
         <div className="flex space-x-8">
           <div className="flex flex-col space-y-6">
             <p className="text-md font-semibold leading-5 underline">
