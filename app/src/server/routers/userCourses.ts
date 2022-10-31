@@ -10,6 +10,8 @@ const singleUserCourseSelect = Prisma.validator<Prisma.UserCourseSelect>()({
   roadmap: true,
   completed: true,
   completedOn: true,
+  lastTestOn: true,
+  lastTestPassed: true,
 });
 
 const defaultUserCourseSelect = Prisma.validator<Prisma.UserCourseSelect>()({
@@ -71,21 +73,21 @@ export const userCourseRouter = createRouter()
   })
   .query('single', {
     input: z.object({
-      userId: z.number(),
       courseId: z.number(),
     }),
     async resolve({ input, ctx }) {
-      const { courseId, userId } = input;
-      if (!ctx.session?.user || ctx.session?.user.userId !== userId) {
+      const { courseId } = input;
+      if (!ctx.session?.user) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: `Unauthorized`,
         });
       }
       try {
+        const userId = ctx.session.user.userId;
         const userCourse = await prisma.userCourse.findUnique({
           where: { userId_courseId: { userId, courseId } },
-          select: defaultUserCourseSelect,
+          select: singleUserCourseSelect,
         });
         return userCourse;
       } catch (err) {

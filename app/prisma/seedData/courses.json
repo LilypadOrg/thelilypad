@@ -7,13 +7,7 @@
     "xp": 1000,
     "coverImageUrl": "/images/courses/32HR_Course.png",
     "levels": ["Beginner", "Intermediate"],
-    "technologies": [
-      "JavaScript",
-      "Solidity",
-      "Hardhat",
-      "ChainLink",
-      "Moralis"
-    ],
+    "technologies": ["Solidity", "Hardhat", "ChainLink"],
     "tags": ["Web3", "Blockchain", "Full-stack"]
   },
   {

@@ -15,6 +15,7 @@ export type Tech = inferQueryOutput<'technologies.bySlug'>;
 export type Techs = inferQueryOutput<'technologies.all'>;
 export type UserCourse = inferQueryOutput<'usercourses.single'>;
 export type UserCourses = inferQueryOutput<'usercourses.all'>;
+export type Question = inferQueryOutput<'tests.questionById'>;
 
 export interface TokenMedata {
   image: string;
@@ -38,3 +39,7 @@ export interface OnChainProfile {
 export interface ContentFilter {
   [x: string]: string | string[] | undefined;
 }
+
+export type TestFormInputs = {
+  [question: string]: string;
+};

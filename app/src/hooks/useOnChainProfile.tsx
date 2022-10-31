@@ -9,6 +9,8 @@ import {
 import { trpc } from '~/utils/trpc';
 
 export const useOnChainProfile = (address: string | undefined) => {
+  console.log('address');
+  console.log(address);
   const {
     data: onChainProfile,
     refetch,
@@ -25,7 +27,7 @@ export const useOnChainProfile = (address: string | undefined) => {
     addressOrName: SBT_CONTRACT_ADDRESS,
     contractInterface: SBT_CONTRACT_ABI,
     functionName: 'tokenURI',
-    enabled: onChainProfile?.tokenId._hex !== '0x00',
+    enabled: !!onChainProfile && onChainProfile.tokenId._hex !== '0x00',
     args: [onChainProfile?.tokenId._hex],
   });
 
@@ -36,15 +38,6 @@ export const useOnChainProfile = (address: string | undefined) => {
         enabled: !!tokenUri,
       }
     );
-
-  // const { data: tokenMetadata, isFetching: isLoadingTokenMetadata } = useQuery(
-  //   ['tokenMetadata', tokenUri],
-  //   async () => {
-  //     const data = await (await fetch(tokenUri?.toString() || '')).json();
-  //     return data;
-  //   },
-  //   { enabled: !!tokenUri }
-  // );
 
   const isLoading =
     isLoadingOnChainProfile || isLoadingTokenMetadata || isLoadingTokenURI;
