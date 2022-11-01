@@ -22,7 +22,7 @@ model User {
   levelNumber  Int
   courses      UserCourse[]
   technologies Technology[]
-  tests        TestIstance[]
+  tests        Testinstance[]
   cratedAt     DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 }
@@ -76,7 +76,7 @@ model Course {
   xp          Int
   userCourses UserCourse[]
   accolades   Accolade[]
-  tests       TestIstance[]
+  tests       Testinstance[]
   content     Content       @relation(fields: [contentId], references: [id])
   contentId   Int           @unique
 }
@@ -89,7 +89,7 @@ model TestQuestion {
   level      Level                 @relation(fields: [levelId], references: [id])
   techId     Int
   technology Technology            @relation(fields: [techId], references: [id])
-  instances  TestIstanceQuestion[]
+  instances  TestinstanceQuestion[]
   answers    TestAnswer[]
 }
 
@@ -99,30 +99,30 @@ model TestAnswer {
   correct           Boolean
   questionId        Int
   question          TestQuestion          @relation(fields: [questionId], references: [id])
-  instanceQuestions TestIstanceQuestion[]
+  instanceQuestions TestinstanceQuestion[]
 }
 
-model TestIstance {
+model Testinstance {
   id          Int                   @id @default(autoincrement())
   userId      Int
   user        User                  @relation(fields: [userId], references: [id])
   courseId    Int
   course      Course                @relation(fields: [courseId], references: [id])
-  questions   TestIstanceQuestion[]
-  isExpired   Boolean
-  isSubmitted Boolean
-  isPassed    Boolean
+  questions   TestinstanceQuestion[]
+  isExpired   Boolean               @default(false)
+  isSubmitted Boolean               @default(false)
+  isPassed    Boolean               @default(false)
   submittedOn DateTime?
   cratedAt    DateTime              @default(now())
   updatedAt   DateTime              @updatedAt
 }
 
-model TestIstanceQuestion {
+model TestinstanceQuestion {
   id            Int          @id @default(autoincrement())
   instanceId    Int
-  Instance      TestIstance  @relation(fields: [instanceId], references: [id])
+  Instance      Testinstance  @relation(fields: [instanceId], references: [id])
   questionId    Int
-  questions     TestQuestion @relation(fields: [questionId], references: [id])
+  question      TestQuestion @relation(fields: [questionId], references: [id])
   givenAnswerId Int?
   givenAnswer   TestAnswer?  @relation(fields: [givenAnswerId], references: [id])
 }

@@ -2,7 +2,64 @@
   {
     "code": "SOL-BEG-1",
     "question": "Solidity Beginner Question 1",
-    "technology": "solidity",
-    "level": "beginner"
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "answer 1",
+        "correct": true
+      },
+      {
+        "answer": "answer 1"
+      },
+      {
+        "answer": "answer 1"
+      },
+      {
+        "answer": "answer 1"
+      }
+    ]
+  },
+  {
+    "code": "SOL-INT-1",
+    "question": "Solidity Intermediate Question 2",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "answer 1"
+      },
+      {
+        "answer": "answer 1"
+      },
+      {
+        "answer": "answer 1",
+        "correct": true
+      },
+      {
+        "answer": "answer 1"
+      }
+    ]
+  },
+  {
+    "code": "SOL-ADV-1",
+    "question": "Solidity Advanced Question 3",
+    "technology": "Solidity",
+    "level": "Advanced",
+    "answers": [
+      {
+        "answer": "answer 1"
+      },
+      {
+        "answer": "answer 1",
+        "correct": true
+      },
+      {
+        "answer": "answer 1"
+      },
+      {
+        "answer": "answer 1"
+      }
+    ]
   }
 ]

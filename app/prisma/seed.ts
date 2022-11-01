@@ -10,11 +10,12 @@ import communityProjects from './seedData/communityProjects.json';
 import accolades from './seedData/accolades.json';
 import events from './seedData/events.json';
 import { slugify } from '../src/utils/formatters';
+import { seedTests } from './seedScripts/seedTests';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  await truncateAllTables();
+  // await truncateAllTables();
   await seedTags();
   await seedTechnologies();
   await seedContentTypes();
@@ -25,28 +26,29 @@ async function main() {
   await seedCommunityProjects();
   await seedAccolades();
   await seedEvents();
-  await seedQuestionsBulk();
-  await seedAnswersBulk();
+  await seedTests();
+  // await seedQuestionsBulk();
+  // await seedAnswersBulk();
 }
 
-const truncateAllTables = async () => {
-  await prisma.$transaction([
-    prisma.userCourse.deleteMany(),
-    prisma.communityProject.deleteMany(),
-    prisma.resource.deleteMany(),
-    prisma.course.deleteMany(),
-    prisma.communityProject.deleteMany(),
-    prisma.content.deleteMany(),
-    prisma.technology.deleteMany(),
-    prisma.tag.deleteMany(),
-    prisma.level.deleteMany(),
-    prisma.userLevel.deleteMany(),
-    prisma.accolade.deleteMany(),
-    prisma.contentType.deleteMany(),
-    prisma.testAnswer.deleteMany(),
-    prisma.testQuestion.deleteMany(),
-  ]);
-};
+// const truncateAllTables = async () => {
+//   await prisma.$transaction([
+//     prisma.userCourse.deleteMany(),
+//     prisma.communityProject.deleteMany(),
+//     prisma.resource.deleteMany(),
+//     prisma.course.deleteMany(),
+//     prisma.communityProject.deleteMany(),
+//     prisma.content.deleteMany(),
+//     prisma.technology.deleteMany(),
+//     prisma.tag.deleteMany(),
+//     prisma.level.deleteMany(),
+//     prisma.userLevel.deleteMany(),
+//     prisma.accolade.deleteMany(),
+//     prisma.contentType.deleteMany(),
+//     prisma.testAnswer.deleteMany(),
+//     prisma.testQuestion.deleteMany(),
+//   ]);
+// };
 
 const seedTechnologies = async () => {
   const data = technologies.map((t) => ({ name: t, slug: slugify(t) }));
@@ -204,103 +206,6 @@ const seedEvents = async () => {
   }
 
   console.log(`Events created ${data.length}`);
-};
-
-const QUESTIONS_PER_LEVEL = 10;
-
-const options = [
-  {
-    tech: 'Solidity',
-    prefix: 'SOL-BEG',
-    level: 'Beginner',
-  },
-  {
-    tech: 'Solidity',
-    prefix: 'SOL-INT',
-    level: 'Intermediate',
-  },
-  {
-    tech: 'Solidity',
-    prefix: 'SOL-ADV',
-    level: 'Advanced',
-  },
-  {
-    tech: 'Hardhat',
-    prefix: 'HHA-BEG',
-    level: 'Beginner',
-  },
-  {
-    tech: 'Hardhat',
-    prefix: 'HHA-INT',
-    level: 'Intermediate',
-  },
-  {
-    tech: 'Hardhat',
-    prefix: 'HHA-ADV',
-    level: 'Advanced',
-  },
-  {
-    tech: 'ChainLink',
-    prefix: 'LNK-BEG',
-    level: 'Beginner',
-  },
-  {
-    tech: 'ChainLink',
-    prefix: 'LNK-INT',
-    level: 'Intermediate',
-  },
-  {
-    tech: 'ChainLink',
-    prefix: 'LNK-ADV',
-    level: 'Advanced',
-  },
-];
-
-const seedQuestionsBulk = async () => {
-  for (let o = 0; o < options.length; o++) {
-    const questions = [...Array(QUESTIONS_PER_LEVEL)].map((e, i) => ({
-      question: `${options[o].tech} ${options[o].level} question ${i + 1}`,
-      code: `${options[o].prefix}-${(i + 1).toString().padStart(4, '0')}`,
-      technology: { connect: { name: options[o].tech } },
-      level: { connect: { name: options[o].level } },
-    }));
-
-    for (let i = 0; i < questions.length; i++) {
-      await prisma.testQuestion.create({ data: questions[i] });
-    }
-
-    console.log(
-      `${questions.length} ${options[o].tech} ${options[o].level} questions created`
-    );
-  }
-};
-
-const seedAnswersBulk = async () => {
-  for (let o = 0; o < options.length; o++) {
-    const answers = [...Array(QUESTIONS_PER_LEVEL)].map((e, i) =>
-      [...Array(4)].map((f, j) => ({
-        answer: `Answer ${options[o].prefix}-${(i + 1)
-          .toString()
-          .padStart(4, '0')} ${j + 1}`,
-        correct: i === 0 ? true : false,
-        question: {
-          connect: {
-            code: `${options[o].prefix}-${(i + 1).toString().padStart(4, '0')}`,
-          },
-        },
-      }))
-    );
-
-    const flatAnswers = answers.flat(1);
-
-    for (let i = 0; i < flatAnswers.length; i++) {
-      await prisma.testAnswer.create({ data: flatAnswers[i] });
-    }
-
-    console.log(
-      `${flatAnswers.length} ${options[o].tech} ${options[o].level} answers created`
-    );
-  }
 };
 
 main()

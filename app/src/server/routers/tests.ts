@@ -27,6 +27,25 @@ const defaultQuestionSelect = Prisma.validator<Prisma.TestQuestionSelect>()({
   },
 });
 
+const testInstanceSelect = Prisma.validator<Prisma.TestinstanceSelect>()({
+  id: true,
+  questions: {
+    select: {
+      question: {
+        select: {
+          ...defaultQuestionSelect,
+        },
+      },
+      givenAnswer: true,
+    },
+  },
+  isExpired: true,
+  isSubmitted: true,
+  isPassed: true,
+  submittedOn: true,
+  cratedAt: true,
+});
+
 export const testsRouter = createRouter()
   // read
   .query('filtered', {
@@ -216,8 +235,9 @@ export const testsRouter = createRouter()
         console.log(questionIds);
 
         // const questions = await prisma
-        const testInstance = await prisma.testIstance.create({
+        const testInstance = await prisma.testinstance.create({
           data: { courseId, userId: ctx.session.user.userId },
+          select: { id: true },
         });
 
         const instanceQuestionData = questionIds.map((q) => ({
@@ -225,8 +245,12 @@ export const testsRouter = createRouter()
           instanceId: testInstance.id,
         }));
 
-        await prisma.testIstanceQuestion.createMany({
+        await prisma.testinstanceQuestion.createMany({
           data: instanceQuestionData,
+        });
+
+        const test = await prisma.testinstance.findUniqueOrThrow({
+          where: { id: testInstance.id },
         });
 
         return questionIds;

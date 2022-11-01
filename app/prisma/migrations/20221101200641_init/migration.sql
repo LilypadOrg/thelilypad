@@ -64,6 +64,52 @@ CREATE TABLE "Course" (
 );
 
 -- CreateTable
+CREATE TABLE "TestQuestion" (
+    "id" SERIAL NOT NULL,
+    "code" TEXT NOT NULL,
+    "question" TEXT NOT NULL,
+    "levelId" INTEGER NOT NULL,
+    "techId" INTEGER NOT NULL,
+
+    CONSTRAINT "TestQuestion_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "TestAnswer" (
+    "id" SERIAL NOT NULL,
+    "answer" TEXT NOT NULL,
+    "correct" BOOLEAN NOT NULL,
+    "questionId" INTEGER NOT NULL,
+
+    CONSTRAINT "TestAnswer_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Testinstance" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "courseId" INTEGER NOT NULL,
+    "isExpired" BOOLEAN NOT NULL DEFAULT false,
+    "isSubmitted" BOOLEAN NOT NULL DEFAULT false,
+    "isPassed" BOOLEAN NOT NULL DEFAULT false,
+    "submittedOn" TIMESTAMP(3),
+    "cratedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Testinstance_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "TestinstanceQuestion" (
+    "id" SERIAL NOT NULL,
+    "instanceId" INTEGER NOT NULL,
+    "questionId" INTEGER NOT NULL,
+    "givenAnswerId" INTEGER,
+
+    CONSTRAINT "TestinstanceQuestion_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Resource" (
     "id" INTEGER NOT NULL,
     "contentId" INTEGER NOT NULL,
@@ -79,8 +125,22 @@ CREATE TABLE "UserCourse" (
     "roadmap" BOOLEAN NOT NULL DEFAULT false,
     "completed" BOOLEAN NOT NULL DEFAULT false,
     "completedOn" TIMESTAMP(3),
+    "lastTestOn" TIMESTAMP(3),
+    "lastTestPassed" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "UserCourse_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Accolade" (
+    "id" SERIAL NOT NULL,
+    "description" TEXT NOT NULL,
+    "imageUrl" TEXT NOT NULL,
+    "courseId" INTEGER NOT NULL,
+    "cratedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Accolade_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -114,12 +174,12 @@ CREATE TABLE "ContentType" (
 );
 
 -- CreateTable
-CREATE TABLE "CourseLevel" (
+CREATE TABLE "Level" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
 
-    CONSTRAINT "CourseLevel_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Level_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -141,7 +201,7 @@ CREATE TABLE "_TechnologyToUser" (
 );
 
 -- CreateTable
-CREATE TABLE "_CourseToCourseLevel" (
+CREATE TABLE "_CourseToLevel" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
 );
@@ -174,6 +234,9 @@ CREATE UNIQUE INDEX "Technology_slug_key" ON "Technology"("slug");
 CREATE UNIQUE INDEX "Course_contentId_key" ON "Course"("contentId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "TestQuestion_code_key" ON "TestQuestion"("code");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Resource_contentId_key" ON "Resource"("contentId");
 
 -- CreateIndex
@@ -192,10 +255,10 @@ CREATE UNIQUE INDEX "ContentType_name_key" ON "ContentType"("name");
 CREATE UNIQUE INDEX "ContentType_slug_key" ON "ContentType"("slug");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "CourseLevel_name_key" ON "CourseLevel"("name");
+CREATE UNIQUE INDEX "Level_name_key" ON "Level"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "CourseLevel_slug_key" ON "CourseLevel"("slug");
+CREATE UNIQUE INDEX "Level_slug_key" ON "Level"("slug");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_ContentToTechnology_AB_unique" ON "_ContentToTechnology"("A", "B");
@@ -216,10 +279,10 @@ CREATE UNIQUE INDEX "_TechnologyToUser_AB_unique" ON "_TechnologyToUser"("A", "B
 CREATE INDEX "_TechnologyToUser_B_index" ON "_TechnologyToUser"("B");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_CourseToCourseLevel_AB_unique" ON "_CourseToCourseLevel"("A", "B");
+CREATE UNIQUE INDEX "_CourseToLevel_AB_unique" ON "_CourseToLevel"("A", "B");
 
 -- CreateIndex
-CREATE INDEX "_CourseToCourseLevel_B_index" ON "_CourseToCourseLevel"("B");
+CREATE INDEX "_CourseToLevel_B_index" ON "_CourseToLevel"("B");
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_levelNumber_fkey" FOREIGN KEY ("levelNumber") REFERENCES "UserLevel"("number") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -231,6 +294,30 @@ ALTER TABLE "Content" ADD CONSTRAINT "Content_contentTypeId_fkey" FOREIGN KEY ("
 ALTER TABLE "Course" ADD CONSTRAINT "Course_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "Content"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "TestQuestion" ADD CONSTRAINT "TestQuestion_levelId_fkey" FOREIGN KEY ("levelId") REFERENCES "Level"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TestQuestion" ADD CONSTRAINT "TestQuestion_techId_fkey" FOREIGN KEY ("techId") REFERENCES "Technology"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TestAnswer" ADD CONSTRAINT "TestAnswer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "TestQuestion"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Testinstance" ADD CONSTRAINT "Testinstance_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Testinstance" ADD CONSTRAINT "Testinstance_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TestinstanceQuestion" ADD CONSTRAINT "TestinstanceQuestion_instanceId_fkey" FOREIGN KEY ("instanceId") REFERENCES "Testinstance"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TestinstanceQuestion" ADD CONSTRAINT "TestinstanceQuestion_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "TestQuestion"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TestinstanceQuestion" ADD CONSTRAINT "TestinstanceQuestion_givenAnswerId_fkey" FOREIGN KEY ("givenAnswerId") REFERENCES "TestAnswer"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Resource" ADD CONSTRAINT "Resource_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "Content"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -238,6 +325,9 @@ ALTER TABLE "UserCourse" ADD CONSTRAINT "UserCourse_userId_fkey" FOREIGN KEY ("u
 
 -- AddForeignKey
 ALTER TABLE "UserCourse" ADD CONSTRAINT "UserCourse_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Accolade" ADD CONSTRAINT "Accolade_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Event" ADD CONSTRAINT "Event_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "Content"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -264,7 +354,7 @@ ALTER TABLE "_TechnologyToUser" ADD CONSTRAINT "_TechnologyToUser_A_fkey" FOREIG
 ALTER TABLE "_TechnologyToUser" ADD CONSTRAINT "_TechnologyToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_CourseToCourseLevel" ADD CONSTRAINT "_CourseToCourseLevel_A_fkey" FOREIGN KEY ("A") REFERENCES "Course"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_CourseToLevel" ADD CONSTRAINT "_CourseToLevel_A_fkey" FOREIGN KEY ("A") REFERENCES "Course"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_CourseToCourseLevel" ADD CONSTRAINT "_CourseToCourseLevel_B_fkey" FOREIGN KEY ("B") REFERENCES "CourseLevel"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_CourseToLevel" ADD CONSTRAINT "_CourseToLevel_B_fkey" FOREIGN KEY ("B") REFERENCES "Level"("id") ON DELETE CASCADE ON UPDATE CASCADE;
