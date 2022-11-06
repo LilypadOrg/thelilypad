@@ -3,14 +3,14 @@ import { Question, TestFormInputs } from '~/types/types';
 
 const TestQuestion = ({
   question,
-  active,
+  disabled,
   registerField,
   error,
   answerSelected,
   answerStatus,
 }: {
   question: Question;
-  active: boolean;
+  disabled: boolean;
   registerField: UseFormRegister<TestFormInputs>;
   error?: boolean;
   answerSelected?: number;
@@ -21,7 +21,7 @@ const TestQuestion = ({
       <p className="text-xl font-bold">{question.question}</p>
       {question.answers.map((a) => {
         let classes = '';
-        if (active) {
+        if (!disabled) {
           classes =
             'hover:bg-primary-300 peer-checked:border-primary-500 peer-checked:bg-primary-300';
         } else {
@@ -39,8 +39,8 @@ const TestQuestion = ({
               {...registerField(`${question.id}`)}
               value={a.id}
               className="peer mr-2 hidden"
-              disabled={active}
-              checked={answerSelected === a.id}
+              defaultChecked={answerSelected === a.id}
+              disabled={disabled}
             />
             <label
               htmlFor={`q-${question.code}-a-${a.id}`}

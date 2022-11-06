@@ -3,7 +3,13 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { createRouter } from '~/server/createRouter';
 import { prisma } from '~/server/prisma';
-import { BROWSE_COURSES_ITEMS, QUESTION_NUM_BY_LEVEL } from '~/utils/constants';
+import {
+  BROWSE_COURSES_ITEMS,
+  TEST_QUESTIONS_BY_LEVEL,
+  TEST_COOLDOWN_MS,
+  TEST_DURATION_MS,
+  TEST_PASS_RATE,
+} from '~/utils/constants';
 
 const defaultQuestionSelect = Prisma.validator<Prisma.TestQuestionSelect>()({
   id: true,
@@ -29,6 +35,8 @@ const defaultQuestionSelect = Prisma.validator<Prisma.TestQuestionSelect>()({
 
 const testInstanceSelect = Prisma.validator<Prisma.TestinstanceSelect>()({
   id: true,
+  userId: true,
+  courseId: true,
   questions: {
     select: {
       question: {
@@ -42,9 +50,59 @@ const testInstanceSelect = Prisma.validator<Prisma.TestinstanceSelect>()({
   isExpired: true,
   isSubmitted: true,
   isPassed: true,
-  submittedOn: true,
+  isCoolDownOver: true,
+  expiredOn: true,
   cratedAt: true,
 });
+
+const updateInstanceStatus = async (
+  testInstance: Prisma.TestinstanceGetPayload<{
+    select: typeof testInstanceSelect;
+  }> | null
+) => {
+  if (!testInstance) return null;
+
+  let isExpired = testInstance.isExpired;
+  let isCoolDownOver = testInstance.isCoolDownOver;
+  let expiredOn: Date | null = testInstance.expiredOn;
+  let update = false;
+  let returnTest: Prisma.TestinstanceGetPayload<{
+    select: typeof testInstanceSelect;
+  }>;
+  let coolDownTime = 0;
+  let expiryTime = 0;
+
+  if (!testInstance.isExpired) {
+    expiryTime =
+      TEST_DURATION_MS -
+      (new Date().getTime() - testInstance.cratedAt.getTime());
+    if (expiryTime <= 0) {
+      isExpired = true;
+      expiredOn = new Date();
+      update = true;
+    }
+  }
+  if (expiredOn) {
+    coolDownTime =
+      TEST_COOLDOWN_MS - (new Date().getTime() - expiredOn.getTime());
+    if (coolDownTime <= 0) {
+      isCoolDownOver = true;
+      update = true;
+    }
+  }
+  if (update) {
+    const updInstance = await prisma.testinstance.update({
+      where: { id: testInstance.id },
+      data: { isExpired, isCoolDownOver, expiredOn },
+      select: testInstanceSelect,
+    });
+
+    returnTest = updInstance;
+  } else {
+    returnTest = testInstance;
+  }
+  return { ...returnTest, coolDownTime, expiryTime };
+};
 
 export const testsRouter = createRouter()
   // read
@@ -108,8 +166,39 @@ export const testsRouter = createRouter()
       }
     },
   })
+  .query('single', {
+    input: z.object({ courseId: z.number() }),
+    async resolve({ ctx, input }) {
+      if (!ctx.session?.user) {
+        console.log('Ostia');
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: `Unauthorized`,
+        });
+      }
+      try {
+        const userId = ctx.session.user.userId;
+
+        const existingInstance = await prisma.testinstance.findFirst({
+          where: { courseId: input.courseId, userId },
+          select: testInstanceSelect,
+        });
+
+        const returnTest = await updateInstanceStatus(existingInstance);
+
+        return returnTest;
+      } catch (err) {
+        console.log('err');
+        console.log(err);
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Error retrieving data.`,
+        });
+      }
+    },
+  })
   .mutation('result', {
-    input: z.record(z.string()),
+    input: z.object({ testId: z.number(), answers: z.record(z.string()) }),
     async resolve({ ctx, input }) {
       if (!ctx.session?.user) {
         throw new TRPCError({
@@ -118,43 +207,78 @@ export const testsRouter = createRouter()
         });
       }
       try {
-        const qIds = Object.keys(input).map((k) => Number(k));
-        const aIds = Object.values(input).map((k) => Number(k));
+        const qIds = Object.keys(input.answers).map((k) => Number(k));
+        const aIds = Object.values(input.answers).map((k) => Number(k));
 
-        console.log('qIds');
-        console.log(qIds);
-        console.log('aIds');
-        console.log(aIds);
+        const testInstance = await prisma.testinstance.findUniqueOrThrow({
+          where: { id: input.testId },
+          select: testInstanceSelect,
+        });
+
+        if (testInstance.questions.length !== qIds.length) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: `Bad Request`,
+          });
+        }
+
+        for (let i = 0; i < qIds.length; i++) {
+          await prisma.testinstanceQuestion.update({
+            where: {
+              instanceId_questionId: {
+                instanceId: input.testId,
+                questionId: qIds[i],
+              },
+            },
+            data: { givenAnswerId: aIds[i] },
+          });
+        }
+
         const results = await prisma.testQuestion.findMany({
           where: {
             id: { in: qIds },
+            answers: { some: { id: { in: aIds }, correct: true } },
           },
           select: {
             id: true,
-            code: true,
-            question: true,
-            answers: {
-              select: {
-                id: true,
-                answer: true,
-                correct: true,
-              },
-              where: {
-                id: { in: aIds },
-                correct: true,
-              },
-            },
           },
         });
-        console.log('results');
-        console.log(results);
+
+        const passed = results.length / qIds.length > TEST_PASS_RATE;
+
         console.log(
           `Questions ${qIds.length}, correct: ${results.length}, ration: ${
             results.length / qIds.length
           }`
         );
 
-        return results;
+        const test = await prisma.testinstance.update({
+          where: { id: input.testId },
+          data: {
+            expiredOn: new Date(),
+            isSubmitted: true,
+            isExpired: true,
+            isPassed: passed,
+          },
+          select: testInstanceSelect,
+        });
+
+        await prisma.userCourse.upsert({
+          where: {
+            userId_courseId: {
+              userId: testInstance.userId,
+              courseId: testInstance.courseId,
+            },
+          },
+          update: { lastTestPassed: passed },
+          create: {
+            userId: testInstance.userId,
+            courseId: testInstance.courseId,
+            lastTestPassed: passed,
+          },
+        });
+
+        return test;
       } catch (err) {
         console.log('query error');
         console.log(err);
@@ -175,6 +299,28 @@ export const testsRouter = createRouter()
         });
       }
       try {
+        const userId = ctx.session.user.userId;
+
+        let existingInstance = await prisma.testinstance.findFirst({
+          where: { courseId: courseId, userId },
+          select: testInstanceSelect,
+        });
+
+        existingInstance = await updateInstanceStatus(existingInstance);
+        if (existingInstance) {
+          // throw an error if not yet expired or expired but cooldown not passed
+          if (!existingInstance.isCoolDownOver) {
+            throw new TRPCError({
+              code: 'BAD_REQUEST',
+              message: `Bad Request`,
+            });
+          } else {
+            await prisma.testinstance.delete({
+              where: { id: existingInstance.id },
+            });
+          }
+        }
+
         const course = await prisma.course.findUniqueOrThrow({
           where: { id: courseId },
           select: {
@@ -186,13 +332,9 @@ export const testsRouter = createRouter()
             },
           },
         });
-        const levels = course.levels.map((c) => c.slug);
-        console.log('levels');
-        console.log(levels);
 
+        const levels = course.levels.map((c) => c.slug);
         const techs = course.content.technologies.map((t) => t.slug);
-        console.log('techs');
-        console.log(techs);
 
         let levelSlug = '';
         if (levels.includes('advanced')) {
@@ -202,12 +344,8 @@ export const testsRouter = createRouter()
         } else if (levels.includes('beginner')) {
           levelSlug = 'beginner';
         }
-        console.log('levelSlug');
-        console.log(levelSlug);
 
-        const questionsToExtract = QUESTION_NUM_BY_LEVEL[levelSlug];
-        console.log('questionsToExtract');
-        console.log(questionsToExtract);
+        const questionsToExtract = TEST_QUESTIONS_BY_LEVEL[levelSlug];
 
         const questionsByTech = Math.floor(questionsToExtract / techs.length);
 
@@ -219,6 +357,8 @@ export const testsRouter = createRouter()
             i < techs.length - 1
               ? questionsByTech
               : questionsToExtract - questionsByTech * i;
+          console.log('limit');
+          console.log(limit);
           const questions: QuestionIds =
             await prisma.$queryRaw`select tq.id from "TestQuestion" tq
             INNER JOIN "Level" lv ON tq."levelId" = lv.id   
@@ -231,19 +371,19 @@ export const testsRouter = createRouter()
           questionIds.push(...questions);
         }
 
-        console.log('questionIds');
-        console.log(questionIds);
-
         // const questions = await prisma
         const testInstance = await prisma.testinstance.create({
-          data: { courseId, userId: ctx.session.user.userId },
+          data: { courseId, userId },
           select: { id: true },
         });
 
-        const instanceQuestionData = questionIds.map((q) => ({
-          questionId: q.id,
-          instanceId: testInstance.id,
-        }));
+        const instanceQuestionData = questionIds
+          .map((q) => ({ ...q, sort: Math.random() }))
+          .sort((a, b) => a.sort - b.sort)
+          .map((q) => ({
+            questionId: q.id,
+            instanceId: testInstance.id,
+          }));
 
         await prisma.testinstanceQuestion.createMany({
           data: instanceQuestionData,
@@ -251,9 +391,10 @@ export const testsRouter = createRouter()
 
         const test = await prisma.testinstance.findUniqueOrThrow({
           where: { id: testInstance.id },
+          select: testInstanceSelect,
         });
 
-        return questionIds;
+        return { ...test, expiryTime: TEST_DURATION_MS };
       } catch (err) {
         console.log('query error');
         console.log(err);

@@ -9,8 +9,6 @@ import {
 import { trpc } from '~/utils/trpc';
 
 export const useOnChainProfile = (address: string | undefined) => {
-  console.log('address');
-  console.log(address);
   const {
     data: onChainProfile,
     refetch,
@@ -42,9 +40,8 @@ export const useOnChainProfile = (address: string | undefined) => {
   const isLoading =
     isLoadingOnChainProfile || isLoadingTokenMetadata || isLoadingTokenURI;
 
-  const data: OnChainProfile | undefined = isLoading
-    ? undefined
-    : {
+  const data: OnChainProfile | undefined = onChainProfile
+    ? {
         DAO: !!onChainProfile?.DAO,
         pathChosen: !!onChainProfile?.pathChosen,
         xp: onChainProfile?.xp,
@@ -55,7 +52,8 @@ export const useOnChainProfile = (address: string | undefined) => {
         sbtImageUrl: tokenMetadata?.image
           .replace('ipfs:', 'https:')
           .concat('.ipfs.nftstorage.link/'),
-      };
+      }
+    : undefined;
 
   return { data, refetch, isLoading };
 };

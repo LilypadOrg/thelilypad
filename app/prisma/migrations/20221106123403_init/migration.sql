@@ -92,7 +92,8 @@ CREATE TABLE "Testinstance" (
     "isExpired" BOOLEAN NOT NULL DEFAULT false,
     "isSubmitted" BOOLEAN NOT NULL DEFAULT false,
     "isPassed" BOOLEAN NOT NULL DEFAULT false,
-    "submittedOn" TIMESTAMP(3),
+    "isCoolDownOver" BOOLEAN NOT NULL DEFAULT false,
+    "expiredOn" TIMESTAMP(3),
     "cratedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -237,6 +238,9 @@ CREATE UNIQUE INDEX "Course_contentId_key" ON "Course"("contentId");
 CREATE UNIQUE INDEX "TestQuestion_code_key" ON "TestQuestion"("code");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "TestinstanceQuestion_instanceId_questionId_key" ON "TestinstanceQuestion"("instanceId", "questionId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Resource_contentId_key" ON "Resource"("contentId");
 
 -- CreateIndex
@@ -303,13 +307,13 @@ ALTER TABLE "TestQuestion" ADD CONSTRAINT "TestQuestion_techId_fkey" FOREIGN KEY
 ALTER TABLE "TestAnswer" ADD CONSTRAINT "TestAnswer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "TestQuestion"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Testinstance" ADD CONSTRAINT "Testinstance_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Testinstance" ADD CONSTRAINT "Testinstance_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Testinstance" ADD CONSTRAINT "Testinstance_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Testinstance" ADD CONSTRAINT "Testinstance_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "TestinstanceQuestion" ADD CONSTRAINT "TestinstanceQuestion_instanceId_fkey" FOREIGN KEY ("instanceId") REFERENCES "Testinstance"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "TestinstanceQuestion" ADD CONSTRAINT "TestinstanceQuestion_instanceId_fkey" FOREIGN KEY ("instanceId") REFERENCES "Testinstance"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TestinstanceQuestion" ADD CONSTRAINT "TestinstanceQuestion_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "TestQuestion"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

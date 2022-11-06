@@ -103,28 +103,31 @@ model TestAnswer {
 }
 
 model Testinstance {
-  id          Int                   @id @default(autoincrement())
-  userId      Int
-  user        User                  @relation(fields: [userId], references: [id])
-  courseId    Int
-  course      Course                @relation(fields: [courseId], references: [id])
-  questions   TestinstanceQuestion[]
-  isExpired   Boolean               @default(false)
-  isSubmitted Boolean               @default(false)
-  isPassed    Boolean               @default(false)
-  submittedOn DateTime?
-  cratedAt    DateTime              @default(now())
-  updatedAt   DateTime              @updatedAt
+  id            Int                   @id @default(autoincrement())
+  userId          Int
+  user            User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId        Int
+  course          Course                @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  questions       TestinstanceQuestion[]
+  isExpired       Boolean               @default(false)
+  isSubmitted     Boolean               @default(false)
+  isPassed        Boolean               @default(false)
+  isCoolDownOver  Boolean               @default(false)
+  expiredOn       DateTime?
+  cratedAt        DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
 }
 
 model TestinstanceQuestion {
   id            Int          @id @default(autoincrement())
   instanceId    Int
-  Instance      Testinstance  @relation(fields: [instanceId], references: [id])
+  Instance      Testinstance  @relation(fields: [instanceId], references: [id], onDelete: Cascade)
   questionId    Int
   question      TestQuestion @relation(fields: [questionId], references: [id])
   givenAnswerId Int?
   givenAnswer   TestAnswer?  @relation(fields: [givenAnswerId], references: [id])
+  
+  @@unique([instanceId, questionId ])
 }
 
 model Resource {

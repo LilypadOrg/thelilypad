@@ -10,7 +10,7 @@ import communityProjects from './seedData/communityProjects.json';
 import accolades from './seedData/accolades.json';
 import events from './seedData/events.json';
 import { slugify } from '../src/utils/formatters';
-import { seedTests } from './seedScripts/seedTests';
+import { seedTests, seedTestsBulk } from './seedScripts/seedTests';
 
 const prisma = new PrismaClient();
 
@@ -26,9 +26,7 @@ async function main() {
   await seedCommunityProjects();
   await seedAccolades();
   await seedEvents();
-  await seedTests();
-  // await seedQuestionsBulk();
-  // await seedAnswersBulk();
+  await seedTestsBulk();
 }
 
 // const truncateAllTables = async () => {

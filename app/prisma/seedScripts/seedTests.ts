@@ -57,9 +57,9 @@ export const seedTests = async () => {
   seedQuestions();
 };
 
-export const seedTestsBuld = async () => {
-  seedQuestionsBulk();
-  seedAnswersBulk();
+export const seedTestsBulk = async () => {
+  await seedQuestionsBulk();
+  await seedAnswersBulk();
 };
 
 const seedQuestions = async () => {
@@ -109,7 +109,7 @@ const seedAnswersBulk = async () => {
         answer: `Answer ${options[o].prefix}-${(i + 1)
           .toString()
           .padStart(4, '0')} ${j + 1}`,
-        correct: i === 0 ? true : false,
+        correct: j === 0 ? true : false,
         question: {
           connect: {
             code: `${options[o].prefix}-${(i + 1).toString().padStart(4, '0')}`,
