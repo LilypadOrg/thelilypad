@@ -3,12 +3,17 @@ import { useEffect, useState } from 'react';
 import { trpc } from '~/utils/trpc';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import TestQuestion from '~/components/TestQuestion';
-import { TestFormInputs } from '~/types/types';
-import { TEST_SHOW_RESULT_MS } from '~/utils/constants';
+import { TestFormInputs, TestInstanceExt } from '~/types/types';
+import {
+  TEST_DURATION_MS,
+  TEST_PASS_RATE,
+  TEST_QUESTIONS_BY_LEVEL,
+  TEST_SHOW_RESULT_MS,
+} from '~/utils/constants';
+import { getCourseHighestLevel } from '~/utils/content';
+import CountDown from '~/components/CountDown';
+import TestForm from '~/components/TestForm';
+import { SubmitHandler } from 'react-hook-form';
 
 const Test: NextPage = () => {
   // TODO: Redirect if unauthorized
@@ -21,34 +26,37 @@ const Test: NextPage = () => {
     ['tests.single', { courseId }],
     {
       enabled: !!session && !!courseId,
-    }
-  );
-
-  const { data: newTest, mutate: createTest } = trpc.useMutation(
-    ['tests.createInstance'],
-    {
-      onSuccess: () => {
-        setTestState('edit');
-      },
-    }
-  );
-
-  const { data: testResults, mutate: getTestResults } = trpc.useMutation(
-    ['tests.result'],
-    {
       onSuccess: (data) => {
-        if (data.isPassed) {
-          setTestState('passed');
-        } else setTestState('cooldown');
+        console.log('Exist succes');
+        setCurrentTest(data);
       },
     }
   );
+
+  const { mutate: createTest } = trpc.useMutation(['tests.createInstance'], {
+    onSuccess: (data) => {
+      console.log('New succes');
+
+      setTestState('edit');
+      setCurrentTest(data);
+    },
+  });
+
+  const { mutate: getTestResults } = trpc.useMutation(['tests.result'], {
+    onSuccess: (data) => {
+      console.log('Result succes');
+      setCurrentTest(data);
+      if (data.isPassed) {
+        setTestState('passed');
+      } else setTestState('cooldown');
+    },
+  });
 
   const [testState, setTestState] = useState<
     'create' | 'edit' | 'cooldown' | 'loading' | 'passed'
   >('loading');
 
-  const schema = z.record(z.string());
+  const [currentTest, setCurrentTest] = useState<TestInstanceExt | null>();
 
   useEffect(() => {
     console.log('use effect');
@@ -75,33 +83,33 @@ const Test: NextPage = () => {
     }
   }, [sessionStatus, router]);
 
-  const currentTest = testResults || newTest || existingTest;
+  // const currentTest = testResults || newTest || existingTest;
+
   const showTest =
     currentTest &&
     (testState === 'edit' ||
-      (testState === 'cooldown' &&
+      ((testState === 'cooldown' || testState === 'passed') &&
         currentTest.isSubmitted &&
         currentTest.expiredOn &&
         new Date().getTime() - currentTest.expiredOn.getTime() <
           TEST_SHOW_RESULT_MS));
 
-  console.log('testState');
-  console.log(testState);
+  const courseLevel = course ? getCourseHighestLevel(course.levels) : undefined;
+  const totalQuestions = courseLevel ? TEST_QUESTIONS_BY_LEVEL[courseLevel] : 0;
 
-  console.log('currentTest');
-  console.log(currentTest);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<TestFormInputs>({
-    mode: 'onTouched',
-    resolver: zodResolver(schema),
-  });
+  const resultStats =
+    currentTest && currentTest.isSubmitted
+      ? {
+          total: currentTest.questions.length,
+          correct: currentTest.questions.filter((q) => q.givenAnswer?.correct)
+            .length,
+        }
+      : undefined;
 
   const submitTest: SubmitHandler<TestFormInputs> = (data) => {
     if (!currentTest) return;
+    console.log('Submit values');
+    console.log(data);
     const submitData = {
       testId: currentTest.id,
       answers: data,
@@ -113,6 +121,10 @@ const Test: NextPage = () => {
     createTest({ courseId });
   };
 
+  const handleCoolDownOver = () => {
+    setTestState('create');
+  };
+
   return (
     <div className="px-[5.5rem]">
       {course && (
@@ -121,10 +133,14 @@ const Test: NextPage = () => {
           {testState === 'create' && (
             <div>
               <p>
-                Test for this course will constitute of question on{' '}
+                Test for this course will constitute of {totalQuestions}{' '}
+                questions on{' '}
                 {course.content.technologies.map((l) => l.name).join(', ')}.
               </p>
-              <p>You are going to have X minutes to complete the test.</p>
+              <p>
+                You are going to have {TEST_DURATION_MS / 1000 / 60} minutes to
+                complete the test.
+              </p>
               <button
                 className="mt-8 w-full rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500"
                 onClick={createNewTest}
@@ -133,28 +149,44 @@ const Test: NextPage = () => {
               </button>
             </div>
           )}
-          {testState === 'passed' && <div>Test passed!!!</div>}
-          {testState === 'cooldown' && <div>Test failed!!!</div>}
-          {showTest && (
+          {(testState === 'passed' || testState === 'cooldown') && currentTest && (
             <div>
-              <form onSubmit={handleSubmit(submitTest)}>
-                {currentTest.questions.map((q) => (
-                  <TestQuestion
-                    key={`q-${q.question.code}`}
-                    question={q.question}
-                    disabled={currentTest.isExpired}
-                    answerSelected={q.givenAnswer?.id}
-                    answerStatus={q.givenAnswer?.correct}
-                    error={!!errors[`${q.question.id}`]}
-                    registerField={register}
+              <div className="mb-4 text-4xl font-bold">
+                <p>
+                  Test{' '}
+                  {testState === 'passed' ? (
+                    <span className="text-green-600">passed!!!</span>
+                  ) : (
+                    <span className="text-red-600">failed!</span>
+                  )}
+                </p>
+                <div>
+                  You can retry in{' '}
+                  <CountDown
+                    classes="inline"
+                    startValue={Math.floor(currentTest.coolDownTime / 1000)}
+                    handleOver={handleCoolDownOver}
                   />
-                ))}
-                <button disabled={currentTest.isExpired} type="submit">
-                  Submit
-                </button>
-              </form>
+                </div>
+              </div>
+
+              {resultStats && (
+                <div className="text-xl">
+                  <p>
+                    Total questions: {resultStats.total} - Correct Answers:{' '}
+                    {resultStats.correct} - Correct:{' '}
+                    {(resultStats.correct / resultStats.total) * 100}%
+                  </p>
+                  <p>
+                    You need {TEST_PASS_RATE * 100}% correct answers to pass the
+                    test.
+                  </p>
+                </div>
+              )}
             </div>
           )}
+
+          {showTest && <TestForm submitTest={submitTest} test={currentTest} />}
         </>
       )}
     </div>

@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import questions from '../seedData/testQuestions.json';
 
-const QUESTIONS_PER_LEVEL = 10;
+const QUESTIONS_PER_LEVEL = 20;
 
 const options = [
   {
@@ -47,6 +47,21 @@ const options = [
   {
     tech: 'ChainLink',
     prefix: 'LNK-ADV',
+    level: 'Advanced',
+  },
+  {
+    tech: 'JavaScript',
+    prefix: 'JS-BEG',
+    level: 'Beginner',
+  },
+  {
+    tech: 'JavaScript',
+    prefix: 'JS-INT',
+    level: 'Intermediate',
+  },
+  {
+    tech: 'JavaScript',
+    prefix: 'JS-ADV',
     level: 'Advanced',
   },
 ];

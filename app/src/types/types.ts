@@ -1,4 +1,6 @@
+import { Prisma } from '@prisma/client';
 import { BigNumber } from 'ethers';
+import { testInstanceSelect } from '~/server/routers/tests';
 import { inferQueryOutput } from '~/utils/trpc';
 
 export enum ContentType {
@@ -43,3 +45,7 @@ export interface ContentFilter {
 export type TestFormInputs = {
   [question: string]: string;
 };
+
+export type TestInstanceExt = Prisma.TestinstanceGetPayload<{
+  select: typeof testInstanceSelect;
+}> & { coolDownTime: number; expiryTime: number };
