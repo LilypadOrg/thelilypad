@@ -23,9 +23,9 @@ const CoursePage: NextPage = () => {
   const { data: session } = useSession();
 
   const { data: userCourses } = trpc.useQuery(
-    ['usercourses.all', { userId: session?.user.userId || -1 }],
+    ['usercourses.single', { courseId: course?.id || -1 }],
     {
-      enabled: !!session,
+      enabled: !!session && !!course,
     }
   );
 
@@ -60,18 +60,6 @@ const CoursePage: NextPage = () => {
 
   // TODO: pull rigght content
   // const project = projects?.find((p) => p.id === 30003);
-  console.log('project');
-  console.log(project);
-
-  const completed =
-    (course &&
-      !!userCourses?.find((c) => c.courseId === course.id && c.completed)) ||
-    false;
-
-  const inRoadmap =
-    (course &&
-      !!userCourses?.find((c) => c.courseId === course.id && c.roadmap)) ||
-    false;
 
   if (isLoading) {
     return (
@@ -178,21 +166,23 @@ const CoursePage: NextPage = () => {
             <h1 className="mb-0 text-3xl font-semibold">Description</h1>
             <p className="font-light">{course.content.description}</p>
             {session && (
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <AddCourseToRoadmap
                   courseId={course.id}
-                  inRoadmap={inRoadmap}
+                  inRoadmap={userCourses?.roadmap || false}
                   type="standard"
                 />
-                <CompleteCourse
-                  courseId={course.id}
-                  user={session.user}
-                  completed={completed}
-                />
-
-                <button className="mt-8 rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500">
-                  Take final test
-                </button>
+                {userCourses?.lastTestPassed || false ? (
+                  <CompleteCourse
+                    courseId={course.id}
+                    user={session.user}
+                    completed={userCourses?.completed || false}
+                  />
+                ) : (
+                  <button className="mt-8 rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500">
+                    <Link href={`/tests/${id}`}>Take final test</Link>
+                  </button>
+                )}
               </div>
             )}
           </div>

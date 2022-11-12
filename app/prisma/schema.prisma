@@ -2,164 +2,193 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["filteredRelationCount"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // shadowDatabaseUrl      = env("DATABASE_URL_SHADOW")
 }
 
-
 model User {
-  id Int @id @default(autoincrement())
-  address String @unique
-  username String @unique
-  bio String?
-  xp Int @default(0)
-  level UserLevel @relation(fields: [levelNumber], references: [number])
-  levelNumber Int
-  courses UserCourse[]
+  id           Int           @id @default(autoincrement())
+  address      String        @unique
+  username     String        @unique
+  bio          String?
+  xp           Int           @default(0)
+  level        UserLevel     @relation(fields: [levelNumber], references: [number])
+  levelNumber  Int
+  courses      UserCourse[]
   technologies Technology[]
-  cratedAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  tests        Testinstance[]
+  cratedAt     DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 model UserLevel {
-  number Int @id
+  number Int    @id
   xpFrom Int
-  xpTo Int
-  users User[]
+  xpTo   Int
+  users  User[]
 }
 
 // Generic content type
 model Content {
-  id Int @id
-  title String @unique
-  slug String @unique
-  description String
-  url String
-  coverImageUrl String?
-  technologies Technology[]
-  tags Tag[]
-  contentType ContentType @relation(fields: [contentTypeId], references: [id])
-  contentTypeId Int
-  course Course?
-  resource Resource?
-  event Event?
+  id               Int               @id
+  title            String            @unique
+  slug             String            @unique
+  description      String
+  url              String
+  coverImageUrl    String?
+  technologies     Technology[]
+  tags             Tag[]
+  contentType      ContentType       @relation(fields: [contentTypeId], references: [id])
+  contentTypeId    Int
+  course           Course?
+  resource         Resource?
+  event            Event?
   communityProject CommunityProject?
-  cratedAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  cratedAt         DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 }
 
 model Tag {
-  id Int @id @default(autoincrement())
-  name String @unique
-  slug String @unique
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  slug     String    @unique
   contents Content[]
 }
 
 model Technology {
-  id Int @id @default(autoincrement())
-  name String @unique
-  slug String @unique
-  contents Content[]
-  users User[]
+  id        Int            @id @default(autoincrement())
+  name      String         @unique
+  slug      String         @unique
+  contents  Content[]
+  users     User[]
   questions TestQuestion[]
 }
 
 model Course {
-  id Int @id
-  levels Level[]
-  xp Int
+  id          Int           @id
+  levels      Level[]
+  xp          Int
   userCourses UserCourse[]
-  accolades Accolade[]
-  content Content @relation(fields: [contentId], references: [id])
-  contentId Int @unique
+  accolades   Accolade[]
+  tests       Testinstance[]
+  content     Content       @relation(fields: [contentId], references: [id])
+  contentId   Int           @unique
 }
 
 model TestQuestion {
-  id Int @id @default(autoincrement())
-  code String @unique
-  question String
-  levelId Int
-  level Level @relation(fields: [levelId], references: [id])
-  techId Int
-  technology Technology @relation(fields: [techId], references: [id])
-  answers TestAnswer[]
+  id         Int                   @id @default(autoincrement())
+  code       String                @unique
+  question   String
+  levelId    Int
+  level      Level                 @relation(fields: [levelId], references: [id])
+  techId     Int
+  technology Technology            @relation(fields: [techId], references: [id])
+  instances  TestinstanceQuestion[]
+  answers    TestAnswer[]
 }
 
 model TestAnswer {
-  id Int @id @default(autoincrement())
-  answer String
-  correct Boolean
-  questionId Int
-  question TestQuestion @relation(fields: [questionId], references: [id])
+  id                Int                   @id @default(autoincrement())
+  answer            String
+  correct           Boolean
+  questionId        Int
+  question          TestQuestion          @relation(fields: [questionId], references: [id])
+  instanceQuestions TestinstanceQuestion[]
+}
+
+model Testinstance {
+  id            Int                   @id @default(autoincrement())
+  userId          Int
+  user            User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId        Int
+  course          Course                @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  questions       TestinstanceQuestion[]
+  isExpired       Boolean               @default(false)
+  isSubmitted     Boolean               @default(false)
+  isPassed        Boolean               @default(false)
+  isCoolDownOver  Boolean               @default(false)
+  expiredOn       DateTime?
+  cratedAt        DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+}
+
+model TestinstanceQuestion {
+  id            Int          @id @default(autoincrement())
+  instanceId    Int
+  Instance      Testinstance  @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  questionId    Int
+  question      TestQuestion @relation(fields: [questionId], references: [id])
+  givenAnswerId Int?
+  givenAnswer   TestAnswer?  @relation(fields: [givenAnswerId], references: [id])
+  
+  @@unique([instanceId, questionId ])
 }
 
 model Resource {
-  id Int @id
-  content Content @relation(fields: [contentId], references: [id])
-  contentId Int @unique
+  id        Int     @id
+  content   Content @relation(fields: [contentId], references: [id])
+  contentId Int     @unique
 }
 
 model UserCourse {
-  id Int @id @default(autoincrement())
-  user User @relation(fields: [userId], references: [id])
-  userId Int
-  course Course @relation(fields: [courseId], references: [id])
-  courseId Int
-  roadmap Boolean @default(false)
-  completed Boolean @default(false)
-  completedOn DateTime?
+  id             Int       @id @default(autoincrement())
+  user           User      @relation(fields: [userId], references: [id])
+  userId         Int
+  course         Course    @relation(fields: [courseId], references: [id])
+  courseId       Int
+  roadmap        Boolean   @default(false)
+  completed      Boolean   @default(false)
+  completedOn    DateTime?
+  lastTestOn     DateTime?
+  lastTestPassed Boolean   @default(false)
 
   @@unique([userId, courseId])
 }
 
 model Accolade {
-  id Int @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   description String
-  imageUrl String
-  course Course @relation(fields: [courseId], references: [id])
-  courseId Int
-  cratedAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  imageUrl    String
+  course      Course   @relation(fields: [courseId], references: [id])
+  courseId    Int
+  cratedAt    DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Event {
-  id Int @id
+  id        Int      @id
   startDate DateTime @db.Date
-  endDate DateTime @db.Date
-  location String
-  content Content @relation(fields: [contentId], references: [id])
-  contentId Int @unique
+  endDate   DateTime @db.Date
+  location  String
+  content   Content  @relation(fields: [contentId], references: [id])
+  contentId Int      @unique
 }
 
 model CommunityProject {
-  id Int @id
-  author String
-  codeUrl String?
-  content Content @relation(fields: [contentId], references: [id])
-  contentId Int @unique
+  id        Int     @id
+  author    String
+  codeUrl   String?
+  content   Content @relation(fields: [contentId], references: [id])
+  contentId Int     @unique
 }
 
-
 model ContentType {
-  id Int @id @default(autoincrement())
-  name String @unique
-  slug String @unique
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  slug     String    @unique
   contents Content[]
 }
 
 model Level {
-  id Int @id @default(autoincrement())
-  name String @unique
-  slug String @unique
-  courses Course[]
+  id        Int            @id @default(autoincrement())
+  name      String         @unique
+  slug      String         @unique
+  courses   Course[]
   questions TestQuestion[]
 }
-
-
-
-

@@ -75,6 +75,7 @@ const Home: NextPage = () => {
                 src="/images/homeBanner.jpg"
                 alt="Home banner"
                 layout="fill"
+                priority
                 objectFit="cover"
                 objectPosition={'left left'}
                 className="rounded-lg"

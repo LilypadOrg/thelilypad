@@ -25,7 +25,7 @@ export const useOnChainProfile = (address: string | undefined) => {
     addressOrName: SBT_CONTRACT_ADDRESS,
     contractInterface: SBT_CONTRACT_ABI,
     functionName: 'tokenURI',
-    enabled: onChainProfile?.tokenId._hex !== '0x00',
+    enabled: !!onChainProfile && onChainProfile.tokenId._hex !== '0x00',
     args: [onChainProfile?.tokenId._hex],
   });
 
@@ -37,21 +37,11 @@ export const useOnChainProfile = (address: string | undefined) => {
       }
     );
 
-  // const { data: tokenMetadata, isFetching: isLoadingTokenMetadata } = useQuery(
-  //   ['tokenMetadata', tokenUri],
-  //   async () => {
-  //     const data = await (await fetch(tokenUri?.toString() || '')).json();
-  //     return data;
-  //   },
-  //   { enabled: !!tokenUri }
-  // );
-
   const isLoading =
     isLoadingOnChainProfile || isLoadingTokenMetadata || isLoadingTokenURI;
 
-  const data: OnChainProfile | undefined = isLoading
-    ? undefined
-    : {
+  const data: OnChainProfile | undefined = onChainProfile
+    ? {
         DAO: !!onChainProfile?.DAO,
         pathChosen: !!onChainProfile?.pathChosen,
         xp: onChainProfile?.xp,
@@ -62,7 +52,8 @@ export const useOnChainProfile = (address: string | undefined) => {
         sbtImageUrl: tokenMetadata?.image
           .replace('ipfs:', 'https:')
           .concat('.ipfs.nftstorage.link/'),
-      };
+      }
+    : undefined;
 
   return { data, refetch, isLoading };
 };
