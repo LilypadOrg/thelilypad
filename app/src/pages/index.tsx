@@ -150,7 +150,7 @@ const Home: NextPage = () => {
         {/* Collection */}
         <div className="my-8">
           {/* First three collection */}
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          <div className="md: grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {/* TODO : Handle error and improve logic */}
             {projectsLoading &&
               [1, 2, 3, 4, 5, 6].map((i) => <SpotLightCardsLoading key={i} />)}

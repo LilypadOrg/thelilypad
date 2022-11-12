@@ -200,11 +200,11 @@ const ProfilePage: NextPage = () => {
           </div>
         </div>
         <div className="flex justify-end gap-x-4">
-          <button className=" rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
+          <button className=" rounded-md bg-gray-800 py-2 px-2 font-semibold text-white lg:px-10 lg:py-2">
             <Link href="/courses/browse/level/beginner">Take final test</Link>
           </button>
 
-          <button className="rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
+          <button className="rounded-md bg-gray-800  py-2 px-2 font-semibold text-white lg:px-10 lg:py-2">
             <Link href="/courses/browse/level/beginner">
               More Beginner Course
             </Link>
@@ -234,11 +234,11 @@ const ProfilePage: NextPage = () => {
           </div>
         </div>
         <div className="flex justify-end gap-x-4">
-          <button className=" rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
+          <button className="rounded-md bg-gray-800 py-2 px-2  font-semibold text-white lg:px-10 lg:py-2">
             <Link href="/courses/browse/level/beginner">Take final test</Link>
           </button>
 
-          <button className="rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
+          <button className="rounded-md bg-gray-800 py-2 px-2 font-semibold text-white lg:px-10 lg:py-2 ">
             <Link href="/courses/browse/level/intermediate">
               More Intermediate Courses
             </Link>
@@ -270,11 +270,11 @@ const ProfilePage: NextPage = () => {
           </div>
         </div>
         <div className="flex justify-end gap-x-4">
-          <button className=" rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
+          <button className=" rounded-md bg-gray-800 py-1 font-semibold text-white lg:px-10 lg:py-2">
             <Link href="/courses/browse/level/beginner">Take final test</Link>
           </button>
 
-          <button className=" rounded-md bg-gray-800 px-10 py-2 font-semibold text-white">
+          <button className=" rounded-md bg-gray-800 py-1 font-semibold text-white lg:px-10 lg:py-2">
             <Link href="/courses/browse/level/advanced">
               More Advance Courses
             </Link>

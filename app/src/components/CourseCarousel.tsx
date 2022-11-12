@@ -10,7 +10,7 @@ import { Pagination, Autoplay } from 'swiper';
 
 interface Props {
   bgColor?: string;
-  title: string;
+  title?: string;
   courses?: Courses;
   type?: 'simple' | 'full';
   isLoading: boolean;
@@ -27,7 +27,7 @@ const CourseCarousel = ({
 }: Props) => {
   return (
     <div className={`my-8 ${bgColor && bgColor}`}>
-      <h4 className="text-2xl md:text-3xl lg:text-4xl">{title}</h4>
+      {title && <h4 className="text-2xl md:text-3xl lg:text-4xl">{title}</h4>}
       {/* Card Container */}
       <Swiper
         pagination={{
@@ -51,9 +51,13 @@ const CourseCarousel = ({
             slidesPerView: 2,
             spaceBetween: 20,
           },
-          1024: {
-            slidesPerView: 3,
-            spaceBetween: 30,
+          1200: {
+            slidesPerView: 2.5,
+            spaceBetween: 10,
+          },
+          1400: {
+            slidesPerView: 2.7,
+            spaceBetween: 20,
           },
         }}
         // autoplay={{
@@ -62,6 +66,12 @@ const CourseCarousel = ({
         // }}
         className="mySwiper"
       >
+        {isLoading &&
+          loaders.map((i) => (
+            <SwiperSlide key={`course-${i}`}>
+              <CourseCardLoading />
+            </SwiperSlide>
+          ))}
         {courses &&
           courses!.map((course) => (
             <SwiperSlide key={`course-${course.id}`}>

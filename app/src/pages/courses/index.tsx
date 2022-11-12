@@ -6,19 +6,62 @@ import { CourseCardLoading } from '~/components/ui/Loaders';
 import { useContentFilter } from '~/hooks/useContentFilter';
 import { ContentType } from '~/types/types';
 import { trpc } from '~/utils/trpc';
+import { Swiper, SwiperSlide } from 'swiper/react';
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/pagination';
+import { Pagination } from 'swiper';
 
 const Loader = () => {
   return (
     <div className={`my-8`}>
-      <h1 className="mt-8 w-[30%] rounded-md bg-gray-400 text-4xl text-transparent">
+      <h1 className="mt-8 w-[60%] rounded-md bg-gray-400 p-0 text-lg text-transparent lg:w-[30%] lg:text-4xl">
         Web3 Courses
       </h1>
       {/* Card Container */}
-      <div className="mt-8 flex space-x-8 overflow-x-auto px-2 py-2">
+      <Swiper
+        pagination={{
+          clickable: true,
+        }}
+        modules={[Pagination]}
+        breakpoints={{
+          0: {
+            slidesPerView: 1,
+            spaceBetween: 20,
+          },
+          585: {
+            slidesPerView: 1,
+            spaceBetween: 20,
+          },
+          680: {
+            slidesPerView: 1.5,
+            spaceBetween: 20,
+          },
+          1000: {
+            slidesPerView: 2,
+            spaceBetween: 20,
+          },
+          1200: {
+            slidesPerView: 2.5,
+            spaceBetween: 10,
+          },
+          1400: {
+            slidesPerView: 2.7,
+            spaceBetween: 20,
+          },
+        }}
+        autoplay={{
+          delay: 2500,
+          disableOnInteraction: false,
+        }}
+        className="mySwiper"
+      >
         {[1, 2, 3, 4, 5].map((i) => (
-          <CourseCardLoading key={i} />
+          <SwiperSlide key={`course-${i}`}>
+            <CourseCardLoading />
+          </SwiperSlide>
         ))}
-      </div>
+      </Swiper>
     </div>
   );
 };
@@ -41,10 +84,10 @@ const Courses: NextPage = () => {
   ]);
 
   return (
-    <div className="gradient-bg-top-courses px-[5.5rem] pt-2">
+    <div className="gradient-bg-top-courses px-[2.5rem] pt-2 lg:px-[5.5rem]">
       <h3 className="mb-2 mt-2">Courses</h3>
       <div className="grid grid-cols-4 gap-10">
-        <div className="col-span-3">
+        <div className="col-span-4 lg:col-span-3">
           {(filtersLoading || coursesLoading) && <Loader />}
           {carouselsTags &&
             courses &&
@@ -65,7 +108,7 @@ const Courses: NextPage = () => {
             })}
         </div>
         {/* Aside */}
-        <div className="mt-8 flex flex-col gap-4">
+        <div className="col-span-4 mt-8 flex flex-col gap-4 lg:col-span-1">
           <h4>Browse courses</h4>
           <h6>Level</h6>
           {levels && (

@@ -2,7 +2,7 @@ import { BsCheck2 } from 'react-icons/bs';
 
 export const CourseCardLoading = () => {
   return (
-    <div className="flex min-h-[400px]  min-w-[20rem] flex-col justify-between self-start rounded-lg  bg-white shadow-lg">
+    <div className="flex min-h-[350px] lg:min-h-[400px] min-w-[10rem]  lg:min-w-[20rem] flex-col justify-between self-start rounded-lg  bg-white shadow-lg">
       <div className="flex flex-col justify-start">
         <div className="relative h-[182px] w-full animate-pulse rounded-tr-lg rounded-tl-lg bg-gray-400">
           <div className="absolute bottom-2 right-2 flex items-center">
