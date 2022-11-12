@@ -93,7 +93,7 @@ const UserProfile = ({
         />
       )}
       <div className="gradient-bg-top my-8 flex items-center justify-center px-[5.5rem]">
-        <div className="-mr-3 min-h-[255px] w-[38%] rounded-lg bg-primary-500 p-8 pl-12 text-white shadow-sm">
+        <div className="-mr-3 hidden min-h-[255px] w-[38%] rounded-lg bg-primary-500 p-8 pl-12 text-white shadow-sm lg:block">
           <div className="flex items-baseline gap-2">
             <h1 className="text-2xl font-bold">
               {userProfile.username === userProfile.address
@@ -111,12 +111,12 @@ const UserProfile = ({
         >
           <>
             {isLoadingOnChainProfile && (
-              <div className="relative flex h-[425px] w-[380px] cursor-pointer items-center justify-center rounded-lg border-4 border-black bg-gray-500  shadow-xl">
+              <div className="relative flex h-[325px] w-[280px]  cursor-pointer items-center justify-center rounded-lg border-4 border-black bg-gray-500 shadow-xl lg:h-[425px]  lg:w-[380px]">
                 <div className="h-full w-full animate-pulse bg-gray-400"></div>
               </div>
             )}
             {!onChainProfile?.tokenMetadata && (
-              <div className="relative flex h-[425px] w-[380px] cursor-pointer items-center justify-center rounded-lg border-4 border-black bg-gray-400 p-4 shadow-xl">
+              <div className="relative flex h-[325px] w-[280px]  cursor-pointer items-center justify-center rounded-lg border-4 border-black bg-gray-400 p-4 shadow-xl lg:h-[425px] lg:w-[380px]">
                 <Image
                   src="/images/profileSBT/level1-gray.jpg"
                   alt="sbt"
@@ -139,7 +139,7 @@ const UserProfile = ({
             )}
           </>
         </Tilt>
-        <div className="-ml-3 min-h-[255px] w-[38%] items-stretch rounded-lg bg-primary-500 p-8 pl-12 text-white shadow-sm">
+        <div className="-ml-3 hidden min-h-[255px] w-[38%] items-stretch rounded-lg bg-primary-500 p-8 pl-12 text-white shadow-sm lg:block">
           <h1 className="text-2xl font-bold">My Tech Stack</h1>
           <div className="grid grid-cols-3 gap-2">
             {userProfile.technologies.map((language) => (

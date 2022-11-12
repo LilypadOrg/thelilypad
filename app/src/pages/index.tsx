@@ -66,32 +66,33 @@ const Home: NextPage = () => {
   return (
     <div>
       {/* Hero and cards */}
-      <div className="gradient-bg-top px-[5.5rem] pt-8">
+      <div className="gradient-bg-top px-[2.5rem] pt-8 lg:px-[5.5rem]">
         <div className="grid grid-cols-3 gap-8">
-          <div className="col-span-2 flex flex-col space-y-4 ">
+          <div className="col-span-3 flex flex-col space-y-4 lg:col-span-2 ">
             {/* Hero Image */}
-            <div className="relative min-h-[353px]  rounded-lg bg-main-gray-dark text-white">
+            <div className="relative min-h-[250px] rounded-lg bg-main-gray-dark text-white lg:min-h-[353px]">
               <Image
                 src="/images/homeBanner.jpg"
                 alt="Home banner"
                 layout="fill"
                 priority
                 objectFit="cover"
+                objectPosition={'left left'}
                 className="rounded-lg"
               />
-              <div className=" absolute bottom-4 right-4 max-w-[25%] space-y-2 rounded-lg bg-primary-400 p-4">
-                <h1 className="mb-0 text-lg">The Lily Pad</h1>
-                <p className="text-sm font-light leading-[1.1]">
+              <div className=" absolute bottom-4 right-4 max-w-[50%] space-y-2 rounded-lg bg-primary-400 p-4 lg:max-w-[25%]">
+                <h1 className="mb-0 text-sm lg:text-lg">The Lily Pad</h1>
+                <p className="text-xs font-light leading-[1.1] lg:text-sm">
                   A community endeavouring to guide those self-learning in web3{' '}
                 </p>
-                <p className="text-sm font-light">#goForYou</p>
+                <p className="text-xs font-light lg:text-sm">#goForYou</p>
               </div>
             </div>
             {/* we help you grow */}
             <AboutHomeLinks />
           </div>
           {/* Side List */}
-          <div className="h-full rounded-lg  bg-main-gray-light py-5 px-6">
+          <div className="hidden h-full rounded-lg bg-main-gray-light py-5 px-6 lg:block">
             {/* header */}
             <div className="mt-6">
               <h1 className="mb-0 text-2xl">Courses</h1>
@@ -150,7 +151,7 @@ const Home: NextPage = () => {
         {/* Collection */}
         <div className="my-8">
           {/* First three collection */}
-          <div className="grid grid-cols-3 gap-8">
+          <div className="md: grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {/* TODO : Handle error and improve logic */}
             {projectsLoading &&
               [1, 2, 3, 4, 5, 6].map((i) => <SpotLightCardsLoading key={i} />)}
@@ -168,7 +169,7 @@ const Home: NextPage = () => {
         </div>
       </div>
       <hr className="my-14 w-full bg-main-gray-dark" />
-      <div className="gradient-bg-bottom px-[5.5rem] pb-12">
+      <div className="gradient-bg-bottom px-[2.5rem]  pb-12 lg:px-[5.5rem]">
         {/* Top 10 courses */}
         <CourseCarousel
           title="Top 10 Courses"
@@ -177,9 +178,9 @@ const Home: NextPage = () => {
         />
         {/* view AllCourse one tab*/}
         <div className="mt-14 w-full">
-          <div className="flex w-[30%] justify-between rounded-md bg-main-gray-light py-2 px-4">
+          <div className="flex justify-between rounded-md bg-main-gray-light px-4 py-2 lg:w-[30%] lg:py-2">
             <Link href="courses">
-              <button className="col-span-2 flex items-center justify-between rounded-md py-2 px-4">
+              <button className="col-span-2 flex items-center justify-between rounded-md lg:px-4 lg:py-2">
                 <p className="font-semibold">View all Courses</p>
                 <p className="mt-[0.1rem] text-xl font-bold">
                   <HiChevronRight />

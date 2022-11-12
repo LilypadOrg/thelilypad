@@ -15,6 +15,7 @@ import superjson from 'superjson';
 import Navbar from '~/components/Navbar';
 import Footer from '~/components/Footer';
 import { Session } from 'next-auth';
+import Head from 'next/head';
 
 const getSiweMessageOptions: GetSiweMessageOptions = () => ({
   statement: 'Sign in to The Lily Pad',
@@ -33,11 +34,15 @@ const MyApp = ({
           getSiweMessageOptions={getSiweMessageOptions}
         >
           <RainbowKitProvider chains={chains}>
+            <Head>
+              <meta
+                name="viewport"
+                content="initial-scale=1.0, width=device-width"
+              />
+            </Head>
             <Navbar />
             <Component {...pageProps} />
             <Footer />
-            {/* <Layout>
-            </Layout> */}
           </RainbowKitProvider>
         </RainbowKitSiweNextAuthProvider>
       </SessionProvider>
