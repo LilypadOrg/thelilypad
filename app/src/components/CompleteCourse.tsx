@@ -60,16 +60,16 @@ export const CompleteCourse = ({
       },
       onSuccess: () => {
         utils.refetchQueries(['usercourses.all', { userId: user.userId }]);
+        utils.refetchQueries(['usercourses.single', { courseId }]);
         setTimeout(() => {
           utils.refetchQueries(['users.byAddress', { address: user.address }]);
-        }, 1000);
+        }, 5000);
       },
     });
 
   const setCompleted = async () => {
     mutateCompleted({
       courseId: courseId,
-      completed: true,
     });
     // refreshUserStats();
   };
@@ -79,7 +79,9 @@ export const CompleteCourse = ({
 
   const { isLoading: isLoadingCompleteCourse } = useWaitForTransaction({
     hash: completeCourseRes?.hash,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('contract tx completed');
+      console.log(data);
       setCompleted();
     },
   });
@@ -103,7 +105,7 @@ export const CompleteCourse = ({
       >
         {isLoading && 'Loading...'}
         {completed && 'Course completed'}
-        {!isLoading && !completed && 'Mark as complete'}
+        {!isLoading && !completed && 'Mark course as complete'}
       </button>
     </div>
   );

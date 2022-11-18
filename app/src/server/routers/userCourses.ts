@@ -140,7 +140,6 @@ export const userCourseRouter = createRouter()
   .mutation('complete', {
     input: z.object({
       courseId: z.number(),
-      completed: z.boolean(),
     }),
     async resolve({ ctx, input }) {
       if (!ctx.session?.user) {
@@ -150,21 +149,24 @@ export const userCourseRouter = createRouter()
         });
       }
       try {
-        const { courseId, completed } = input;
+        const { courseId } = input;
         const { userId } = ctx.session.user;
 
-        await prisma.userCourse.upsert({
+        const userCourseId = await prisma.userCourse.findFirstOrThrow({
           where: {
-            userId_courseId: { userId, courseId },
-          },
-          update: {
-            completed,
-            completedOn: new Date(),
-          },
-          create: {
+            lastTestPassed: true,
             userId,
             courseId,
-            completed,
+          },
+          select: { id: true },
+        });
+
+        await prisma.userCourse.update({
+          where: {
+            id: userCourseId.id,
+          },
+          data: {
+            completed: true,
             completedOn: new Date(),
           },
           select: singleUserCourseSelect,

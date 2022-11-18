@@ -19,6 +19,8 @@ export const useOnChainProfile = (address: string | undefined) => {
     functionName: 'getMember',
     enabled: !!address,
     args: address,
+    cacheTime: 0,
+    staleTime: 0,
   });
 
   const { data: tokenUri, isLoading: isLoadingTokenURI } = useContractRead({
@@ -54,6 +56,9 @@ export const useOnChainProfile = (address: string | undefined) => {
           .concat('.ipfs.nftstorage.link/'),
       }
     : undefined;
+
+  console.log('onChainProfile');
+  console.log(data);
 
   return { data, refetch, isLoading };
 };

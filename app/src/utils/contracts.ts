@@ -147,6 +147,19 @@ export const MAIN_CONTRACT_ABI = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: 'address',
+        name: 'member',
+        type: 'address',
+      },
+    ],
+    name: 'MemberBurned',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: 'address',
         name: 'previousOwner',
@@ -275,6 +288,19 @@ export const MAIN_CONTRACT_ABI = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'member',
+        type: 'address',
+      },
+    ],
+    name: 'burnBabyBurn',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -894,11 +920,6 @@ export const MAIN_CONTRACT_ABI = [
         name: '_memberAddress',
         type: 'address',
       },
-      {
-        internalType: 'contract IPondSBT',
-        name: '_sbtAddress',
-        type: 'address',
-      },
     ],
     name: 'mintTokenForMember',
     outputs: [],
@@ -936,6 +957,32 @@ export const MAIN_CONTRACT_ABI = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'sbtAddress',
+    outputs: [
+      {
+        internalType: 'contract IPondSBT',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'contract IPondSBT',
+        name: '_newSbtAddress',
+        type: 'address',
+      },
+    ],
+    name: 'setSbtAddress',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {

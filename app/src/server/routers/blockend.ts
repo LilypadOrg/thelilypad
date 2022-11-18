@@ -4,6 +4,7 @@ import { z } from 'zod';
 import Web3 from 'web3';
 import { env } from '~/server/env';
 import { TokenMedata } from '~/types/types';
+import fetch from 'node-fetch';
 
 export const blockenRouter = createRouter()
   .query('signCreateMember', {
@@ -78,9 +79,15 @@ export const blockenRouter = createRouter()
     }),
     async resolve({ input }) {
       try {
+        console.log('input.tokenUri');
+        console.log(input.tokenUri.toString());
         const data = await (await fetch(input.tokenUri.toString())).json();
+        console.log('data');
+        console.log(data);
         return data as TokenMedata;
       } catch (err) {
+        console.log('GetTokenMetadataError');
+        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Something went wrong'`,

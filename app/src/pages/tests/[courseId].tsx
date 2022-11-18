@@ -14,6 +14,7 @@ import { getCourseHighestLevel } from '~/utils/content';
 import CountDown from '~/components/CountDown';
 import TestForm from '~/components/TestForm';
 import { SubmitHandler } from 'react-hook-form';
+import { CompleteCourse } from '~/components/CompleteCourse';
 
 const Test: NextPage = () => {
   // TODO: Redirect if unauthorized
@@ -27,16 +28,20 @@ const Test: NextPage = () => {
     {
       enabled: !!session && !!courseId,
       onSuccess: (data) => {
-        console.log('Exist succes');
         setCurrentTest(data);
       },
     }
   );
 
+  const { data: userCourses } = trpc.useQuery(
+    ['usercourses.single', { courseId: courseId }],
+    {
+      enabled: !!session,
+    }
+  );
+
   const { mutate: createTest } = trpc.useMutation(['tests.createInstance'], {
     onSuccess: (data) => {
-      console.log('New succes');
-
       setTestState('edit');
       setCurrentTest(data);
     },
@@ -44,7 +49,6 @@ const Test: NextPage = () => {
 
   const { mutate: getTestResults } = trpc.useMutation(['tests.result'], {
     onSuccess: (data) => {
-      console.log('Result succes');
       setCurrentTest(data);
       if (data.isPassed) {
         setTestState('passed');
@@ -59,7 +63,6 @@ const Test: NextPage = () => {
   const [currentTest, setCurrentTest] = useState<TestInstanceExt | null>();
 
   useEffect(() => {
-    console.log('use effect');
     if (isLoadingExisting) return;
 
     if (!existingTest) {
@@ -108,8 +111,6 @@ const Test: NextPage = () => {
 
   const submitTest: SubmitHandler<TestFormInputs> = (data) => {
     if (!currentTest) return;
-    console.log('Submit values');
-    console.log(data);
     const submitData = {
       testId: currentTest.id,
       answers: data,
@@ -127,22 +128,28 @@ const Test: NextPage = () => {
 
   return (
     <div className="px-[5.5rem]">
-      {course && (
+      {course && session?.user && (
         <>
           <h4>Test for &quot;{course.content.title}&quot;</h4>
           {testState === 'create' && (
             <div>
               <p>
-                Test for this course will constitute of {totalQuestions}{' '}
-                questions on{' '}
-                {course.content.technologies.map((l) => l.name).join(', ')}.
+                Test for this course will constitute of{' '}
+                <span className="font-bold">{totalQuestions} questions</span> on{' '}
+                <span className="font-bold">
+                  {course.content.technologies.map((l) => l.name).join(', ')}
+                </span>
+                .
               </p>
               <p>
-                You are going to have {TEST_DURATION_MS / 1000 / 60} minutes to
-                complete the test.
+                You are going to have{' '}
+                <span className="font-bold">
+                  {TEST_DURATION_MS / 1000 / 60} minutes
+                </span>{' '}
+                to complete the test.
               </p>
               <button
-                className="mt-8 w-full rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500"
+                className="mt-8 rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500"
                 onClick={createNewTest}
               >
                 Start Test
@@ -151,36 +158,50 @@ const Test: NextPage = () => {
           )}
           {(testState === 'passed' || testState === 'cooldown') && currentTest && (
             <div>
-              <div className="mb-4 text-4xl font-bold">
-                <p>
-                  Test{' '}
-                  {testState === 'passed' ? (
-                    <span className="text-green-600">passed!!!</span>
-                  ) : (
-                    <span className="text-red-600">failed!</span>
+              {(testState === 'passed' || testState === 'cooldown') && (
+                <div className="mb-4  ">
+                  <p className="text-4xl font-bold">
+                    {testState === 'passed' ? (
+                      <span className="text-green-600">Test passed 🎉</span>
+                    ) : (
+                      <span className="text-red-600">Test failed 😭</span>
+                    )}
+                  </p>
+                  {testState === 'cooldown' && (
+                    <div>
+                      You can retry in{' '}
+                      <CountDown
+                        classes="inline"
+                        startValue={Math.floor(currentTest.coolDownTime / 1000)}
+                        handleOver={handleCoolDownOver}
+                      />
+                    </div>
                   )}
-                </p>
-                <div>
-                  You can retry in{' '}
-                  <CountDown
-                    classes="inline"
-                    startValue={Math.floor(currentTest.coolDownTime / 1000)}
-                    handleOver={handleCoolDownOver}
-                  />
-                </div>
-              </div>
-
-              {resultStats && (
-                <div className="text-xl">
-                  <p>
-                    Total questions: {resultStats.total} - Correct Answers:{' '}
-                    {resultStats.correct} - Correct:{' '}
-                    {(resultStats.correct / resultStats.total) * 100}%
-                  </p>
-                  <p>
-                    You need {TEST_PASS_RATE * 100}% correct answers to pass the
-                    test.
-                  </p>
+                  {resultStats && (
+                    <div className="text-xl">
+                      <p>
+                        Total questions:{' '}
+                        <span className="font-bold">{resultStats.total}</span> -
+                        Correct Answers:{' '}
+                        <span className="font-bold">{resultStats.correct}</span>{' '}
+                        - Correct:{' '}
+                        <span className="font-bold">
+                          {(resultStats.correct / resultStats.total) * 100}%
+                        </span>
+                      </p>
+                      <p>
+                        You need {TEST_PASS_RATE * 100}% correct answers to pass
+                        the test.
+                      </p>
+                    </div>
+                  )}
+                  {testState === 'passed' && (
+                    <CompleteCourse
+                      courseId={courseId}
+                      completed={userCourses?.completed || false}
+                      user={session.user}
+                    />
+                  )}
                 </div>
               )}
             </div>
