@@ -25,10 +25,12 @@ const AccountWidget = () => {
     {
       enabled: !!session?.user,
       onSuccess: (data) => {
+        console.log('fetch user');
         if (!data) {
           disconnect();
         }
         if (onChainProfile) {
+          console.log('refetchOnchain');
           refetchOnchain();
         }
       },
@@ -42,17 +44,27 @@ const AccountWidget = () => {
     user?.address
   );
 
+  const tokenMetadata = onChainProfile?.tokenMetadata;
+  console.log('tokenMedata');
+  console.log(tokenMetadata);
+
   useEffect(() => {
-    if (onChainProfile?.tokenMetadata) {
-      const sbtURL = onChainProfile.tokenMetadata.image
+    if (tokenMetadata) {
+      const sbtURL = tokenMetadata.image
         .replace('ipfs:', 'https:')
         .concat('.ipfs.nftstorage.link/');
+      console.log('sbtURL');
+      console.log(sbtURL);
+      console.log('prevSBT');
+      console.log(prevSBT);
+      console.log('currSBT');
+      console.log(currSBT);
       if (sbtURL !== currSBT) {
         setPrevSBT(currSBT);
         setCurrSBT(sbtURL);
       }
     }
-  }, [onChainProfile]);
+  }, [tokenMetadata]);
 
   useEffect(() => {
     if (prevSBT && currSBT) {

@@ -135,8 +135,6 @@ export const testsRouter = createRouter()
         });
         return questions;
       } catch (err) {
-        console.log('err');
-        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Error retrieving data.`,
@@ -160,8 +158,6 @@ export const testsRouter = createRouter()
         });
         return question;
       } catch (err) {
-        console.log('err');
-        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Error retrieving data.`,
@@ -173,7 +169,6 @@ export const testsRouter = createRouter()
     input: z.object({ courseId: z.number() }),
     async resolve({ ctx, input }) {
       if (!ctx.session?.user) {
-        console.log('Ostia');
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: `Unauthorized`,
@@ -191,8 +186,6 @@ export const testsRouter = createRouter()
 
         return returnTest;
       } catch (err) {
-        console.log('err');
-        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Error retrieving data.`,
@@ -242,7 +235,6 @@ export const testsRouter = createRouter()
           }
         }
 
-        console.log('getting results...');
         const results = await prisma.testQuestion.findMany({
           where: {
             id: { in: qIds },
@@ -253,15 +245,13 @@ export const testsRouter = createRouter()
           },
         });
 
-        console.log('results');
-        console.log(results);
-        const passed = results.length / qIds.length > TEST_PASS_RATE;
+        const passed = results.length / qIds.length >= TEST_PASS_RATE;
 
-        console.log(
-          `Questions ${qIds.length}, correct: ${results.length}, ration: ${
-            results.length / qIds.length
-          }`
-        );
+        // console.log(
+        //   `Questions ${qIds.length}, correct: ${results.length}, ration: ${
+        //     results.length / qIds.length
+        //   }`
+        // );
 
         const test = await prisma.testinstance.update({
           where: { id: input.testId },
@@ -291,8 +281,6 @@ export const testsRouter = createRouter()
 
         return { ...test, expiryTime: 0, coolDownTime: TEST_COOLDOWN_MS };
       } catch (err) {
-        console.log('query error');
-        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Error retrieving data.`,
@@ -362,8 +350,6 @@ export const testsRouter = createRouter()
             i < techs.length - 1
               ? questionsByTech
               : questionsToExtract - questionsByTech * i;
-          console.log('limit');
-          console.log(limit);
           const questions: QuestionIds =
             await prisma.$queryRaw`select tq.id from "TestQuestion" tq
             INNER JOIN "Level" lv ON tq."levelId" = lv.id   
@@ -401,8 +387,6 @@ export const testsRouter = createRouter()
 
         return { ...test, expiryTime: TEST_DURATION_MS, coolDownTime: 0 };
       } catch (err) {
-        console.log('query error');
-        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Error retrieving data.`,

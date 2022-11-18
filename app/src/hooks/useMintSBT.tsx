@@ -4,18 +4,14 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import { SBT_MINT_FEE } from '~/utils/constants';
-import {
-  MAIN_CONTRACT_ABI,
-  MAIN_CONTRACT_ADDRESS,
-  SBT_CONTRACT_ADDRESS,
-} from '~/utils/contracts';
+import { MAIN_CONTRACT_ABI, MAIN_CONTRACT_ADDRESS } from '~/utils/contracts';
 
 export const useMintSBT = (address: string, enableMint: boolean) => {
   const { config: mintTokenConfig } = usePrepareContractWrite({
     addressOrName: MAIN_CONTRACT_ADDRESS,
     contractInterface: MAIN_CONTRACT_ABI,
     functionName: 'mintTokenForMember',
-    args: [address, SBT_CONTRACT_ADDRESS],
+    args: [address],
     overrides: {
       value: SBT_MINT_FEE,
     },
