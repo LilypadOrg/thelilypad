@@ -11,7 +11,7 @@ const BASE_FEE = ethers.utils.parseEther("0.05");
 const GAS_PRICE_LINK = 1e9;
 
 const updateApp: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-    /*console.log("Updating app ABI's and addresses...");
+    console.log("Updating app ABI's and addresses...");
     const chainId = network.config.chainId!;
 
     const LilyPadContract = await ethers.getContract("LilyPad");
@@ -19,6 +19,17 @@ const updateApp: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const PondSBTContract = await ethers.getContract("PondSBT");
     const LilyPadExecutorContract = await ethers.getContract("LilyPadExecutor");
     const LilyPadGovernorContract = await ethers.getContract("LilyPadGovernor");
+
+    //check if dir exists. Create if not
+    if (!fs.existsSync(fronEndABIsDir)) fs.mkdirSync(fronEndABIsDir);
+
+    //check if json exits
+    try {
+        if (!fs.existsSync(frontEndContractsFile))
+            fs.writeFileSync(frontEndContractsFile, JSON.stringify({}));
+    } catch (e: any) {
+        console.log("Error checking if file exists! Error: " + e.message);
+    }
 
     const contractAddresses = JSON.parse(fs.readFileSync(frontEndContractsFile, "utf8"));
 
@@ -44,7 +55,7 @@ const updateApp: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     );
 
     fs.writeFileSync(frontEndContractsFile, JSON.stringify(contractAddresses));
-    console.log("Front end written!");*/
+    console.log("Front end written!");
 };
 
 async function updateContractInFrontEnd(
