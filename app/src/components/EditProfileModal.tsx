@@ -51,10 +51,6 @@ const EditProfileModal = ({
           'users.byUsername',
           { username: data.username },
         ]);
-        utils.invalidateQueries([
-          'users.byAddress',
-          { address: userProfile.address },
-        ]);
         const changeRoute = userProfile.username !== data.username;
         if (changeRoute) router.replace(`/profiles/${data.username}`);
         closeModal();
@@ -142,7 +138,7 @@ const EditProfileModal = ({
         techs.filter((t) => !selectedSkillsIds.includes(t.id))
       );
     }
-  }, [techs]);
+  }, [techs, selectedSkills]);
 
   const schema = z.object({
     username: z

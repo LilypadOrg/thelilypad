@@ -62,7 +62,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
             // id: siwe.address,
             id: user.id,
             address: siwe.address,
-            name: siwe.address,
+            name: user.username,
             // image: getSBTLocalURL(user.levelNumber),
           };
         } catch (e) {
@@ -95,9 +95,11 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
       },
 
       async session({ session, token }) {
+        console.log('token');
+        console.log(token);
         // session.address = token.sub;
         session.user = token.user;
-        // session.user.image = token.picture;
+        session.user.name = token.name;
 
         return session;
       },

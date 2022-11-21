@@ -61,6 +61,25 @@ export const userRouter = createRouter()
       }
     },
   })
+  .query('lookupAddress', {
+    input: z.object({
+      username: z.string(),
+    }),
+    async resolve({ input }) {
+      try {
+        const user = prisma.user.findUnique({
+          where: { username: input.username },
+          select: { address: true },
+        });
+        return user;
+      } catch (err) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Something went wrong'`,
+        });
+      }
+    },
+  })
   .query('byAddress', {
     input: z.object({
       address: z.string(),
@@ -172,6 +191,7 @@ export const userRouter = createRouter()
           data: {
             hasPondSBT: input.hasPondSBT,
           },
+          select: defaultUserSelect,
         });
         return user;
       } catch (err) {
