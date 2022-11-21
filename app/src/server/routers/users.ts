@@ -18,24 +18,27 @@ const profileUserSelect = Prisma.validator<Prisma.UserSelect>()({
   xp: true,
   level: true,
   technologies: true,
+  hasPondSBT: true,
+  hasOnChainProfile: true,
   courses: {
     select: {
       completed: true,
       roadmap: true,
       courseId: true,
-      // course: {
-      //   select: {
-      //     id: true,
-      //     content: true,
-      //     levels: {
-      //       select: {
-      //         name: true,
-      //       },
-      //     },
-      //   },
-      // },
     },
   },
+});
+
+const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
+  id: true,
+  username: true,
+  bio: true,
+  address: true,
+  xp: true,
+  level: true,
+  technologies: true,
+  hasPondSBT: true,
+  hasOnChainProfile: true,
 });
 
 export const userRouter = createRouter()
@@ -66,7 +69,7 @@ export const userRouter = createRouter()
       try {
         const user = prisma.user.findUnique({
           where: { address: input.address },
-          select: profileUserSelect,
+          select: defaultUserSelect,
         });
         return user;
       } catch (err) {
@@ -82,6 +85,7 @@ export const userRouter = createRouter()
       username: z.string().min(USERNAME_MIN_LENGTH).max(USERNAME_MAX_LENGTH),
       bio: z.string().min(BIO_MIN_LENGTH).max(BIO_MAX_LENGTH),
       technologies: z.number().array(),
+      hasOnChainProfile: z.boolean().optional(),
     }),
     async resolve({ ctx, input }) {
       if (!ctx.session?.user) {
@@ -104,6 +108,69 @@ export const userRouter = createRouter()
                 id,
               })),
             },
+            hasOnChainProfile: input.hasOnChainProfile,
+          },
+        });
+        return user;
+      } catch (err) {
+        console.error(err);
+
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Something went wrong'`,
+        });
+      }
+    },
+  })
+  .mutation('setHasOnChainProfile', {
+    input: z.object({
+      hasOnChainProfile: z.boolean(),
+    }),
+    async resolve({ ctx, input }) {
+      if (!ctx.session?.user) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: `Unauthorized`,
+        });
+      }
+      try {
+        const { userId } = ctx.session.user;
+
+        const user = await prisma.user.update({
+          where: { id: userId },
+          data: {
+            hasOnChainProfile: input.hasOnChainProfile,
+          },
+        });
+        return user;
+      } catch (err) {
+        console.error(err);
+
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Something went wrong'`,
+        });
+      }
+    },
+  })
+  .mutation('setHasPondSBT', {
+    input: z.object({
+      hasPondSBT: z.boolean(),
+    }),
+    async resolve({ ctx, input }) {
+      if (!ctx.session?.user) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: `Unauthorized`,
+        });
+      }
+      try {
+        const { userId } = ctx.session.user;
+
+        const user = await prisma.user.update({
+          where: { id: userId },
+          data: {
+            hasPondSBT: input.hasPondSBT,
           },
         });
         return user;

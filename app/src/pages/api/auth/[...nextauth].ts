@@ -57,11 +57,13 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
               username: siwe.address,
             },
           });
+
           return {
             // id: siwe.address,
             id: user.id,
             address: siwe.address,
             name: siwe.address,
+            // image: getSBTLocalURL(user.levelNumber),
           };
         } catch (e) {
           return null;
@@ -95,6 +97,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
       async session({ session, token }) {
         // session.address = token.sub;
         session.user = token.user;
+        // session.user.image = token.picture;
 
         return session;
       },

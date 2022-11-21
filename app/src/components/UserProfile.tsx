@@ -29,7 +29,7 @@ const UserProfile = ({
   const {
     data: onChainProfile,
     isLoading: isLoadingOnChainProfile,
-    refetch: refetchOnChainProfile,
+    refetchProfile: refetchOnChainProfile,
   } = useOnChainProfile(userProfile?.address);
 
   const {

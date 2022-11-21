@@ -16,6 +16,7 @@ import Navbar from '~/components/Navbar';
 import Footer from '~/components/Footer';
 import { Session } from 'next-auth';
 import Head from 'next/head';
+import Avatar from '~/components/Avatar';
 
 const getSiweMessageOptions: GetSiweMessageOptions = () => ({
   statement: 'Sign in to The Lily Pad',
@@ -33,7 +34,7 @@ const MyApp = ({
         <RainbowKitSiweNextAuthProvider
           getSiweMessageOptions={getSiweMessageOptions}
         >
-          <RainbowKitProvider chains={chains}>
+          <RainbowKitProvider avatar={Avatar} chains={chains}>
             <Head>
               <meta
                 name="viewport"

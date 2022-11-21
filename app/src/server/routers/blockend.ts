@@ -20,6 +20,8 @@ export const blockenRouter = createRouter()
         });
       }
       try {
+        console.log('signing inputs');
+        console.log(input);
         const web3 = new Web3();
         const hash = web3.utils.soliditySha3(
           // { t: 'bytes', v: web3.utils.fromAscii(input.name) },

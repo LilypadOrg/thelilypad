@@ -4,10 +4,12 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import { Session } from 'next-auth';
-import { MAIN_CONTRACT_ABI, MAIN_CONTRACT_ADDRESS } from '~/utils/contracts';
+import { getLilyPadAddress, getLilyPadABI } from '~/utils/contracts';
 import { trpc } from '~/utils/trpc';
-import { toast } from 'react-toastify';
 import { useOnChainProfile } from '~/hooks/useOnChainProfile';
+import LevelUpModal from './LevelUpModal';
+import { useState } from 'react';
+import { getSBTLocalURL } from '~/utils/formatters';
 
 export const CompleteCourse = ({
   user,
@@ -19,6 +21,12 @@ export const CompleteCourse = ({
   completed: boolean;
 }) => {
   const utils = trpc.useContext();
+  const [levelUpModal, setLevelUpModal] = useState<{
+    prevSBT: string;
+    currSBT: string;
+    show: boolean;
+    newLevel: number;
+  }>({ prevSBT: '', currSBT: '', show: false, newLevel: 0 });
 
   const { data: onChainProfile } = useOnChainProfile(user?.address);
 
@@ -36,34 +44,37 @@ export const CompleteCourse = ({
   );
 
   const { config: completeCourseConfig } = usePrepareContractWrite({
-    addressOrName: MAIN_CONTRACT_ADDRESS,
-    contractInterface: MAIN_CONTRACT_ABI,
+    addressOrName: getLilyPadAddress(),
+    contractInterface: getLilyPadABI(),
     functionName: 'completeEvent',
     args: [user.address, courseId, completeEventSignature],
     enabled: !!completeEventSignature,
   });
 
-  // const { mutate: refreshUserStats, isLoading: isLoadingrefreshUserStats } =
-  //   trpc.useMutation(['users.updateXPandLevel'], {
-  //     onError: (err) => {
-  //       toast.error(err.message);
-  //     },
-  //     onSuccess: () => {
-  //       console.log('user stats updated. invalidating user.byAddress....');
-  //     },
-  //   });
+  const { data: completeCourseRes, write: completeCourse } =
+    useContractWrite(completeCourseConfig);
+
+  const { isLoading: isLoadingCompleteCourse } = useWaitForTransaction({
+    hash: completeCourseRes?.hash,
+    onSuccess: async () => {
+      setCompleted();
+    },
+  });
 
   const { mutate: mutateCompleted, isLoading: isLoadingMutateCompleted } =
     trpc.useMutation(['usercourses.complete'], {
-      onError: (err) => {
-        toast.error(err.message);
-      },
-      onSuccess: () => {
-        utils.refetchQueries(['usercourses.all', { userId: user.userId }]);
+      onSuccess: (data) => {
+        if (onChainProfile?.pathChosen && data.levelUp) {
+          setLevelUpModal({
+            prevSBT: getSBTLocalURL(data.user.levelNumber - 1),
+            currSBT: getSBTLocalURL(data.user.levelNumber),
+            show: true,
+            newLevel: data.user.levelNumber,
+          });
+        }
+        // utils.refetchQueries(['usercourses.all', { userId: user.userId }]);
         utils.refetchQueries(['usercourses.single', { courseId }]);
-        setTimeout(() => {
-          utils.refetchQueries(['users.byAddress', { address: user.address }]);
-        }, 5000);
+        utils.refetchQueries(['users.byAddress', { address: user.address }]);
       },
     });
 
@@ -71,20 +82,7 @@ export const CompleteCourse = ({
     mutateCompleted({
       courseId: courseId,
     });
-    // refreshUserStats();
   };
-
-  const { data: completeCourseRes, write: completeCourse } =
-    useContractWrite(completeCourseConfig);
-
-  const { isLoading: isLoadingCompleteCourse } = useWaitForTransaction({
-    hash: completeCourseRes?.hash,
-    onSuccess: (data) => {
-      console.log('contract tx completed');
-      console.log(data);
-      setCompleted();
-    },
-  });
 
   const handleSetCompleted = async () => {
     if (completeCourse) {
@@ -96,17 +94,58 @@ export const CompleteCourse = ({
 
   const isLoading = isLoadingCompleteCourse || isLoadingMutateCompleted;
 
+  // const tokenMetadata = onChainProfile?.tokenMetadata;
+
+  // useEffect(() => {
+  //   if (tokenMetadata) {
+  //     const sbtURL = tokenMetadata.image
+  //       .replace('ipfs:', 'https:')
+  //       .concat('.ipfs.nftstorage.link/');
+  //     console.log('sbtURL');
+  //     console.log(sbtURL);
+  //     console.log('prevSBT');
+  //     console.log(prevSBT);
+  //     console.log('currSBT');
+  //     console.log(currSBT);
+  //     if (sbtURL !== currSBT) {
+  //       setPrevSBT(currSBT);
+  //       setCurrSBT(sbtURL);
+  //     }
+  //   }
+  // }, [tokenMetadata]);
+
+  // useEffect(() => {
+  //   if (prevSBT && currSBT) {
+  //     setLevelUpModalOpen(true);
+  //   }
+  // }, [prevSBT, currSBT]);
+
+  const closeLevelUpModal = () => {
+    setLevelUpModal((prev) => ({ ...prev, show: false }));
+  };
+
   return (
-    <div>
-      <button
-        disabled={isLoadingCompleteCourse || completed}
-        onClick={handleSetCompleted}
-        className="mt-8 w-full rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500"
-      >
-        {isLoading && 'Loading...'}
-        {completed && 'Course completed'}
-        {!isLoading && !completed && 'Mark course as complete'}
-      </button>
-    </div>
+    <>
+      {levelUpModal.show && (
+        <LevelUpModal
+          open={levelUpModal.show}
+          closeModal={closeLevelUpModal}
+          prevSBT={levelUpModal.prevSBT}
+          currSBT={levelUpModal.currSBT}
+          reachedLevel={levelUpModal.newLevel}
+        />
+      )}
+      <div>
+        <button
+          disabled={isLoadingCompleteCourse || completed}
+          onClick={handleSetCompleted}
+          className="mt-8 w-full rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500"
+        >
+          {isLoading && 'Loading...'}
+          {completed && 'Course completed'}
+          {!isLoading && !completed && 'Mark course as complete'}
+        </button>
+      </div>
+    </>
   );
 };

@@ -53,7 +53,12 @@ const LevelUpModal = ({
       // setPrevSBTVisibile(false);
       // setCurrSBTVisibile(true);
     }
-  }, [open]);
+  }, [open, fireCelebration]);
+
+  console.log('prevSBT');
+  console.log(prevSBT);
+  console.log('currSBT');
+  console.log(currSBT);
 
   return (
     <div

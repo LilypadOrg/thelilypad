@@ -152,6 +152,11 @@ export const userCourseRouter = createRouter()
         const { courseId } = input;
         const { userId } = ctx.session.user;
 
+        const curLevel = await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+          select: { level: true },
+        });
+
         const userCourseId = await prisma.userCourse.findFirstOrThrow({
           where: {
             lastTestPassed: true,
@@ -188,7 +193,7 @@ export const userCourseRouter = createRouter()
           data: { xp: xpVal, levelNumber: level.number },
         });
 
-        return user;
+        return { levelUp: curLevel.level.number !== level.number, user: user };
       } catch (err) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
