@@ -261,7 +261,7 @@ describe("LilyPad", function () {
             const _web3: Web3 = web3;
 
             const initialXp: number = 1000;
-            var completedCourses: number[] = [];
+            var completedCourses: number[] = [10001, 10002];
 
             var badges: any[] = []; //badges is just an accolade array
             var flattenedBadgesArray = badges.map((i) => {

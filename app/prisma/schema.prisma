@@ -8,7 +8,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL")  
   // shadowDatabaseUrl      = env("DATABASE_URL_SHADOW")
 }
 
@@ -71,14 +71,14 @@ model Technology {
 }
 
 model Course {
-  id          Int           @id
+  id          Int            @id
   levels      Level[]
   xp          Int
   userCourses UserCourse[]
   accolades   Accolade[]
   tests       Testinstance[]
-  content     Content       @relation(fields: [contentId], references: [id])
-  contentId   Int           @unique
+  content     Content        @relation(fields: [contentId], references: [id])
+  contentId   Int            @unique
 }
 
 model TestQuestion {
@@ -191,4 +191,50 @@ model Level {
   slug      String         @unique
   courses   Course[]
   questions TestQuestion[]
+}
+
+model daoFunction{
+  id               Int            @id @default(autoincrement())
+  contractAddress  String         @db.VarChar(100)
+  contractFunction String         @db.VarChar(100)
+  functionInputs   String[] 
+  functionName     String         @db.VarChar(100)
+  proposals        daoProposal[]
+}
+
+model daoProposal {
+  id             Int                @id @default(autoincrement())
+  proposer       String             @db.VarChar(100)
+  targets        String[]    
+  signatures     String[] 
+  values         String[] 
+  calldatas      String[]
+  startBlock     String             @db.Text
+  endBlock       String             @db.Text
+  description    String
+  proposalJson   String             @db.Text
+  status         Int?
+  proposalId     String?            @db.Text
+  eta            Int?      
+  params         String[]
+  tx             String?            @db.VarChar(200)
+  function       daoFunction?       @relation(fields: [functionId], references: [id])
+  functionId     Int?
+  snapshotBlock  String?            @db.Text()
+  votes          daoProposalVote[]
+
+  @@unique([proposalId])
+}
+
+model daoProposalVote {
+  id             Int          @id @default(autoincrement())
+  voter          String       @db.VarChar(100)
+  support        Int
+  weigth         Int
+  reason         String?      @db.VarChar(200)
+  voteTx         String?      @db.VarChar(200)
+  proposal       daoProposal? @relation(fields: [proposalId], references: [proposalId])
+  proposalId     String?      @db.Text  
+
+  @@unique([proposalId, voter])
 }
