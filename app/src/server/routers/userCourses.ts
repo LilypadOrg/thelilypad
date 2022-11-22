@@ -50,6 +50,7 @@ const defaultUserCourseSelect = Prisma.validator<Prisma.UserCourseSelect>()({
 });
 
 export const userCourseRouter = createRouter()
+  // TODO: Update to query course table as main object instead usercourses
   .query('all', {
     input: z.object({
       userId: z.number(),
@@ -89,6 +90,33 @@ export const userCourseRouter = createRouter()
         const userCourse = await prisma.userCourse.findUnique({
           where: { userId_courseId: { userId, courseId } },
           select: singleUserCourseSelect,
+        });
+        return userCourse;
+      } catch (err) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Error retrieving course status`,
+        });
+      }
+    },
+  })
+  .query('singleWithContent', {
+    input: z.object({
+      courseId: z.number(),
+    }),
+    async resolve({ input, ctx }) {
+      const { courseId } = input;
+      if (!ctx.session?.user) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: `Unauthorized`,
+        });
+      }
+      try {
+        const userId = ctx.session.user.userId;
+        const userCourse = await prisma.userCourse.findUnique({
+          where: { userId_courseId: { userId, courseId } },
+          select: defaultUserCourseSelect,
         });
         return userCourse;
       } catch (err) {
@@ -152,6 +180,11 @@ export const userCourseRouter = createRouter()
         const { courseId } = input;
         const { userId } = ctx.session.user;
 
+        const curLevel = await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+          select: { level: true },
+        });
+
         const userCourseId = await prisma.userCourse.findFirstOrThrow({
           where: {
             lastTestPassed: true,
@@ -188,7 +221,7 @@ export const userCourseRouter = createRouter()
           data: { xp: xpVal, levelNumber: level.number },
         });
 
-        return user;
+        return { levelUp: curLevel.level.number !== level.number, user: user };
       } catch (err) {
         throw new TRPCError({
           code: 'BAD_REQUEST',

@@ -1,34 +1,40 @@
 import { useContractRead } from 'wagmi';
 import { OnChainProfile } from '~/types/types';
 import {
-  MAIN_CONTRACT_ABI,
-  MAIN_CONTRACT_ADDRESS,
-  SBT_CONTRACT_ABI,
-  SBT_CONTRACT_ADDRESS,
+  getLilyPadABI,
+  getLilyPadAddress,
+  getPondSBTABI,
+  getPondSBTAddress,
 } from '~/utils/contracts';
 import { trpc } from '~/utils/trpc';
 
 export const useOnChainProfile = (address: string | undefined) => {
   const {
     data: onChainProfile,
-    refetch,
+    refetch: refetchProfile,
     isLoading: isLoadingOnChainProfile,
   } = useContractRead({
-    addressOrName: MAIN_CONTRACT_ADDRESS,
-    contractInterface: MAIN_CONTRACT_ABI,
+    addressOrName: getLilyPadAddress(),
+    contractInterface: getLilyPadABI(),
     functionName: 'getMember',
     enabled: !!address,
     args: address,
     cacheTime: 0,
     staleTime: 0,
+    onSuccess: () => {
+      console.log('getMember Contract read success');
+    },
   });
 
   const { data: tokenUri, isLoading: isLoadingTokenURI } = useContractRead({
-    addressOrName: SBT_CONTRACT_ADDRESS,
-    contractInterface: SBT_CONTRACT_ABI,
+    addressOrName: getPondSBTAddress(),
+    contractInterface: getPondSBTABI(),
     functionName: 'tokenURI',
     enabled: !!onChainProfile && onChainProfile.tokenId._hex !== '0x00',
     args: [onChainProfile?.tokenId._hex],
+    onSuccess: () => {
+      console.log('tokenUri Contract read success');
+    },
   });
 
   const { data: tokenMetadata, isFetching: isLoadingTokenMetadata } =
@@ -36,6 +42,10 @@ export const useOnChainProfile = (address: string | undefined) => {
       ['blockend.getTokenMetadata', { tokenUri: tokenUri?.toString() || '' }],
       {
         enabled: !!tokenUri,
+        onSuccess: (data) => {
+          console.log('tokenMetadata read success');
+          console.log(data);
+        },
       }
     );
 
@@ -57,8 +67,5 @@ export const useOnChainProfile = (address: string | undefined) => {
       }
     : undefined;
 
-  console.log('onChainProfile');
-  console.log(data);
-
-  return { data, refetch, isLoading };
+  return { data, refetchProfile, isLoading };
 };

@@ -20,6 +20,8 @@ model User {
   xp           Int           @default(0)
   level        UserLevel     @relation(fields: [levelNumber], references: [number])
   levelNumber  Int
+  hasOnChainProfile Boolean @default(false)
+  hasPondSBT Boolean @default(false)
   courses      UserCourse[]
   technologies Technology[]
   tests        Testinstance[]

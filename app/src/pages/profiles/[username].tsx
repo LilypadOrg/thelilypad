@@ -3,7 +3,7 @@ import Link from 'next/link';
 import LevelPill from '../../components/ui/LevelPill';
 import { trpc } from '~/utils/trpc';
 import { useRouter } from 'next/router';
-import { UserCourse } from '~/types/types';
+import { UserCourseWithContent } from '~/types/types';
 import CourseCard from '~/components/CourseCard';
 import { LearningPathCards } from '~/components/ui/userProfile';
 import UserProfile from '~/components/UserProfile';
@@ -51,9 +51,9 @@ const ProfilePage: NextPage = () => {
   );
 
   type RoadmapCourses = {
-    beginner: UserCourse[];
-    intermediate: UserCourse[];
-    advanced: UserCourse[];
+    beginner: UserCourseWithContent[];
+    intermediate: UserCourseWithContent[];
+    advanced: UserCourseWithContent[];
   };
 
   const initRoadmap: RoadmapCourses = {

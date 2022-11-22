@@ -16,6 +16,8 @@ export type UserProfile = inferQueryOutput<'users.byUsername'>;
 export type Tech = inferQueryOutput<'technologies.bySlug'>;
 export type Techs = inferQueryOutput<'technologies.all'>;
 export type UserCourse = inferQueryOutput<'usercourses.single'>;
+export type UserCourseWithContent =
+  inferQueryOutput<'usercourses.singleWithContent'>;
 export type UserCourses = inferQueryOutput<'usercourses.all'>;
 export type Question = inferQueryOutput<'tests.questionById'>;
 

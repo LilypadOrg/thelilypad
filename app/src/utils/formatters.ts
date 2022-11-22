@@ -24,3 +24,7 @@ export const formatAddress = (address: string) => {
 export const formatNumber = (input: string | number) => {
   return input.toLocaleString('en-US');
 };
+
+export const getSBTLocalURL = (level: number) => {
+  return `/images/profileSBT/level${level}.jpg`;
+};

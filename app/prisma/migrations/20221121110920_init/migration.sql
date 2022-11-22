@@ -6,6 +6,8 @@ CREATE TABLE "User" (
     "bio" TEXT,
     "xp" INTEGER NOT NULL DEFAULT 0,
     "levelNumber" INTEGER NOT NULL,
+    "hasOnChainProfile" BOOLEAN NOT NULL DEFAULT false,
+    "hasPondSBT" BOOLEAN NOT NULL DEFAULT false,
     "cratedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
