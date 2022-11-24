@@ -1,6 +1,29 @@
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
 
 export const burnAddress = "0x0000000000000000000000000000000000000000";
+
+export async function getAccount(accountType: string, qtty: number = 0) {
+    const { ethers, network } = require("hardhat");
+    const accounts: any[] = await ethers.getSigners();
+
+    if (accountType.toLowerCase() == "owner" || accountType.toLowerCase() == "vetoer")
+        return accounts[0];
+    else if (accountType.toLowerCase() == "malicious") return accounts[1];
+    else if (accountType.toLowerCase() == "souls") {
+        let souls: any[] = [];
+        if (network.config.chainId != 1337) {
+            console.log("No souls key on live network");
+            return souls;
+        }
+
+        if (qtty >= 1) {
+            for (let idx = 0; idx < qtty; idx++) {
+                souls.push(accounts[idx + 2]);
+            }
+        } else souls.push(accounts[2]);
+        return souls;
+    }
+}
 
 export function encode_function_data(initializer?: any, args?: any[]) {
     const { web3 } = require("hardhat");
@@ -35,4 +58,20 @@ export function asciiToHex(ascii: string) {
         result += `0${hex}`.slice(-2);
     }
     return `0x${result}`;
+}
+
+export async function chainSleep(snoozzeTime: number) {
+    const { network, ethers } = require("hardhat");
+    const blockNumBefore = await ethers.provider.getBlockNumber();
+    const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+    await network.provider.send("evm_mine", [blockBefore.timestamp + snoozzeTime]);
+}
+
+export async function chainMine(blocks: number) {
+    const helpers = require("@nomicfoundation/hardhat-network-helpers");
+    helpers.mine(blocks);
+}
+
+export function currentNetWork(): number {
+    return network.config.chainId ?? 1337;
 }

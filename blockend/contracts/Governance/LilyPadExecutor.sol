@@ -19,7 +19,7 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts-upgradeable/governance/TimelockControllerUpgradeable.sol";
 
-contract LilyPadExecutorV2 is TimelockControllerUpgradeable {
+contract LilyPadExecutor is TimelockControllerUpgradeable {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();

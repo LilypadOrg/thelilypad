@@ -1,17 +1,14 @@
-import { artifacts, ethers, network, upgrades } from "hardhat";
+import { ethers, network, upgrades } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { developmentChains } from "../helper-hardhat.config";
-import { asciiToHex, encode_function_data } from "../scripts/utils";
+import { encode_function_data } from "../scripts/utils";
 import {
     LilyPad,
     LilyPadProxyAdmin__factory,
     LilyPadProxy__factory,
     LilyPad__factory,
 } from "../typechain-types";
-import fs from "fs";
 import { ILilyPad } from "../typechain-types/contracts/LilyPad";
-import { readSvgContent } from "../scripts/svgUtils";
 import { EventStruct } from "../types/EventStruct";
 import { BigNumber } from "ethers";
 import Web3 from "web3";

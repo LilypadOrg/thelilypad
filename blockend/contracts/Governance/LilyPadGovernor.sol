@@ -25,6 +25,7 @@ import "@openzeppelin/contracts-upgradeable/governance/extensions/GovernorVotesQ
 import "@openzeppelin/contracts-upgradeable/governance/extensions/GovernorTimelockControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "../interface/IMain.sol";
+import "../interface/ILilyPad.sol";
 
 contract LilyPadGovernor is
     Initializable,
@@ -38,7 +39,7 @@ contract LilyPadGovernor is
     event ProposalVetoed(uint256 id);
     event ResignedPower(address vetoer);
 
-    IMain public mainContract;
+    ILilyPad public mainContract;
     address public vetoer;
 
     uint256 public levelThreshold;
@@ -51,7 +52,7 @@ contract LilyPadGovernor is
     }
 
     function isWorthy(address member) internal view {
-        (, , uint256 level, , ) = mainContract.getMember(member);
+        (, , uint256 level, , , , ) = mainContract.getMember(member);
 
         require(level >= levelThreshold, "Get your Level Higher! Contribute More!");
     }
@@ -64,14 +65,16 @@ contract LilyPadGovernor is
     function initialize(
         IVotesUpgradeable _token,
         TimelockControllerUpgradeable _timelock,
+        uint256 _votingDelay,
+        uint256 _votingPeriod,
         uint256 _levelThreshold,
-        IMain _mainContract,
+        ILilyPad _mainContract,
         address _vetoer
     ) public initializer {
         __Governor_init("LilyPadGovernor");
         __GovernorSettings_init(
-            6545, /* 6545 blocks (~1 day) */
-            45818, /* 45818 blocks (~1 week) */
+            _votingDelay, /* 6545 blocks (~1 day) */
+            _votingPeriod, /* 45818 blocks (~1 week) */
             1 /*Threshold to participate */
         );
         __GovernorCompatibilityBravo_init();
@@ -88,8 +91,8 @@ contract LilyPadGovernor is
      * @notice Set a new level threshold for proposals.
      * @param _levelThreshold The new level Threshold
      */
-    function setLevelThreshold(uint256 _levelThreshold) public onlyGovernance {
-        require(_levelThreshold != levelThreshold, "Current Value!");
+    function setLevelThreshold(uint256 _levelThreshold) external onlyGovernance {
+        require(_levelThreshold != levelThreshold, "LilyPadGovernor::Current Value!");
 
         levelThreshold = _levelThreshold;
     }

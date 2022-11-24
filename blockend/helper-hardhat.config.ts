@@ -8,6 +8,10 @@ export interface networkConfigItem {
     callBackGasLimit: string;
     interval: string;
     subscriptionId?: string;
+    votingDelay: number;
+    votingPeriod: number;
+    levelThreshold: number;
+    executorMinDelay: number;
 }
 
 export interface networkConfigInfo {
@@ -23,6 +27,10 @@ const networkConfig: networkConfigInfo = {
         callBackGasLimit: "500000",
         interval: "120",
         subscriptionId: "505",
+        votingDelay: 6545 /* 6545 blocks (~1 day) */,
+        votingPeriod: 45818 /* 45818 blocks (~1 week) */,
+        levelThreshold: 1,
+        executorMinDelay: 86400 /*86400 seconds (1 day) */,
     },
     1337: {
         blockConfirmations: 1,
@@ -31,9 +39,15 @@ const networkConfig: networkConfigInfo = {
         gasLane: "0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc",
         callBackGasLimit: "500000",
         interval: "30",
+        votingDelay: 6545 /* 6545 blocks (~1 day) */,
+        votingPeriod: 45818 /* 45818 blocks (~1 week) */,
+        levelThreshold: 1,
+        executorMinDelay: 300 /*300 seconds (5 minutes) */,
     },
 };
 
 const developmentChains = ["hardhat", "localhost"];
+const frontEndContractsFile = "../app/src/utils/contracts/contractAddresses.json";
+const fronEndABIsDir = "../app/src/utils/contracts";
 
-export { networkConfig, developmentChains };
+export { networkConfig, developmentChains, frontEndContractsFile, fronEndABIsDir };
