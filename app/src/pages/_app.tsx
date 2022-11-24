@@ -14,24 +14,36 @@ import { AppRouter } from '~/server/routers/_app';
 import superjson from 'superjson';
 import Navbar from '~/components/Navbar';
 import Footer from '~/components/Footer';
+import { Session } from 'next-auth';
+import Head from 'next/head';
+import Avatar from '~/components/Avatar';
 
 const getSiweMessageOptions: GetSiweMessageOptions = () => ({
   statement: 'Sign in to The Lily Pad',
 });
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
+const MyApp = ({
+  Component,
+  pageProps,
+}: AppProps<{
+  session: Session;
+}>) => {
   return (
     <WagmiConfig client={wagmiClient}>
       <SessionProvider refetchInterval={0} session={pageProps.session}>
         <RainbowKitSiweNextAuthProvider
           getSiweMessageOptions={getSiweMessageOptions}
         >
-          <RainbowKitProvider chains={chains}>
+          <RainbowKitProvider avatar={Avatar} chains={chains}>
+            <Head>
+              <meta
+                name="viewport"
+                content="initial-scale=1.0, width=device-width"
+              />
+            </Head>
             <Navbar />
             <Component {...pageProps} />
             <Footer />
-            {/* <Layout>
-            </Layout> */}
           </RainbowKitProvider>
         </RainbowKitSiweNextAuthProvider>
       </SessionProvider>
@@ -45,11 +57,11 @@ export default withTRPC<AppRouter>({
      * If you want to use SSR, you need to use the server's full URL
      * @link https://trpc.io/docs/ssr
      */
-    const url = 'https://thelilypad.vercel.app//api/trpc';
+    // const url = 'https://thelilypad.vercel.app//api/trpc';
 
-    // const url = process.env.VERCEL_URL
-    //   ? `https://${process.env.VERCEL_URL}/api/trpc`
-    //   : 'http://localhost:3000/api/trpc';
+    const url = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}/api/trpc`
+      : 'http://localhost:3000/api/trpc';
     return {
       url,
       transformer: superjson,

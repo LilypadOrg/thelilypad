@@ -3,6 +3,8 @@ import { createRouter } from '~/server/createRouter';
 import { z } from 'zod';
 import Web3 from 'web3';
 import { env } from '~/server/env';
+import { TokenMedata } from '~/types/types';
+import fetch from 'node-fetch';
 
 export const blockenRouter = createRouter()
   .query('signCreateMember', {
@@ -18,6 +20,8 @@ export const blockenRouter = createRouter()
         });
       }
       try {
+        console.log('signing inputs');
+        console.log(input);
         const web3 = new Web3();
         const hash = web3.utils.soliditySha3(
           // { t: 'bytes', v: web3.utils.fromAscii(input.name) },
@@ -64,6 +68,28 @@ export const blockenRouter = createRouter()
         ).signature;
         return signature;
       } catch (err) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Something went wrong'`,
+        });
+      }
+    },
+  })
+  .query('getTokenMetadata', {
+    input: z.object({
+      tokenUri: z.string(),
+    }),
+    async resolve({ input }) {
+      try {
+        console.log('input.tokenUri');
+        console.log(input.tokenUri.toString());
+        const data = await (await fetch(input.tokenUri.toString())).json();
+        console.log('data');
+        console.log(data);
+        return data as TokenMedata;
+      } catch (err) {
+        console.log('GetTokenMetadataError');
+        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Something went wrong'`,

@@ -66,8 +66,9 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
-          <div className="flex items-center justify-evenly gap-4">
-            <button className="text-md rounded-lg  border-primary-500  bg-primary-400 p-2 font-bold text-white shadow-md shadow-gray-300">
+          {/* TODO : Show this in navbar */}
+          <div className="ml-2 flex items-center justify-evenly gap-4 lg:ml-0">
+            <button className="hidden rounded-lg border-primary-500 bg-primary-400 p-2 text-xs  font-bold  text-white shadow-md shadow-gray-300 lg:block lg:p-2 lg:text-lg">
               Froggy DAO Treasury: 23.421 ETH
             </button>
             <AccountWidget />
@@ -88,26 +89,28 @@ const Navbar = () => {
           >
             <div>
               <div className="flex w-full items-center justify-between">
-                <Link href="/">
-                  <a>
-                    <Image
-                      src="/assets/navLogo.png"
-                      alt="logo"
-                      width="64"
-                      height="45"
-                    />
-                  </a>
-                </Link>
+                <div onClick={hideNavBar}>
+                  <Link href="/">
+                    <a>
+                      <Image
+                        src="/logo.png"
+                        alt="logo"
+                        width="50"
+                        height="45"
+                      />
+                    </a>
+                  </Link>
+                </div>
                 <div
                   onClick={hideNavBar}
-                  className="cursor-pointer rounded-full p-3"
+                  className="cursor-pointer rounded-full p-3 text-white"
                 >
-                  <AiOutlineClose />
+                  <AiOutlineClose className="text-xl font-bold" />
                 </div>
               </div>
             </div>
             <div className="flex flex-col py-4">
-              <ul className="uppercase">
+              <ul className="uppercase text-white">
                 {navBarItems.map((link) => (
                   <li
                     key={link.text}

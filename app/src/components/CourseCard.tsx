@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Course } from '~/types/types';
 import { formatNumber, limitStrLength } from '~/utils/formatters';
 import LevelPill from './ui/LevelPill';
@@ -18,31 +18,36 @@ const CourseCard = ({
 }) => {
   const { data: session } = useSession();
 
+  // pull all the courses the user is enrolled to or has completed
+  // this is used instead of querying the specific course under the assumption the query result is cached andused
+  // for all courses (TODO: assumption need to be verified)
   const { data: userCourses } = trpc.useQuery(
     ['usercourses.all', { userId: session?.user.userId || -1 }],
     {
       enabled: !!session,
+      cacheTime: 1000 * 60,
     }
   );
 
-  const completed = !!userCourses?.find(
-    (c) => c.courseId === course.id && c.completed
-  );
-  const inRoadmap = !!userCourses?.find(
-    (c) => c.courseId === course.id && c.roadmap
-  );
+  const completed = useMemo(() => {
+    return !!userCourses?.find((c) => c.courseId === course.id && c.completed);
+  }, [userCourses, course.id]);
+
+  const inRoadmap = useMemo(() => {
+    return !!userCourses?.find((c) => c.courseId === course.id && c.roadmap);
+  }, [userCourses, course.id]);
 
   return (
     // TODO: remove fix heigth
     <div
-      className={`flex min-w-[20rem] ${
+      className={`flex lg:min-w-[20rem] ${
         type === 'simple' && 'max-w-[20rem]'
       } flex-col justify-between self-start rounded-lg shadow-lg ${
-        type === 'full' ? 'min-h-[500px]' : 'min-h-[350px]'
+        type === 'full' ? 'min-h-[400px] lg:min-h-[500px]' : 'min-h-[350px]'
       } bg-white`}
     >
       <div className="flex flex-col justify-start">
-        <div className="relative h-[182px] w-full rounded-tr-lg rounded-tl-lg bg-main-gray-dark">
+        <div className="relative h-[120px] w-full rounded-tr-lg rounded-tl-lg bg-main-gray-dark lg:h-[182px]">
           <Link href={`/courses/${course.content.id}/${course.content.slug}`}>
             <a>
               {course.content.coverImageUrl && (
@@ -95,7 +100,7 @@ const CourseCard = ({
         )}
 
         <div className=" px-4 py-4">
-          <div className="mb-2 text-lg font-bold">
+          <div className="mb-2 text-[.885rem]  font-bold lg:text-lg">
             <Link href={`/courses/${course.content.id}/${course.content.slug}`}>
               {course.content.title}
             </Link>

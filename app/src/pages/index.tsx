@@ -3,32 +3,48 @@ import Image from 'next/image';
 import Link from 'next/link';
 import CourseCarousel from '~/components/CourseCarousel';
 import { ContentType } from '~/types/types';
-import { HOMEPAGE_COURSE_FILTERS } from '~/utils/constants';
+import {
+  HOMEPAGE_COURSE_CAROUSEL,
+  HOMEPAGE_COURSE_FILTERS,
+  HOMEPAGE_FEATURED_ITEMS,
+} from '~/utils/constants';
 import { trpc } from '~/utils/trpc';
 import { useSession } from 'next-auth/react';
 import { SpotLightCards } from '~/components/ui/Home';
 import { SpotLightCardsLoading, StripLoading } from '~/components/ui/Loaders';
 import { HiChevronRight } from 'react-icons/hi';
+import AboutHomeLinks from '~/components/AboutHomeLinks';
+import BrowseCoursesLink from '~/components/BrowseCoursesLink';
+import { useMemo } from 'react';
 
 const Home: NextPage = () => {
+  // Load techs for side bar links - top tags and techs
   const { data: techs, isLoading: techsLoading } = trpc.useQuery([
     'technologies.byContentTYpe',
     { contentType: ContentType.COURSE },
   ]);
+
+  // Load tags for side bar links - top tags and techs
   const { data: tags, isLoading: tagsLoading } = trpc.useQuery([
     'tags.byContentTYpe',
     { contentType: ContentType.COURSE },
   ]);
 
   const { data: session } = useSession();
+
+  // load courses for courses section
   const { data: courses, isLoading: coursesLoading } = trpc.useQuery([
     'courses.all',
-  ]);
-  const { data: projects, isLoading: projectsLoading } = trpc.useQuery([
-    'projects.all',
-    { take: 6 },
+    { take: HOMEPAGE_COURSE_CAROUSEL },
   ]);
 
+  // load projects for featured section
+  const { data: projects, isLoading: projectsLoading } = trpc.useQuery([
+    'projects.all',
+    { take: HOMEPAGE_FEATURED_ITEMS },
+  ]);
+
+  // load user data for profile link
   const { data: user } = trpc.useQuery(
     ['users.byAddress', { address: session?.user.address || '' }],
     {
@@ -36,87 +52,47 @@ const Home: NextPage = () => {
     }
   );
 
+  // create list of topTags and Techs for top-right sidebar
+  const topTagsTechs = useMemo(() => {
+    if (tags && techs) {
+      return tags
+        .map((t) => ({ ...t, type: 'tag' }))
+        .concat(techs.map((t) => ({ ...t, type: 'tech' })))
+        .sort((a, b) => b._count.contents - a._count.contents)
+        .slice(0, HOMEPAGE_COURSE_FILTERS);
+    }
+  }, [tags, techs]);
+
   return (
     <div>
       {/* Hero and cards */}
-      <div className="gradient-bg-top px-[5.5rem] pt-8">
+      <div className="gradient-bg-top px-[2.5rem] pt-8 lg:px-[5.5rem]">
         <div className="grid grid-cols-3 gap-8">
-          <div className="col-span-2 flex flex-col space-y-4 ">
+          <div className="col-span-3 flex flex-col space-y-4 lg:col-span-2 ">
             {/* Hero Image */}
-            <div className="relative min-h-[353px]  rounded-lg bg-main-gray-dark text-white">
+            <div className="relative min-h-[250px] rounded-lg bg-main-gray-dark text-white lg:min-h-[353px]">
               <Image
                 src="/images/homeBanner.jpg"
                 alt="Home banner"
                 layout="fill"
+                priority
                 objectFit="cover"
+                objectPosition={'left left'}
                 className="rounded-lg"
               />
-              <div className=" absolute bottom-4 right-4 max-w-[25%] space-y-2 rounded-lg bg-primary-400 p-4">
-                <h1 className="mb-0 text-lg">The Lily Pad</h1>
-                <p className="text-sm font-light leading-[1.1]">
+              <div className=" absolute bottom-4 right-4 max-w-[50%] space-y-2 rounded-lg bg-primary-400 p-4 lg:max-w-[25%]">
+                <h1 className="mb-0 text-sm lg:text-lg">The Lily Pad</h1>
+                <p className="text-xs font-light leading-[1.1] lg:text-sm">
                   A community endeavouring to guide those self-learning in web3{' '}
                 </p>
-                <p className="text-sm font-light">#goForYou</p>
+                <p className="text-xs font-light lg:text-sm">#goForYou</p>
               </div>
             </div>
             {/* we help you grow */}
-            <div className="flex h-full flex-col rounded-lg bg-main-gray-light p-6">
-              {/* Heading and sub */}
-              <div>
-                <h1 className="mb-0 text-2xl">
-                  We help you grow, learn & excell
-                </h1>
-                <span className="text-sm font-light">
-                  Discover what we are all about
-                </span>
-              </div>
-              {/* List */}
-              <div className="mt-4 grid  w-[85%] grid-cols-2 gap-8 ">
-                <div className="flex space-x-2">
-                  <p className="mt-[0.1rem] text-2xl font-bold">
-                    <HiChevronRight />
-                  </p>
-                  <p className="font-medium underline underline-offset-2">
-                    About the Lily Pad
-                  </p>
-                </div>
-                <div className="flex space-x-2">
-                  <p className="mt-[0.1rem] text-2xl font-bold">
-                    <HiChevronRight />
-                  </p>
-                  <p className="font-medium underline underline-offset-2">
-                    Meet the team
-                  </p>
-                </div>
-                <div className="flex space-x-2">
-                  <p className="mt-[0.1rem] text-2xl font-bold">
-                    <HiChevronRight />
-                  </p>
-                  <p className="font-medium underline underline-offset-2">
-                    What is a Soulbound token?
-                  </p>
-                </div>
-                <div className="flex space-x-2">
-                  <p className="mt-[0.1rem] text-2xl font-bold">
-                    <HiChevronRight />
-                  </p>
-                  <p className="font-medium underline underline-offset-2">
-                    The Lily Pad White Paper
-                  </p>
-                </div>
-                {/* <div className="flex space-x-3">
-                  <p className="font-normal">&#62;</p>
-                  <p className="underline">Lorem ipsum dolor sit amet</p>
-                </div>
-                <div className="flex space-x-3">
-                  <p className="font-normal">&#62;</p>
-                  <p className="underline">Lorem ipsum dolor sit amet</p>
-                </div> */}
-              </div>
-            </div>
+            <AboutHomeLinks />
           </div>
           {/* Side List */}
-          <div className="h-full rounded-lg  bg-main-gray-light py-5 px-6">
+          <div className="hidden h-full rounded-lg bg-main-gray-light py-5 px-6 lg:block">
             {/* header */}
             <div className="mt-6">
               <h1 className="mb-0 text-2xl">Courses</h1>
@@ -136,32 +112,15 @@ const Home: NextPage = () => {
                 </button>
               </Link>
 
-              {tagsLoading &&
-                techsLoading &&
-                [1, 2, 3, 4, 5, 6, 7, 8].map((i) => <StripLoading key={i} />)}
-
-              {tags &&
-                techs &&
-                tags
-                  .map((t) => ({ ...t, type: 'tag' }))
-                  .concat(techs.map((t) => ({ ...t, type: 'tech' })))
-                  .sort((a, b) => b._count.contents - a._count.contents)
-                  .slice(0, HOMEPAGE_COURSE_FILTERS)
-                  .map((courseFilter) => (
+              {tagsLoading && techsLoading
+                ? [1, 2, 3, 4, 5, 6, 7, 8].map((i) => <StripLoading key={i} />)
+                : topTagsTechs?.map((courseFilter) => (
                     /* Needs to be abstracted */
-                    <Link
-                      href={`/courses/browse/${courseFilter.type}/${courseFilter.slug}`}
+                    <BrowseCoursesLink
                       key={`home-coursefilter-${courseFilter.slug}`}
-                    >
-                      <button className="flex items-center justify-between rounded-md bg-white py-2 px-4">
-                        <p className="">
-                          {courseFilter.name} ({courseFilter._count.contents})
-                        </p>
-                        <p className="mt-[0.1rem] text-xl font-bold">
-                          <HiChevronRight />
-                        </p>
-                      </button>
-                    </Link>
+                      courseFilter={courseFilter}
+                      courseFilterType={courseFilter.type}
+                    />
                   ))}
             </div>
             <div className="mt-4 flex gap-x-4 rounded-lg bg-gray-300 p-2">
@@ -192,11 +151,11 @@ const Home: NextPage = () => {
         {/* Collection */}
         <div className="my-8">
           {/* First three collection */}
-          <div className="grid grid-cols-3 gap-8">
+          <div className="md: grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {/* TODO : Handle error and improve logic */}
             {projectsLoading &&
               [1, 2, 3, 4, 5, 6].map((i) => <SpotLightCardsLoading key={i} />)}
-            {projects?.slice(0, 6).map((p, index: number) => (
+            {projects?.map((p, index: number) => (
               <SpotLightCards
                 key={p.id}
                 teal={Boolean(index % 2)}
@@ -210,7 +169,7 @@ const Home: NextPage = () => {
         </div>
       </div>
       <hr className="my-14 w-full bg-main-gray-dark" />
-      <div className="gradient-bg-bottom px-[5.5rem] pb-12">
+      <div className="gradient-bg-bottom px-[2.5rem]  pb-12 lg:px-[5.5rem]">
         {/* Top 10 courses */}
         <CourseCarousel
           title="Top 10 Courses"
@@ -219,9 +178,9 @@ const Home: NextPage = () => {
         />
         {/* view AllCourse one tab*/}
         <div className="mt-14 w-full">
-          <div className="flex w-[30%] justify-between rounded-md bg-main-gray-light py-2 px-4">
+          <div className="flex justify-between rounded-md bg-main-gray-light px-4 py-2 lg:w-[30%] lg:py-2">
             <Link href="courses">
-              <button className="col-span-2 flex items-center justify-between rounded-md py-2 px-4">
+              <button className="col-span-2 flex items-center justify-between rounded-md lg:px-4 lg:py-2">
                 <p className="font-semibold">View all Courses</p>
                 <p className="mt-[0.1rem] text-xl font-bold">
                   <HiChevronRight />

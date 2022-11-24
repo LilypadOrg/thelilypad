@@ -8,10 +8,11 @@ import superjson from 'superjson';
 import { userRouter } from './users';
 import { tagRouter } from './tags';
 import { technologyRouter } from './technologies';
-import { courseLevelRouter } from './courseLevels';
+import { levelRouter } from './levels';
 import { resourceRouter } from './resources';
 import { blockenRouter } from './blockend';
 import { projectsRouter } from './projects';
+import { testsRouter } from './tests';
 
 /**
  * Create your application's root router
@@ -46,9 +47,10 @@ export const appRouter = createRouter()
   .merge('users.', userRouter)
   .merge('tags.', tagRouter)
   .merge('technologies.', technologyRouter)
-  .merge('courseLevels.', courseLevelRouter)
+  .merge('levels.', levelRouter)
   .merge('resources.', resourceRouter)
   .merge('projects.', projectsRouter)
-  .merge('blockend.', blockenRouter);
+  .merge('blockend.', blockenRouter)
+  .merge('tests.', testsRouter);
 
 export type AppRouter = typeof appRouter;

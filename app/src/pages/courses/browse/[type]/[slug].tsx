@@ -1,7 +1,6 @@
 import type { NextPage } from 'next';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { HiChevronRight } from 'react-icons/hi';
+import BrowseCoursesLink from '~/components/BrowseCoursesLink';
 import CourseCard from '~/components/CourseCard';
 import CourseCarousel from '~/components/CourseCarousel';
 import { CourseCardLoading } from '~/components/ui/Loaders';
@@ -44,10 +43,7 @@ const CourseCategories: NextPage = () => {
   );
 
   const { data: levelTitle } = trpc.useQuery(
-    [
-      'courseLevels.bySlug',
-      { slug: Array.isArray(slug) ? slug[0] : slug || '' },
-    ],
+    ['levels.bySlug', { slug: Array.isArray(slug) ? slug[0] : slug || '' }],
     {
       enabled: !!slug && type === 'level',
     }
@@ -67,8 +63,8 @@ const CourseCategories: NextPage = () => {
   return (
     <div>
       {/* Header */}
-      <div className="flex flex-col py-8 px-[5.5rem]">
-        <h1 className="mb-4 text-5xl font-bold">
+      <div className="flex flex-col py-8 px-[2.5rem]  lg:px-[5.5rem]">
+        <h1 className="mb-4 text-3xl  font-bold md:text-4xl lg:text-5xl">
           {type !== 'level'
             ? `So You want to learn ${topic}`
             : `${topic} Courses`}
@@ -80,7 +76,7 @@ const CourseCategories: NextPage = () => {
       </div>
       {/* Course Carousel */}
       <div className="bg-main-gray-light pt-2 pb-4">
-        <div className="px-[5.5rem]">
+        <div className="px-[2.5rem]  lg:px-[5.5rem]">
           <CourseCarousel
             title={`Top 10 ${topic} Courses`}
             courses={courses}
@@ -89,10 +85,10 @@ const CourseCategories: NextPage = () => {
         </div>
       </div>
       {/* Course Grid */}
-      <div className="px-[5.5rem]">
+      <div className="px-[2.5rem]  lg:px-[5.5rem]">
         {/* header */}
         <div className="flex flex-col py-8">
-          <h1 className="mb-4 text-4xl font-bold">
+          <h1 className="mb-4 text-2xl font-bold md:text-3xl lg:text-4xl">
             {type !== 'level'
               ? `So You want to learn ${topic}`
               : `${topic} Courses`}
@@ -103,7 +99,7 @@ const CourseCategories: NextPage = () => {
           </p>
         </div>
         {/* Grid */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* TODO : Handle error and improve logic */}
           {coursesLoading &&
             [1, 2, 3, 4, 5].map((i) => <CourseCardLoading key={i} />)}
@@ -120,8 +116,10 @@ const CourseCategories: NextPage = () => {
         )}
         {/* Other Categories */}
         <div className="my-10 w-full space-y-4">
-          <h1 className="mt-8 text-4xl">Other Categories</h1>
-          <div className="grid grid-cols-3 gap-4">
+          <h1 className="mt-8 text-2xl md:text-3xl lg:text-4xl">
+            Other Categories
+          </h1>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {tags &&
               techs &&
               tags
@@ -131,27 +129,22 @@ const CourseCategories: NextPage = () => {
                 .sort((a, b) => b._count.contents - a._count.contents)
                 .slice(0, BROWSE_COURSES_CAT_FILTERS)
                 .map((courseFilter) => (
-                  <Link
-                    href={`/courses/browse/${courseFilter.type}/${courseFilter.slug}`}
+                  <BrowseCoursesLink
                     key={`home-coursefilter-${courseFilter.slug}`}
-                  >
-                    <button className="flex items-center justify-between rounded-md bg-main-gray-light py-2 px-4">
-                      <p className="">
-                        {courseFilter.name} ({courseFilter._count.contents})
-                      </p>
-                      <p className="mt-[0.1rem] text-xl font-bold">
-                        <HiChevronRight />
-                      </p>
-                    </button>
-                  </Link>
+                    courseFilter={courseFilter}
+                    courseFilterType={courseFilter.type}
+                  />
                 ))}
           </div>
         </div>
         {/* Event I suck at titles */}
-        <div className="flex flex-col">
-          <h1 className="text-4xl"> Even I suck at titles</h1>
-          <div className="flex space-x-8">
-            <div className="min-h-[353px] min-w-[60%]  rounded-lg bg-main-gray-dark text-white"></div>
+        <div className="mb-8 flex flex-col">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl">
+            {' '}
+            Even I suck at titles
+          </h1>
+          <div className="flex flex-col space-y-4  lg:flex-row lg:space-x-8 lg:space-y-0">
+            <div className="min-h-[200px]  min-w-[60%] rounded-lg  bg-main-gray-dark text-white lg:min-h-[353px]"></div>
             <div className="flex flex-col space-y-4">
               <p className="font-semibold">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -165,7 +158,7 @@ const CourseCategories: NextPage = () => {
                 cum quo deleniti quis iusto?Lorem ipsum, dolor sit amet
                 consectetur adipisicing elit. Saepe quibusdam tempore aliquid
               </p>
-              <div className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
+              <div className="mb-6 flex justify-between rounded-md bg-main-gray-light py-2 px-4 lg:mb-0">
                 <p>Go somewhere else</p>
                 <p className="font-normal">&#62;</p>
               </div>

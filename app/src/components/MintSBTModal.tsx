@@ -3,22 +3,57 @@
 import Image from 'next/image';
 import React, { useCallback, useEffect, useRef } from 'react';
 import Tilt from 'react-parallax-tilt';
+import {
+  useContractWrite,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from 'wagmi';
+import { SBT_MINT_FEE } from '~/utils/constants';
+import { getLilyPadABI, getLilyPadAddress } from '~/utils/contracts';
+import { trpc } from '~/utils/trpc';
 
 const MintSBTModal = ({
   open,
   closeModal,
-  mintFunction,
-  mintIsLoading,
+  address,
 }: {
   open: boolean;
-  closeModal: () => void;
-  mintFunction: ContractWriteFn | undefined;
-  mintIsLoading: boolean;
-  fireCelebration: () => void;
+  closeModal: (isSuccess: boolean) => void;
+  address: string;
 }) => {
+  const utils = trpc.useContext();
+
+  const { config: mintTokenConfig } = usePrepareContractWrite({
+    addressOrName: getLilyPadAddress(),
+    contractInterface: getLilyPadABI(),
+    functionName: 'mintTokenForMember',
+    args: [address],
+    overrides: {
+      value: SBT_MINT_FEE,
+    },
+  });
+
+  const { data: mintTokenRes, write: mintToken } =
+    useContractWrite(mintTokenConfig);
+
+  const { mutateAsync: upadteHasPondSBT } = trpc.useMutation([
+    'users.setHasPondSBT',
+  ]);
+
+  const { isLoading: isLoadingMintToken } = useWaitForTransaction({
+    hash: mintTokenRes?.hash,
+    onSuccess: async () => {
+      const user = await upadteHasPondSBT({ hasPondSBT: true });
+      utils.refetchQueries(['users.byAddress', { address: user.address }]);
+      utils.refetchQueries(['users.byUsername', { username: user.username }]);
+
+      closeModal(true);
+    },
+  });
+
   const handleMint = () => {
-    if (mintFunction) {
-      mintFunction();
+    if (mintToken) {
+      mintToken();
     }
   };
 
@@ -26,14 +61,14 @@ const MintSBTModal = ({
 
   const hideModal = (e: React.MouseEvent<HTMLElement>) => {
     if (modalRef.current === e.target) {
-      closeModal();
+      closeModal(false);
     }
   };
 
   const keyPress = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape' && open) {
-        closeModal();
+        closeModal(false);
       }
     },
     [closeModal, open]
@@ -88,17 +123,17 @@ const MintSBTModal = ({
             </p>
             <button
               type="submit"
-              // disabled={!mintFunction}
+              disabled={!mintToken}
               onClick={handleMint}
               className="inline-flex w-full justify-center rounded-md border border-transparent bg-primary-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
             >
-              {mintIsLoading ? 'Minting...' : 'Mint SBT'}
+              {isLoadingMintToken ? 'Minting...' : 'Mint SBT'}
             </button>
           </div>
         </div>
         <span
           className="absolute top-0 right-0 cursor-pointer rounded-full pt-2 pr-5 text-xl font-bold"
-          onClick={closeModal}
+          onClick={hideModal}
         >
           &times;
         </span>

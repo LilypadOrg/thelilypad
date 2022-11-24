@@ -33,34 +33,65 @@ html {
   }
 
   h4 {
-    @apply text-3xl;
+    @apply text-4xl;
   }
 
   h5 {
-    @apply text-2xl;
+    @apply text-3xl;
   }
 
   h6 {
     @apply text-xl;
   }
-
-  a {
-    @apply hover:border-b hover:border-slate-400;
-  }
 }
 
-
-.gradient-bg-top { 
-  background: conic-gradient(from 207.84deg at 41.65% 45.97%, #FFFFFF -26.57deg, #FFFFFF 44.43deg, #2EB786 134.34deg, rgba(143, 122, 247, 0.79178) 185.4deg, #FFFFFF 263.92deg, #FFFFFF 333.43deg, #FFFFFF 404.43deg);
+.gradient-bg-top {
+  background: conic-gradient(
+    from 207.84deg at 41.65% 45.97%,
+    #ffffff -26.57deg,
+    #ffffff 44.43deg,
+    #2eb786 134.34deg,
+    rgba(143, 122, 247, 0.79178) 185.4deg,
+    #ffffff 263.92deg,
+    #ffffff 333.43deg,
+    #ffffff 404.43deg
+  );
 }
 
-.gradient-bg-bottom { 
-  background: conic-gradient(from 28deg at 41.65% 45.97%, #FFFFFF -26.57deg, #FFFFFF 44.43deg, #7B61FF 134.34deg, rgba(143, 122, 247, 0.79178) 185.4deg, #FFFFFF 263.92deg, #FFFFFF 333.43deg, #FFFFFF 404.43deg)
+.gradient-bg-bottom {
+  background: conic-gradient(
+    from 28deg at 41.65% 45.97%,
+    #ffffff -26.57deg,
+    #ffffff 44.43deg,
+    #7b61ff 134.34deg,
+    rgba(143, 122, 247, 0.79178) 185.4deg,
+    #ffffff 263.92deg,
+    #ffffff 333.43deg,
+    #ffffff 404.43deg
+  );
 }
 
 .gradient-bg-top-course {
-  background : conic-gradient(from 207.84deg at 36.65% 30.97%, #FFFFFF -26.57deg, #FFFFFF 44.43deg, #2EB786 134.34deg, rgba(143, 122, 247, 0.79178) 185.4deg, #FFFFFF 263.92deg, #FFFFFF 333.43deg, #FFFFFF 404.43deg)
+  background: conic-gradient(
+    from 207.84deg at 36.65% 30.97%,
+    #ffffff -26.57deg,
+    #ffffff 44.43deg,
+    #2eb786 134.34deg,
+    rgba(143, 122, 247, 0.79178) 185.4deg,
+    #ffffff 263.92deg,
+    #ffffff 333.43deg,
+    #ffffff 404.43deg
+  );
 }
 .gradient-bg-top-courses {
-  background :conic-gradient(from 207.84deg at 43.65% 13.97%, #FFFFFF -26.57deg, #FFFFFF 44.43deg, #2EB786 134.34deg, rgba(143, 122, 247, 0.79178) 185.4deg, #FFFFFF 263.92deg, #FFFFFF 333.43deg, #FFFFFF 404.43deg)
+  background: conic-gradient(
+    from 207.84deg at 43.65% 13.97%,
+    #ffffff -26.57deg,
+    #ffffff 44.43deg,
+    #2eb786 134.34deg,
+    rgba(143, 122, 247, 0.79178) 185.4deg,
+    #ffffff 263.92deg,
+    #ffffff 333.43deg,
+    #ffffff 404.43deg
+  );
 }
