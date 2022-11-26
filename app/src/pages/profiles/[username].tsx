@@ -41,9 +41,6 @@ const ProfilePage: NextPage = () => {
     { username },
   ]);
 
-  console.log('coursesForUser');
-  console.log(userCourses);
-
   const { data: userProfile, isSuccess: isSuccessUserProfile } = trpc.useQuery(
     ['users.byUsername', { username: username! }],
     {

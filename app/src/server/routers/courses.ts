@@ -205,8 +205,6 @@ export const courseRouter = createRouter()
     }),
     async resolve({ ctx, input }) {
       try {
-        console.log('Server session');
-        console.log(ctx.session);
         const userId = ctx.session?.user.userId;
         const { id } = input;
         const course = await prisma.course.findUnique({
@@ -254,12 +252,6 @@ export const courseRouter = createRouter()
           },
         });
 
-        if (!course) {
-          throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: `No course with id '${courseId}'`,
-          });
-        }
         return course;
       } catch (err) {
         throw new TRPCError({
