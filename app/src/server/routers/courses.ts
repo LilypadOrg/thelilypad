@@ -6,31 +6,32 @@ import { prisma } from '~/server/prisma';
 import { ContentType } from '~/types/types';
 import { BROWSE_COURSES_ITEMS } from '~/utils/constants';
 
-// const contentCourseSelect = Prisma.validator<Prisma.ContentSelect>()({
-//   id: true,
-//   title: true,
-//   description: true,
-//   coverImageUrl: true,
-//   technologies: true,
-//   tags: true,
-//   slug: true,
-//   course: {
-//     select: {
-//       id: true,
-//       levels: true,
-//       xp: true,
-//       userCourses: {
-//         select: {
-//           roadmap: true,
-//           completed: true,
-//           completedOn: true,
-//         },
-//       },
-//     },
-//   },
-// });
-
 const defaultCourseSelect = Prisma.validator<Prisma.CourseSelect>()({
+  id: true,
+  levels: true,
+  xp: true,
+  content: {
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      coverImageUrl: true,
+      technologies: true,
+      tags: true,
+      slug: true,
+    },
+  },
+  userCourses: {
+    select: {
+      roadmap: true,
+      completed: true,
+      completedOn: true,
+      lastTestPassed: true,
+    },
+  },
+});
+
+const userCourseSelect = Prisma.validator<Prisma.CourseSelect>()({
   id: true,
   levels: true,
   xp: true,
@@ -39,6 +40,7 @@ const defaultCourseSelect = Prisma.validator<Prisma.CourseSelect>()({
       roadmap: true,
       completed: true,
       completedOn: true,
+      lastTestPassed: true,
     },
   },
   content: {
@@ -65,14 +67,14 @@ export const courseRouter = createRouter()
         take: z.number().min(1).max(100).optional(),
       })
       .optional(),
-    async resolve({ input }) {
+    async resolve({ ctx, input }) {
       /**
        * For pagination you can have a look at this docs site
        * @link https://trpc.io/docs/useInfiniteQuery
        */
 
       try {
-        // const userId = ctx.session?.user.userId || -1;
+        const userId = ctx.session?.user.userId || -1;
         const courses = await prisma.course.findMany({
           where: {
             ...(input?.tags
@@ -92,14 +94,13 @@ export const courseRouter = createRouter()
               : {}),
           },
           take: input?.take || BROWSE_COURSES_ITEMS,
-          select: defaultCourseSelect,
-          // select: {
-          //   ...defaultCourseSelect,
-          //   userCourses: {
-          //     ...defaultCourseSelect.userCourses,
-          //     where: { userId },
-          //   },
-          // },
+          select: {
+            ...defaultCourseSelect,
+            userCourses: {
+              ...userCourseSelect.userCourses,
+              where: { userId: userId || -1 },
+            },
+          },
         });
         return courses;
       } catch (err) {
@@ -202,12 +203,21 @@ export const courseRouter = createRouter()
     input: z.object({
       id: z.number(),
     }),
-    async resolve({ input }) {
+    async resolve({ ctx, input }) {
       try {
+        console.log('Server session');
+        console.log(ctx.session);
+        const userId = ctx.session?.user.userId;
         const { id } = input;
         const course = await prisma.course.findUnique({
           where: { id },
-          select: defaultCourseSelect,
+          select: {
+            ...defaultCourseSelect,
+            userCourses: {
+              ...userCourseSelect.userCourses,
+              where: { userId: userId || -1 },
+            },
+          },
         });
 
         if (!course) {
@@ -225,51 +235,33 @@ export const courseRouter = createRouter()
       }
     },
   })
-  // .query('bySlug', {
-  //   input: z.object({
-  //     slug: z.string(),
-  //   }),
-  //   async resolve({ input }) {
-  //     try {
-  //       const { slug } = input;
-  //       const course = await prisma.course.findFirst({
-  //         where: { content: { slug } },
-  //         select: defaultCourseSelect,
-  //       });
-
-  //       if (!course) {
-  //         throw new TRPCError({
-  //           code: 'NOT_FOUND',
-  //           message: `No course with slug '${slug}'`,
-  //         });
-  //       }
-  //       return course;
-  //     } catch (err) {
-  //       console.error(err);
-  //       throw new TRPCError({
-  //         code: 'BAD_REQUEST',
-  //         message: `Error retrieving data.`,
-  //       });
-  //     }
-  //   },
-  // })
-  .query('byUser', {
+  .query('byUsername', {
     input: z.object({
-      userId: z.number(),
+      username: z.string(),
     }),
     async resolve({ input }) {
       try {
-        const courses = await prisma.content.findMany({
+        const course = await prisma.course.findMany({
           where: {
-            contentType: { name: ContentType.COURSE },
-            course: { userCourses: { some: { userId: input.userId } } },
+            userCourses: { some: { user: { username: input.username } } },
           },
-          select: defaultCourseSelect,
+          select: {
+            ...userCourseSelect,
+            userCourses: {
+              ...userCourseSelect.userCourses,
+              where: { user: { username: input.username } },
+            },
+          },
         });
 
-        return courses;
+        if (!course) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: `No course with id '${courseId}'`,
+          });
+        }
+        return course;
       } catch (err) {
-        console.error(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Error retrieving data.`,
@@ -277,6 +269,7 @@ export const courseRouter = createRouter()
       }
     },
   })
+
   .query('userRoadmap', {
     input: z.object({
       userId: z.number(),
