@@ -1,7 +1,5 @@
 import { useContractRead } from 'wagmi';
-import Web3 from 'web3';
 import { getLilyPadTreasure, getLilyPadTreasureABI } from '~/utils/contracts';
-import { trpc } from '~/utils/trpc';
 
 export const useDAOTreasure = () => {
   const {

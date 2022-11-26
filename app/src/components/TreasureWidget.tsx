@@ -1,10 +1,5 @@
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
-import { useAccount, useDisconnect } from 'wagmi';
-import { useEffect } from 'react';
-import { trpc } from '~/utils/trpc';
 import { useDAOTreasure } from '~/hooks/useDAOTreasure';
-import { resolve } from 'path';
 import Web3 from 'web3';
 
 const TreasureWidget = () => {

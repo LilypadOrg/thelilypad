@@ -41,8 +41,8 @@ const GovernanceTreasury = forwardRef((props, ref) => {
       if (controller) {
         try {
           controller.abort();
-        } catch (err: any) {
-          console.error(`Error aborting controller: ${err.message}`);
+        } catch (err) {
+          console.error(`Error aborting controller: ${err}`);
         }
       }
     };
@@ -51,10 +51,6 @@ const GovernanceTreasury = forwardRef((props, ref) => {
   const fmtTreasureBalanceUsd = useMemo(() => {
     let fmtTreasureBalanceUsd;
     if (treasureValue && ethUsd) {
-      const sEthUsd = ethUsd.split('.');
-      const dec = sEthUsd[1]?.length ?? 0;
-      const biEthUsd = ethUsd.replace('.', '');
-
       const treasureBalanceUsd =
         Number(formatNumber(Number(fmtTreasureBalance), 4)) * Number(ethUsd);
       //console.log(value);
@@ -66,7 +62,7 @@ const GovernanceTreasury = forwardRef((props, ref) => {
       console.log(fmtTreasureBalanceUsd);
     }
     return fmtTreasureBalanceUsd;
-  }, [formatNumber, treasureValue, ethUsd]);
+  }, [treasureValue, ethUsd, fmtTreasureBalance]);
 
   return (
     <Container>
@@ -93,5 +89,7 @@ const GovernanceTreasury = forwardRef((props, ref) => {
     </Container>
   );
 });
+
+GovernanceTreasury.displayName = 'GovernanceTreasury';
 
 export default GovernanceTreasury;
