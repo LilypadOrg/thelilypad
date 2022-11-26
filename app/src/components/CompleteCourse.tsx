@@ -10,6 +10,7 @@ import { useOnChainProfile } from '~/hooks/useOnChainProfile';
 import LevelUpModal from './LevelUpModal';
 import { useState } from 'react';
 import { getSBTLocalURL } from '~/utils/formatters';
+import { BigNumber } from 'ethers';
 
 export const CompleteCourse = ({
   user,
@@ -44,10 +45,14 @@ export const CompleteCourse = ({
   );
 
   const { config: completeCourseConfig } = usePrepareContractWrite({
-    addressOrName: getLilyPadAddress(),
-    contractInterface: getLilyPadABI(),
+    address: getLilyPadAddress(),
+    abi: getLilyPadABI(),
     functionName: 'completeEvent',
-    args: [user.address, courseId, completeEventSignature],
+    args: [
+      user.address as `0x${string}`,
+      BigNumber.from(courseId),
+      completeEventSignature as `0x${string}`,
+    ],
     enabled: !!completeEventSignature,
   });
 

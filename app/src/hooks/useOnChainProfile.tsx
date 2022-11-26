@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers';
 import { useContractRead } from 'wagmi';
 import { OnChainProfile } from '~/types/types';
 import {
@@ -14,21 +15,21 @@ export const useOnChainProfile = (address: string | undefined) => {
     refetch: refetchProfile,
     isLoading: isLoadingOnChainProfile,
   } = useContractRead({
-    addressOrName: getLilyPadAddress(),
-    contractInterface: getLilyPadABI(),
+    address: getLilyPadAddress(),
+    abi: getLilyPadABI(),
     functionName: 'getMember',
     enabled: !!address,
-    args: address,
+    args: [address as `0x${string}`],
     cacheTime: 0,
     staleTime: 0,
   });
 
   const { data: tokenUri, isLoading: isLoadingTokenURI } = useContractRead({
-    addressOrName: getPondSBTAddress(),
-    contractInterface: getPondSBTABI(),
+    address: getPondSBTAddress(),
+    abi: getPondSBTABI(),
     functionName: 'tokenURI',
     enabled: !!onChainProfile && onChainProfile.tokenId._hex !== '0x00',
-    args: [onChainProfile?.tokenId._hex],
+    args: [onChainProfile?.tokenId || BigNumber.from('0x00')],
   });
 
   const { data: tokenMetadata, isFetching: isLoadingTokenMetadata } =

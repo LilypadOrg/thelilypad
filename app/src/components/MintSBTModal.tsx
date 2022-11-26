@@ -24,10 +24,10 @@ const MintSBTModal = ({
   const utils = trpc.useContext();
 
   const { config: mintTokenConfig } = usePrepareContractWrite({
-    addressOrName: getLilyPadAddress(),
-    contractInterface: getLilyPadABI(),
+    address: getLilyPadAddress(),
+    abi: getLilyPadABI(),
     functionName: 'mintTokenForMember',
-    args: [address],
+    args: [address as `0x${string}`],
     overrides: {
       value: SBT_MINT_FEE,
     },

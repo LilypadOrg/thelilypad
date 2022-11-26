@@ -19,6 +19,7 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
+import { BigNumber } from 'ethers';
 
 const EditProfileModal = ({
   open,
@@ -82,14 +83,16 @@ const EditProfileModal = ({
   );
 
   const { config: createMemberConfig } = usePrepareContractWrite({
-    addressOrName: getLilyPadAddress(),
-    contractInterface: getLilyPadABI(),
+    address: getLilyPadAddress(),
+    abi: getLilyPadABI(),
     functionName: 'createMember',
     args: [
-      userProfile.xp, // _initialXP
-      userProfile.courses.filter((c) => c.completed).map((c) => c.courseId), // -completedEvents
+      BigNumber.from(userProfile.xp), // _initialXP
+      userProfile.courses
+        .filter((c) => c.completed)
+        .map((c) => BigNumber.from(c.courseId)), // -completedEvents
       [], // _badges
-      createMemberSignature, // _sig
+      createMemberSignature as `0x${string}`, // _sig
     ],
     enabled: !!createMemberSignature,
   });

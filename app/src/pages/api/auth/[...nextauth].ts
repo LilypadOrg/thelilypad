@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import NextAuth from 'next-auth';
+import NextAuth, { User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { getCsrfToken } from 'next-auth/react';
 import { SiweMessage } from 'siwe';
@@ -58,13 +58,15 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
             },
           });
 
-          return {
+          const nextAuthUser: User = {
             // id: siwe.address,
-            id: user.id,
+            id: user.id.toString(),
             address: siwe.address,
             name: user.username,
             // image: getSBTLocalURL(user.levelNumber),
           };
+
+          return nextAuthUser;
         } catch (e) {
           return null;
         }

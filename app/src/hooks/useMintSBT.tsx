@@ -9,10 +9,10 @@ import { trpc } from '~/utils/trpc';
 
 export const useMintSBT = (address: string, enableMint: boolean) => {
   const { config: mintTokenConfig } = usePrepareContractWrite({
-    addressOrName: getLilyPadAddress(),
-    contractInterface: getLilyPadABI(),
+    address: getLilyPadAddress(),
+    abi: getLilyPadABI(),
     functionName: 'mintTokenForMember',
-    args: [address],
+    args: [address as `0x${string}`],
     overrides: {
       value: SBT_MINT_FEE,
     },
