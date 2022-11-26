@@ -10,6 +10,7 @@ export const HOMEPAGE_COURSE_CAROUSEL = 10;
 export const HOMEPAGE_FEATURED_ITEMS = 6;
 export const BROWSE_COURSES_CAT_FILTERS = 21;
 export const BROWSE_COURSES_ITEMS = 18;
+export const BROWSE_DAO_ITEMS = 18;
 export const TEST_QUESTIONS_BY_LEVEL: { [level: string]: number } = {
   beginner: 10,
   intermediate: 20,
