@@ -13,6 +13,7 @@ import { resourceRouter } from './resources';
 import { blockenRouter } from './blockend';
 import { projectsRouter } from './projects';
 import { testsRouter } from './tests';
+import { daoRouter } from './dao';
 
 /**
  * Create your application's root router
@@ -51,6 +52,7 @@ export const appRouter = createRouter()
   .merge('resources.', resourceRouter)
   .merge('projects.', projectsRouter)
   .merge('blockend.', blockenRouter)
-  .merge('tests.', testsRouter);
+  .merge('tests.', testsRouter)
+  .merge('dao.', daoRouter);
 
 export type AppRouter = typeof appRouter;

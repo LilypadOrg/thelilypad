@@ -21,8 +21,18 @@ export const formatAddress = (address: string) => {
   return address.slice(0, 4) + '...' + address.slice(-4);
 };
 
-export const formatNumber = (input: string | number) => {
-  return input.toLocaleString('en-US');
+export const formatNumber = (input: string | number, decimals?: number) => {
+  //console.log(`Number to format: ${input}`);
+  //console.log(`Decimals to format: ${decimals}`);
+  let formattedNumber = input.toLocaleString('en-US');
+  if (decimals) {
+    formattedNumber = input.toLocaleString('en-US', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    });
+  }
+  //console.log(`Formatted Number: ${formattedNumber}`);
+  return formattedNumber;
 };
 
 export const getSBTLocalURL = (level: number) => {

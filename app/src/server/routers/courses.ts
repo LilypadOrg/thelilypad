@@ -73,7 +73,6 @@ export const courseRouter = createRouter()
 
       try {
         // const userId = ctx.session?.user.userId || -1;
-        console.log('teste');
         const courses = await prisma.course.findMany({
           where: {
             ...(input?.tags

@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import ConnectWallet from './ConnectWallet';
 import { getNavBarItems } from '../utils/navLinks';
 import AccountWidget from './AccountWidget';
+import { useDAOTreasure } from '~/hooks/useDAOTreasure';
+import TreasureWidget from './TreasureWidget';
 
 const Navbar = () => {
   const [visibile, setVisibile] = useState<boolean>(false);
@@ -68,9 +70,7 @@ const Navbar = () => {
           </ul>
           {/* TODO : Show this in navbar */}
           <div className="ml-2 flex items-center justify-evenly gap-4 lg:ml-0">
-            <button className="hidden rounded-lg border-primary-500 bg-primary-400 p-2 text-xs  font-bold  text-white shadow-md shadow-gray-300 lg:block lg:p-2 lg:text-lg">
-              Froggy DAO Treasury: 23.421 ETH
-            </button>
+            <TreasureWidget />
             <AccountWidget />
             <ConnectWallet />
           </div>
