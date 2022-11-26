@@ -95,3 +95,52 @@ html {
     #ffffff 404.43deg
   );
 }
+
+.GovernanceTreasury {
+  border: 1px solid #7b61ff;
+  border-radius: 20px;
+  margin-bottom: 48px;
+  margin-top: 48px;
+}
+.treasuryAmount {
+  padding: 1rem 2rem;
+}
+
+.treasuryHeader {
+  color: #2eb786;
+  font-family: Rufina, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.treasuryEth {
+  min-width: 9rem;
+  padding-top: 0.2rem;
+}
+
+.treasuryUsd {
+  padding-top: 0.2rem;
+}
+
+.treasuryInfo {
+  padding: 1rem 2rem;
+}
+
+.FancyButton {
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid #7b61ff;
+  border-radius: 10px;
+  color: #7b61ff;
+  cursor: pointer;
+  display: flex;
+  flex-flow: row nowrap;
+  font-size: 15px;
+  font-weight: 700;
+  height: 40px;
+  min-height: 40px;
+  justify-content: center;
+  line-height: 15px;
+  padding: 0 12px;
+  transition: all 125ms ease-in-out;
+}

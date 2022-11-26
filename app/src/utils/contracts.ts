@@ -2,6 +2,7 @@ import contractAddresses from './contracts/contractAddresses.json';
 import { wagmiClient } from './rainbowkit';
 import LiLyPadContract from './contracts/LilyPad.json';
 import PondSBTContract from './contracts/PondSBT.json';
+import LilyPadTreasureContract from './contracts/LilyPadTreasure.json';
 
 const addresses: {
   [key: number]: Array<{ contract: string; address: string }>;
@@ -36,10 +37,18 @@ export const getPondSBTAddress = () => {
   return getContractAddress('PondSBT');
 };
 
+export const getLilyPadTreasure = () => {
+  return getContractAddress('LilyPadTreasure');
+};
+
 export const getLilyPadABI = () => {
   return LiLyPadContract.abi;
 };
 
 export const getPondSBTABI = () => {
   return PondSBTContract.abi;
+};
+
+export const getLilyPadTreasureABI = () => {
+  return LilyPadTreasureContract.abi;
 };
