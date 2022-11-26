@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useDAOTreasure } from '~/hooks/useDAOTreasure';
+  import { useDAOTreasure } from '~/hooks/useDAOTreasure';
 import Web3 from 'web3';
 
 const TreasureWidget = () => {
