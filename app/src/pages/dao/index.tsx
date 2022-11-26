@@ -1,16 +1,5 @@
 import { NextPage } from 'next';
-import React, { useState } from 'react';
-import BrowseCoursesLink from '~/components/BrowseCoursesLink';
-import CourseCarousel from '~/components/CourseCarousel';
-import { CourseCardLoading } from '~/components/ui/Loaders';
-import { useContentFilter } from '~/hooks/useContentFilter';
-import { ContentType } from '~/types/types';
-import { trpc } from '~/utils/trpc';
-import { Swiper, SwiperSlide } from 'swiper/react';
 // Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/pagination';
-import { Pagination } from 'swiper';
 import GovernanceTreasury from '~/components/GovernanceTreasury';
 
 const Dao: NextPage = () => {

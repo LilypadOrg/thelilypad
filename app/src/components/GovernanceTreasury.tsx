@@ -1,10 +1,8 @@
 import axios from 'axios';
-import { BigNumber, ethers } from 'ethers';
 import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import { BiColorFill } from 'react-icons/bi';
 import Web3 from 'web3';
 import { useDAOTreasure } from '~/hooks/useDAOTreasure';
 import { formatNumber } from '~/utils/formatters';
