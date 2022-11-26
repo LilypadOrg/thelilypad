@@ -6,7 +6,6 @@ const TestQuestion = ({
   question,
   disabled,
   registerField,
-  error,
   answerSelected,
   answerStatus,
 }: {
@@ -14,7 +13,6 @@ const TestQuestion = ({
   question: Question;
   disabled: boolean;
   registerField: UseFormRegister<TestFormInputs>;
-  error?: boolean;
   answerSelected?: number;
   answerStatus?: boolean;
 }) => {

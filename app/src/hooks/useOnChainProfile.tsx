@@ -21,9 +21,6 @@ export const useOnChainProfile = (address: string | undefined) => {
     args: address,
     cacheTime: 0,
     staleTime: 0,
-    onSuccess: () => {
-      console.log('getMember Contract read success');
-    },
   });
 
   const { data: tokenUri, isLoading: isLoadingTokenURI } = useContractRead({
@@ -32,9 +29,6 @@ export const useOnChainProfile = (address: string | undefined) => {
     functionName: 'tokenURI',
     enabled: !!onChainProfile && onChainProfile.tokenId._hex !== '0x00',
     args: [onChainProfile?.tokenId._hex],
-    onSuccess: () => {
-      console.log('tokenUri Contract read success');
-    },
   });
 
   const { data: tokenMetadata, isFetching: isLoadingTokenMetadata } =
@@ -42,10 +36,6 @@ export const useOnChainProfile = (address: string | undefined) => {
       ['blockend.getTokenMetadata', { tokenUri: tokenUri?.toString() || '' }],
       {
         enabled: !!tokenUri,
-        onSuccess: (data) => {
-          console.log('tokenMetadata read success');
-          console.log(data);
-        },
       }
     );
 
