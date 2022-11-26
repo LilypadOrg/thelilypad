@@ -70,7 +70,10 @@ const EditProfileModal = ({
       'blockend.signCreateMember',
       {
         xp: userProfile?.xp || 0,
-        courses: userProfile.courses.map((c) => c.courseId) || [],
+        courses:
+          userProfile.courses
+            .filter((c) => c.completed)
+            .map((c) => c.courseId) || [],
       },
     ],
     {
