@@ -149,6 +149,7 @@ const Home: NextPage = () => {
           </div>
         </div>
         {/* Collection */}
+        {/* TODO  Add title */}
         <div className="my-8">
           {/* First three collection */}
           <div className="md: grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">

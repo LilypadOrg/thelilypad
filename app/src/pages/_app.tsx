@@ -1,7 +1,7 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 // import Layout from '../components/Layout';
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { AvatarComponent, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import {
   GetSiweMessageOptions,
   RainbowKitSiweNextAuthProvider,
@@ -21,6 +21,17 @@ const getSiweMessageOptions: GetSiweMessageOptions = () => ({
   statement: 'Sign in to The Lily Pad',
 });
 
+const CustomAvatar: AvatarComponent = ({}) => {
+  return (
+    <img
+      src={'/images/profileSBT/frogSBT.png'}
+      width={250}
+      height={250}
+      style={{ borderRadius: 999 }}
+    />
+  );
+};
+
 const MyApp = ({
   Component,
   pageProps,
@@ -33,7 +44,7 @@ const MyApp = ({
         <RainbowKitSiweNextAuthProvider
           getSiweMessageOptions={getSiweMessageOptions}
         >
-          <RainbowKitProvider chains={chains}>
+          <RainbowKitProvider chains={chains} avatar={CustomAvatar}>
             <Head>
               <meta
                 name="viewport"
