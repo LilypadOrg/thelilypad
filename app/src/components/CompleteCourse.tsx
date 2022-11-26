@@ -73,7 +73,10 @@ export const CompleteCourse = ({
           });
         }
         // utils.refetchQueries(['usercourses.all', { userId: user.userId }]);
-        utils.refetchQueries(['usercourses.single', { courseId }]);
+        utils.refetchQueries([
+          'courses.byIdAndUser',
+          { courseId, userId: user.userId },
+        ]);
         utils.refetchQueries(['users.byAddress', { address: user.address }]);
         if (user.name) {
           utils.refetchQueries(['users.byUsername', { username: user.name }]);

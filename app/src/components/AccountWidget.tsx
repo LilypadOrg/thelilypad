@@ -9,9 +9,6 @@ const AccountWidget = () => {
   const { disconnect } = useDisconnect();
   const { data: session } = useSession();
 
-  console.log('session');
-  console.log(session);
-
   useEffect(() => {
     if (address && session && session.user.address !== address) {
       disconnect();

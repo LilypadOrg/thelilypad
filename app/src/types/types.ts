@@ -12,6 +12,7 @@ export enum ContentType {
 
 export type Course = inferQueryOutput<'courses.byId'>;
 export type Courses = inferQueryOutput<'courses.all'>;
+export type CoursesByUser = inferQueryOutput<'courses.byUsername'>;
 export type UserProfile = inferQueryOutput<'users.byUsername'>;
 export type Tech = inferQueryOutput<'technologies.bySlug'>;
 export type Techs = inferQueryOutput<'technologies.all'>;
@@ -26,6 +27,12 @@ export interface TokenMedata {
   name: string;
   description: string;
 }
+
+export type RoadmapCourses = {
+  beginner: CoursesByUser;
+  intermediate: CoursesByUser;
+  advanced: CoursesByUser;
+};
 
 export interface OnChainProfile {
   DAO: boolean;

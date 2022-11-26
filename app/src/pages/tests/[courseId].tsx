@@ -23,6 +23,10 @@ const Test: NextPage = () => {
 
   const { data: session, status: sessionStatus } = useSession();
   const { data: course } = trpc.useQuery(['courses.byId', { id: courseId }]);
+
+  const userCourse =
+    course?.userCourses.length === 1 ? course?.userCourses[0] : undefined;
+
   const { data: existingTest, isLoading: isLoadingExisting } = trpc.useQuery(
     ['tests.single', { courseId }],
     {
@@ -30,13 +34,6 @@ const Test: NextPage = () => {
       onSuccess: (data) => {
         setCurrentTest(data);
       },
-    }
-  );
-
-  const { data: userCourses } = trpc.useQuery(
-    ['usercourses.single', { courseId: courseId }],
-    {
-      enabled: !!session,
     }
   );
 
@@ -198,7 +195,7 @@ const Test: NextPage = () => {
                   {testState === 'passed' && (
                     <CompleteCourse
                       courseId={courseId}
-                      completed={userCourses?.completed || false}
+                      completed={userCourse?.completed || false}
                       user={session.user}
                     />
                   )}

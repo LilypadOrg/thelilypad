@@ -38,3 +38,7 @@ export const formatNumber = (input: string | number, decimals?: number) => {
 export const getSBTLocalURL = (level: number) => {
   return `/images/profileSBT/level${level}.jpg`;
 };
+
+export const capitalizeFirstLetter = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
