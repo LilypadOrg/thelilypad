@@ -5,6 +5,15 @@
     {
       "splitTerminals": [
         {
+          "name": "app",
+          "commands": ["cd ./app"],
+          "shouldRunCommands": true
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
+        {
           "name": "contracts-hh",
           "commands": ["cd ./blockend"],
           "shouldRunCommands": true

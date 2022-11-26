@@ -47,5 +47,7 @@ const networkConfig: networkConfigInfo = {
 };
 
 const developmentChains = ["hardhat", "localhost"];
+const frontEndContractsFile = "../app/src/utils/contracts/contractAddresses.json";
+const fronEndABIsDir = "../app/src/utils/contracts";
 
-export { networkConfig, developmentChains };
+export { networkConfig, developmentChains, frontEndContractsFile, fronEndABIsDir };

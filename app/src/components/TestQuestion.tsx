@@ -2,6 +2,7 @@ import { UseFormRegister } from 'react-hook-form';
 import { Question, TestFormInputs } from '~/types/types';
 
 const TestQuestion = ({
+  sequenceNumber,
   question,
   disabled,
   registerField,
@@ -9,6 +10,7 @@ const TestQuestion = ({
   answerSelected,
   answerStatus,
 }: {
+  sequenceNumber: number;
   question: Question;
   disabled: boolean;
   registerField: UseFormRegister<TestFormInputs>;
@@ -17,8 +19,14 @@ const TestQuestion = ({
   answerStatus?: boolean;
 }) => {
   return (
-    <div key={`q-${question.code}`} className="mb-6 flex flex-col gap-y-4">
-      <p className="text-xl font-bold">{question.question}</p>
+    <div key={`q-${question.code}`} className="flex flex-col gap-y-4">
+      <div>
+        <p className="uppercase text-gray-500">{question.technology.name}</p>
+        <p className="text-xl font-bold uppercase">
+          #{sequenceNumber}. {question.question}
+        </p>
+      </div>
+
       {question.answers.map((a) => {
         let classes = '';
         if (!disabled) {
@@ -51,9 +59,9 @@ const TestQuestion = ({
           </div>
         );
       })}
-      {error && (
+      {/* {error && (
         <p className="font-bold text-red-600">You must select an answer</p>
-      )}
+      )} */}
     </div>
   );
 };

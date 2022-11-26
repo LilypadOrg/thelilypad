@@ -1,7 +1,6 @@
 import { BiAddToQueue } from 'react-icons/bi';
 import { toast } from 'react-toastify';
 import { trpc } from '~/utils/trpc';
-import { useSession } from 'next-auth/react';
 
 const AddCourseToRoadmap = ({
   courseId,
@@ -13,7 +12,6 @@ const AddCourseToRoadmap = ({
   type: 'small' | 'standard';
 }) => {
   const utils = trpc.useContext();
-  const { data: session } = useSession();
 
   const { mutate: mutateAddToRoadmap } = trpc.useMutation(
     ['usercourses.addToRoadmap'],
@@ -49,10 +47,6 @@ const AddCourseToRoadmap = ({
       },
       onSuccess: () => {
         utils.invalidateQueries(['courses.byId', { id: courseId }]);
-        utils.invalidateQueries([
-          'usercourses.all',
-          { userId: session?.user.userId || -1 },
-        ]);
         utils.invalidateQueries(['courses.userRoadmap']);
       },
     }

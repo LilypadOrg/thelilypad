@@ -1,4 +1,6 @@
+import { Prisma } from '@prisma/client';
 import { BigNumber } from 'ethers';
+import { testInstanceSelect } from '~/server/routers/tests';
 import { inferQueryOutput } from '~/utils/trpc';
 
 export enum ContentType {
@@ -10,10 +12,13 @@ export enum ContentType {
 
 export type Course = inferQueryOutput<'courses.byId'>;
 export type Courses = inferQueryOutput<'courses.all'>;
+export type CoursesByUser = inferQueryOutput<'courses.byUsername'>;
 export type UserProfile = inferQueryOutput<'users.byUsername'>;
 export type Tech = inferQueryOutput<'technologies.bySlug'>;
 export type Techs = inferQueryOutput<'technologies.all'>;
 export type UserCourse = inferQueryOutput<'usercourses.single'>;
+export type UserCourseWithContent =
+  inferQueryOutput<'usercourses.singleWithContent'>;
 export type UserCourses = inferQueryOutput<'usercourses.all'>;
 export type Question = inferQueryOutput<'tests.questionById'>;
 
@@ -22,6 +27,12 @@ export interface TokenMedata {
   name: string;
   description: string;
 }
+
+export type RoadmapCourses = {
+  beginner: CoursesByUser;
+  intermediate: CoursesByUser;
+  advanced: CoursesByUser;
+};
 
 export interface OnChainProfile {
   DAO: boolean;
@@ -43,3 +54,7 @@ export interface ContentFilter {
 export type TestFormInputs = {
   [question: string]: string;
 };
+
+export type TestInstanceExt = Prisma.TestinstanceGetPayload<{
+  select: typeof testInstanceSelect;
+}> & { coolDownTime: number; expiryTime: number };

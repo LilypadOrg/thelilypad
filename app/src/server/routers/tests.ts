@@ -10,6 +10,7 @@ import {
   TEST_DURATION_MS,
   TEST_PASS_RATE,
 } from '~/utils/constants';
+import { getCourseHighestLevel } from '~/utils/content';
 
 const defaultQuestionSelect = Prisma.validator<Prisma.TestQuestionSelect>()({
   id: true,
@@ -33,27 +34,29 @@ const defaultQuestionSelect = Prisma.validator<Prisma.TestQuestionSelect>()({
   },
 });
 
-const testInstanceSelect = Prisma.validator<Prisma.TestinstanceSelect>()({
-  id: true,
-  userId: true,
-  courseId: true,
-  questions: {
-    select: {
-      question: {
-        select: {
-          ...defaultQuestionSelect,
+export const testInstanceSelect = Prisma.validator<Prisma.TestinstanceSelect>()(
+  {
+    id: true,
+    userId: true,
+    courseId: true,
+    questions: {
+      select: {
+        question: {
+          select: {
+            ...defaultQuestionSelect,
+          },
         },
+        givenAnswer: true,
       },
-      givenAnswer: true,
     },
-  },
-  isExpired: true,
-  isSubmitted: true,
-  isPassed: true,
-  isCoolDownOver: true,
-  expiredOn: true,
-  cratedAt: true,
-});
+    isExpired: true,
+    isSubmitted: true,
+    isPassed: true,
+    isCoolDownOver: true,
+    expiredOn: true,
+    cratedAt: true,
+  }
+);
 
 const updateInstanceStatus = async (
   testInstance: Prisma.TestinstanceGetPayload<{
@@ -78,7 +81,7 @@ const updateInstanceStatus = async (
       (new Date().getTime() - testInstance.cratedAt.getTime());
     if (expiryTime <= 0) {
       isExpired = true;
-      expiredOn = new Date();
+      expiredOn = new Date(testInstance.cratedAt.getTime() + TEST_DURATION_MS);
       update = true;
     }
   }
@@ -132,8 +135,6 @@ export const testsRouter = createRouter()
         });
         return questions;
       } catch (err) {
-        console.log('err');
-        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Error retrieving data.`,
@@ -157,8 +158,6 @@ export const testsRouter = createRouter()
         });
         return question;
       } catch (err) {
-        console.log('err');
-        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Error retrieving data.`,
@@ -170,7 +169,6 @@ export const testsRouter = createRouter()
     input: z.object({ courseId: z.number() }),
     async resolve({ ctx, input }) {
       if (!ctx.session?.user) {
-        console.log('Ostia');
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: `Unauthorized`,
@@ -188,8 +186,6 @@ export const testsRouter = createRouter()
 
         return returnTest;
       } catch (err) {
-        console.log('err');
-        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Error retrieving data.`,
@@ -198,7 +194,10 @@ export const testsRouter = createRouter()
     },
   })
   .mutation('result', {
-    input: z.object({ testId: z.number(), answers: z.record(z.string()) }),
+    input: z.object({
+      testId: z.number(),
+      answers: z.record(z.string().or(z.null())),
+    }),
     async resolve({ ctx, input }) {
       if (!ctx.session?.user) {
         throw new TRPCError({
@@ -223,15 +222,17 @@ export const testsRouter = createRouter()
         }
 
         for (let i = 0; i < qIds.length; i++) {
-          await prisma.testinstanceQuestion.update({
-            where: {
-              instanceId_questionId: {
-                instanceId: input.testId,
-                questionId: qIds[i],
+          if (aIds[i]) {
+            await prisma.testinstanceQuestion.update({
+              where: {
+                instanceId_questionId: {
+                  instanceId: input.testId,
+                  questionId: qIds[i],
+                },
               },
-            },
-            data: { givenAnswerId: aIds[i] },
-          });
+              data: { givenAnswerId: aIds[i] },
+            });
+          }
         }
 
         const results = await prisma.testQuestion.findMany({
@@ -244,13 +245,13 @@ export const testsRouter = createRouter()
           },
         });
 
-        const passed = results.length / qIds.length > TEST_PASS_RATE;
+        const passed = results.length / qIds.length >= TEST_PASS_RATE;
 
-        console.log(
-          `Questions ${qIds.length}, correct: ${results.length}, ration: ${
-            results.length / qIds.length
-          }`
-        );
+        // console.log(
+        //   `Questions ${qIds.length}, correct: ${results.length}, ration: ${
+        //     results.length / qIds.length
+        //   }`
+        // );
 
         const test = await prisma.testinstance.update({
           where: { id: input.testId },
@@ -278,10 +279,8 @@ export const testsRouter = createRouter()
           },
         });
 
-        return test;
+        return { ...test, expiryTime: 0, coolDownTime: TEST_COOLDOWN_MS };
       } catch (err) {
-        console.log('query error');
-        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Error retrieving data.`,
@@ -333,17 +332,11 @@ export const testsRouter = createRouter()
           },
         });
 
-        const levels = course.levels.map((c) => c.slug);
         const techs = course.content.technologies.map((t) => t.slug);
 
-        let levelSlug = '';
-        if (levels.includes('advanced')) {
-          levelSlug = 'advanced';
-        } else if (levels.includes('intermediate')) {
-          levelSlug = 'intermediate';
-        } else if (levels.includes('beginner')) {
-          levelSlug = 'beginner';
-        }
+        getCourseHighestLevel(course.levels);
+
+        const levelSlug = getCourseHighestLevel(course.levels);
 
         const questionsToExtract = TEST_QUESTIONS_BY_LEVEL[levelSlug];
 
@@ -357,8 +350,6 @@ export const testsRouter = createRouter()
             i < techs.length - 1
               ? questionsByTech
               : questionsToExtract - questionsByTech * i;
-          console.log('limit');
-          console.log(limit);
           const questions: QuestionIds =
             await prisma.$queryRaw`select tq.id from "TestQuestion" tq
             INNER JOIN "Level" lv ON tq."levelId" = lv.id   
@@ -394,10 +385,8 @@ export const testsRouter = createRouter()
           select: testInstanceSelect,
         });
 
-        return { ...test, expiryTime: TEST_DURATION_MS };
+        return { ...test, expiryTime: TEST_DURATION_MS, coolDownTime: 0 };
       } catch (err) {
-        console.log('query error');
-        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Error retrieving data.`,

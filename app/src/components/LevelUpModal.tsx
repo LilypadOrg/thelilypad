@@ -53,7 +53,7 @@ const LevelUpModal = ({
       // setPrevSBTVisibile(false);
       // setCurrSBTVisibile(true);
     }
-  }, [open]);
+  }, [open, fireCelebration]);
 
   return (
     <div

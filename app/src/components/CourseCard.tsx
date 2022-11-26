@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Course } from '~/types/types';
 import { formatNumber, limitStrLength } from '~/utils/formatters';
 import LevelPill from './ui/LevelPill';
@@ -7,7 +7,6 @@ import AddCourseToRoadmap from './AddCourseToRoadmap';
 import { BsCheck2 } from 'react-icons/bs';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { trpc } from '~/utils/trpc';
 
 const CourseCard = ({
   course,
@@ -21,21 +20,24 @@ const CourseCard = ({
   // pull all the courses the user is enrolled to or has completed
   // this is used instead of querying the specific course under the assumption the query result is cached andused
   // for all courses (TODO: assumption need to be verified)
-  const { data: userCourses } = trpc.useQuery(
-    ['usercourses.all', { userId: session?.user.userId || -1 }],
-    {
-      enabled: !!session,
-      cacheTime: 1000 * 60,
-    }
-  );
+  // const { data: userCourses } = trpc.useQuery(
+  //   ['usercourses.all', { userId: session?.user.userId || -1 }],
+  //   {
+  //     enabled: !!session,
+  //     cacheTime: 1000 * 60,
+  //   }
+  // );
 
-  const completed = useMemo(() => {
-    return !!userCourses?.find((c) => c.courseId === course.id && c.completed);
-  }, [userCourses, course.id]);
+  const completed = course.userCourses[0]?.completed;
+  const inRoadmap = course.userCourses[0]?.roadmap;
 
-  const inRoadmap = useMemo(() => {
-    return !!userCourses?.find((c) => c.courseId === course.id && c.roadmap);
-  }, [userCourses, course.id]);
+  // const completed = useMemo(() => {
+  //   return !!userCourses?.find((c) => c.courseId === course.id && c.completed);
+  // }, [userCourses, course.id]);
+
+  // const inRoadmap = useMemo(() => {
+  //   return !!userCourses?.find((c) => c.courseId === course.id && c.roadmap);
+  // }, [userCourses, course.id]);
 
   return (
     // TODO: remove fix heigth

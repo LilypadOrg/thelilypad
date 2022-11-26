@@ -22,12 +22,8 @@ const CoursePage: NextPage = () => {
 
   const { data: session } = useSession();
 
-  const { data: userCourses } = trpc.useQuery(
-    ['usercourses.single', { courseId: course?.id || -1 }],
-    {
-      enabled: !!session && !!course,
-    }
-  );
+  const userCourse =
+    course?.userCourses.length === 1 ? course?.userCourses[0] : undefined;
 
   const { data: relatedResources } = trpc.useQuery(
     [
@@ -169,14 +165,14 @@ const CoursePage: NextPage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <AddCourseToRoadmap
                   courseId={course.id}
-                  inRoadmap={userCourses?.roadmap || false}
+                  inRoadmap={userCourse?.roadmap || false}
                   type="standard"
                 />
-                {userCourses?.lastTestPassed || false ? (
+                {userCourse?.lastTestPassed || false ? (
                   <CompleteCourse
                     courseId={course.id}
                     user={session.user}
-                    completed={userCourses?.completed || false}
+                    completed={userCourse?.completed || false}
                   />
                 ) : (
                   <button className="mt-8 rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500">

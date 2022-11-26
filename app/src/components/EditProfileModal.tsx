@@ -13,7 +13,7 @@ import { trpc } from '~/utils/trpc';
 import LevelPill from './ui/LevelPill';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
-import { MAIN_CONTRACT_ABI, MAIN_CONTRACT_ADDRESS } from '~/utils/contracts';
+import { getLilyPadABI, getLilyPadAddress } from '~/utils/contracts';
 import {
   useContractWrite,
   usePrepareContractWrite,
@@ -47,15 +47,11 @@ const EditProfileModal = ({
         toast.error(err.message);
       },
       onSuccess: (data) => {
-        const changeRoute = userProfile.username !== data.username;
         utils.invalidateQueries([
           'users.byUsername',
           { username: data.username },
         ]);
-        utils.invalidateQueries([
-          'users.byAddress',
-          { address: userProfile.address },
-        ]);
+        const changeRoute = userProfile.username !== data.username;
         if (changeRoute) router.replace(`/profiles/${data.username}`);
         closeModal();
       },
@@ -74,7 +70,7 @@ const EditProfileModal = ({
       'blockend.signCreateMember',
       {
         xp: userProfile?.xp || 0,
-        courses: userProfile?.courses.map((c) => c.courseId) || [],
+        courses: userProfile.courses.map((c) => c.courseId) || [],
       },
     ],
     {
@@ -83,8 +79,8 @@ const EditProfileModal = ({
   );
 
   const { config: createMemberConfig } = usePrepareContractWrite({
-    addressOrName: MAIN_CONTRACT_ADDRESS,
-    contractInterface: MAIN_CONTRACT_ABI,
+    addressOrName: getLilyPadAddress(),
+    contractInterface: getLilyPadABI(),
     functionName: 'createMember',
     args: [
       userProfile.xp, // _initialXP
@@ -106,6 +102,7 @@ const EditProfileModal = ({
         username: data.username,
         bio: data.bio,
         technologies: selectedSkills.map((t) => t.id),
+        hasOnChainProfile: true,
       });
     },
   });
@@ -141,7 +138,7 @@ const EditProfileModal = ({
         techs.filter((t) => !selectedSkillsIds.includes(t.id))
       );
     }
-  }, [techs]);
+  }, [techs, selectedSkills]);
 
   const schema = z.object({
     username: z

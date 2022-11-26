@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useMintSBT } from '~/hooks/useMintSBT';
+import { useState } from 'react';
 import { UserProfile as UserProfileType } from '~/types/types';
-import { formatAddress } from '~/utils/formatters';
+import { formatAddress, getSBTLocalURL } from '~/utils/formatters';
 import EditProfileModal from './EditProfileModal';
 import MintSBTModal from './MintSBTModal';
 import Tilt from 'react-parallax-tilt';
@@ -10,7 +9,6 @@ import TagsPill from './TagsPill';
 import { useSession } from 'next-auth/react';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import { useConfetti } from '~/hooks/useConfetti';
-import { useOnChainProfile } from '~/hooks/useOnChainProfile';
 
 const UserProfile = ({
   userProfile,
@@ -18,6 +16,7 @@ const UserProfile = ({
   userProfile: NonNullable<UserProfileType>;
 }) => {
   const { data: session } = useSession();
+
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
   const [editModalMode, setEditModalMode] = useState<'create' | 'update'>(
     'update'
@@ -26,46 +25,25 @@ const UserProfile = ({
   const [mintModalOpen, setMintModalOpen] = useState<boolean>(false);
   const { fireCelebration, getConfettiInstance } = useConfetti();
 
-  const {
-    data: onChainProfile,
-    isLoading: isLoadingOnChainProfile,
-    refetch: refetchOnChainProfile,
-  } = useOnChainProfile(userProfile?.address);
-
-  const {
-    mintToken,
-    isLoading: isLoadingMintToken,
-    isSuccess: isSuccessMintToken,
-  } = useMintSBT(
-    userProfile.address || '',
-    !!onChainProfile &&
-      onChainProfile.pathChosen &&
-      onChainProfile.tokenId._hex === '0x00'
-  );
-
-  useEffect(() => {
-    if (isSuccessMintToken) {
-      refetchOnChainProfile();
-      closeMintModal();
-      fireCelebration();
-    }
-  }, [isSuccessMintToken, refetchOnChainProfile, fireCelebration]);
-
   const openModal = () => {
     setEditModalOpen(true);
-    setEditModalMode(onChainProfile?.pathChosen ? 'update' : 'create');
+    setEditModalMode(userProfile.hasOnChainProfile ? 'update' : 'create');
   };
 
   const closeEditModal = () => {
     setEditModalOpen(false);
-    refetchOnChainProfile();
   };
 
-  const closeMintModal = () => {
+  const closeMintModal = (isSuccess = false) => {
     setMintModalOpen(false);
+    if (isSuccess) {
+      fireCelebration();
+    }
   };
 
-  const sbtImageUrl = onChainProfile?.sbtImageUrl;
+  const sbtImageUrl = userProfile.hasPondSBT
+    ? getSBTLocalURL(userProfile.level.number)
+    : getSBTLocalURL(0);
 
   return (
     <>
@@ -87,9 +65,7 @@ const UserProfile = ({
         <MintSBTModal
           open={mintModalOpen}
           closeModal={closeMintModal}
-          mintFunction={mintToken}
-          mintIsLoading={isLoadingMintToken}
-          fireCelebration={fireCelebration}
+          address={userProfile.address}
         />
       )}
       <div className="gradient-bg-top my-8 flex items-center justify-center px-[5.5rem]">
@@ -110,12 +86,12 @@ const UserProfile = ({
           scale={1.02}
         >
           <>
-            {isLoadingOnChainProfile && (
+            {/* {isLoadingOnChainProfile && (
               <div className="relative flex h-[325px] w-[280px]  cursor-pointer items-center justify-center rounded-lg border-4 border-black bg-gray-500 shadow-xl lg:h-[425px]  lg:w-[380px]">
                 <div className="h-full w-full animate-pulse bg-gray-400"></div>
               </div>
-            )}
-            {!onChainProfile?.tokenMetadata && (
+            )} */}
+            {/* {!userProfile.hasPondSBT && (
               <div className="relative flex h-[325px] w-[280px]  cursor-pointer items-center justify-center rounded-lg border-4 border-black bg-gray-400 p-4 shadow-xl lg:h-[425px] lg:w-[380px]">
                 <Image
                   src="/images/profileSBT/level1-gray.jpg"
@@ -125,18 +101,19 @@ const UserProfile = ({
                   className="rounded-lg opacity-25"
                 />
               </div>
-            )}
-            {sbtImageUrl && (
-              <div className="relative flex h-[380px] w-[380px] cursor-pointer items-center justify-center rounded-lg border-4 border-black p-4 shadow-xl">
-                <Image
-                  loader={() => sbtImageUrl}
-                  src={sbtImageUrl}
-                  alt="sbt"
-                  layout="fill"
-                  objectFit="contain"
-                />
-              </div>
-            )}
+            )} */}
+            {/* {userProfile.hasPondSBT && ( */}
+            <div className="relative flex h-[380px] w-[380px] cursor-pointer items-center justify-center rounded-lg border-4 border-black p-4 shadow-xl">
+              <Image
+                // loader={() => sbtImageUrl}
+                src={sbtImageUrl}
+                alt="sbt"
+                layout="fill"
+                objectFit="contain"
+                priority
+              />
+            </div>
+            {/* )} */}
           </>
         </Tilt>
         <div className="-ml-3 hidden min-h-[255px] w-[38%] items-stretch rounded-lg bg-primary-500 p-8 pl-12 text-white shadow-sm lg:block">
@@ -159,15 +136,10 @@ const UserProfile = ({
               onClick={openModal}
               className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white"
             >
-              {onChainProfile?.pathChosen ? 'Update' : 'Create'} Profile
+              {userProfile.hasOnChainProfile ? 'Update' : 'Create'} Profile
             </button>
-            {onChainProfile?.['tokenId']?._hex === '0x00' && (
+            {userProfile.hasOnChainProfile && !userProfile.hasPondSBT && (
               <button
-                disabled={
-                  !onChainProfile?.pathChosen ||
-                  !mintToken ||
-                  isLoadingMintToken
-                }
                 className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white hover:bg-primary-400 disabled:bg-gray-500"
                 onClick={() => setMintModalOpen(true)}
               >
