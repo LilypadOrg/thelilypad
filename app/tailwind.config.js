@@ -18,6 +18,29 @@ module.exports = {
         'main-gray-dark': '#C4C4C4',
         'main-gray-light': '#F5F5F5',
       },
+      animation: {
+        blob: 'blob 8s infinite',
+      },
+
+      keyframes: {
+        blob: {
+          '0%': {
+            transform: 'translate(0px,0px) scale(0.8)',
+          },
+          '25%': {
+            transform: 'translate(-30px,-20px) scale(0.9)',
+          },
+          '50%': {
+            transform: 'translate(50px,-50px) scale(1)',
+          },
+          '75%': {
+            transform: 'translate(20px, 30px) scale(0.9)',
+          },
+          '100%': {
+            transform: 'translate(0px,0px) scale(0.8)',
+          },
+        },
+      },
     },
   },
   plugins: [],
