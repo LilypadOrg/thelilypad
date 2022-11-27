@@ -1,19 +1,20 @@
 import axios from 'axios';
-import React, { forwardRef, useEffect, useMemo, useState } from 'react';
-import Container from 'react-bootstrap/Container';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-import Web3 from 'web3';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDAOTreasure } from '~/hooks/useDAOTreasure';
 import { formatNumber } from '~/utils/formatters';
+import { ethers } from 'ethers';
 
-const GovernanceTreasury = forwardRef((props, ref) => {
+const GovernanceTreasury = () => {
   const { treasureValue } = useDAOTreasure();
-  const web3: Web3 = new Web3();
-  const fmtTreasureBalance = web3.utils.fromWei(
+  const fmtTreasureBalance = ethers.utils.formatUnits(
     (treasureValue ?? 0).toString(),
     'ether'
   );
+  // const web3: Web3 = new Web3();
+  // const fmtTreasureBalance = web3.utils.fromWei(
+  //   (treasureValue ?? 0).toString(),
+  //   'ether'
+  // );
   const [ethUsd, setEthUsd] = useState('');
 
   useEffect(() => {
@@ -65,31 +66,41 @@ const GovernanceTreasury = forwardRef((props, ref) => {
   }, [treasureValue, ethUsd, fmtTreasureBalance]);
 
   return (
-    <Container>
-      <Row className="GovernanceTreasury" ref={ref}>
-        <Col lg={8} className="treasuryAmount">
-          <span className="treasuryHeader">Treasury</span>
-          <Row>
-            <Col lg={3} className="treasuryEth">
-              <h3>Ξ&nbsp;{fmtTreasureBalance}</h3>
-            </Col>
-            <Col className="treasuryUsd">
-              <h4>$&nbsp;{fmtTreasureBalanceUsd}</h4>
-            </Col>
-          </Row>
-        </Col>
-        <Col
-          className="treasuryInfo"
-          dangerouslySetInnerHTML={{
-            __html:
-              'This treasury exists for supporting developers of the LilyPad Community to build Web3 Projects.',
-          }}
-        />
-      </Row>
-    </Container>
-  );
-});
+    <div>
+      <h1>Trasury</h1>
+      <h3>Ξ&nbsp;{fmtTreasureBalance}</h3>
+      <h4>$&nbsp;{fmtTreasureBalanceUsd}</h4>
+      <p>
+        This treasury exists for supporting developers of the LilyPad Community
+        to build Web3 Projects.
+      </p>
+    </div>
 
-GovernanceTreasury.displayName = 'GovernanceTreasury';
+    // <Container>
+    //   <Row className="GovernanceTreasury" ref={ref}>
+    //     <Col lg={8} className="treasuryAmount">
+    //       <span className="treasuryHeader">Treasury</span>
+    //       <Row>
+    //         <Col lg={3} className="treasuryEth">
+    //           <h3>Ξ&nbsp;{fmtTreasureBalance}</h3>
+    //         </Col>
+    //         <Col className="treasuryUsd">
+    //           <h4>$&nbsp;{fmtTreasureBalanceUsd}</h4>
+    //         </Col>
+    //       </Row>
+    //     </Col>
+    //     <Col
+    //       className="treasuryInfo"
+    //       dangerouslySetInnerHTML={{
+    //         __html:
+    //           'This treasury exists for supporting developers of the LilyPad Community to build Web3 Projects.',
+    //       }}
+    //     />
+    //   </Row>
+    // </Container>
+  );
+};
+
+// GovernanceTreasury.displayName = 'GovernanceTreasury';
 
 export default GovernanceTreasury;

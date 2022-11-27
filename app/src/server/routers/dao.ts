@@ -29,7 +29,7 @@ import { BROWSE_DAO_ITEMS } from '~/utils/constants';
 //   },
 // });
 
-const defaultDaoProposalSelect = Prisma.validator<Prisma.daoProposalSelect>()({
+const defaultDaoProposalSelect = Prisma.validator<Prisma.DaoProposalSelect>()({
   id: true,
   proposer: true,
   targets: true,

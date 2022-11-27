@@ -1,10 +1,11 @@
 import { TRPCError } from '@trpc/server';
 import { createRouter } from '~/server/createRouter';
 import { z } from 'zod';
-import Web3 from 'web3';
+// import Web3 from 'web3';
 import { env } from '~/server/env';
 import { TokenMedata } from '~/types/types';
 import fetch from 'node-fetch';
+import { ethers } from 'ethers';
 
 export const blockenRouter = createRouter()
   .query('signCreateMember', {
@@ -20,20 +21,43 @@ export const blockenRouter = createRouter()
         });
       }
       try {
-        const web3 = new Web3();
-        const hash = web3.utils.soliditySha3(
-          // { t: 'bytes', v: web3.utils.fromAscii(input.name) },
-          { t: 'uint256', v: input.xp },
-          ...input.courses,
-          { t: 'string', v: '' }
+        const ethHash = ethers.utils.solidityKeccak256(
+          ['uint256', 'uint256[]', 'string'],
+          [input.xp, [...input.courses], '']
         );
-        if (!hash) throw new Error();
-        const signature = web3.eth.accounts.sign(
-          hash,
-          env.SIGNER_PRIVATE_KEY
-        ).signature;
-        return signature;
+
+        const provider = ethers.providers.getDefaultProvider('homestead');
+        const wallet = new ethers.Wallet(env.SIGNER_PRIVATE_KEY, provider);
+        const ethSignature = await wallet.signMessage(
+          ethers.utils.arrayify(ethHash)
+        );
+        // console.log('ethHash');
+        // console.log(ethHash);
+
+        // console.log('ethSignature');
+        // console.log(ethSignature);
+
+        return ethSignature;
+
+        // const web3 = new Web3();
+        // const hash = web3.utils.soliditySha3(
+        //   // { t: 'bytes', v: web3.utils.fromAscii(input.name) },
+        //   { t: 'uint256', v: input.xp },
+        //   ...input.courses,
+        //   { t: 'string', v: '' }
+        // );
+
+        // if (!hash) throw new Error();
+        // const signature = web3.eth.accounts.sign(hash, env.SIGNER_PRIVATE_KEY);
+
+        // console.log('hash');
+        // console.log(hash);
+        // console.log('signature');
+        // console.log(signature);
+
+        // return signature;
       } catch (err) {
+        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Something went wrong'`,
@@ -54,17 +78,30 @@ export const blockenRouter = createRouter()
         });
       }
       try {
-        const web3 = new Web3();
-        const hash = web3.utils.soliditySha3(
-          { t: 'address', v: input.address },
-          { t: 'uint256', v: input.courseId }
+        const ethHash = ethers.utils.solidityKeccak256(
+          ['address', 'uint256'],
+          [input.address, input.courseId]
         );
-        if (!hash) throw new Error();
-        const signature = web3.eth.accounts.sign(
-          hash,
-          env.SIGNER_PRIVATE_KEY
-        ).signature;
-        return signature;
+
+        const provider = ethers.providers.getDefaultProvider('homestead');
+        const wallet = new ethers.Wallet(env.SIGNER_PRIVATE_KEY, provider);
+        const ethSignature = await wallet.signMessage(
+          ethers.utils.arrayify(ethHash)
+        );
+
+        return ethSignature;
+
+        // const web3 = new Web3();
+        // const hash = web3.utils.soliditySha3(
+        //   { t: 'address', v: input.address },
+        //   { t: 'uint256', v: input.courseId }
+        // );
+        // if (!hash) throw new Error();
+        // const signature = web3.eth.accounts.sign(
+        //   hash,
+        //   env.SIGNER_PRIVATE_KEY
+        // ).signature;
+        // return signature;
       } catch (err) {
         throw new TRPCError({
           code: 'BAD_REQUEST',

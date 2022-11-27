@@ -186,6 +186,53 @@ CREATE TABLE "Level" (
 );
 
 -- CreateTable
+CREATE TABLE "DaoFunction" (
+    "id" SERIAL NOT NULL,
+    "contractAddress" VARCHAR(100) NOT NULL,
+    "contractFunction" VARCHAR(100) NOT NULL,
+    "functionInputs" TEXT[],
+    "functionName" VARCHAR(100) NOT NULL,
+
+    CONSTRAINT "DaoFunction_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DaoProposal" (
+    "id" SERIAL NOT NULL,
+    "proposer" VARCHAR(100) NOT NULL,
+    "targets" TEXT[],
+    "signatures" TEXT[],
+    "values" TEXT[],
+    "calldatas" TEXT[],
+    "startBlock" TEXT NOT NULL,
+    "endBlock" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "proposalJson" TEXT NOT NULL,
+    "status" INTEGER,
+    "proposalId" TEXT,
+    "eta" INTEGER,
+    "params" TEXT[],
+    "tx" VARCHAR(200),
+    "functionId" INTEGER,
+    "snapshotBlock" TEXT,
+
+    CONSTRAINT "DaoProposal_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DaoProposalVote" (
+    "id" SERIAL NOT NULL,
+    "voter" VARCHAR(100) NOT NULL,
+    "support" INTEGER NOT NULL,
+    "weigth" INTEGER NOT NULL,
+    "reason" VARCHAR(200),
+    "voteTx" VARCHAR(200),
+    "proposalId" TEXT,
+
+    CONSTRAINT "DaoProposalVote_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "_ContentToTechnology" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
@@ -267,6 +314,12 @@ CREATE UNIQUE INDEX "Level_name_key" ON "Level"("name");
 CREATE UNIQUE INDEX "Level_slug_key" ON "Level"("slug");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "DaoProposal_proposalId_key" ON "DaoProposal"("proposalId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "DaoProposalVote_proposalId_voter_key" ON "DaoProposalVote"("proposalId", "voter");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "_ContentToTechnology_AB_unique" ON "_ContentToTechnology"("A", "B");
 
 -- CreateIndex
@@ -340,6 +393,12 @@ ALTER TABLE "Event" ADD CONSTRAINT "Event_contentId_fkey" FOREIGN KEY ("contentI
 
 -- AddForeignKey
 ALTER TABLE "CommunityProject" ADD CONSTRAINT "CommunityProject_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "Content"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DaoProposal" ADD CONSTRAINT "DaoProposal_functionId_fkey" FOREIGN KEY ("functionId") REFERENCES "DaoFunction"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DaoProposalVote" ADD CONSTRAINT "DaoProposalVote_proposalId_fkey" FOREIGN KEY ("proposalId") REFERENCES "DaoProposal"("proposalId") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_ContentToTechnology" ADD CONSTRAINT "_ContentToTechnology_A_fkey" FOREIGN KEY ("A") REFERENCES "Content"("id") ON DELETE CASCADE ON UPDATE CASCADE;
