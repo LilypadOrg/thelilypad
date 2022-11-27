@@ -40,7 +40,7 @@ export const CompleteCourse = ({
       },
     ],
     {
-      enabled: !!onChainProfile?.pathChosen && !completed,
+      enabled: !!onChainProfile && onChainProfile.pathChosen && !completed,
     }
   );
 
