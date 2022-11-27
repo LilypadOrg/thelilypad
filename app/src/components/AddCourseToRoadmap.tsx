@@ -47,7 +47,7 @@ const AddCourseToRoadmap = ({
       },
       onSuccess: () => {
         utils.invalidateQueries(['courses.byId', { id: courseId }]);
-        utils.invalidateQueries(['courses.userRoadmap']);
+        utils.invalidateQueries(['courses.byUsername']);
       },
     }
   );
