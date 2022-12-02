@@ -29,19 +29,28 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
             JSON.parse(credentials?.message || '{}')
           );
 
+          console.log('siwe');
+          console.log(siwe);
           const nextAuthUrl =
             process.env.NEXTAUTH_URL ||
             (process.env.VERCEL_URL
               ? `https://${process.env.VERCEL_URL}`
               : null);
+
+          console.log('nextAuthUrl');
+          console.log(nextAuthUrl);
+
           if (!nextAuthUrl) {
-            return null;
+            throw new Error('Next Auth URL not defined!');
           }
 
           const nextAuthHost = new URL(nextAuthUrl).host;
           if (siwe.domain !== nextAuthHost) {
-            return null;
+            throw new Error('siwe domain does not match nextAuthURL host');
           }
+
+          console.log('nextAuthHost');
+          console.log(nextAuthHost);
 
           if (siwe.nonce !== (await getCsrfToken({ req }))) {
             return null;
@@ -68,6 +77,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
 
           return nextAuthUser;
         } catch (e) {
+          console.error(e);
           return null;
         }
       },
