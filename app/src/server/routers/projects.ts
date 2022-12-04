@@ -18,6 +18,7 @@ const defaultProjectSelect = Prisma.validator<Prisma.CommunityProjectSelect>()({
       technologies: true,
       tags: true,
       slug: true,
+      url: true,
     },
   },
 });
@@ -82,6 +83,33 @@ export const projectsRouter = createRouter()
           select: defaultProjectSelect,
         });
 
+        return project;
+      } catch (err) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Error retrieving data.`,
+        });
+      }
+    },
+  })
+  .query('byId', {
+    input: z.object({
+      id: z.number(),
+    }),
+    async resolve({ input }) {
+      try {
+        const { id } = input;
+        const project = await prisma.communityProject.findUnique({
+          where: { id },
+          select: defaultProjectSelect,
+        });
+
+        if (!project) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: `No course with id '${id}'`,
+          });
+        }
         return project;
       } catch (err) {
         throw new TRPCError({

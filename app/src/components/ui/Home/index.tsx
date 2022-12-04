@@ -1,1 +1,1 @@
-export * from './SpotLightCards';
+export * from '../../ProjectCard';

@@ -22,7 +22,7 @@ export const navItems = [
   },
   {
     text: 'Spotlights',
-    path: '/spotlights',
+    path: '/projects',
     navBar: true,
     footerMain: true,
     footerSec: false,

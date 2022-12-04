@@ -151,17 +151,18 @@ const Home: NextPage = () => {
         {/* Collection */}
         <div className="my-8">
           {/* First three collection */}
+          <h4 className="text-2xl md:text-3xl lg:text-4xl">
+            Community Spotlight
+          </h4>
           <div className="md: grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {/* TODO : Handle error and improve logic */}
             {projectsLoading &&
               [1, 2, 3, 4, 5, 6].map((i) => <SpotLightCardsLoading key={i} />)}
             {projects?.map((p, index: number) => (
               <SpotLightCards
+                project={p}
                 key={p.id}
                 teal={Boolean(index % 2)}
-                title={p.content.title}
-                description={p.content.description}
-                coverImageUrl={p.content.coverImageUrl}
               />
             ))}
           </div>
