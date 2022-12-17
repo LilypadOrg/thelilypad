@@ -66,7 +66,7 @@ const Home: NextPage = () => {
   return (
     <div>
       {/* Hero and cards */}
-      <div className="grid h-[50vh] grid-cols-3 border-2 border-dashed">
+      <div className="grid h-[55vh] grid-cols-3">
         <div className="col-span-2 h-full bg-[url('/homeBanner.png')] bg-cover">
           <div className="space-y-3 px-8 pt-12">
             <p className="max-w-[80%] text-4xl leading-[2.8rem] text-secondary-400">

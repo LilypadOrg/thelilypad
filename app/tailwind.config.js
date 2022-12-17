@@ -15,6 +15,7 @@ module.exports = {
         'secondary-400': '#40ADA5',
         'secondary-300': '#83DAD6',
         'main-yellow': '#F7DC16',
+        'main-violet' : '#7B61FF',
         'main-gray-dark': '#C4C4C4',
         'main-gray-light': '#F5F5F5',
       },
