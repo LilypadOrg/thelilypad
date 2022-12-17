@@ -11,9 +11,11 @@ import { useSession } from 'next-auth/react';
 const CourseCard = ({
   course,
   type = 'full',
+  actions = true,
 }: {
   course: Course;
   type?: 'full' | 'simple';
+  actions: boolean;
 }) => {
   const { data: session } = useSession();
 
@@ -114,7 +116,7 @@ const CourseCard = ({
           )}
         </div>
       </div>
-      {session && (
+      {session && actions && (
         <div className="mb-2 mr-2 flex items-center justify-end gap-x-2">
           {completed && (
             <div className="rounded-full border-2 bg-green-600 p-2  text-lg text-white">

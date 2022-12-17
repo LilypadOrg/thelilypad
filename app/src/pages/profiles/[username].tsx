@@ -3,10 +3,11 @@ import Link from 'next/link';
 import LevelPill from '../../components/ui/LevelPill';
 import { trpc } from '~/utils/trpc';
 import { useRouter } from 'next/router';
-import { RoadmapCourses } from '~/types/types';
+import { Accolade, RoadmapCourses } from '~/types/types';
 import { LearningPathCards } from '~/components/ui/userProfile';
 import UserProfile from '~/components/UserProfile';
 import PersonalRoadmap from '~/components/PersonalRoadmap';
+import AccoladeCard from '~/components/AccoladeCard';
 
 const InfoTile = ({
   title,
@@ -36,8 +37,13 @@ const ProfilePage: NextPage = () => {
   const router = useRouter();
   const username = router.query.username as string;
 
+  // const { data: userCourses } = trpc.useQuery([
+  //   'courses.byUsername',
+  //   { username },
+  // ]);
+
   const { data: userCourses } = trpc.useQuery([
-    'courses.byUsername',
+    'usercourses.all',
     { username },
   ]);
 
@@ -54,29 +60,11 @@ const ProfilePage: NextPage = () => {
     advanced: [],
   };
 
-  const roadmapCourses: RoadmapCourses =
-    userCourses
-      ?.filter((c) => c.userCourses[0]?.roadmap)
-      .reduce((prev, curr) => {
-        const courseLevels = curr.levels.map((l) => l.name);
-        if (!courseLevels) return prev;
-        if (courseLevels.includes('Beginner')) {
-          prev = { ...prev, beginner: [...prev.beginner, curr] };
-        }
-        if (courseLevels.includes('Intermediate')) {
-          prev = { ...prev, intermediate: [...prev.intermediate, curr] };
-        }
-        if (courseLevels.includes('Advanced')) {
-          prev = { ...prev, advanced: [...prev.advanced, curr] };
-        }
-        return prev;
-      }, initRoadmap) || initRoadmap;
-
   // const roadmapCourses: RoadmapCourses =
   //   userCourses
-  //     ?.filter((c) => c.roadmap)
+  //     ?.filter((c) => c.userCourses[0]?.roadmap)
   //     .reduce((prev, curr) => {
-  //       const courseLevels = curr.course.levels.map((l) => l.name);
+  //       const courseLevels = curr.levels.map((l) => l.name);
   //       if (!courseLevels) return prev;
   //       if (courseLevels.includes('Beginner')) {
   //         prev = { ...prev, beginner: [...prev.beginner, curr] };
@@ -89,6 +77,39 @@ const ProfilePage: NextPage = () => {
   //       }
   //       return prev;
   //     }, initRoadmap) || initRoadmap;
+
+  const roadmapCourses: RoadmapCourses =
+    userCourses
+      ?.filter((c) => c.roadmap)
+      .reduce((prev, curr) => {
+        const courseLevels = curr.course.levels.map((l) => l.name);
+        if (!courseLevels) return prev;
+        if (courseLevels.includes('Beginner')) {
+          prev = { ...prev, beginner: [...prev.beginner] };
+        }
+        if (courseLevels.includes('Intermediate')) {
+          prev = { ...prev, intermediate: [...prev.intermediate, curr] };
+        }
+        if (courseLevels.includes('Advanced')) {
+          prev = { ...prev, advanced: [...prev.advanced, curr] };
+        }
+        return prev;
+      }, initRoadmap) || initRoadmap;
+
+  const initAccolade: Accolade[] = [];
+
+  const accolades: Accolade[] =
+    userCourses
+      ?.filter((c) => c.completed && !!c.completedOn)
+      .sort((a, b) => {
+        if (a.completedOn && b.completedOn) {
+          return b.completedOn.getTime() - a.completedOn.getTime();
+        }
+        return 0;
+      })
+      .reduce((prev, curr) => {
+        return [...prev, ...curr.course.accolades];
+      }, initAccolade) || initAccolade;
 
   // TODO: redirect to home if profile doesn't exist
   if (isSuccessUserProfile && !userProfile) {
@@ -118,6 +139,29 @@ const ProfilePage: NextPage = () => {
         </nav>
         {/* Hero section */}
         {userProfile && <UserProfile userProfile={userProfile} />}
+      </div>
+      {/* My Accolades */}
+      <div
+        id="path"
+        className="flex flex-col bg-main-gray-light px-[2.5rem]  py-16 lg:px-[5.5rem]"
+      >
+        <h1 className="mb-1 text-3xl font-bold">My Accolades</h1>
+        <p className="font-light lg:w-[40%]">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio eum
+          tempore porro aperiam ipsum. Delectus, suscipit! Magni eveniet,
+          commodi, aliquid reiciendis nemo pariatur a dolores error at quo
+          aspernatur atque.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-6">
+          {accolades.slice(0, 2).map((a) => (
+            <AccoladeCard key={`accolade-${a.id}`} accolade={a} />
+          ))}
+        </div>
+        <div>
+          <Link href={`/profiles/${username}/accolades`}>
+            See all accolades
+          </Link>
+        </div>
       </div>
       {/* My Learning Path */}
       <div

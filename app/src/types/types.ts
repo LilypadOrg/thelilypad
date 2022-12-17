@@ -29,10 +29,16 @@ export interface TokenMedata {
   description: string;
 }
 
+// export type RoadmapCourses = {
+//   beginner: CoursesByUser;
+//   intermediate: CoursesByUser;
+//   advanced: CoursesByUser;
+// };
+
 export type RoadmapCourses = {
-  beginner: CoursesByUser;
-  intermediate: CoursesByUser;
-  advanced: CoursesByUser;
+  beginner: UserCourses;
+  intermediate: UserCourses;
+  advanced: UserCourses;
 };
 
 export interface OnChainProfile {
@@ -59,3 +65,7 @@ export type TestFormInputs = {
 export type TestInstanceExt = Prisma.TestinstanceGetPayload<{
   select: typeof testInstanceSelect;
 }> & { coolDownTime: number; expiryTime: number };
+
+export type Accolade = Prisma.AccoladeGetPayload<{
+  select: { id: true; imageUrl: true; description: true };
+}>;
