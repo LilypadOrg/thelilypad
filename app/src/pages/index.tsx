@@ -66,10 +66,51 @@ const Home: NextPage = () => {
   return (
     <div>
       {/* Hero and cards */}
-      <div className="gradient-bg-top px-[2.5rem] pt-8 lg:px-[5.5rem]">
+      <div className="grid h-[50vh] grid-cols-3 border-2 border-dashed">
+        <div className="col-span-2 h-full bg-[url('/homeBanner.png')] bg-cover">
+          <div className="space-y-3 px-8 pt-12">
+            <p className="max-w-[80%] text-4xl leading-[2.8rem] text-secondary-400">
+              A community endeavouring to guide those self-learning in Web3
+            </p>
+            <p className="text-4xl text-main-yellow">#GoYou</p>
+          </div>
+        </div>
+        <div className="flex h-full items-center justify-center bg-main-yellow px-6">
+          <div className="flex flex-col items-center space-y-8">
+            <div className="flex w-full justify-between">
+              <div className="flex max-w-[55%] flex-col justify-between">
+                <p className="text-xl">
+                  <span className="font-bold">
+                    Track your self-learning progress
+                  </span>{' '}
+                  and show it ot the world through the{' '}
+                  <span className="font-bold">soulbound token</span>
+                </p>
+                <div className="flex items-center text-lg font-semibold">
+                  <HiChevronRight className="text-2xl text-secondary-400" />
+                  <p className="text-secondary-400">Learn More</p>
+                </div>
+              </div>
+              <Image
+                src="/images/sbt-frontpage.gif"
+                alt="sbt"
+                layout="intrinsic"
+                width="175px"
+                height="175px"
+                className="block"
+              />
+            </div>
+            <button className="btn-primary text-xl font-semibold leading-4 tracking-wide text-white">
+              {' '}
+              Minting now !
+            </button>
+          </div>
+        </div>
+      </div>
+      <div className="px-[2.5rem] pt-8 lg:px-[5.5rem]">
         <div className="grid grid-cols-3 gap-8">
-          <div className="col-span-3 flex flex-col space-y-4 lg:col-span-2 ">
-            {/* Hero Image */}
+          {/* Home Image and below container */}
+          {/* <div className="col-span-3 flex flex-col space-y-4 lg:col-span-2 ">
             <div className="relative min-h-[250px] rounded-lg bg-main-gray-dark text-white lg:min-h-[353px]">
               <Image
                 src="/images/homeBanner.jpg"
@@ -88,12 +129,10 @@ const Home: NextPage = () => {
                 <p className="text-xs font-light lg:text-sm">#goForYou</p>
               </div>
             </div>
-            {/* we help you grow */}
             <AboutHomeLinks />
-          </div>
+          </div> */}
           {/* Side List */}
-          <div className="hidden h-full rounded-lg bg-main-gray-light py-5 px-6 lg:block">
-            {/* header */}
+          {/* <div className="hidden h-full rounded-lg bg-main-gray-light py-5 px-6 lg:block">
             <div className="mt-6">
               <h1 className="mb-0 text-2xl">Courses</h1>
               <p className="text-sm">
@@ -101,7 +140,6 @@ const Home: NextPage = () => {
                 need to be the best you can be
               </p>
             </div>
-            {/* List */}
             <div className="mt-4 grid grid-cols-2 gap-2">
               <Link href="courses">
                 <button className="col-span-2 flex items-center justify-between rounded-md bg-white py-2 px-4">
@@ -115,7 +153,6 @@ const Home: NextPage = () => {
               {tagsLoading && techsLoading
                 ? [1, 2, 3, 4, 5, 6, 7, 8].map((i) => <StripLoading key={i} />)
                 : topTagsTechs?.map((courseFilter) => (
-                    /* Needs to be abstracted */
                     <BrowseCoursesLink
                       key={`home-coursefilter-${courseFilter.slug}`}
                       courseFilter={courseFilter}
@@ -146,7 +183,7 @@ const Home: NextPage = () => {
                 )}
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
         {/* Collection */}
         {/* TODO  Add title */}

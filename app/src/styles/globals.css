@@ -54,6 +54,14 @@ html {
   }
 }
 
+
+@layer components {
+  .btn-primary {
+    @apply shadow-[5px_6px_3px_#56565685] px-12 py-6 bg-secondary-400 hover:shadow-[-0.5px_0px_3px_#565656] transition-all;
+   }
+}
+
+
 .gradient-bg-top {
   background: conic-gradient(
     from 207.84deg at 41.65% 45.97%,
@@ -114,6 +122,8 @@ html {
   @apply relative h-full w-full transition-transform duration-[1500ms];
   transform-style: preserve-3d;
 }
+
+
 
 .cardContainer:hover > .card {
   transform: rotateY(180deg);
