@@ -10,6 +10,7 @@ import { useOnChainProfile } from '~/hooks/useOnChainProfile';
 import LevelUpModal from './LevelUpModal';
 import { useState } from 'react';
 import { getSBTLocalURL } from '~/utils/formatters';
+import { BigNumber } from 'ethers';
 
 export const CompleteCourse = ({
   user,
@@ -39,15 +40,19 @@ export const CompleteCourse = ({
       },
     ],
     {
-      enabled: !!onChainProfile?.pathChosen && !completed,
+      enabled: !!onChainProfile && onChainProfile.pathChosen && !completed,
     }
   );
 
   const { config: completeCourseConfig } = usePrepareContractWrite({
-    addressOrName: getLilyPadAddress(),
-    contractInterface: getLilyPadABI(),
+    address: getLilyPadAddress(),
+    abi: getLilyPadABI(),
     functionName: 'completeEvent',
-    args: [user.address, courseId, completeEventSignature],
+    args: [
+      user.address as `0x${string}`,
+      BigNumber.from(courseId),
+      completeEventSignature as `0x${string}`,
+    ],
     enabled: !!completeEventSignature,
   });
 
@@ -73,10 +78,7 @@ export const CompleteCourse = ({
           });
         }
         // utils.refetchQueries(['usercourses.all', { userId: user.userId }]);
-        utils.refetchQueries([
-          'courses.byIdAndUser',
-          { courseId, userId: user.userId },
-        ]);
+        utils.refetchQueries(['courses.byId', { id: courseId }]);
         utils.refetchQueries(['users.byAddress', { address: user.address }]);
         if (user.name) {
           utils.refetchQueries(['users.byUsername', { username: user.name }]);

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import NextAuth from 'next-auth';
+import NextAuth, { User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { getCsrfToken } from 'next-auth/react';
 import { SiweMessage } from 'siwe';
@@ -34,13 +34,14 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
             (process.env.VERCEL_URL
               ? `https://${process.env.VERCEL_URL}`
               : null);
+
           if (!nextAuthUrl) {
-            return null;
+            throw new Error('Next Auth URL not defined!');
           }
 
           const nextAuthHost = new URL(nextAuthUrl).host;
           if (siwe.domain !== nextAuthHost) {
-            return null;
+            throw new Error('siwe domain does not match nextAuthURL host');
           }
 
           if (siwe.nonce !== (await getCsrfToken({ req }))) {
@@ -58,14 +59,17 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
             },
           });
 
-          return {
+          const nextAuthUser: User = {
             // id: siwe.address,
-            id: user.id,
+            id: user.id.toString(),
             address: siwe.address,
             name: user.username,
             // image: getSBTLocalURL(user.levelNumber),
           };
+
+          return nextAuthUser;
         } catch (e) {
+          console.error(e);
           return null;
         }
       },
@@ -95,8 +99,6 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
       },
 
       async session({ session, token }) {
-        console.log('token');
-        console.log(token);
         // session.address = token.sub;
         session.user = token.user;
         session.user.name = token.name;

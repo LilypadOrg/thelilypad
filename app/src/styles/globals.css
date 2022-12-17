@@ -6,6 +6,15 @@ html {
   scroll-behavior: smooth;
 }
 
+@layer utilities {
+  .animation-delay-1000 {
+    animation-delay: 1s;
+  }
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+}
+
 @layer base {
   body {
     @apply bg-white tracking-wide text-gray-900 dark:bg-slate-900 dark:text-slate-400;
@@ -96,51 +105,31 @@ html {
   );
 }
 
-.GovernanceTreasury {
-  border: 1px solid #7b61ff;
-  border-radius: 20px;
-  margin-bottom: 48px;
-  margin-top: 48px;
-}
-.treasuryAmount {
-  padding: 1rem 2rem;
+.cardContainer {
+  @apply h-[25rem] w-[20rem];
+  perspective: 700px;
 }
 
-.treasuryHeader {
-  color: #2eb786;
-  font-family: Rufina, sans-serif;
-  font-size: 24px;
-  font-weight: bold;
+.card {
+  @apply relative h-full w-full transition-transform duration-[1500ms];
+  transform-style: preserve-3d;
 }
 
-.treasuryEth {
-  min-width: 9rem;
-  padding-top: 0.2rem;
+.cardContainer:hover > .card {
+  transform: rotateY(180deg);
 }
 
-.treasuryUsd {
-  padding-top: 0.2rem;
+.cardFront,
+.cardBack {
+  @apply absolute h-full w-full rounded-lg border-4 border-main-yellow text-center font-bold;
+  backface-visibility: hidden;
 }
 
-.treasuryInfo {
-  padding: 1rem 2rem;
+.cardFront {
+  @apply bg-secondary-400 text-3xl;
 }
 
-.FancyButton {
-  align-items: center;
-  background-color: transparent;
-  border: 1px solid #7b61ff;
-  border-radius: 10px;
-  color: #7b61ff;
-  cursor: pointer;
-  display: flex;
-  flex-flow: row nowrap;
-  font-size: 15px;
-  font-weight: 700;
-  height: 40px;
-  min-height: 40px;
-  justify-content: center;
-  line-height: 15px;
-  padding: 0 12px;
-  transition: all 125ms ease-in-out;
+.cardBack {
+  @apply flex place-items-center bg-primary-500 text-3xl;
+  transform: rotateY(180deg);
 }

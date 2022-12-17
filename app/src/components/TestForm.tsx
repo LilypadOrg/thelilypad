@@ -22,7 +22,7 @@ const TestForm = ({
     getValues,
     watch,
     trigger,
-    formState: { errors, isValid, isDirty },
+    formState: { isValid, isDirty },
   } = useForm<TestFormInputs>({
     mode: 'onTouched',
     resolver: zodResolver(schema),
@@ -55,7 +55,7 @@ const TestForm = ({
       }
     });
     return () => subscription.unsubscribe();
-  }, [watch, questionIndex, getValues]);
+  }, [watch, questionIndex, getValues, trigger, test.questions]);
 
   const handleExpiration = () => {
     submitTest(getValues());
@@ -124,7 +124,6 @@ const TestForm = ({
                     disabled={test.isExpired}
                     answerSelected={q.givenAnswer?.id}
                     answerStatus={q.givenAnswer?.correct}
-                    error={!!errors[`${q.question.id}`]}
                     registerField={register}
                   />
                 </div>

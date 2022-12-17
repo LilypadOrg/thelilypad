@@ -70,8 +70,10 @@ export default withTRPC<AppRouter>({
      */
     // const url = 'https://thelilypad.vercel.app//api/trpc';
 
-    const url = process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}/api/trpc`
+    const vercelUrl =
+      process.env.VERCEL_URL || process.env.NEXT_PUBLIC_VERCEL_URL;
+    const url = vercelUrl
+      ? `https://${vercelUrl}/api/trpc`
       : 'http://localhost:3000/api/trpc';
     return {
       url,

@@ -195,16 +195,16 @@ model Level {
   questions TestQuestion[]
 }
 
-model daoFunction{
+model DaoFunction{
   id               Int            @id @default(autoincrement())
   contractAddress  String         @db.VarChar(100)
   contractFunction String         @db.VarChar(100)
   functionInputs   String[] 
   functionName     String         @db.VarChar(100)
-  proposals        daoProposal[]
+  proposals        DaoProposal[]
 }
 
-model daoProposal {
+model DaoProposal {
   id             Int                @id @default(autoincrement())
   proposer       String             @db.VarChar(100)
   targets        String[]    
@@ -220,22 +220,22 @@ model daoProposal {
   eta            Int?      
   params         String[]
   tx             String?            @db.VarChar(200)
-  function       daoFunction?       @relation(fields: [functionId], references: [id])
+  function       DaoFunction?       @relation(fields: [functionId], references: [id])
   functionId     Int?
   snapshotBlock  String?            @db.Text()
-  votes          daoProposalVote[]
+  votes          DaoProposalVote[]
 
   @@unique([proposalId])
 }
 
-model daoProposalVote {
+model DaoProposalVote {
   id             Int          @id @default(autoincrement())
   voter          String       @db.VarChar(100)
   support        Int
   weigth         Int
   reason         String?      @db.VarChar(200)
   voteTx         String?      @db.VarChar(200)
-  proposal       daoProposal? @relation(fields: [proposalId], references: [proposalId])
+  proposal       DaoProposal? @relation(fields: [proposalId], references: [proposalId])
   proposalId     String?      @db.Text  
 
   @@unique([proposalId, voter])

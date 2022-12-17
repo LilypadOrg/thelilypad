@@ -3,8 +3,7 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { createRouter } from '~/server/createRouter';
 import { prisma } from '~/server/prisma';
-import { ContentType } from '~/types/types';
-import { BROWSE_COURSES_ITEMS, BROWSE_DAO_ITEMS } from '~/utils/constants';
+import { BROWSE_DAO_ITEMS } from '~/utils/constants';
 
 // const contentCourseSelect = Prisma.validator<Prisma.ContentSelect>()({
 //   id: true,
@@ -30,7 +29,7 @@ import { BROWSE_COURSES_ITEMS, BROWSE_DAO_ITEMS } from '~/utils/constants';
 //   },
 // });
 
-const defaultDaoProposalSelect = Prisma.validator<Prisma.daoProposalSelect>()({
+const defaultDaoProposalSelect = Prisma.validator<Prisma.DaoProposalSelect>()({
   id: true,
   proposer: true,
   targets: true,

@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import ConnectWallet from './ConnectWallet';
 import { getNavBarItems } from '../utils/navLinks';
 import AccountWidget from './AccountWidget';
-import { useDAOTreasure } from '~/hooks/useDAOTreasure';
 import TreasureWidget from './TreasureWidget';
 
 const Navbar = () => {

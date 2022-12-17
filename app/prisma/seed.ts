@@ -10,7 +10,7 @@ import communityProjects from './seedData/communityProjects.json';
 import accolades from './seedData/accolades.json';
 import events from './seedData/events.json';
 import { slugify } from '../src/utils/formatters';
-import { seedTests, seedTestsBulk } from './seedScripts/seedTests';
+import { seedTestsBulk } from './seedScripts/seedTests';
 
 const prisma = new PrismaClient();
 

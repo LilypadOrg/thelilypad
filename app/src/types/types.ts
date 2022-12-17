@@ -21,6 +21,7 @@ export type UserCourseWithContent =
   inferQueryOutput<'usercourses.singleWithContent'>;
 export type UserCourses = inferQueryOutput<'usercourses.all'>;
 export type Question = inferQueryOutput<'tests.questionById'>;
+export type Project = inferQueryOutput<'projects.byId'>;
 
 export interface TokenMedata {
   image: string;
