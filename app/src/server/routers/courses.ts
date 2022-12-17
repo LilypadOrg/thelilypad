@@ -35,6 +35,13 @@ const userCourseSelect = Prisma.validator<Prisma.CourseSelect>()({
   id: true,
   levels: true,
   xp: true,
+  accolades: {
+    select: {
+      id: true,
+      description: true,
+      imageUrl: true,
+    },
+  },
   userCourses: {
     select: {
       roadmap: true,
@@ -236,9 +243,11 @@ export const courseRouter = createRouter()
   .query('byUsername', {
     input: z.object({
       username: z.string(),
+      completed: z.boolean().optional(),
     }),
     async resolve({ input }) {
       try {
+        const completed = !!input.completed;
         const course = await prisma.course.findMany({
           where: {
             userCourses: { some: { user: { username: input.username } } },
@@ -247,7 +256,7 @@ export const courseRouter = createRouter()
             ...userCourseSelect,
             userCourses: {
               ...userCourseSelect.userCourses,
-              where: { user: { username: input.username } },
+              where: { user: { username: input.username }, completed },
             },
           },
         });

@@ -1,7 +1,22 @@
 [
   {
-    "description": "foefif jeiofjeiofj fjef jioj",
-    "imageUrl": "https://",
+    "description": "Accolade 1",
+    "imageUrl": "/images/frongLevels/l1.png",
     "courseId": 10001
+  },
+  {
+    "description": "Accolade 2",
+    "imageUrl": "/images/frongLevels/l2.png",
+    "courseId": 10001
+  },
+  {
+    "description": "Accolade 3",
+    "imageUrl": "/images/frongLevels/l3.png",
+    "courseId": 10002
+  },
+  {
+    "description": "Accolade 4",
+    "imageUrl": "/images/frongLevels/l4.png",
+    "courseId": 10003
   }
 ]

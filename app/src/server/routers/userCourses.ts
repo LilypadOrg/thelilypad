@@ -27,11 +27,13 @@ const defaultUserCourseSelect = Prisma.validator<Prisma.UserCourseSelect>()({
       id: true,
       levels: true,
       xp: true,
+      accolades: true,
       userCourses: {
         select: {
           roadmap: true,
           completed: true,
           completedOn: true,
+          lastTestPassed: true,
         },
       },
       content: {
@@ -53,14 +55,14 @@ export const userCourseRouter = createRouter()
   // TODO: Update to query course table as main object instead usercourses
   .query('all', {
     input: z.object({
-      userId: z.number(),
+      username: z.string(),
     }),
     async resolve({ input }) {
-      const { userId } = input;
+      const { username } = input;
 
       try {
         const userCourse = await prisma.userCourse.findMany({
-          where: { userId },
+          where: { user: { username } },
           select: defaultUserCourseSelect,
         });
 
