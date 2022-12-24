@@ -5,6 +5,11 @@ export const USERNAME_MIN_LENGTH = 3;
 export const USERNAME_MAX_LENGTH = 20;
 export const BIO_MIN_LENGTH = 5;
 export const BIO_MAX_LENGTH = 256;
+export const PROJECT_NAME_MIN_LENGTH = 3;
+export const PROJECT_NAME_MAX_LENGTH = 20;
+export const PROJECT_DESC_MIN_LENGTH = 20;
+export const PROJECT_DESC_MAX_LENGTH = 1000;
+
 export const HOMEPAGE_COURSE_FILTERS = 8;
 export const HOMEPAGE_COURSE_CAROUSEL = 10;
 export const HOMEPAGE_FEATURED_ITEMS = 6;

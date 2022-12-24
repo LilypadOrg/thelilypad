@@ -3,7 +3,9 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { createRouter } from '~/server/createRouter';
 import { prisma } from '~/server/prisma';
+import { ContentType } from '~/types/types';
 import { BROWSE_COURSES_ITEMS } from '~/utils/constants';
+import { slugify } from '~/utils/formatters';
 
 const defaultProjectSelect = Prisma.validator<Prisma.CommunityProjectSelect>()({
   id: true,
@@ -115,6 +117,49 @@ export const projectsRouter = createRouter()
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Error retrieving data.`,
+        });
+      }
+    },
+  })
+  .mutation('create', {
+    input: z.object({
+      author: z.string(),
+      title: z.string(),
+      description: z.string(),
+      url: z.string().url(),
+    }),
+    async resolve({ ctx, input }) {
+      if (!ctx.session?.user) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: `Unauthorized`,
+        });
+      }
+      try {
+        const { author, title, description, url } = input;
+        const submittedBy = ctx.session.user.address;
+        const project = prisma.communityProject.create({
+          data: {
+            author,
+            submittedBy,
+            content: {
+              create: {
+                title,
+                description,
+                url,
+                slug: slugify(title),
+                contentType: {
+                  connect: { name: ContentType.COMMUNITY_PROJECT },
+                },
+              },
+            },
+          },
+        });
+        return project;
+      } catch (err) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Error updating course status`,
         });
       }
     },

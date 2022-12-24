@@ -14,13 +14,15 @@ const defaultTagsSelect = Prisma.validator<Prisma.TagSelect>()({
 export const tagRouter = createRouter()
   // read
   .query('all', {
-    input: z.object({
-      tags: z.array(z.string()).or(z.string()).optional(),
-    }),
+    input: z
+      .object({
+        tags: z.array(z.string()).or(z.string()).optional(),
+      })
+      .optional(),
     async resolve({ input }) {
       try {
         const tags = await prisma.tag.findMany({
-          where: { ...(input.tags ? { slug: { in: input.tags } } : {}) },
+          where: { ...(input?.tags ? { slug: { in: input.tags } } : {}) },
           select: {
             ...defaultTagsSelect,
             _count: {

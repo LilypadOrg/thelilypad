@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Course, RoadmapCourses } from '~/types/types';
+import { RoadmapCourses, UserCourses } from '~/types/types';
 import { capitalizeFirstLetter } from '~/utils/formatters';
 import CourseCard from './CourseCard';
 
@@ -7,7 +7,7 @@ const RoadmapByLevel = ({
   courses,
   level,
 }: {
-  courses: Course[];
+  courses: UserCourses;
   level: string;
 }) => {
   return (
@@ -16,7 +16,7 @@ const RoadmapByLevel = ({
         <div className="flex flex-col space-y-6">
           <p className="text-md font-semibold leading-5 underline">
             {capitalizeFirstLetter(level)} -
-            {courses.filter((f) => f.userCourses[0]?.completed).length || 0} /{' '}
+            {courses.filter((f) => f.completed).length || 0} /{' '}
             {courses.length || 0}
           </p>
         </div>
@@ -26,8 +26,8 @@ const RoadmapByLevel = ({
           {courses.map((course) => (
             /* Its same as CourseCard component */
             <CourseCard
-              key={`roadmap-course-${course.id}`}
-              course={course}
+              key={`roadmap-course-${course.course.id}`}
+              course={course.course}
               type="simple"
             />
           ))}

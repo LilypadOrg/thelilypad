@@ -25,7 +25,7 @@ CREATE TABLE "UserLevel" (
 
 -- CreateTable
 CREATE TABLE "Content" (
-    "id" INTEGER NOT NULL,
+    "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -159,10 +159,11 @@ CREATE TABLE "Event" (
 
 -- CreateTable
 CREATE TABLE "CommunityProject" (
-    "id" INTEGER NOT NULL,
+    "id" SERIAL NOT NULL,
     "author" TEXT NOT NULL,
     "codeUrl" TEXT,
     "contentId" INTEGER NOT NULL,
+    "submittedBy" TEXT,
 
     CONSTRAINT "CommunityProject_pkey" PRIMARY KEY ("id")
 );

@@ -35,7 +35,7 @@ const Navbar = () => {
   return (
     <div className="h-[4rem]">
       <div
-        className={`fixed z-[100] h-16 w-full bg-white dark:bg-slate-900 ${
+        className={`fixed z-50 h-16 w-full bg-white dark:bg-slate-900 ${
           shadow ? 'bg-white shadow-sm shadow-gray-400' : ''
         } `}
       >

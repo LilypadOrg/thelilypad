@@ -29,24 +29,24 @@ async function main() {
   await seedTestsBulk();
 }
 
-const truncateAllTables = async () => {
-  await prisma.$transaction([
-    // prisma.userCourse.deleteMany(),
-    // prisma.communityProject.deleteMany(),
-    // prisma.resource.deleteMany(),
-    // prisma.course.deleteMany(),
-    // prisma.communityProject.deleteMany(),
-    // prisma.content.deleteMany(),
-    // prisma.technology.deleteMany(),
-    // prisma.tag.deleteMany(),
-    // prisma.level.deleteMany(),
-    // prisma.userLevel.deleteMany(),
-    prisma.accolade.deleteMany(),
-    // prisma.contentType.deleteMany(),
-    // prisma.testAnswer.deleteMany(),
-    // prisma.testQuestion.deleteMany(),
-  ]);
-};
+// const truncateAllTables = async () => {
+// await prisma.$transaction([
+// prisma.userCourse.deleteMany(),
+// prisma.communityProject.deleteMany(),
+// prisma.resource.deleteMany(),
+// prisma.course.deleteMany(),
+// prisma.communityProject.deleteMany(),
+// prisma.content.deleteMany(),
+// prisma.technology.deleteMany(),
+// prisma.tag.deleteMany(),
+// prisma.level.deleteMany(),
+// prisma.userLevel.deleteMany(),
+// prisma.accolade.deleteMany(),
+// prisma.contentType.deleteMany(),
+// prisma.testAnswer.deleteMany(),
+// prisma.testQuestion.deleteMany(),
+//   ]);
+// };
 
 const seedTechnologies = async () => {
   const data = technologies.map((t) => ({ name: t, slug: slugify(t) }));
@@ -96,7 +96,7 @@ const seedContentTypes = async () => {
 
 const seedCourses = async () => {
   const data = courses.map((c) => ({
-    id: c.id,
+    // id: c.id,
     title: c.title,
     slug: slugify(c.title),
     description: c.description,
@@ -123,7 +123,7 @@ const seedCourses = async () => {
 
 const seedResources = async () => {
   const data = resources.map((c) => ({
-    id: c.id,
+    // id: c.id,
     title: c.title,
     slug: slugify(c.title),
     description: c.description,
@@ -147,7 +147,7 @@ const seedResources = async () => {
 
 const seedCommunityProjects = async () => {
   const data = communityProjects.map((c) => ({
-    id: c.id,
+    // id: c.id,
     title: c.title,
     slug: slugify(c.title),
     description: c.description,
@@ -180,7 +180,7 @@ const seedAccolades = async () => {
 
 const seedEvents = async () => {
   const data = events.map((c) => ({
-    id: c.id,
+    // id: c.id,
     title: c.title,
     slug: slugify(c.title),
     description: c.description,

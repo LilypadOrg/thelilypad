@@ -38,7 +38,7 @@ model UserLevel {
 
 // Generic content type
 model Content {
-  id               Int               @id
+  id               Int               @id @default(autoincrement())
   title            String            @unique
   slug             String            @unique
   description      String
@@ -173,11 +173,12 @@ model Event {
 }
 
 model CommunityProject {
-  id        Int     @id
+  id        Int      @id @default(autoincrement())
   author    String
   codeUrl   String?
   content   Content @relation(fields: [contentId], references: [id])
   contentId Int     @unique
+  submittedBy String?
 }
 
 model ContentType {

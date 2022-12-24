@@ -174,6 +174,7 @@ const EditProfileModal = ({
     mode: 'onTouched',
     resolver: zodResolver(schema),
   });
+
   const onSubmit: SubmitHandler<Inputs> = ({ username, bio }) => {
     if (mode === 'create') {
       if (createMember) createMember({});
@@ -250,7 +251,6 @@ const EditProfileModal = ({
                     <label className="font-bold uppercase tracking-widest">
                       Your Skills
                     </label>
-
                     <div className="flex flex-wrap">
                       {selectedSkills.map((ts) => (
                         <button
@@ -284,7 +284,6 @@ const EditProfileModal = ({
                     </div>
                   </div>
                   <div className="bg-transparent px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                    {/* TODO: Show spinner in button when loading */}
                     <button
                       disabled={
                         (mode === 'create' && !createMember) || isLoading

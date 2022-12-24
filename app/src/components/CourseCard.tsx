@@ -15,7 +15,7 @@ const CourseCard = ({
 }: {
   course: Course;
   type?: 'full' | 'simple';
-  actions: boolean;
+  actions?: boolean;
 }) => {
   const { data: session } = useSession();
 

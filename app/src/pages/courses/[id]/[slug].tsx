@@ -205,7 +205,6 @@ const CoursePage: NextPage = () => {
           ))}
         </div>
         {/* show more */}
-        {/* TODO: manage pagination properly */}
         {relatedCourses?.length === BROWSE_COURSES_ITEMS && (
           <div className="my-10 w-full bg-main-gray-light py-2 text-center text-xl font-medium">
             Show More Courses

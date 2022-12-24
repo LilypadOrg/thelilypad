@@ -30,6 +30,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.38.0",
     "react-icons": "^4.4.0",
+    "react-image-crop": "^10.0.9",
     "react-parallax-tilt": "^1.7.65",
     "react-toastify": "^9.0.8",
     "siwe": "^1.1.6",
