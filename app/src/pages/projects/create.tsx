@@ -5,16 +5,17 @@ import SpinningCircle from '~/components/ui/Loaders/SpinningCircle';
 import { useEditProjectForm } from '~/hooks/useEditProjectForm';
 import TextInput from '~/components/ui/form/TextInput';
 import TextAreaInput from '~/components/ui/form/TextAreaInput';
-import ImageInput from '~/components/ui/form/ImageInput';
+import ImageInput from '~/components/ui/form/NewImageInput';
+import { FormInput } from '~/components/ui/form/FormInput';
 
 const CreateProjectPage: NextPage = () => {
   const {
-    register,
-    handleSubmit,
-    errors,
+    onSubmit,
     isSubmitting,
+    register,
     projectSkills,
     projectTags,
+    errors,
   } = useEditProjectForm();
 
   const { data: techs } = trpc.useQuery(['technologies.all']);
@@ -31,33 +32,40 @@ const CreateProjectPage: NextPage = () => {
         </div>
 
         <div className="mt-2">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={onSubmit}>
             <div className="flex flex-col gap-4">
+              <TextInput {...register('author')} error={errors.author} />
+              <TextInput {...register('title')} error={errors.title} />
               <TextInput
-                label="Author"
-                error={errors.author}
-                register={register('author')}
-              />
-              <TextInput
-                label="Title"
-                error={errors.title}
-                register={register('title')}
+                {...register('url')}
+                label="Project URL"
+                error={errors.url}
               />
               <TextAreaInput
-                label="Description"
+                {...register('description')}
                 error={errors.description}
-                register={register('description')}
-              />
-              <TextInput
-                label="URL"
-                error={errors.url}
-                register={register('url')}
               />
               <ImageInput
-                register={register('image')}
+                name="image"
                 error={errors.image}
                 label="Cover Image"
+                register={register}
               />
+              <FormInput
+                id="title"
+                name="title"
+                register={register}
+                error={errors.title}
+              />
+              {/* <TextInput name="author" />
+                <TextInput name="title" />
+                {/* <TextAreaInput label="Description" error={errors.description} /> */}
+              {/* <TextInput name="URL" /> 
+                <ImageInput
+                  name="image"
+                  error={errors.image}
+                  label="Cover Image"
+                /> */}
               <PillSelector
                 label="Technologies"
                 selectedOptions={projectSkills}

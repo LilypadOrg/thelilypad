@@ -3,7 +3,7 @@ import PillSelector from './SkillSelector';
 import Modal from './ui/Modal';
 import SpinningCircle from './ui/Loaders/SpinningCircle';
 import { useEditProjectForm } from '~/hooks/useEditProjectForm';
-import TextInput from './ui/form/TextInput';
+import TextInput from './ui/form/TextInputOld';
 import TextAreaInput from './ui/form/TextAreaInput';
 import ImageInput from './ui/form/ImageInput';
 

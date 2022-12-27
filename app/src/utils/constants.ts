@@ -29,3 +29,10 @@ export const TEST_SHOW_RESULT_MS = 1 * 60 * 1000;
 export const TEST_PASS_RATE = 0.75;
 
 export const COURSES_HOME_ITEMS = 5;
+export const MAX_FILE_SIZE = 2000000;
+export const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+];
