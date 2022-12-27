@@ -6,7 +6,7 @@ export type InputSize = 'medium' | 'large';
 export type InputType = 'text' | 'email';
 
 export type InputProps = {
-  id: string;
+  id?: string;
   name: string;
   label?: string;
   className?: string;

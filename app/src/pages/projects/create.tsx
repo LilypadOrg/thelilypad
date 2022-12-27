@@ -5,7 +5,7 @@ import SpinningCircle from '~/components/ui/Loaders/SpinningCircle';
 import { useEditProjectForm } from '~/hooks/useEditProjectForm';
 import TextInput from '~/components/ui/form/TextInput';
 import TextAreaInput from '~/components/ui/form/TextAreaInput';
-import ImageInput from '~/components/ui/form/NewImageInput';
+import ImageInput from '~/components/ui/form/ImageInput';
 import { FormInput } from '~/components/ui/form/FormInput';
 
 const CreateProjectPage: NextPage = () => {
