@@ -11,6 +11,7 @@ import {
 } from '~/utils/constants';
 import { useRef } from 'react';
 import { trpc } from '~/utils/trpc';
+import axios from 'axios';
 
 const schema = z.object({
   author: z
@@ -38,13 +39,14 @@ const schema = z.object({
       message: `Description can be maximum ${PROJECT_NAME_MAX_LENGTH} characters`,
     }),
   url: z.string().url(),
+  codeUrl: z.string().url().optional(),
   image: z
     .custom<FileList>()
-    .refine((files) => files?.length === 0, 'Image is required.') // if no file files?.length === 0, if file files?.length === 1
-    .refine(
-      (files) => files?.[0]?.size >= MAX_FILE_SIZE,
-      `Max file size is ${MAX_FILE_SIZE / 1000000} MB.`
-    )
+    .refine((files) => files.length === 1, 'Image is required.') // if no file files?.length === 0, if file files?.length === 1
+    .refine((files) => {
+      console.log(files?.[0]?.size);
+      return files?.[0]?.size <= MAX_FILE_SIZE;
+    }, `Max file size is ${MAX_FILE_SIZE / 1000000} MB.`)
     .refine(
       (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
       `${ACCEPTED_IMAGE_TYPES.join(',')} files are accepted.`
@@ -54,12 +56,13 @@ const schema = z.object({
 export type EditProjectFormInputs = z.infer<typeof schema>;
 
 export const useEditProjectForm = () => {
-  const projectSkills = useRef<number[]>([]);
+  const projectTechs = useRef<number[]>([]);
   const projectTags = useRef<number[]>([]);
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<EditProjectFormInputs>({
     mode: 'onTouched',
@@ -82,10 +85,29 @@ export const useEditProjectForm = () => {
   //   // saveProject({ ...data });
   // };
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
     console.log('form data');
     console.log(data);
+    const formData = new FormData();
+    const image = data.image.item(0);
+    if (image) {
+      formData.append('image', image);
+    }
+
+    formData.append('author', data.author);
+    formData.append('title', data.title);
+    formData.append('description', data.description);
+    formData.append('url', data.url);
+    data.codeUrl && formData.append('codeUrl', data.codeUrl);
+    formData.append('techs', JSON.stringify(projectTechs.current));
+    formData.append('tags', JSON.stringify(projectTags.current));
+
     // saveProject({ ...data });
+    await axios.post('/api/projects/edit', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   });
 
   return {
@@ -95,7 +117,8 @@ export const useEditProjectForm = () => {
     onSubmit,
     errors,
     isSubmitting,
-    projectSkills,
+    projectSkills: projectTechs,
+    control,
     projectTags,
   };
 };

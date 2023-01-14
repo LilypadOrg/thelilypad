@@ -15,38 +15,38 @@ import { seedTestsBulk } from './seedScripts/seedTests';
 const prisma = new PrismaClient();
 
 async function main() {
-  await truncateAllTables();
-  // await seedTags();
-  // await seedTechnologies();
-  // await seedContentTypes();
-  // await seedLevels();
-  // await seedUserLevels();
-  // await seedCourses();
-  // await seedResources();
-  // await seedCommunityProjects();
-  // await seedAccolades();
-  // await seedEvents();
+  // await truncateAllTables();
+  await seedTags();
+  await seedTechnologies();
+  await seedContentTypes();
+  await seedLevels();
+  await seedUserLevels();
+  await seedCourses();
+  await seedResources();
+  await seedCommunityProjects();
+  await seedAccolades();
+  await seedEvents();
   await seedTestsBulk();
 }
 
-const truncateAllTables = async () => {
-  await prisma.$transaction([
-    // prisma.userCourse.deleteMany(),
-    // prisma.communityProject.deleteMany(),
-    // prisma.resource.deleteMany(),
-    // prisma.course.deleteMany(),
-    // prisma.communityProject.deleteMany(),
-    // prisma.content.deleteMany(),
-    // prisma.technology.deleteMany(),
-    // prisma.tag.deleteMany(),
-    // prisma.level.deleteMany(),
-    // prisma.userLevel.deleteMany(),
-    // prisma.accolade.deleteMany(),
-    // prisma.contentType.deleteMany(),
-    prisma.testAnswer.deleteMany(),
-    prisma.testQuestion.deleteMany(),
-  ]);
-};
+// const truncateAllTables = async () => {
+//   await prisma.$transaction([
+//     prisma.userCourse.deleteMany(),
+//     prisma.communityProject.deleteMany(),
+//     prisma.resource.deleteMany(),
+//     prisma.course.deleteMany(),
+//     prisma.communityProject.deleteMany(),
+//     prisma.content.deleteMany(),
+//     prisma.technology.deleteMany(),
+//     prisma.tag.deleteMany(),
+//     prisma.level.deleteMany(),
+//     prisma.userLevel.deleteMany(),
+//     prisma.accolade.deleteMany(),
+//     prisma.contentType.deleteMany(),
+//     prisma.testAnswer.deleteMany(),
+//     prisma.testQuestion.deleteMany(),
+//   ]);
+// };
 
 const seedTechnologies = async () => {
   const data = technologies.map((t) => ({ name: t, slug: slugify(t) }));
