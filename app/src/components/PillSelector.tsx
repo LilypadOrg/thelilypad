@@ -38,6 +38,7 @@ const PillSelector = ({
       <label className="font-bold uppercase tracking-widest">
         Selected {label}
       </label>
+
       <div className="flex flex-wrap">
         {selected.map((ts) => (
           <button

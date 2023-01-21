@@ -25,6 +25,7 @@ model User {
   courses      UserCourse[]
   technologies Technology[]
   tests        Testinstance[]
+  communityProjects CommunityProject[]
   cratedAt     DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 }
@@ -178,7 +179,9 @@ model CommunityProject {
   codeUrl   String?
   content   Content @relation(fields: [contentId], references: [id])
   contentId Int     @unique
-  submittedBy String?
+  submittedBy           User      @relation(fields: [submittedById], references: [id])
+  submittedById         Int
+  approved   Boolean @default(false)
 }
 
 model ContentType {

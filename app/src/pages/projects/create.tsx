@@ -1,12 +1,11 @@
 import { NextPage } from 'next';
 import { trpc } from '~/utils/trpc';
-import PillSelector from '~/components/SkillSelector';
+import PillSelector from '~/components/PillSelector';
 import SpinningCircle from '~/components/ui/Loaders/SpinningCircle';
 import { useEditProjectForm } from '~/hooks/useEditProjectForm';
 import TextInput from '~/components/ui/form/TextInput';
 import TextAreaInput from '~/components/ui/form/TextAreaInput';
 import ImageInput from '~/components/ui/form/ImageInput';
-import { FormInput } from '~/components/ui/form/FormInput';
 
 const CreateProjectPage: NextPage = () => {
   const {
@@ -51,21 +50,7 @@ const CreateProjectPage: NextPage = () => {
                 label="Cover Image"
                 register={register}
               />
-              <FormInput
-                id="title"
-                name="title"
-                register={register}
-                error={errors.title}
-              />
-              {/* <TextInput name="author" />
-                <TextInput name="title" />
-                {/* <TextAreaInput label="Description" error={errors.description} /> */}
-              {/* <TextInput name="URL" /> 
-                <ImageInput
-                  name="image"
-                  error={errors.image}
-                  label="Cover Image"
-                /> */}
+
               <PillSelector
                 label="Technologies"
                 selectedOptions={projectSkills}

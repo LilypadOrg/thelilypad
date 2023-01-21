@@ -17,6 +17,39 @@ import { canvasPreview } from '~/utils/canvasPreview';
 import { ACCEPTED_IMAGE_TYPES } from '~/utils/constants';
 import Modal from '../Modal';
 import { InputProps } from './Input';
+import 'react-image-crop/dist/ReactCrop.css';
+
+const Output = ({
+  imageSrc,
+  croppedArea,
+  aspect,
+  scale,
+}: {
+  imageSrc: string;
+  croppedArea: PixelCrop;
+  aspect: number;
+  scale: number;
+}) => {
+  const transform = {
+    x: `${-croppedArea.x * scale}%`,
+    y: `${-croppedArea.y * scale}%`,
+    scale,
+    width: 'calc(100% + 0.5px)',
+    height: 'auto',
+  };
+
+  const imageStyle = {
+    transform: `translate3d(${transform.x}, ${transform.y}, 0) scale3d(${transform.scale},${transform.scale},1)`,
+    width: transform.width,
+    height: transform.height,
+  };
+
+  return (
+    <div className="output" style={{ paddingBottom: `${100 / aspect}%` }}>
+      <img src={imageSrc} alt="" style={imageStyle} />
+    </div>
+  );
+};
 
 export type FormInputProps<TFormValues extends FieldValues> = {
   name: Path<TFormValues>;
@@ -55,7 +88,9 @@ FormInputProps<TFormValues>) => {
   const imgRef = useRef<HTMLImageElement>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [imgSrc, setImgSrc] = useState('');
+  const [imageSrc, setImageSrc] = useState('');
+  const [image, setImage] = useState<File | null>(null);
+  const [croppedImage, setCroppedImage] = useState<File | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
@@ -76,12 +111,15 @@ FormInputProps<TFormValues>) => {
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log('file Selected');
     if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
       setCrop(undefined); // Makes crop preview update between images.
       setIsCropCompleted(false);
       setScale(1);
+      setImage(file);
+
       const reader = new FileReader();
       reader.addEventListener('load', () =>
-        setImgSrc(reader.result?.toString() || '')
+        setImageSrc(reader.result?.toString() || '')
       );
       reader.readAsDataURL(e.target.files[0]);
     }
@@ -104,6 +142,7 @@ FormInputProps<TFormValues>) => {
     ) {
       console.log('cropping');
       // We use canvasPreview as it's much faster than imgPreview.
+      // const croppedImage = getCroppedImg(imgRef.current, completedCrop);
       canvasPreview(
         imgRef.current,
         previewCanvasRef.current,
@@ -119,7 +158,7 @@ FormInputProps<TFormValues>) => {
   return (
     <>
       <Modal open={showModal} onClose={() => setShowModal(false)}>
-        {!!imgSrc && (
+        {!!imageSrc && (
           <div onWheelCapture={onScroll}>
             <ReactCrop
               crop={crop}
@@ -131,7 +170,7 @@ FormInputProps<TFormValues>) => {
               <img
                 ref={imgRef}
                 alt="Crop me"
-                src={imgSrc}
+                src={imageSrc}
                 style={{ transform: `scale(${scale}) rotate(${rotate}deg)` }}
                 onLoad={onImageLoad}
               />
@@ -161,15 +200,15 @@ FormInputProps<TFormValues>) => {
             />
           </div>
           <div>
-            {imgSrc && !isCropCompleted && (
+            {imageSrc && !isCropCompleted && (
               <Image
-                src={imgSrc}
+                src={imageSrc}
                 width={320}
                 height={180}
                 alt="Image Preview"
               />
             )}
-            <canvas
+            {/* <canvas
               className={`${isCropCompleted ? 'visible' : 'hidden'}`}
               ref={previewCanvasRef}
               style={{
@@ -180,9 +219,16 @@ FormInputProps<TFormValues>) => {
                 // width: completedCrop.width,
                 // height: completedCrop.height,
               }}
-            />
+            /> */}
+            {imageSrc && completedCrop && (
+              <Output
+                imageSrc={imageSrc}
+                aspect={aspect}
+                croppedArea={completedCrop}
+              />
+            )}
           </div>
-          {imgSrc && (
+          {imageSrc && (
             <button type="button" onClick={() => setShowModal(true)}>
               Crop image
             </button>
