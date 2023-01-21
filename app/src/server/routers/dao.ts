@@ -5,30 +5,6 @@ import { createRouter } from '~/server/createRouter';
 import { prisma } from '~/server/prisma';
 import { BROWSE_DAO_ITEMS } from '~/utils/constants';
 
-// const contentCourseSelect = Prisma.validator<Prisma.ContentSelect>()({
-//   id: true,
-//   title: true,
-//   description: true,
-//   coverImageUrl: true,
-//   technologies: true,
-//   tags: true,
-//   slug: true,
-//   course: {
-//     select: {
-//       id: true,
-//       levels: true,
-//       xp: true,
-//       userCourses: {
-//         select: {
-//           roadmap: true,
-//           completed: true,
-//           completedOn: true,
-//         },
-//       },
-//     },
-//   },
-// });
-
 const defaultDaoProposalSelect = Prisma.validator<Prisma.DaoProposalSelect>()({
   id: true,
   proposer: true,
@@ -67,6 +43,16 @@ const defaultDaoProposalSelect = Prisma.validator<Prisma.DaoProposalSelect>()({
   },
 });
 
+const listDaoProposalSelect = Prisma.validator<Prisma.DaoProposalSelect>()({
+  id: true,
+  description: true,
+  status: true,
+  proposalId: true,
+  eta: true,
+  tx: true,
+  snapshotBlock: true,
+});
+
 export const daoRouter = createRouter()
   // read
   .query('all', {
@@ -80,13 +66,69 @@ export const daoRouter = createRouter()
        * For pagination you can have a look at this docs site
        * @link https://trpc.io/docs/useInfiniteQuery
        */
-
       try {
         const proposals = await prisma.daoProposal.findMany({
           take: input?.take || BROWSE_DAO_ITEMS,
           select: defaultDaoProposalSelect,
         });
+
         return proposals;
+      } catch (err) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Error retrieving data.`,
+        });
+      }
+    },
+  })
+  .query('list', {
+    input: z
+      .object({
+        skip: z.number().optional(),
+        take: z.number().min(1).max(100).optional(),
+        cursorId: z.number().optional(),
+      })
+      .optional(),
+    async resolve({ input }) {
+      /**
+       * For pagination you can have a look at this docs site
+       * @link https://trpc.io/docs/useInfiniteQuery
+       */
+      try {
+        const proposals = await prisma.daoProposal.findMany({
+          skip: input?.skip || 0,
+          take: input?.take || BROWSE_DAO_ITEMS,
+          //cursor: {
+          //  id: input?.cursorId ? input?.cursorId : 1,
+          //},
+          select: listDaoProposalSelect,
+        });
+        return proposals;
+      } catch (err) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Error retrieving data.`,
+        });
+      }
+    },
+  })
+  .query('count', {
+    input: z
+      .object({
+        status: z.number().optional(),
+      })
+      .optional(),
+    async resolve({ input }) {
+      /**
+       * For pagination you can have a look at this docs site
+       * @link https://trpc.io/docs/useInfiniteQuery
+       */
+
+      try {
+        const proposalQtty = await prisma.daoProposal.count({
+          where: { ...(input?.status ? { status: input?.status } : {}) },
+        });
+        return proposalQtty;
       } catch (err) {
         throw new TRPCError({
           code: 'BAD_REQUEST',

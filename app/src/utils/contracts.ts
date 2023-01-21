@@ -6,6 +6,8 @@ import LiLyPadContract from './contracts/LilyPad';
 import PondSBTContract from './contracts/PondSBT';
 // import LilyPadTreasureContract from './contracts/LilyPadTreasure.json';
 import LilyPadTreasureContract from './contracts/LilyPadTreasure';
+import LilyPadGovernorContract from './contracts/LilyPadGovernor.json';
+import LilyPadExecutorContract from './contracts/LilyPadExecutor.json';
 
 const addresses: {
   [key: number]: Array<{ contract: string; address: string }>;
@@ -44,6 +46,14 @@ export const getLilyPadTreasure = () => {
   return getContractAddress('LilyPadTreasure');
 };
 
+export const getLilyPadGovernorAddress = () => {
+  return getContractAddress('LilyPadGovernor');
+};
+
+export const getLilyPadExecutorAddress = () => {
+  return getContractAddress('LilyPadExecutor');
+};
+
 export const getLilyPadABI = () => {
   // return LiLyPadContract.abi;
   return LiLyPadContract;
@@ -57,4 +67,12 @@ export const getPondSBTABI = () => {
 export const getLilyPadTreasureABI = () => {
   // return LilyPadTreasureContract.abi;
   return LilyPadTreasureContract;
+};
+
+export const getLilyPadGovernorABI = () => {
+  return LilyPadGovernorContract.abi;
+};
+
+export const getLilyPadExecutorABI = () => {
+  return LilyPadExecutorContract.abi;
 };

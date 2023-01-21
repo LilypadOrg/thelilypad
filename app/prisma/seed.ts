@@ -9,6 +9,7 @@ import contentTypes from './seedData/contentTYpes.json';
 import communityProjects from './seedData/communityProjects.json';
 import accolades from './seedData/accolades.json';
 import events from './seedData/events.json';
+import functions from './seedData/daoFunctions.json';
 import { slugify } from '../src/utils/formatters';
 import { seedTestsBulk } from './seedScripts/seedTests';
 
@@ -16,33 +17,33 @@ const prisma = new PrismaClient();
 
 async function main() {
   await truncateAllTables();
-  // await seedTags();
-  // await seedTechnologies();
-  // await seedContentTypes();
-  // await seedLevels();
-  // await seedUserLevels();
-  // await seedCourses();
-  // await seedResources();
-  // await seedCommunityProjects();
-  // await seedAccolades();
-  // await seedEvents();
+  await seedTags();
+  await seedTechnologies();
+  await seedContentTypes();
+  await seedLevels();
+  await seedUserLevels();
+  await seedCourses();
+  await seedResources();
+  await seedCommunityProjects();
+  await seedAccolades();
+  await seedEvents();
   await seedTestsBulk();
 }
 
 const truncateAllTables = async () => {
   await prisma.$transaction([
-    // prisma.userCourse.deleteMany(),
-    // prisma.communityProject.deleteMany(),
-    // prisma.resource.deleteMany(),
-    // prisma.course.deleteMany(),
-    // prisma.communityProject.deleteMany(),
-    // prisma.content.deleteMany(),
-    // prisma.technology.deleteMany(),
-    // prisma.tag.deleteMany(),
-    // prisma.level.deleteMany(),
-    // prisma.userLevel.deleteMany(),
-    // prisma.accolade.deleteMany(),
-    // prisma.contentType.deleteMany(),
+    prisma.userCourse.deleteMany(),
+    prisma.communityProject.deleteMany(),
+    prisma.resource.deleteMany(),
+    prisma.course.deleteMany(),
+    prisma.communityProject.deleteMany(),
+    prisma.content.deleteMany(),
+    prisma.technology.deleteMany(),
+    prisma.tag.deleteMany(),
+    prisma.level.deleteMany(),
+    prisma.userLevel.deleteMany(),
+    prisma.accolade.deleteMany(),
+    prisma.contentType.deleteMany(),
     prisma.testAnswer.deleteMany(),
     prisma.testQuestion.deleteMany(),
   ]);
@@ -204,6 +205,20 @@ const seedEvents = async () => {
   }
 
   console.log(`Events created ${data.length}`);
+};
+const seedDaoFunctions = async () => {
+  const data = functions.map((c) => ({
+    contractAddress: c.contractAddress,
+    contractFunction: c.contractFunction,
+    functionInputs: c.functionInputs,
+    functionName: c.functionName,
+  }));
+
+  for (let i = 0; i < data.length; i++) {
+    await prisma.daoFunction.create({ data: data[i] });
+  }
+
+  console.log(`DAO Functions created ${data.length}`);
 };
 
 main()

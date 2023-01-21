@@ -1,42 +1,45 @@
-import axios from 'axios';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDAOTreasure } from '~/hooks/useDAOTreasure';
 import { formatNumber } from '~/utils/formatters';
 import { ethers } from 'ethers';
+import { trpc } from '~/utils/trpc';
 
 const GovernanceTreasury = () => {
+  //const { data } = trpc.useQuery(['environment.getEnvironment']);
+  //const env = data;
+  const utils = trpc.useContext();
+  trpc.useQuery(['external.getTreasureTokenPrice'], {
+    onSuccess: (data) => {
+      if ((data ?? '0') != '0') {
+        setPriceUsd(data ?? '0');
+      }
+    },
+    onError: () => {
+      console.error('error');
+    },
+  });
+
   const { treasureValue } = useDAOTreasure();
+  //const treasureValue = 0;
   const fmtTreasureBalance = ethers.utils.formatUnits(
     (treasureValue ?? 0).toString(),
     'ether'
   );
-  // const web3: Web3 = new Web3();
-  // const fmtTreasureBalance = web3.utils.fromWei(
-  //   (treasureValue ?? 0).toString(),
-  //   'ether'
-  // );
-  const [ethUsd, setEthUsd] = useState('');
+  const [priceUsd, setPriceUsd] = useState('');
+  const [treasureUsd, setTreasureUsd] = useState('');
+
+  function fetchPrice() {
+    utils.invalidateQueries(['external.getTreasureTokenPrice']);
+  }
 
   useEffect(() => {
     let controller: AbortController;
 
-    function fetchEthUsd() {
-      controller = new AbortController();
-      axios
-        .get('https://api.etherscan.io/api?module=stats&action=ethprice', {
-          signal: controller.signal,
-        })
-        .then((res) => {
-          //console.log(res.data.result.ethusd);
-          setEthUsd(res.data.result.ethusd);
-        });
-    }
-
-    fetchEthUsd();
+    fetchPrice();
 
     const interval = setInterval(() => {
-      fetchEthUsd();
-    }, 60000);
+      fetchPrice();
+    }, 3000);
     return () => {
       clearInterval(interval);
       if (controller) {
@@ -49,55 +52,45 @@ const GovernanceTreasury = () => {
     };
   }, []);
 
-  const fmtTreasureBalanceUsd = useMemo(() => {
+  useMemo(() => {
     let fmtTreasureBalanceUsd;
-    if (treasureValue && ethUsd) {
+    if (treasureValue && priceUsd) {
       const treasureBalanceUsd =
-        Number(formatNumber(Number(fmtTreasureBalance), 4)) * Number(ethUsd);
-      //console.log(value);
-      //const treasureBalanceUsd = ethers.utils
-      //  .parseUnits(treasureValue.toString(), 'wei')
-      //  .mul(biEthUsd)
-      //  .div('1'.padEnd(dec + 1, '0'));
+        Number(formatNumber(Number(fmtTreasureBalance), 4)) * Number(priceUsd);
       fmtTreasureBalanceUsd = formatNumber(treasureBalanceUsd, 2); //formatEther(treasureBalanceUsd, 2);
-      console.log(fmtTreasureBalanceUsd);
+
+      setTreasureUsd(fmtTreasureBalanceUsd);
     }
-    return fmtTreasureBalanceUsd;
-  }, [treasureValue, ethUsd, fmtTreasureBalance]);
+
+    return fmtTreasureBalanceUsd ?? '0.0';
+  }, [treasureValue, priceUsd, fmtTreasureBalance]);
 
   return (
-    <div>
-      <h1>Trasury</h1>
-      <h3>Ξ&nbsp;{fmtTreasureBalance}</h3>
-      <h4>$&nbsp;{fmtTreasureBalanceUsd}</h4>
-      <p>
-        This treasury exists for supporting developers of the LilyPad Community
-        to build Web3 Projects.
-      </p>
+    <div
+      className="rounded-lg border-4 border-polygon-purple"
+      style={{ padding: '5px 30px 5px' }}
+    >
+      <h3>Treasury</h3>
+      <div className="flex grid grid-flow-col grid-cols-12 gap-1">
+        <div className="flex shrink items-center">
+          <img
+            src="https://cryptologos.cc/logos/polygon-matic-logo.png?v=024"
+            width="32"
+          />
+        </div>
+        <div className="row-span-11 flex items-start">
+          <h4>{fmtTreasureBalance}</h4>
+        </div>
+      </div>
+      <h5>$&nbsp;{treasureUsd}</h5>
+      <br />
+      <h6>
+        <p style={{ color: '#7b61ff' }}>
+          This treasury exists for supporting developers of the LilyPad
+          Community to build Web3 Projects.
+        </p>
+      </h6>
     </div>
-
-    // <Container>
-    //   <Row className="GovernanceTreasury" ref={ref}>
-    //     <Col lg={8} className="treasuryAmount">
-    //       <span className="treasuryHeader">Treasury</span>
-    //       <Row>
-    //         <Col lg={3} className="treasuryEth">
-    //           <h3>Ξ&nbsp;{fmtTreasureBalance}</h3>
-    //         </Col>
-    //         <Col className="treasuryUsd">
-    //           <h4>$&nbsp;{fmtTreasureBalanceUsd}</h4>
-    //         </Col>
-    //       </Row>
-    //     </Col>
-    //     <Col
-    //       className="treasuryInfo"
-    //       dangerouslySetInnerHTML={{
-    //         __html:
-    //           'This treasury exists for supporting developers of the LilyPad Community to build Web3 Projects.',
-    //       }}
-    //     />
-    //   </Row>
-    // </Container>
   );
 };
 

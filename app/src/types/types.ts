@@ -69,3 +69,31 @@ export type TestInstanceExt = Prisma.TestinstanceGetPayload<{
 export type Accolade = Prisma.AccoladeGetPayload<{
   select: { id: true; imageUrl: true; description: true };
 }>;
+
+export interface DaoList {
+  status: number | null;
+  id: number;
+  description: string;
+  proposalId: string | null;
+  eta: number | null;
+  tx: string | null;
+  snapshotBlock: string | null;
+}
+
+export default interface ProposalJson {
+  id?: number;
+  proposer?: string;
+  title?: string;
+  summary?: string;
+  description?: string;
+  targets?: string[];
+  values?: string[];
+  signatures?: string[];
+  calldatas?: string[];
+  contractFunctions?: string[];
+  annex?: string[];
+  proposalTimeStamp?: string;
+  proposalBlock?: string;
+  parameters?: string[];
+  functionId?: number[];
+}

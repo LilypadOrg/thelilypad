@@ -17,6 +17,7 @@ module.exports = {
         'main-yellow': '#F7DC16',
         'main-gray-dark': '#C4C4C4',
         'main-gray-light': '#F5F5F5',
+        'polygon-purple': '#7b61ff',
       },
       animation: {
         blob: 'blob 8s infinite',
@@ -43,6 +44,6 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('daisyui')],
   darkMode: 'class',
 };
