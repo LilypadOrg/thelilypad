@@ -6,15 +6,17 @@ import { useEditProjectForm } from '~/hooks/useEditProjectForm';
 import TextInput from '~/components/ui/form/TextInput';
 import TextAreaInput from '~/components/ui/form/TextAreaInput';
 import ImageInput from '~/components/ui/form/ImageInput';
+import { Controller } from 'react-hook-form';
 
 const CreateProjectPage: NextPage = () => {
   const {
     onSubmit,
-    isSubmitting,
     register,
     projectSkills,
+    isSubmitting,
     projectTags,
     errors,
+    control,
   } = useEditProjectForm();
 
   const { data: techs } = trpc.useQuery(['technologies.all']);
@@ -44,11 +46,25 @@ const CreateProjectPage: NextPage = () => {
                 {...register('description')}
                 error={errors.description}
               />
-              <ImageInput
+              {/* <ImageInput
                 name="image"
                 error={errors.image}
-                label="Cover Image"
+                label="Upload Image"
                 register={register}
+              /> */}
+
+              <Controller
+                control={control}
+                name="image"
+                render={({ field: { onChange, value } }) => (
+                  <ImageInput
+                    name="image"
+                    error={errors.image}
+                    label="Upload Image"
+                    image={value}
+                    setImage={onChange}
+                  />
+                )}
               />
 
               <PillSelector

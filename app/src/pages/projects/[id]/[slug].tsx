@@ -8,10 +8,28 @@ import { BsGithub } from 'react-icons/bs';
 import LevelPill from '~/components/ui/LevelPill';
 import { trpc } from '~/utils/trpc';
 import { TbWorld } from 'react-icons/tb';
+import { PROJECTS_IMAGE_PATH } from '~/utils/constants';
+import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
 
 const ProjectPage: NextPage = () => {
   const id = Number(useRouter().query.id);
-  const { data: project, isLoading } = trpc.useQuery(['projects.byId', { id }]);
+  const router = useRouter();
+
+  const {
+    data: project,
+    isLoading,
+    error,
+  } = trpc.useQuery(['projects.byId', { id }]);
+  const { data: session } = useSession();
+
+  const isOwner = session?.user?.userId === project?.submittedById;
+
+  useEffect(() => {
+    if (error?.data?.code === 'NOT_FOUND') {
+      router.replace('/');
+    }
+  }, [error?.data?.code, router]);
 
   return (
     <div>
@@ -29,6 +47,13 @@ const ProjectPage: NextPage = () => {
         )}
         {project && (
           <div>
+            {!project.isApproved && (
+              <div className="rounded-md border border-secondary-500 bg-secondary-300 py-2 px-4 text-xl font-bold">
+                {isOwner ? 'Your' : 'This'} project is pending approval and is
+                not currently visible.
+              </div>
+            )}
+
             <div className="flex flex-col py-8 ">
               <h1 className="mb-4 text-4xl font-bold">
                 {project.content.title}
@@ -39,7 +64,7 @@ const ProjectPage: NextPage = () => {
               {project.content.coverImageUrl && (
                 <Image
                   alt="thumbnail"
-                  src={project.content.coverImageUrl}
+                  src={`${PROJECTS_IMAGE_PATH}${project.content.coverImageUrl}`}
                   layout="fill"
                   objectFit="contain"
                 />

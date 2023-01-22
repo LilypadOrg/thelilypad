@@ -64,6 +64,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
             id: user.id.toString(),
             address: siwe.address,
             name: user.username,
+            isAdmin: user.isAdmin,
             // image: getSBTLocalURL(user.levelNumber),
           };
 
@@ -94,7 +95,11 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
     callbacks: {
       jwt: async ({ token, user }) => {
         user &&
-          (token.user = { userId: Number(user.id), address: user.address });
+          (token.user = {
+            userId: Number(user.id),
+            address: user.address,
+            isAdmin: user.isAdmin,
+          });
         return token;
       },
 

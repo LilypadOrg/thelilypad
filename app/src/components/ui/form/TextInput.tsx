@@ -56,7 +56,7 @@ const TextInput = forwardRef<HTMLInputElement, InputProps>(
           ])}
           {...props}
         />
-        {error && <span>{error.message}</span>}
+        {error && <span className="text-red-600">{error.message}</span>}
       </>
     );
   }

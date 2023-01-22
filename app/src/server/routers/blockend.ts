@@ -57,7 +57,6 @@ export const blockenRouter = createRouter()
 
         // return signature;
       } catch (err) {
-        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Something went wrong'`,

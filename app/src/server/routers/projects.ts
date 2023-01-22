@@ -7,23 +7,26 @@ import { ContentType } from '~/types/types';
 import { BROWSE_COURSES_ITEMS } from '~/utils/constants';
 import { slugify } from '~/utils/formatters';
 
-const defaultProjectSelect = Prisma.validator<Prisma.CommunityProjectSelect>()({
-  id: true,
-  author: true,
-  codeUrl: true,
-  content: {
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      coverImageUrl: true,
-      technologies: true,
-      tags: true,
-      slug: true,
-      url: true,
+export const defaultProjectSelect =
+  Prisma.validator<Prisma.CommunityProjectSelect>()({
+    id: true,
+    author: true,
+    codeUrl: true,
+    isApproved: true,
+    submittedById: true,
+    content: {
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        coverImageUrl: true,
+        technologies: true,
+        tags: true,
+        slug: true,
+        url: true,
+      },
     },
-  },
-});
+  });
 
 export const projectsRouter = createRouter()
   .query('all', {
@@ -33,11 +36,13 @@ export const projectsRouter = createRouter()
         technologies: z.array(z.string()).or(z.string()).optional(),
         levels: z.array(z.string()).or(z.string()).optional(),
         take: z.number().min(1).max(100).optional(),
+        isApproved: z.boolean().optional(),
       })
       .optional(),
     async resolve({ input }) {
+      const isApproved = input?.isApproved ?? true;
       try {
-        const courses = await prisma.communityProject.findMany({
+        const projects = await prisma.communityProject.findMany({
           where: {
             ...(input?.tags
               ? { content: { tags: { some: { slug: { in: input.tags } } } } }
@@ -54,6 +59,7 @@ export const projectsRouter = createRouter()
             ...(input?.levels
               ? { levels: { some: { slug: { in: input.levels } } } }
               : {}),
+            isApproved,
           },
           take: input?.take || BROWSE_COURSES_ITEMS,
           select: defaultProjectSelect,
@@ -65,7 +71,7 @@ export const projectsRouter = createRouter()
           //   },
           // },
         });
-        return courses;
+        return projects;
       } catch (err) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
@@ -98,27 +104,26 @@ export const projectsRouter = createRouter()
     input: z.object({
       id: z.number(),
     }),
-    async resolve({ input }) {
-      try {
-        const { id } = input;
-        const project = await prisma.communityProject.findUnique({
-          where: { id },
-          select: defaultProjectSelect,
-        });
-
-        if (!project) {
-          throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: `No course with id '${id}'`,
-          });
-        }
-        return project;
-      } catch (err) {
+    async resolve({ input, ctx }) {
+      const { id } = input;
+      const userId = ctx.session?.user?.userId || -1;
+      const isAdmin = ctx.session?.user?.isAdmin || false;
+      const project = await prisma.communityProject.findFirst({
+        where: {
+          id,
+          ...(isAdmin
+            ? {}
+            : { OR: [{ isApproved: true }, { submittedById: userId }] }),
+        },
+        select: defaultProjectSelect,
+      });
+      if (!project) {
         throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: `Error retrieving data.`,
+          code: 'NOT_FOUND',
+          message: `No project with id '${id}'`,
         });
       }
+      return project;
     },
   })
   .mutation('create', {
@@ -137,11 +142,11 @@ export const projectsRouter = createRouter()
       }
       try {
         const { author, title, description, url } = input;
-        const submittedBy = ctx.session.user.address;
+        const submittedById = ctx.session.user.userId;
         const project = prisma.communityProject.create({
           data: {
             author,
-            submittedBy,
+            submittedBy: { connect: { id: submittedById } },
             content: {
               create: {
                 title,
@@ -160,6 +165,28 @@ export const projectsRouter = createRouter()
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Error updating course status`,
+        });
+      }
+    },
+  })
+  .mutation('delete', {
+    input: z.number(),
+    async resolve({ ctx, input }) {
+      if (!ctx.session?.user) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: `Unauthorized`,
+        });
+      }
+      try {
+        const project = await prisma.communityProject.delete({
+          where: { id: input },
+        });
+        return project;
+      } catch (err) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Error deleting project`,
         });
       }
     },

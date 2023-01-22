@@ -36,3 +36,5 @@ export const ACCEPTED_IMAGE_TYPES = [
   'image/png',
   'image/webp',
 ];
+
+export const PROJECTS_IMAGE_PATH = '/images/communityProjects/';

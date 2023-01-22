@@ -22,6 +22,7 @@ model User {
   levelNumber  Int
   hasOnChainProfile Boolean @default(false)
   hasPondSBT Boolean @default(false)
+  isAdmin      Boolean       @default(false)
   courses      UserCourse[]
   technologies Technology[]
   tests        Testinstance[]
@@ -179,9 +180,9 @@ model CommunityProject {
   codeUrl   String?
   content   Content @relation(fields: [contentId], references: [id])
   contentId Int     @unique
-  submittedBy           User      @relation(fields: [submittedById], references: [id])
-  submittedById         Int
-  approved   Boolean @default(false)
+  submittedBy           User?      @relation(fields: [submittedById], references: [id])
+  submittedById         Int?
+  isApproved   Boolean @default(false)
 }
 
 model ContentType {
