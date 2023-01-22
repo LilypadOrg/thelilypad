@@ -226,7 +226,7 @@ model DaoProposal {
   params         String[]
   tx             String?            @db.VarChar(200)
   function       DaoFunction?       @relation(fields: [functionId], references: [id])
-  functionId     Int?
+  functionId     Int[]
   snapshotBlock  String?            @db.Text()
   votes          DaoProposalVote[]
 

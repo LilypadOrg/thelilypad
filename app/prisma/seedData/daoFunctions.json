@@ -1,0 +1,8 @@
+[
+  {
+    "contractAddress": "0x31De52e5f8E4881Bbdcb9F2d8F240a3C698F59c2",
+    "contractFunction": "withdrawFromTreasure",
+    "functionInputs": "{uint256._amount,address._funded}",
+    "functionName": "fundMe"
+  }
+]

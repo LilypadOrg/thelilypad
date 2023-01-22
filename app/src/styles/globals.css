@@ -133,3 +133,14 @@ html {
   @apply flex place-items-center bg-primary-500 text-3xl;
   transform: rotateY(180deg);
 }
+
+.TreasuryHeader {
+  display: block;
+  padding: 5px 30px 5px;
+  border: 2px solid black;
+  border-radius: 50px !important;
+  overflow: auto;
+  position: static;
+  margin: 0px 0px 0px 2px;
+  border-color: #7b61ff;
+}
