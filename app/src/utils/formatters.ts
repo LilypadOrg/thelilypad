@@ -42,3 +42,31 @@ export const getSBTLocalURL = (level: number) => {
 export const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
+
+const imageExtensions: { [type: string]: string } = {
+  'image/bmp': '.bmp',
+  'image/cis-cod': '.cod',
+  'image/gif': '.gif',
+  'image/ief': '.ief',
+  'image/jpeg': '.jpg',
+  'image/pipeg': '.jfif',
+  'image/tiff': '.tif',
+  'image/x-cmu-raster': '.ras',
+  'image/x-cmx': '.cmx',
+  'image/x-icon': '.ico',
+  'image/x-portable-anymap': '.pnm',
+  'image/x-portable-bitmap': '.pbm',
+  'image/x-portable-graymap': '.pgm',
+  'image/x-portable-pixmap': '.ppm',
+  'image/x-rgb': '.rgb',
+  'image/x-xbitmap': '.xbm',
+  'image/x-xpixmap': '.xpm',
+  'image/x-xwindowdump': '.xwd',
+  'image/png': '.png',
+  'image/x-jps': '.jps',
+  'image/x-freehand': '.fh',
+};
+
+export const getImageExtFromType = (imageType: string) => {
+  return imageExtensions[imageType];
+};

@@ -4,13 +4,17 @@ import { z } from 'zod';
 import {
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE,
+  PROJECTS_IMAGE_PATH,
   PROJECT_DESC_MAX_LENGTH,
   PROJECT_DESC_MIN_LENGTH,
   PROJECT_NAME_MAX_LENGTH,
   PROJECT_NAME_MIN_LENGTH,
 } from '~/utils/constants';
 import formidable from 'formidable';
-// import { prisma } from '~/server/prisma';
+import { prisma } from '~/server/prisma';
+import { getImageExtFromType, slugify } from '~/utils/formatters';
+import fs from 'fs';
+import { defaultProjectSelect } from '~/server/routers/projects';
 
 export const config = {
   api: {
@@ -46,19 +50,12 @@ const reqDataSchema = z.object({
   url: z.string().url(),
   codeUrl: z.string().url().optional(),
   image: z
-    .custom<formidable.File[]>()
-    .refine((files) => {
-      console.log({ files });
-      return files.length === 1;
-    }, 'Image is required.') // if no file files?.length === 0, if file files?.length === 1
+    .custom<formidable.File>()
+    .refine((file) => {
+      return file.size <= MAX_FILE_SIZE;
+    }, `Max file size is ${MAX_FILE_SIZE / 1000000} MB.`)
     .refine(
-      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
-      `Max file size is ${MAX_FILE_SIZE / 1000000} MB.`
-    )
-    .refine(
-      (files) =>
-        files?.[0]?.mimetype &&
-        ACCEPTED_IMAGE_TYPES.includes(files?.[0].mimetype),
+      (file) => file.mimetype && ACCEPTED_IMAGE_TYPES.includes(file.mimetype),
       `${ACCEPTED_IMAGE_TYPES.join(',')} files are accepted.`
     ),
   techs: z.number().array(),
@@ -73,36 +70,67 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const form = new formidable.IncomingForm();
   form.parse(req, async function (err, fields, files) {
-    console.log({ files });
-    const image = Array.isArray(files.image) ? files.image : [files.image];
-    console.log({ image });
+    if (Array.isArray(files.image)) {
+      return res.status(401).send('Unauthorized');
+    }
+    const image = files.image;
+
+    ({ image });
     fields['techs'] = Array.isArray(fields['techs'])
       ? JSON.parse(fields['techs'][0])
       : JSON.parse(fields['techs']);
     fields['tags'] = Array.isArray(fields['tags'])
       ? JSON.parse(fields['tags'][0])
       : JSON.parse(fields['tags']);
-    console.log({ fields });
+    ({ fields });
     try {
       const validFields = reqDataSchema.parse({
         ...fields,
-        image: image,
+        image,
       });
-      console.log(validFields);
-      // const project = await prisma.communityProject.create({
-      //   data: {
-      //     author: validFields.author,
-      //     codeUrl: validFields.codeUrl || null,
-      //   },
-      //   conte
-      // });
 
-      return res.status(201).send('Done!!!');
+      const slug = slugify(validFields.title);
+      const extension = getImageExtFromType(image.mimetype || '');
+      const outputFilename = `${slug}-${new Date().getTime()}${extension}`;
+      console.log(outputFilename);
+      await saveFile(image, './public' + PROJECTS_IMAGE_PATH + outputFilename);
+
+      const project = await prisma.communityProject.create({
+        data: {
+          author: validFields.author,
+          codeUrl: validFields.codeUrl || null,
+          submittedBy: { connect: { id: session.user.userId } },
+          content: {
+            create: {
+              title: validFields.title,
+              slug,
+              description: validFields.description,
+              url: validFields.url,
+              coverImageUrl: outputFilename,
+              contentType: { connect: { name: 'Community Project' } },
+              technologies: {
+                connect: validFields.techs.map((l) => ({ id: l })),
+              },
+              tags: { connect: validFields.tags.map((l) => ({ id: l })) },
+            },
+          },
+        },
+        // TODO: Move defaultSelect outside of roouters
+        select: defaultProjectSelect,
+      });
+
+      return res.status(201).json(project);
     } catch (error) {
-      console.log(error);
       return res.status(400);
     }
   });
+};
+
+const saveFile = async (file: formidable.File, fileName: string) => {
+  const data = fs.readFileSync(file.filepath);
+  fs.writeFileSync(fileName, data);
+  fs.unlinkSync(file.filepath);
+  return;
 };
 
 const handler = (req: NextApiRequest, res: NextApiResponse) => {

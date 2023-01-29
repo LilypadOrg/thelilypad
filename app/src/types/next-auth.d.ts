@@ -8,6 +8,7 @@ declare module 'next-auth/jwt' {
       /** The user's postal address. */
       userId: number;
       address: string;
+      isAdmin: boolean;
     } & DefaultSession['user'];
   }
 }
@@ -21,10 +22,12 @@ declare module 'next-auth' {
       /** The user's postal address. */
       userId: number;
       address: string;
+      isAdmin: boolean;
     } & DefaultSession['user'];
   }
 
   interface User {
     address: string;
+    isAdmin: boolean;
   }
 }

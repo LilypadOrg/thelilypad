@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Project } from '~/types/types';
+import { PROJECTS_IMAGE_PATH } from '~/utils/constants';
 import { limitStrLength } from '~/utils/formatters';
 
 export const SpotLightCards = ({
@@ -10,7 +11,8 @@ export const SpotLightCards = ({
   project: Project;
   teal: boolean;
 }) => {
-  const { id, slug, title, coverImageUrl, description } = project.content;
+  const id = project.id;
+  const { slug, title, coverImageUrl, description } = project.content;
 
   return (
     <>
@@ -21,7 +23,7 @@ export const SpotLightCards = ({
         >
           {coverImageUrl && (
             <Image
-              src={coverImageUrl}
+              src={`${PROJECTS_IMAGE_PATH}${coverImageUrl}`}
               alt={`${title} thumbnail`}
               height={320}
               width={420}

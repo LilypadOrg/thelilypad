@@ -11,6 +11,7 @@
     "db:dev:seed": "dotenv -e .env.local -- ts-node --compiler-options {\\\"module\\\":\\\"commonjs\\\"} prisma/seed.ts"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.7",
     "@hookform/resolvers": "^2.9.8",
     "@prisma/client": "^4.3.1",
     "@rainbow-me/rainbowkit": "^0.8.0",

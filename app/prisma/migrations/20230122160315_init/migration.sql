@@ -8,6 +8,7 @@ CREATE TABLE "User" (
     "levelNumber" INTEGER NOT NULL,
     "hasOnChainProfile" BOOLEAN NOT NULL DEFAULT false,
     "hasPondSBT" BOOLEAN NOT NULL DEFAULT false,
+    "isAdmin" BOOLEAN NOT NULL DEFAULT false,
     "cratedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -163,7 +164,8 @@ CREATE TABLE "CommunityProject" (
     "author" TEXT NOT NULL,
     "codeUrl" TEXT,
     "contentId" INTEGER NOT NULL,
-    "submittedBy" TEXT,
+    "submittedById" INTEGER,
+    "isApproved" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "CommunityProject_pkey" PRIMARY KEY ("id")
 );
@@ -394,6 +396,9 @@ ALTER TABLE "Event" ADD CONSTRAINT "Event_contentId_fkey" FOREIGN KEY ("contentI
 
 -- AddForeignKey
 ALTER TABLE "CommunityProject" ADD CONSTRAINT "CommunityProject_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "Content"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CommunityProject" ADD CONSTRAINT "CommunityProject_submittedById_fkey" FOREIGN KEY ("submittedById") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "DaoProposal" ADD CONSTRAINT "DaoProposal_functionId_fkey" FOREIGN KEY ("functionId") REFERENCES "DaoFunction"("id") ON DELETE SET NULL ON UPDATE CASCADE;

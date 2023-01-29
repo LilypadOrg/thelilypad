@@ -270,7 +270,6 @@ export const courseRouter = createRouter()
       }
     },
   })
-
   .query('userRoadmap', {
     input: z.object({
       userId: z.number(),

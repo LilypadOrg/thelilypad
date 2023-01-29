@@ -160,7 +160,7 @@ const seedCommunityProjects = async () => {
     tags: { connect: c.tags.map((l) => ({ name: l })) },
     communityProject: {
       create: {
-        id: c.id,
+        // id: c.id,
         author: c.author,
         codeUrl: c.codeUrl,
         contentId: c.id,

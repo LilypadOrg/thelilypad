@@ -10,8 +10,9 @@ import {
   MAX_FILE_SIZE,
 } from '~/utils/constants';
 import { useRef } from 'react';
-import { trpc } from '~/utils/trpc';
 import axios from 'axios';
+import { useRouter } from 'next/router';
+import { Project } from '~/types/types';
 
 const schema = z.object({
   author: z
@@ -41,55 +42,56 @@ const schema = z.object({
   url: z.string().url(),
   codeUrl: z.string().url().optional(),
   image: z
-    .custom<FileList>()
-    .refine((files) => files.length === 1, 'Image is required.') // if no file files?.length === 0, if file files?.length === 1
-    .refine((files) => {
-      console.log(files?.[0]?.size);
-      return files?.[0]?.size <= MAX_FILE_SIZE;
+    .custom<File>()
+    .refine((file) => {
+      return file;
+    }, 'Image is required.')
+    .refine((file) => {
+      return file && file.size <= MAX_FILE_SIZE;
     }, `Max file size is ${MAX_FILE_SIZE / 1000000} MB.`)
     .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+      (file) => file && ACCEPTED_IMAGE_TYPES.includes(file.type),
       `${ACCEPTED_IMAGE_TYPES.join(',')} files are accepted.`
     ),
 });
 
 export type EditProjectFormInputs = z.infer<typeof schema>;
 
+// not using TRPC because of file upload
+const createProject = async (data: FormData) => {
+  const res = await axios.post('/api/projects/edit', data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return res.data as Project;
+};
+
 export const useEditProjectForm = () => {
   const projectTechs = useRef<number[]>([]);
   const projectTags = useRef<number[]>([]);
+  const router = useRouter();
 
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<EditProjectFormInputs>({
     mode: 'onTouched',
     resolver: zodResolver(schema),
   });
 
-  // const { handleSubmit, ...metods } = useForm<EditProjectFormInputs>({
-  //   mode: 'onTouched',
-  //   resolver: zodResolver(schema),
+  // const { mutate, isLoading } = useMutation({
+  //   mutationFn: (data: FormData) => createProject(data),
+  //   onSuccess: (data) => {
+  //     router.replace(`/projects/${data.id}/${data.content.slug}`);
+  //   },
   // });
 
-  const { isLoading: isSubmitting } = trpc.useMutation(['projects.create']);
-  // const { mutate: saveProject, isLoading: isSubmitting } = trpc.useMutation([
-  //   'projects.create',
-  // ]);
-
-  // const onSubmit: SubmitHandler<EditProjectFormInputs> = (data) => {
-  //   console.log('form data');
-  //   console.log(data);
-  //   // saveProject({ ...data });
-  // };
-
   const onSubmit = handleSubmit(async (data) => {
-    console.log('form data');
-    console.log(data);
     const formData = new FormData();
-    const image = data.image.item(0);
+    const image = data.image;
     if (image) {
       formData.append('image', image);
     }
@@ -102,12 +104,9 @@ export const useEditProjectForm = () => {
     formData.append('techs', JSON.stringify(projectTechs.current));
     formData.append('tags', JSON.stringify(projectTags.current));
 
-    // saveProject({ ...data });
-    await axios.post('/api/projects/edit', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    // mutate(formData);
+    const project = await createProject(formData);
+    router.replace(`/projects/${project.id}/${project.content.slug}`);
   });
 
   return {
@@ -115,8 +114,8 @@ export const useEditProjectForm = () => {
     register,
     // handleFormSubmit: handleSubmit(onSubmit),
     onSubmit,
-    errors,
     isSubmitting,
+    errors,
     projectSkills: projectTechs,
     control,
     projectTags,
