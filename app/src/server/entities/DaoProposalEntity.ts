@@ -1,11 +1,12 @@
-import { DaoProposal } from '@prisma/client';
-import { proposalStatesEnum } from '~/types/enums';
+import { DaoProposal, DaoProposalVote } from '@prisma/client';
+import { proposalStatesEnum, voteSupportEnum } from '~/types/enums';
 import ProposalJson from '~/types/types';
 
 export interface DaoProposalModel {
   id?: number;
   proposalId?: string;
   proposer?: string;
+  proposerUrl?: string;
   title?: string;
   summary?: string;
   description?: string;
@@ -28,6 +29,7 @@ export interface DaoProposalModel {
   votesAbstained?: number;
   daoVotes?: DaoVoteModel[];
   tx?: string;
+  txUrl?: string;
   eta?: number;
 }
 
@@ -43,41 +45,53 @@ export interface DaoVoteModel {
 }
 
 export class DaoProposalEntity {
-  static parse(data: DaoProposal): DaoProposalModel {
+  static parse(
+    data?: DaoProposal,
+    dataVotes?: DaoProposalVote[]
+  ): DaoProposalModel {
     const proposalModel: DaoProposalModel = {};
 
     if (data) {
       proposalModel.id = data.id;
       proposalModel.proposalId = data.proposalId ?? undefined;
       proposalModel.title = data.description;
+      proposalModel.proposer = data.proposer;
 
-      const voteInFavorWeight = 0;
-      const voteAgainstWeight = 0;
-      const abstainedWeight = 0;
-      /*if (Array.isArray(proposalModel.daoVotes)) {
-        for (const v of proposalModel.daoVotes.filter(
+      proposalModel.proposerUrl =
+        process.env.NODE_ENV == 'production'
+          ? `https://polygonscan.com/address/${data.proposer}`
+          : `https://mumbai.polygonscan.com/address/${data.proposer}`;
+
+      proposalModel.tx = data.tx ?? '';
+
+      proposalModel.txUrl =
+        process.env.NODE_ENV == 'production'
+          ? `https://polygonscan.com/tx/${data.tx}`
+          : `https://mumbai.polygonscan.com/tx/${data.tx}`;
+
+      var voteInFavorWeight = 0;
+      var voteAgainstWeight = 0;
+      var abstainedWeight = 0;
+
+      if (dataVotes) {
+        for (const v of dataVotes.filter(
           (v) => v.support == voteSupportEnum.InFavor
         )) {
-          voteInFavorWeight += v?.weight ?? 0;
+          voteInFavorWeight += v?.weigth ?? 0;
         }
-      } //else voteInFavorWeight += proposalModel.daoVotes ?? 0;
 
-      if (Array.isArray(data.votes)) {
-        for (const v of proposalModel.daoVotes.filter(
+        for (const v of dataVotes.filter(
           (v) => v.support == voteSupportEnum.Against
         )) {
-          voteAgainstWeight += v?.weight ?? 0;
+          voteAgainstWeight += v?.weigth ?? 0;
         }
-      } //else voteAgainstWeight += proposalModel.daoVotes.weight;
-
-      if (Array.isArray(proposalModel.daoVotes)) {
-        for (const v of proposalModel.daoVotes.filter(
+        for (const v of dataVotes.filter(
           (v) => v.support == voteSupportEnum.Abstained
         )) {
-          abstainedWeight += v?.weight ?? 0;
+          abstainedWeight += v?.weigth ?? 0;
         }
-      } //else abstainedWeight += proposalModel.daoVotes.weight;
-*/
+      }
+
       //parse json with proposal content
       const jsonFile: ProposalJson = JSON.parse(data.proposalJson);
       proposalModel.summary = jsonFile.summary;

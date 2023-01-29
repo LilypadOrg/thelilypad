@@ -1,25 +1,28 @@
-import React, { useMemo, useState } from 'react';
+import Link from 'next/link';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  DaoProposalEntity,
+  DaoProposalModel,
+} from '~/server/entities/DaoProposalEntity';
+import { proposalStatesEnum } from '~/types/enums';
 import { trpc } from '~/utils/trpc';
+import ProposalStatusWidget from './ProposalStatusWidget';
 
 const pageQtty = 10;
 
 const GovernanceList = () => {
   const utils = trpc.useContext();
-
+  var proposalList: DaoProposalModel[] = [{}];
   //const [rowCount, setRowCount] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentList, setCurrentList] = useState<
-    {
-      status: number | null;
-      id: number;
-      description: string;
-      proposalId: string | null;
-      eta: number | null;
-      tx: string | null;
-      snapshotBlock: string | null;
-    }[]
-  >([]);
+  const [currentList, setCurrentList] = useState(proposalList);
+
+  useEffect(() => {
+    console.log('teste');
+    setCurrentList([]);
+    utils.invalidateQueries(['dao.list']);
+  }, []);
 
   trpc.useQuery(['dao.count'], {
     onSuccess: (data) => {
@@ -36,7 +39,7 @@ const GovernanceList = () => {
     },
   });
 
-  trpc.useQuery(
+  const { isLoading } = trpc.useQuery(
     [
       'dao.list',
       {
@@ -45,8 +48,12 @@ const GovernanceList = () => {
       },
     ],
     {
+      initialData: [{}],
       onSuccess: (data) => {
-        setCurrentList(data);
+        const convertedData = data.map((element) => {
+          return DaoProposalEntity.parse(element, element.votes!!);
+        });
+        setCurrentList(convertedData);
       },
       onError: () => {
         console.error('error');
@@ -83,16 +90,40 @@ const GovernanceList = () => {
     );
   };
 
+  const StatusButtonComponent = (proposal: DaoProposalModel) => {
+    let buttonCss = 'btn w-24';
+    if (proposal.status == proposalStatesEnum.Defeated)
+      buttonCss += ' bg-red-800';
+    else if (proposal.status == proposalStatesEnum.Succeeded)
+      buttonCss += ' bg-lime-600';
+    else if (proposal.status == proposalStatesEnum.Active)
+      buttonCss += ' bg-blue-700';
+    else if (proposal.status == proposalStatesEnum.Executed)
+      buttonCss += ' btn-primary';
+    else buttonCss += ' btn-primary';
+
+    buttonCss += ' btn-sm';
+
+    return <button className={buttonCss}>{proposal.statusDesc}</button>;
+  };
+
   const DataComponent = () => {
     const rows: JSX.Element[] = [];
-    currentList.forEach((element) => {
+    currentList.forEach((element: DaoProposalModel) => {
       rows.push(
         <tr className="border-2">
           <td>
             <div className="font-bold">
-              <button className="btn btn-primary btn-xs btn-circle">
-                {element.id}
-              </button>
+              <Link
+                href={{
+                  pathname: `/dao/proposal/${element.id}`,
+                  query: { proposal: JSON.stringify(element) },
+                }}
+              >
+                <button className="btn btn-primary btn-xs btn-circle">
+                  {element.id}
+                </button>
+              </Link>
             </div>
           </td>
           <td>
@@ -105,7 +136,13 @@ const GovernanceList = () => {
           <td></td>
           <td></td>
           <th>
-            <button className="btn btn-primary btn-sm">VOTE</button>
+            <ProposalStatusWidget
+              statusId={element.id!!}
+              statusDescription={element.statusDesc ?? 'UNKNOWN'}
+              width={24}
+              size="sm"
+              url={`/dao/proposal/${element.id}`}
+            />
           </th>
         </tr>
       );
@@ -122,10 +159,26 @@ const GovernanceList = () => {
 
   return (
     <div className="w-full overflow-x-auto">
-      <DataComponent />
-      <div className="mt-2 flex justify-center">
-        <PaginationComponent />
-      </div>
+      {isLoading ? (
+        <div>
+          <div className="flex animate-pulse flex-col py-8">
+            <h1 className="mb-2 w-[30%] rounded-md bg-gray-400 text-4xl font-bold text-transparent">
+              Loading Proposal...
+            </h1>
+          </div>
+          {/* hero image */}
+          <div className="relative flex h-[200px] w-full animate-pulse items-center justify-center rounded-md bg-main-gray-dark sm:h-[300px] md:h-[400px] lg:h-[600px]"></div>
+        </div>
+      ) : (
+        !isLoading && (
+          <div>
+            <DataComponent />
+            <div className="mt-2 flex justify-center">
+              <PaginationComponent />
+            </div>
+          </div>
+        )
+      )}
     </div>
   );
 };

@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "db:dev:push": "dotenv -e .env.local -- npx prisma db push",
-    "db:dev:seed": "dotenv -e .env.local -- ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+    "db:dev:seed": "dotenv -e .env.local -- ts-node --compiler-options {\\\"module\\\":\\\"commonjs\\\"} prisma/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^2.9.8",

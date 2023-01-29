@@ -75,15 +75,14 @@ const GovernanceTreasury = () => {
         <div className="flex shrink items-center">
           <img
             src="https://cryptologos.cc/logos/polygon-matic-logo.png?v=024"
-            width="32"
+            width="28"
           />
         </div>
         <div className="row-span-11 flex items-start">
-          <h4>{fmtTreasureBalance}</h4>
+          <h5>{fmtTreasureBalance}</h5>
         </div>
       </div>
-      <h5>$&nbsp;{treasureUsd}</h5>
-      <br />
+      <h6>$&nbsp;{treasureUsd}</h6>
       <h6>
         <p style={{ color: '#7b61ff' }}>
           This treasury exists for supporting developers of the LilyPad

@@ -56,12 +56,32 @@ const ProposalButton = ({ userAddr }: { userAddr: string }) => {
 
 const GovernanceToolBar = ({ user }: { user: Session['user'] | undefined }) => {
   return (
-    <div
-      className="flex justify-end justify-items-end gap-1"
-      style={{ paddingTop: '5px', paddingRight: '0px', paddingBottom: '5px' }}
-    >
-      <ProposalButton userAddr={user?.address ?? ''} />
-      <SoonAlert />
+    <div className="overflow-x-auto">
+      <table className="table w-full">
+        <tr>
+          <td
+            className="justify-start justify-items-start gap-1"
+            style={{
+              paddingTop: '5px',
+              paddingRight: '0px',
+              paddingBottom: '5px',
+            }}
+          >
+            <h4>Proposals</h4>
+          </td>
+          <td
+            className="flex justify-end justify-items-end gap-1"
+            style={{
+              paddingTop: '5px',
+              paddingRight: '0px',
+              paddingBottom: '5px',
+            }}
+          >
+            <ProposalButton userAddr={user?.address ?? ''} />
+            <SoonAlert />
+          </td>
+        </tr>
+      </table>
     </div>
   );
 };

@@ -32,6 +32,12 @@ async function main() {
 
 const truncateAllTables = async () => {
   await prisma.$transaction([
+    prisma.userLevel.deleteMany(),
+    prisma.level.deleteMany(),
+    prisma.testAnswer.deleteMany(),
+    prisma.testQuestion.deleteMany(),
+    prisma.event.deleteMany(),
+    prisma.accolade.deleteMany(),
     prisma.userCourse.deleteMany(),
     prisma.communityProject.deleteMany(),
     prisma.resource.deleteMany(),
@@ -40,12 +46,7 @@ const truncateAllTables = async () => {
     prisma.content.deleteMany(),
     prisma.technology.deleteMany(),
     prisma.tag.deleteMany(),
-    prisma.level.deleteMany(),
-    prisma.userLevel.deleteMany(),
-    prisma.accolade.deleteMany(),
     prisma.contentType.deleteMany(),
-    prisma.testAnswer.deleteMany(),
-    prisma.testQuestion.deleteMany(),
   ]);
 };
 
@@ -148,7 +149,7 @@ const seedResources = async () => {
 
 const seedCommunityProjects = async () => {
   const data = communityProjects.map((c) => ({
-    // id: c.id,
+    id: c.id,
     title: c.title,
     slug: slugify(c.title),
     description: c.description,
@@ -162,6 +163,7 @@ const seedCommunityProjects = async () => {
         id: c.id,
         author: c.author,
         codeUrl: c.codeUrl,
+        contentId: c.id,
       },
     },
   }));
@@ -169,6 +171,29 @@ const seedCommunityProjects = async () => {
   for (let i = 0; i < data.length; i++) {
     await prisma.content.create({ data: data[i] });
   }
+
+  /*for (let i = 0; i < data.length; i++) {
+    const newRow = await prisma.content.create({
+      data: {
+        title: data[i].title,
+        slug: data[i].slug,
+        description: data[i].description,
+        url: data[i].url,
+        coverImageUrl: data[i].coverImageUrl,
+        contentType: data[i].contentType,
+        technologies: data[i].technologies,
+        tags: data[i].tags,
+      },
+    });
+    await prisma.communityProject.create({
+      data: {
+        id: newRow.id,
+        author: data[i].communityProject.create.author!!,
+        codeUrl: data[i].communityProject.create.codeUrl!!,
+        contentId: newRow.id,
+      },
+    });
+  }*/
 
   console.log(`Community projects created ${data.length}`);
 };

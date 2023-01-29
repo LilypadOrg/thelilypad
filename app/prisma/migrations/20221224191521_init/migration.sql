@@ -214,7 +214,7 @@ CREATE TABLE "DaoProposal" (
     "eta" INTEGER,
     "params" TEXT[],
     "tx" VARCHAR(200),
-    "functionId" INTEGER,
+    "functionId" INTEGER[],
     "snapshotBlock" TEXT,
 
     CONSTRAINT "DaoProposal_pkey" PRIMARY KEY ("id")

@@ -23,14 +23,14 @@ const defaultDaoProposalSelect = Prisma.validator<Prisma.DaoProposalSelect>()({
   tx: true,
   functionId: true,
   snapshotBlock: true,
-  function: {
-    select: {
-      contractAddress: true,
-      contractFunction: true,
-      functionInputs: true,
-      functionName: true,
-    },
-  },
+  //function: {
+  //  select: {
+  //    contractAddress: true,
+  //    contractFunction: true,
+  //    functionInputs: true,
+  //    functionName: true,
+  //  },
+  //},
   votes: {
     select: {
       id: true,
@@ -39,6 +39,7 @@ const defaultDaoProposalSelect = Prisma.validator<Prisma.DaoProposalSelect>()({
       weigth: true,
       reason: true,
       voteTx: true,
+      proposalId: true,
     },
   },
 });
@@ -101,7 +102,7 @@ export const daoRouter = createRouter()
           //cursor: {
           //  id: input?.cursorId ? input?.cursorId : 1,
           //},
-          select: listDaoProposalSelect,
+          select: defaultDaoProposalSelect, //listDaoProposalSelect,
         });
         return proposals;
       } catch (err) {
@@ -144,11 +145,11 @@ export const daoRouter = createRouter()
     async resolve({ input }) {
       try {
         const { id } = input;
+
         const proposal = await prisma.daoProposal.findUnique({
-          where: { id },
+          where: { id: id },
           select: defaultDaoProposalSelect,
         });
-
         if (!proposal) {
           throw new TRPCError({
             code: 'NOT_FOUND',
@@ -157,9 +158,10 @@ export const daoRouter = createRouter()
         }
         return proposal;
       } catch (err) {
+        console.log(err);
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: `Error retrieving data.`,
+          message: `Error retrieving data. Error: ${err}`,
         });
       }
     },
