@@ -13,6 +13,7 @@ export const SpotLightCards = ({
 }) => {
   const id = project.id;
   const { slug, title, coverImageUrl, description } = project.content;
+  console.log(`${PROJECTS_IMAGE_PATH}${coverImageUrl}`);
 
   return (
     <>

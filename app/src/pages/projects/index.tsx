@@ -13,6 +13,8 @@ const Projects: NextPage = () => {
   const { data: projects, isLoading } = trpc.useQuery(['projects.all']);
   const { data: session } = useSession();
 
+  console.log({ projects });
+
   return (
     <>
       <div className="gradient-bg-top-courses px-[2.5rem] pt-2 lg:px-[5.5rem]">

@@ -15,7 +15,7 @@ import ReactCrop, {
 } from 'react-image-crop';
 import { canvasPreview } from '~/utils/canvasPreview';
 import { ACCEPTED_IMAGE_TYPES } from '~/utils/constants';
-import Modal from '../Modal';
+import Modal from '~/components/modals/Modal';
 import { InputProps } from './Input';
 import 'react-image-crop/dist/ReactCrop.css';
 
@@ -155,7 +155,7 @@ FormInputProps<TFormValues>) => {
 
   return (
     <>
-      <Modal open={showModal} onClose={() => setShowModal(false)}>
+      <Modal open={showModal} setOpen={setShowModal}>
         {!!imageSrc && (
           <div onWheelCapture={onScroll}>
             <ReactCrop

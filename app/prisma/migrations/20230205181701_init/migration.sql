@@ -401,9 +401,6 @@ ALTER TABLE "CommunityProject" ADD CONSTRAINT "CommunityProject_contentId_fkey" 
 ALTER TABLE "CommunityProject" ADD CONSTRAINT "CommunityProject_submittedById_fkey" FOREIGN KEY ("submittedById") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "DaoProposal" ADD CONSTRAINT "DaoProposal_functionId_fkey" FOREIGN KEY ("functionId") REFERENCES "DaoFunction"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "DaoProposalVote" ADD CONSTRAINT "DaoProposalVote_proposalId_fkey" FOREIGN KEY ("proposalId") REFERENCES "DaoProposal"("proposalId") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
