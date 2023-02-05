@@ -168,9 +168,9 @@ const seedCommunityProjects = async () => {
     },
   }));
 
-  for (let i = 0; i < data.length; i++) {
-    await prisma.content.create({ data: data[i] });
-  }
+  //for (let i = 0; i < data.length; i++) {
+  //  await prisma.content.create({ data: data[i] });
+  //}
 
   /*for (let i = 0; i < data.length; i++) {
     const newRow = await prisma.content.create({

@@ -44,16 +44,6 @@ const defaultDaoProposalSelect = Prisma.validator<Prisma.DaoProposalSelect>()({
   },
 });
 
-const listDaoProposalSelect = Prisma.validator<Prisma.DaoProposalSelect>()({
-  id: true,
-  description: true,
-  status: true,
-  proposalId: true,
-  eta: true,
-  tx: true,
-  snapshotBlock: true,
-});
-
 export const daoRouter = createRouter()
   // read
   .query('all', {

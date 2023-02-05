@@ -24,5 +24,8 @@
   "Alchemy-SDK",
   "Axios",
   "React-Bootstrap",
-  "Tailwind CSS"
+  "Tailwind CSS",
+  "Blockchain",
+  "Cryptography",
+  "SHA256"
 ]

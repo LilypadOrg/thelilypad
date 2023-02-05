@@ -4,7 +4,6 @@ import {
   DaoProposalEntity,
   DaoProposalModel,
 } from '~/server/entities/DaoProposalEntity';
-import { proposalStatesEnum } from '~/types/enums';
 import { trpc } from '~/utils/trpc';
 import ProposalStatusWidget from './ProposalStatusWidget';
 
@@ -12,7 +11,7 @@ const pageQtty = 10;
 
 const GovernanceList = () => {
   const utils = trpc.useContext();
-  var proposalList: DaoProposalModel[] = [{}];
+  const proposalList: DaoProposalModel[] = [{}];
   //const [rowCount, setRowCount] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,7 +50,7 @@ const GovernanceList = () => {
       initialData: [{}],
       onSuccess: (data) => {
         const convertedData = data.map((element) => {
-          return DaoProposalEntity.parse(element, element.votes!!);
+          return DaoProposalEntity.parse(element, element.votes);
         });
         setCurrentList(convertedData);
       },
@@ -90,23 +89,6 @@ const GovernanceList = () => {
     );
   };
 
-  const StatusButtonComponent = (proposal: DaoProposalModel) => {
-    let buttonCss = 'btn w-24';
-    if (proposal.status == proposalStatesEnum.Defeated)
-      buttonCss += ' bg-red-800';
-    else if (proposal.status == proposalStatesEnum.Succeeded)
-      buttonCss += ' bg-lime-600';
-    else if (proposal.status == proposalStatesEnum.Active)
-      buttonCss += ' bg-blue-700';
-    else if (proposal.status == proposalStatesEnum.Executed)
-      buttonCss += ' btn-primary';
-    else buttonCss += ' btn-primary';
-
-    buttonCss += ' btn-sm';
-
-    return <button className={buttonCss}>{proposal.statusDesc}</button>;
-  };
-
   const DataComponent = () => {
     const rows: JSX.Element[] = [];
     currentList.forEach((element: DaoProposalModel) => {
@@ -137,7 +119,7 @@ const GovernanceList = () => {
           <td></td>
           <th>
             <ProposalStatusWidget
-              statusId={element.id!!}
+              statusId={element.id ?? 0}
               statusDescription={element.statusDesc ?? 'UNKNOWN'}
               width={24}
               size="sm"

@@ -1,6 +1,4 @@
-import classNames from 'classnames';
 import Link from 'next/link';
-import { string } from 'zod';
 import { proposalStatesEnum } from '~/types/enums';
 
 export type ProposalStatusWidgetProps = {

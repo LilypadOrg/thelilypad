@@ -2,10 +2,7 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import ProposalStatusWidget from '~/components/ProposalStatusWidget';
 import BackButton from '~/components/ui/BackButton';
-import {
-  DaoProposalEntity,
-  DaoProposalModel,
-} from '~/server/entities/DaoProposalEntity';
+import { DaoProposalEntity } from '~/server/entities/DaoProposalEntity';
 import { trpc } from '~/utils/trpc';
 
 export type ProposalHeaderProps = {
@@ -23,10 +20,10 @@ const ProposalPage: NextPage = () => {
 
   const { data: proposal, isLoading } = trpc.useQuery(['dao.byId', { id }]);
   const daoEntity = DaoProposalEntity.parse(proposal);
-  console.log(daoEntity);
+
   const ProposalHeader = ({
-    propId,
-    status,
+    //propId,
+    //status,
     proposer,
     proposerUrl,
     title,
@@ -59,9 +56,9 @@ const ProposalPage: NextPage = () => {
               }}
             >
               <h1 className="mb-2 text-3xl font-bold text-stone-400">
-                Proposal {daoEntity.id} {' '}
+                Proposal {daoEntity.id}{' '}
                 <ProposalStatusWidget
-                  statusId={daoEntity.status!!}
+                  statusId={daoEntity.status ?? 0}
                   statusDescription={daoEntity.statusDesc ?? 'UNKNOWN'}
                   width={24}
                   size="sm"
@@ -83,7 +80,7 @@ const ProposalPage: NextPage = () => {
                 paddingTop: '1px',
               }}
             >
-              <h1 className="mb-2 text-4xl font-bold text-primary">{title}</h1>
+              <h1 className="text-primary mb-2 text-4xl font-bold">{title}</h1>
             </td>
           </tr>
           <tr>
@@ -106,12 +103,18 @@ const ProposalPage: NextPage = () => {
                   className="link-primary link"
                   href={proposerUrl}
                   target="_blank"
+                  rel="noreferrer"
                 >
                   {proposer ? proposer.substring(0, 5) : ''}..
                   {proposer ? proposer.substring(proposer.length - 5) : ''}
                 </a>{' '}
                 at{' '}
-                <a className="link-primary link" href={txUrl} target="_blank">
+                <a
+                  className="link-primary link"
+                  href={txUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   {tx ? tx.substring(0, 5) : ''}..
                   {tx ? tx.substring(tx.length - 5) : ''}
                 </a>{' '}
@@ -140,12 +143,12 @@ const ProposalPage: NextPage = () => {
         {daoEntity && (
           <div>
             <ProposalHeader
-              propId={daoEntity.id!!}
-              proposer={daoEntity.proposer!!}
-              proposerUrl={daoEntity.proposerUrl!!}
-              title={daoEntity.title!!}
-              tx={daoEntity.tx!!}
-              txUrl={daoEntity.txUrl!!}
+              propId={daoEntity.id ?? 0}
+              proposer={daoEntity.proposer ?? ''}
+              proposerUrl={daoEntity.proposerUrl ?? ''}
+              title={daoEntity.title ?? ''}
+              tx={daoEntity.tx}
+              txUrl={daoEntity.txUrl}
             />
             {/* Intro and desc */}
             <h1 className="mb-0 text-3xl font-semibold">MORE DATA HERE</h1>

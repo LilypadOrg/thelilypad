@@ -69,9 +69,9 @@ export class DaoProposalEntity {
           ? `https://polygonscan.com/tx/${data.tx}`
           : `https://mumbai.polygonscan.com/tx/${data.tx}`;
 
-      var voteInFavorWeight = 0;
-      var voteAgainstWeight = 0;
-      var abstainedWeight = 0;
+      let voteInFavorWeight = 0;
+      let voteAgainstWeight = 0;
+      let abstainedWeight = 0;
 
       if (dataVotes) {
         for (const v of dataVotes.filter(

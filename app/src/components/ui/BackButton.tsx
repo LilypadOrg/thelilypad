@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import Link from 'next/link';
 
 export type ButtonProps = {
