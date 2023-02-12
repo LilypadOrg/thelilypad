@@ -9,7 +9,6 @@ import {
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE,
 } from '~/utils/constants';
-import { useRef } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { Project } from '~/types/types';
@@ -40,7 +39,9 @@ const schema = z.object({
       message: `Description can be maximum ${PROJECT_NAME_MAX_LENGTH} characters`,
     }),
   url: z.string().url(),
-  codeUrl: z.string().url().optional(),
+  codeUrl: z.string().url().nullish(),
+  techs: z.array(z.number()),
+  tags: z.array(z.number()),
   image: z
     .custom<File>()
     .refine((file) => {
@@ -68,19 +69,17 @@ const createProject = async (data: FormData) => {
 };
 
 export const useEditProjectForm = () => {
-  const projectTechs = useRef<number[]>([]);
-  const projectTags = useRef<number[]>([]);
   const router = useRouter();
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors, isSubmitting },
-  } = useForm<EditProjectFormInputs>({
-    mode: 'onTouched',
-    resolver: zodResolver(schema),
-  });
+  const { register, handleSubmit, control, formState, reset } =
+    useForm<EditProjectFormInputs>({
+      mode: 'onTouched',
+      resolver: zodResolver(schema),
+      defaultValues: {
+        techs: [],
+        tags: [],
+      },
+    });
 
   // const { mutate, isLoading } = useMutation({
   //   mutationFn: (data: FormData) => createProject(data),
@@ -95,14 +94,15 @@ export const useEditProjectForm = () => {
     if (image) {
       formData.append('image', image);
     }
+    console.log({ data });
 
     formData.append('author', data.author);
     formData.append('title', data.title);
     formData.append('description', data.description);
     formData.append('url', data.url);
     data.codeUrl && formData.append('codeUrl', data.codeUrl);
-    formData.append('techs', JSON.stringify(projectTechs.current));
-    formData.append('tags', JSON.stringify(projectTags.current));
+    formData.append('techs', JSON.stringify(data.techs));
+    formData.append('tags', JSON.stringify(data.tags));
 
     // mutate(formData);
     const project = await createProject(formData);
@@ -114,10 +114,8 @@ export const useEditProjectForm = () => {
     register,
     // handleFormSubmit: handleSubmit(onSubmit),
     onSubmit,
-    isSubmitting,
-    errors,
-    projectSkills: projectTechs,
+    formState,
     control,
-    projectTags,
+    reset,
   };
 };

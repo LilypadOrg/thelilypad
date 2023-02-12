@@ -165,7 +165,7 @@ CREATE TABLE "CommunityProject" (
     "codeUrl" TEXT,
     "contentId" INTEGER NOT NULL,
     "submittedById" INTEGER,
-    "isApproved" BOOLEAN NOT NULL DEFAULT false,
+    "isVisible" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "CommunityProject_pkey" PRIMARY KEY ("id")
 );

@@ -1,4 +1,3 @@
-import { MutableRefObject, useState } from 'react';
 import LevelPill from './ui/LevelPill';
 
 interface option {
@@ -9,28 +8,25 @@ interface option {
 const PillSelector = ({
   label = 'Values',
   options,
-  selectedOptions: selectedOptions,
+  value,
+  onChange,
 }: {
   label: string;
   options: option[];
-  selectedOptions: MutableRefObject<number[]>;
+  value: number[];
+  onChange: (value: number[]) => void;
 }) => {
-  const [selectedValues, setSelectedValues] = useState<Array<number>>([]);
+  const selected = options.filter((s) => value.includes(s.value));
+  const available = options.filter((s) => !value.includes(s.value));
 
-  const selected = options.filter((s) => selectedValues.includes(s.value));
-  const available = options.filter((s) => !selectedValues.includes(s.value));
-
-  const addSelected = (value: number) => {
-    const values = [...selectedValues, value];
-    setSelectedValues(values);
-    selectedOptions.current = values;
+  const addSelected = (addedValue: number) => {
+    const values = [...value, addedValue];
+    onChange(values);
   };
 
-  const removeSelected = (value: number) => {
-    const values = selectedValues.filter((s) => s !== value);
-
-    setSelectedValues(values);
-    selectedOptions.current = values;
+  const removeSelected = (removedValue: number) => {
+    const values = value.filter((s) => s !== removedValue);
+    onChange(values);
   };
 
   return (

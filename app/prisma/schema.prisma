@@ -182,7 +182,7 @@ model CommunityProject {
   contentId Int     @unique
   submittedBy           User?      @relation(fields: [submittedById], references: [id])
   submittedById         Int?
-  isApproved   Boolean @default(false)
+  isVisible   Boolean @default(false)
 }
 
 model ContentType {

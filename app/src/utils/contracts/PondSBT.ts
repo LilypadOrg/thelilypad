@@ -315,7 +315,7 @@ const PondSbtAbi = [
       { internalType: 'address', name: 'owner', type: 'address' },
       { internalType: 'address', name: 'operator', type: 'address' },
     ],
-    name: 'isApprovedForAll',
+    name: 'isVisibleForAll',
     outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
     stateMutability: 'view',
     type: 'function',

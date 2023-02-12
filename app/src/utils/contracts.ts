@@ -21,7 +21,6 @@ const getChainId = () => {
 const getContractAddress = (contractName: string) => {
   const chainId = getChainId();
 
-  contractAddresses[1337];
   const contractAddress = addresses[chainId].find(
     (c) => c.contract === contractName
   )?.address;

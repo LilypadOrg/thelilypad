@@ -52,7 +52,7 @@ const CourseCard = ({
     >
       <div className="flex flex-col justify-start">
         <div className="relative h-[120px] w-full rounded-tr-lg rounded-tl-lg bg-main-gray-dark lg:h-[182px]">
-          <Link href={`/courses/${course.content.id}/${course.content.slug}`}>
+          <Link href={`/courses/${course.id}/${course.content.slug}`}>
             <a>
               {course.content.coverImageUrl && (
                 <Image

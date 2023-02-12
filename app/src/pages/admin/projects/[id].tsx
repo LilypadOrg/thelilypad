@@ -12,10 +12,10 @@ const AdminProjectPage: NextPage = () => {
   const {
     data: project,
     isLoading,
-    error,
+    // error,
   } = trpc.useQuery(['projects.byId', { id }]);
 
-  error?.data?.code === 'NOT_FOUND' && router.push('/');
+  // error?.data?.code === 'NOT_FOUND' && router.push('/');
 
   return (
     <>
