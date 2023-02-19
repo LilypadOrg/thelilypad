@@ -8,19 +8,30 @@ import { SpotLightCardsLoading } from '~/components/ui/Loaders';
 // import EditProjectModal from '~/components/EditProjectModal';
 import { useSession } from 'next-auth/react';
 import Button from '~/components/ui/Button';
+import Link from 'next/link';
+import useAdmin from '~/hooks/useAdmin';
 
 const Projects: NextPage = () => {
+  useAdmin();
   const { data: projects, isLoading } = trpc.useQuery(['projects.all']);
   const { data: session } = useSession();
-
-  console.log({ projects });
+  const { data: user } = trpc.useQuery(
+    ['users.byAddress', { address: session?.user?.address || '' }],
+    {
+      enabled: Boolean(session?.user?.address),
+    }
+  );
 
   return (
     <>
       <div className="gradient-bg-top-courses px-[2.5rem] pt-2 lg:px-[5.5rem]">
         <div className="flex items-center gap-x-4">
           <h3 className="mb-8 mt-4">Community Projects</h3>
-          {session && <Button text="Add a project" url="/projects/create" />}
+          {user && user.hasPondSBT && (
+            <Button>
+              <Link href="/projects/create">Add a project</Link>
+            </Button>
+          )}
         </div>
         <div className="md: grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {isLoading &&

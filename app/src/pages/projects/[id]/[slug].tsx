@@ -47,7 +47,7 @@ const ProjectPage: NextPage = () => {
         )}
         {project && (
           <div>
-            {!project.isApproved && (
+            {!project.isVisible && (
               <div className="rounded-md border border-secondary-500 bg-secondary-300 py-2 px-4 text-xl font-bold">
                 {isOwner ? 'Your' : 'This'} project is pending approval and is
                 not currently visible.

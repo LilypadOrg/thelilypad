@@ -63,8 +63,17 @@ const reqDataSchema = z.object({
 });
 
 const post = async (req: NextApiRequest, res: NextApiResponse) => {
+  // Check user is authenticated
   const session = await getSession({ req });
   if (!session) {
+    return res.status(401).send('Unauthorized');
+  }
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.userId },
+  });
+
+  // Check user has Pond SBT or is admin
+  if (!user || (!user.hasPondSBT && !user.isAdmin)) {
     return res.status(401).send('Unauthorized');
   }
 

@@ -3,16 +3,14 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { createRouter } from '~/server/createRouter';
 import { prisma } from '~/server/prisma';
-import { ContentType } from '~/types/types';
 import { BROWSE_COURSES_ITEMS } from '~/utils/constants';
-import { slugify } from '~/utils/formatters';
 
 export const defaultProjectSelect =
   Prisma.validator<Prisma.CommunityProjectSelect>()({
     id: true,
     author: true,
     codeUrl: true,
-    isApproved: true,
+    isVisible: true,
     submittedById: true,
     content: {
       select: {
@@ -36,11 +34,17 @@ export const projectsRouter = createRouter()
         technologies: z.array(z.string()).or(z.string()).optional(),
         levels: z.array(z.string()).or(z.string()).optional(),
         take: z.number().min(1).max(100).optional(),
-        isApproved: z.boolean().optional(),
+        visibility: z.enum(['Visible', '', 'Hidden', 'All']).optional(),
       })
       .optional(),
     async resolve({ input }) {
-      const isApproved = input?.isApproved ?? true;
+      let isVisible: boolean | undefined = true;
+      if (input?.visibility === 'Hidden') {
+        isVisible = false;
+      } else if (input?.visibility === 'All') {
+        isVisible = undefined;
+      }
+
       try {
         const projects = await prisma.communityProject.findMany({
           where: {
@@ -59,7 +63,7 @@ export const projectsRouter = createRouter()
             ...(input?.levels
               ? { levels: { some: { slug: { in: input.levels } } } }
               : {}),
-            isApproved,
+            isVisible,
           },
           take: input?.take || BROWSE_COURSES_ITEMS,
           select: defaultProjectSelect,
@@ -113,7 +117,7 @@ export const projectsRouter = createRouter()
           id,
           ...(isAdmin
             ? {}
-            : { OR: [{ isApproved: true }, { submittedById: userId }] }),
+            : { OR: [{ isVisible: true }, { submittedById: userId }] }),
         },
         select: defaultProjectSelect,
       });
@@ -126,49 +130,49 @@ export const projectsRouter = createRouter()
       return project;
     },
   })
-  .mutation('create', {
-    input: z.object({
-      author: z.string(),
-      title: z.string(),
-      description: z.string(),
-      url: z.string().url(),
-    }),
-    async resolve({ ctx, input }) {
-      if (!ctx.session?.user) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: `Unauthorized`,
-        });
-      }
-      try {
-        const { author, title, description, url } = input;
-        const submittedById = ctx.session.user.userId;
-        const project = prisma.communityProject.create({
-          data: {
-            author,
-            submittedBy: { connect: { id: submittedById } },
-            content: {
-              create: {
-                title,
-                description,
-                url,
-                slug: slugify(title),
-                contentType: {
-                  connect: { name: ContentType.COMMUNITY_PROJECT },
-                },
-              },
-            },
-          },
-        });
-        return project;
-      } catch (err) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: `Error updating course status`,
-        });
-      }
-    },
-  })
+  // .mutation('create', {
+  //   input: z.object({
+  //     author: z.string(),
+  //     title: z.string(),
+  //     description: z.string(),
+  //     url: z.string().url(),
+  //   }),
+  //   async resolve({ ctx, input }) {
+  //     if (!ctx.session?.user) {
+  //       throw new TRPCError({
+  //         code: 'UNAUTHORIZED',
+  //         message: `Unauthorized`,
+  //       });
+  //     }
+  //     try {
+  //       const { author, title, description, url } = input;
+  //       const submittedById = ctx.session.user.userId;
+  //       const project = prisma.communityProject.create({
+  //         data: {
+  //           author,
+  //           submittedBy: { connect: { id: submittedById } },
+  //           content: {
+  //             create: {
+  //               title,
+  //               description,
+  //               url,
+  //               slug: slugify(title),
+  //               contentType: {
+  //                 connect: { name: ContentType.COMMUNITY_PROJECT },
+  //               },
+  //             },
+  //           },
+  //         },
+  //       });
+  //       return project;
+  //     } catch (err) {
+  //       throw new TRPCError({
+  //         code: 'BAD_REQUEST',
+  //         message: `Error updating course status`,
+  //       });
+  //     }
+  //   },
+  // })
   .mutation('delete', {
     input: z.number(),
     async resolve({ ctx, input }) {
@@ -187,6 +191,33 @@ export const projectsRouter = createRouter()
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Error deleting project`,
+        });
+      }
+    },
+  })
+  .mutation('setIsVisible', {
+    input: z.object({
+      id: z.number(),
+      isVisible: z.boolean(),
+    }),
+    async resolve({ ctx, input }) {
+      if (!ctx.session?.user) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: `Unauthorized`,
+        });
+      }
+      try {
+        const { id, isVisible } = input;
+        const project = await prisma.communityProject.update({
+          where: { id },
+          data: { isVisible },
+        });
+        return project;
+      } catch (err) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Error updating course status`,
         });
       }
     },

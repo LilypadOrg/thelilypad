@@ -70,3 +70,12 @@ const imageExtensions: { [type: string]: string } = {
 export const getImageExtFromType = (imageType: string) => {
   return imageExtensions[imageType];
 };
+
+export const getFileFromImageUri = async (imageUri: string) => {
+  const response = await fetch(imageUri);
+  const blob = await response.blob();
+  const file = new File([blob], getImageExtFromType(blob.type), {
+    type: blob.type,
+  });
+  return file;
+};

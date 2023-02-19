@@ -7,16 +7,16 @@ import TextInput from '~/components/ui/form/TextInput';
 import TextAreaInput from '~/components/ui/form/TextAreaInput';
 import ImageInput from '~/components/ui/form/ImageInput';
 import { Controller } from 'react-hook-form';
+import Button from '~/components/ui/Button';
+import { getFileFromImageUri } from '~/utils/formatters';
 
 const CreateProjectPage: NextPage = () => {
   const {
     onSubmit,
     register,
-    projectSkills,
-    isSubmitting,
-    projectTags,
-    errors,
+    formState: { isSubmitting, errors, isValid },
     control,
+    reset,
   } = useEditProjectForm();
 
   const { data: techs } = trpc.useQuery(['technologies.all']);
@@ -24,6 +24,26 @@ const CreateProjectPage: NextPage = () => {
 
   const { data: tags } = trpc.useQuery(['tags.all']);
   const tagOptions = tags?.map((t) => ({ value: t.id, label: t.name })) || [];
+
+  trpc.useQuery(['projects.byId', { id: 4 }], {
+    onSuccess: async (data) => {
+      console.log({ data });
+      const {
+        codeUrl,
+        author,
+        content: { title, description, url, coverImageUrl },
+      } = data;
+      const techs = data.content.technologies.map((t) => t.id);
+      const tags = data.content.tags.map((t) => t.id);
+      const image = coverImageUrl
+        ? await getFileFromImageUri(
+            '/images/communityProjects/' + coverImageUrl
+          )
+        : undefined;
+      console.log({ image });
+      reset({ codeUrl, author, title, tags, techs, description, url, image });
+    },
+  });
 
   return (
     <div>
@@ -46,13 +66,6 @@ const CreateProjectPage: NextPage = () => {
                 {...register('description')}
                 error={errors.description}
               />
-              {/* <ImageInput
-                name="image"
-                error={errors.image}
-                label="Upload Image"
-                register={register}
-              /> */}
-
               <Controller
                 control={control}
                 name="image"
@@ -67,33 +80,42 @@ const CreateProjectPage: NextPage = () => {
                 )}
               />
 
-              <PillSelector
-                label="Technologies"
-                selectedOptions={projectSkills}
-                options={techOptions}
+              <Controller
+                control={control}
+                name="techs"
+                render={({ field: { onChange, value } }) => (
+                  <PillSelector
+                    label="Technologies"
+                    options={tagOptions}
+                    value={value}
+                    onChange={onChange}
+                  />
+                )}
               />
-              <PillSelector
-                label="Tags"
-                selectedOptions={projectTags}
-                options={tagOptions}
+              <Controller
+                control={control}
+                name="tags"
+                render={({ field: { onChange, value } }) => (
+                  <PillSelector
+                    label="Tags"
+                    options={techOptions}
+                    value={value}
+                    onChange={onChange}
+                  />
+                )}
               />
             </div>
             <div className="bg-transparent px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-              <button
-                type="submit"
-                className={`inline-flex w-full justify-center rounded-md border border-transparent bg-primary-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
-                  isSubmitting && 'cursor-not-allowed'
-                }`}
-              >
+              <Button type="submit" disabled={isSubmitting || !isValid}>
                 {isSubmitting ? (
                   <>
                     <SpinningCircle />
-                    Saving profile
+                    Saving...
                   </>
                 ) : (
-                  'Save Profile'
+                  'Save Project'
                 )}
-              </button>
+              </Button>
             </div>
           </form>
         </div>

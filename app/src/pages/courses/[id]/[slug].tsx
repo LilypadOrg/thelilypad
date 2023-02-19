@@ -9,7 +9,7 @@ import AddCourseToRoadmap from '~/components/AddCourseToRoadmap';
 import { CompleteCourse } from '~/components/CompleteCourse';
 import CourseCard from '~/components/CourseCard';
 import LevelPill from '~/components/ui/LevelPill';
-import { BROWSE_COURSES_ITEMS } from '~/utils/constants';
+import { BROWSE_COURSES_ITEMS, PROJECTS_IMAGE_PATH } from '~/utils/constants';
 import { trpc } from '~/utils/trpc';
 import { FaCogs } from 'react-icons/fa';
 import { AiFillTags } from 'react-icons/ai';
@@ -235,7 +235,7 @@ const CoursePage: NextPage = () => {
             <div className="relative min-h-[353px] min-w-[51.2%] rounded-lg border-[0.15rem] border-primary-600 bg-primary-600 text-white ">
               {project?.content.coverImageUrl && (
                 <Image
-                  src={project.content.coverImageUrl}
+                  src={`${PROJECTS_IMAGE_PATH}${project.content.coverImageUrl}`}
                   alt="community project thumbnail"
                   layout="fill"
                   objectFit="contain"

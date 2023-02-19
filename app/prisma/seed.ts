@@ -164,7 +164,7 @@ const seedCommunityProjects = async () => {
         // id: c.id,
         author: c.author,
         codeUrl: c.codeUrl,
-        isApproved: true,
+        isVisible: true,
         // contentId: c.id,
       },
     },

@@ -1,5 +1,5 @@
-import React, { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import React, { Fragment } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
 
 const Modal = ({
   open,
@@ -12,7 +12,7 @@ const Modal = ({
 }) => {
   return (
     <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={() => setOpen(false)}>
+      <Dialog as="div" className="relative z-10" onClose={setOpen}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"

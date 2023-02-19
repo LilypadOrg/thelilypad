@@ -153,7 +153,7 @@ const ProfilePage: NextPage = () => {
           aspernatur atque.
         </p>
         <div className="mt-6 flex flex-wrap gap-6">
-          {accolades.slice(0, 2).map((a) => (
+          {accolades.slice(0, 3).map((a) => (
             <AccoladeCard key={`accolade-${a.id}`} accolade={a} />
           ))}
         </div>
