@@ -64,6 +64,51 @@ const options = [
     prefix: 'JS-ADV',
     level: 'Advanced',
   },
+  {
+    tech: 'Blockchain',
+    prefix: 'BLK-BEG',
+    level: 'Beginner',
+  },
+  {
+    tech: 'Blockchain',
+    prefix: 'BLK-INT',
+    level: 'Intermediate',
+  },
+  {
+    tech: 'Blockchain',
+    prefix: 'BLK-ADV',
+    level: 'Advanced',
+  },
+  {
+    tech: 'Ethereum',
+    prefix: 'ETH-BEG',
+    level: 'Beginner',
+  },
+  {
+    tech: 'Ethereum',
+    prefix: 'ETH-INT',
+    level: 'Intermediate',
+  },
+  {
+    tech: 'Ethereum',
+    prefix: 'ETH-ADV',
+    level: 'Advanced',
+  },
+  {
+    tech: 'Bitcoin',
+    prefix: 'BTC-BEG',
+    level: 'Beginner',
+  },
+  {
+    tech: 'Bitcoin',
+    prefix: 'BTC-INT',
+    level: 'Intermediate',
+  },
+  {
+    tech: 'Bitcoin',
+    prefix: 'BTC-ADV',
+    level: 'Advanced',
+  },
 ];
 
 const prisma = new PrismaClient();
@@ -99,7 +144,36 @@ const seedQuestions = async () => {
 };
 
 const seedQuestionsBulk = async () => {
-  for (let o = 0; o < options.length; o++) {
+  const parsedQuestions = questions.map((q, idx) => ({
+    question: `${q.question}`,
+    code: `${q.code}`,
+    technology: { connect: { name: q.technology } },
+    level: { connect: { name: q.level } },
+  }));
+  var techQuestions: string[] = [];
+
+  parsedQuestions.forEach((item) => {
+    if (!techQuestions.includes(item.technology.connect.name)) {
+      techQuestions.push(item.technology.connect.name);
+    }
+  });
+
+  for (let i = 0; i < techQuestions.length; i++) {
+    console.log(techQuestions[i]);
+    const filteredTechQuestions = parsedQuestions.filter(
+      (q) => q.technology.connect.name == techQuestions[i]
+    );
+
+    for (let idx = 0; idx < filteredTechQuestions.length; idx++) {
+      await prisma.testQuestion.create({ data: filteredTechQuestions[idx] });
+    }
+
+    console.log(
+      `${filteredTechQuestions.length} ${filteredTechQuestions[0].technology.connect.name} questions created`
+    );
+  }
+
+  /*for (let o = 0; o < options.length; o++) {
     const questions = [...Array(QUESTIONS_PER_LEVEL)].map((e, i) => ({
       question: `${options[o].tech} ${options[o].level} question ${i + 1}`,
       code: `${options[o].prefix}-${(i + 1).toString().padStart(4, '0')}`,
@@ -114,11 +188,31 @@ const seedQuestionsBulk = async () => {
     console.log(
       `${questions.length} ${options[o].tech} ${options[o].level} questions created`
     );
-  }
+  }*/
 };
 
 const seedAnswersBulk = async () => {
-  for (let o = 0; o < options.length; o++) {
+  const answers = questions.map((e, i) =>
+    e.answers.map((f, j) => ({
+      answer: f.answer,
+      correct: f.correct ?? false,
+      question: {
+        connect: {
+          code: e.code,
+        },
+      },
+    }))
+  );
+
+  const flatAnswers = answers.flat(1);
+
+  for (let i = 0; i < flatAnswers.length; i++) {
+    await prisma.testAnswer.create({ data: flatAnswers[i] });
+  }
+
+  console.log(`${flatAnswers.length} answers created`);
+
+  /*for (let o = 0; o < options.length; o++) {
     const answers = [...Array(QUESTIONS_PER_LEVEL)].map((e, i) =>
       [...Array(4)].map((f, j) => ({
         answer: `Answer ${options[o].prefix}-${(i + 1)
@@ -142,5 +236,5 @@ const seedAnswersBulk = async () => {
     console.log(
       `${flatAnswers.length} ${options[o].tech} ${options[o].level} answers created`
     );
-  }
+  }*/
 };

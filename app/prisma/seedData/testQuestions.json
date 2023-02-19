@@ -15,51 +15,6 @@
     ]
   },
   {
-    "code": "CRYP-BEG-1",
-    "question": "Is the following statement true? 'Asymmetric cryptography or public key systems use three different keys: one of them can be public, the other is private, the user protects it to access the information he receives through his public key. And the last one works for both.'",
-    "technology": "Cryptography",
-    "level": "Beginner",
-    "answers": [
-      {
-        "answer": "True"
-      },
-      {
-        "answer": "False",
-        "correct": true
-      }
-    ]
-  },
-  {
-    "code": "CRYP-ADV-1",
-    "question": "Is the following statement true? 'A merkle tree is a data structure divided into a layer whose purpose is to relate each node with a unique root associated with them.'",
-    "technology": "Cryptography",
-    "level": "Advanced",
-    "answers": [
-      {
-        "answer": "True",
-        "correct": true
-      },
-      {
-        "answer": "False"
-      }
-    ]
-  },
-  {
-    "code": "CRYP-ADV-2",
-    "question": "Is the following statement true? 'Symmetric key cryptography, also secret key cryptography or one-key cryptography, is a cryptographic method in which the same key is used to encrypt and decrypt messages at the sender and receiver.'",
-    "technology": "Cryptography",
-    "level": "Advanced",
-    "answers": [
-      {
-        "answer": "True",
-        "correct": true
-      },
-      {
-        "answer": "False"
-      }
-    ]
-  },
-  {
     "code": "BLK-BEG-1",
     "question": "Is the following statement true? 'The Ethereum Virtual Machine, or EVM, is part of the Bitcoin blockchain ecosystem.'",
     "technology": "Blockchain",
@@ -133,7 +88,7 @@
   },
   {
     "code": "BLK-BEG-5",
-    "question": "Is the following statement true? 'The concept of Cryptocurrency refers at the same time to the concept of Token, since they are the same.'",
+    "question": "Is the following statement true? 'Asymmetric cryptography or public key systems use three different keys: one of them can be public, the other is private, the user protects it to access the information he receives through his public key. And the last one works for both.'",
     "technology": "Blockchain",
     "level": "Beginner",
     "answers": [
@@ -148,22 +103,16 @@
   },
   {
     "code": "BLK-BEG-6",
-    "question": "Who is Satoshi Nakamoto?",
+    "question": "Is the following statement true? 'The concept of Cryptocurrency refers at the same time to the concept of Token, since they are the same.'",
     "technology": "Blockchain",
     "level": "Beginner",
     "answers": [
       {
-        "answer": "It is a pseudonym used by the person or group of experts who developed the Blockchain technology."
+        "answer": "True"
       },
       {
-        "answer": "It is a pseudonym used by the person or group of experts who developed the cryptocurrency Bitcoin and the software that supports it.",
+        "answer": "False",
         "correct": true
-      },
-      {
-        "answer": "Satoshi Nakamoto is a 37-year-old man who developed blockchain technology in Japan in 2008."
-      },
-      {
-        "answer": "It is a pseudonym used by the person who developed the Bitcoin cryptocurrency. This pseudonym was used in the first months of the birth of Bitcoin, then the identity of the person came to light."
       }
     ]
   },
@@ -190,6 +139,27 @@
   },
   {
     "code": "BLK-BEG-8",
+    "question": "Who is Satoshi Nakamoto?",
+    "technology": "Blockchain",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "It is a pseudonym used by the person or group of experts who developed the Blockchain technology."
+      },
+      {
+        "answer": "It is a pseudonym used by the person or group of experts who developed the cryptocurrency Bitcoin and the software that supports it.",
+        "correct": true
+      },
+      {
+        "answer": "Satoshi Nakamoto is a 37-year-old man who developed blockchain technology in Japan in 2008."
+      },
+      {
+        "answer": "It is a pseudonym used by the person who developed the Bitcoin cryptocurrency. This pseudonym was used in the first months of the birth of Bitcoin, then the identity of the person came to light."
+      }
+    ]
+  },
+  {
+    "code": "BLK-BEG-9",
     "question": "What is the Proof-of-Work (PoW) model?",
     "technology": "Blockchain",
     "level": "Beginner",
@@ -287,7 +257,36 @@
       }
     ]
   },
-
+  {
+    "code": "CRYP-ADV-1",
+    "question": "Is the following statement true? 'A merkle tree is a data structure divided into a layer whose purpose is to relate each node with a unique root associated with them.'",
+    "technology": "Cryptography",
+    "level": "Advanced",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "CRYP-ADV-2",
+    "question": "Is the following statement true? 'Symmetric key cryptography, also secret key cryptography or one-key cryptography, is a cryptographic method in which the same key is used to encrypt and decrypt messages at the sender and receiver.'",
+    "technology": "Cryptography",
+    "level": "Advanced",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
   {
     "code": "ETH-BEG-1",
     "question": "Is the following statement true? 'The Ethereum Virtual Machine, or EVM, is a virtual machine that is part of the Bitcoin blockchain ecosystem.'",
@@ -655,6 +654,27 @@
     ]
   },
   {
+    "code": "SOL-BEG-21",
+    "question": "What is Structs?",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "Structures are custom data types. They can be used in mappings or arrays, but can contain only simple data types like uint and strings."
+      },
+      {
+        "answer": "Structures are custom data types. They can be used in mappings or arrays, and they themselves may contain arrays and mapping.",
+        "correct": true
+      },
+      {
+        "answer": "Structures are standard data types that can only contain simple data types like uint and strings."
+      },
+      {
+        "answer": "Structures are custom data types that can not be used in mappings or arrays."
+      }
+    ]
+  },
+  {
     "code": "SOL-INT-1",
     "question": "Is the following statement true? 'The read and write of storage variables are more costly in terms of gas used per execution.'",
     "technology": "Solidity",
@@ -788,7 +808,7 @@
   },
   {
     "code": "SOL-INT-9",
-    "question": "Is the following statement true? 'Mappings can be multi-level wich means that a mapping can have another mapping as long it is not the first member.'",
+    "question": "Is the following statement true? 'Mappings can be multi-level wich means that a mapping can have another mapping as long it is not the first/left member.'",
     "technology": "Solidity",
     "level": "Intermediate",
     "answers": [
@@ -798,6 +818,111 @@
       },
       {
         "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "SOL-INT-10",
+    "question": "Can an enum type be declared inside of an interface?",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "Yes"
+      },
+      {
+        "answer": "No",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "SOL-INT-11",
+    "question": "Is the following statement true? 'Struct data types can not be used inside mappings.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "SOL-INT-12",
+    "question": "Is the following statement true? 'Struct data types can be used inside mappings and they themselves may contain arrays and mappings.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "SOL-INT-13",
+    "question": "Is it possible for a struct to contain a member of its own type?",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "Yes"
+      },
+      {
+        "answer": "No",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "SOL-INT-14",
+    "question": "Is the following statement true? 'Variables declared without specified data type with the 'var' keyword must have an initialization value.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "SOL-INT-15",
+    "question": "Is the following statement true? 'Memory arrays have fixed lenght that are defined upon its creation. Storage arrays on the other hand can grow and receive new items.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "SOL-INT-16",
+    "question": "Is the following statement true? 'Storage arrays have fixed lenght that are defined upon its creation. Memory arrays on the other hand can grow and receive new items.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
       }
     ]
   }
