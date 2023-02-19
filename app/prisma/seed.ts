@@ -33,10 +33,10 @@ async function main() {
 
 const truncateAllTables = async () => {
   await prisma.$transaction([
-    prisma.userLevel.deleteMany(),
-    prisma.level.deleteMany(),
     prisma.testAnswer.deleteMany(),
     prisma.testQuestion.deleteMany(),
+    prisma.userLevel.deleteMany(),
+    prisma.level.deleteMany(),
     prisma.event.deleteMany(),
     prisma.accolade.deleteMany(),
     prisma.userCourse.deleteMany(),

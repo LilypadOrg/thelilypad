@@ -1,64 +1,803 @@
 [
   {
+    "code": "BTC-BEG-1",
+    "question": "Is the following statement true? 'In a Hierarchical Deterministic wallet it is recommended to share the master private key.'",
+    "technology": "Bitcoin",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "CRYP-BEG-1",
+    "question": "Is the following statement true? 'Asymmetric cryptography or public key systems use three different keys: one of them can be public, the other is private, the user protects it to access the information he receives through his public key. And the last one works for both.'",
+    "technology": "Cryptography",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "CRYP-ADV-1",
+    "question": "Is the following statement true? 'A merkle tree is a data structure divided into a layer whose purpose is to relate each node with a unique root associated with them.'",
+    "technology": "Cryptography",
+    "level": "Advanced",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "CRYP-ADV-2",
+    "question": "Is the following statement true? 'Symmetric key cryptography, also secret key cryptography or one-key cryptography, is a cryptographic method in which the same key is used to encrypt and decrypt messages at the sender and receiver.'",
+    "technology": "Cryptography",
+    "level": "Advanced",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "BLK-BEG-1",
+    "question": "Is the following statement true? 'The Ethereum Virtual Machine, or EVM, is part of the Bitcoin blockchain ecosystem.'",
+    "technology": "Blockchain",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "BLK-BEG-2",
+    "question": "What is the NONCE?'",
+    "technology": "Blockchain",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "The Nonce is an integer number that together with the block number, the data, and the previous hash, serves as input to the SHA256 function to calculate the hash of the current block.",
+        "correct": true
+      },
+      {
+        "answer": "The Nonce is a decimal number that together with the block number, the data, and the previous hash, serves as input to the SHA256 function to calculate the hash of the current block."
+      },
+      {
+        "answer": "The Nonce is an integer number that independently serves as input to the SHA256 function to calculate the hash of the current block."
+      },
+      {
+        "answer": "The Nonce is an integer number that together with the block number, the data, and the previous hash, serves as input to the SHA512 function to calculate the hash of the current block."
+      }
+    ]
+  },
+  {
+    "code": "BLK-BEG-3",
+    "question": "What are the hash cryptography? characteristics?'",
+    "technology": "Blockchain",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "Unidirectional - Deterministic - Easy to Calculate - Compressible - Avalanche type operation - Weak and strong resistance to collisions - Reversible"
+      },
+      {
+        "answer": "Unidirectional - Deterministic - Hard to Calculate - Compressible - Avalanche type operation - Weak and strong resistance to collisions - Irreversibles"
+      },
+      {
+        "answer": "Unidirectional - Deterministic - Easy to Calculate - Compressible - Avalanche type operation - Weak and strong resistance to collisions - Irreversibles",
+        "correct": true
+      },
+      {
+        "answer": "Bidirectional - Deterministic - Easy to Calculate - Compressible - Avalanche type operation - Weak and strong resistance to collisions - Irreversibles"
+      }
+    ]
+  },
+  {
+    "code": "BLK-BEG-4",
+    "question": "Is the following statement true? 'Ethereum is currently the first largest cryptocurrency in the world by its market value'",
+    "technology": "Blockchain",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "BLK-BEG-5",
+    "question": "Is the following statement true? 'The concept of Cryptocurrency refers at the same time to the concept of Token, since they are the same.'",
+    "technology": "Blockchain",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "BLK-BEG-6",
+    "question": "Who is Satoshi Nakamoto?",
+    "technology": "Blockchain",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "It is a pseudonym used by the person or group of experts who developed the Blockchain technology."
+      },
+      {
+        "answer": "It is a pseudonym used by the person or group of experts who developed the cryptocurrency Bitcoin and the software that supports it.",
+        "correct": true
+      },
+      {
+        "answer": "Satoshi Nakamoto is a 37-year-old man who developed blockchain technology in Japan in 2008."
+      },
+      {
+        "answer": "It is a pseudonym used by the person who developed the Bitcoin cryptocurrency. This pseudonym was used in the first months of the birth of Bitcoin, then the identity of the person came to light."
+      }
+    ]
+  },
+  {
+    "code": "BLK-BEG-7",
+    "question": "Who is Satoshi Nakamoto?",
+    "technology": "Blockchain",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "It is a pseudonym used by the person or group of experts who developed the Blockchain technology."
+      },
+      {
+        "answer": "It is a pseudonym used by the person or group of experts who developed the cryptocurrency Bitcoin and the software that supports it.",
+        "correct": true
+      },
+      {
+        "answer": "Satoshi Nakamoto is a 37-year-old man who developed blockchain technology in Japan in 2008."
+      },
+      {
+        "answer": "It is a pseudonym used by the person who developed the Bitcoin cryptocurrency. This pseudonym was used in the first months of the birth of Bitcoin, then the identity of the person came to light."
+      }
+    ]
+  },
+  {
+    "code": "BLK-BEG-8",
+    "question": "What is the Proof-of-Work (PoW) model?",
+    "technology": "Blockchain",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "In this model, all the nodes are equal peers in the network, and all compete to seal a block before the rest and be able to obtain cryptocurrencies in exchange.",
+        "correct": true
+      },
+      {
+        "answer": "In this model, all the nodes are different peers in the network, and they all come together to seal a block before the rest and be able to obtain cryptocurrencies in exchange."
+      },
+      {
+        "answer": "This model is the same as Proof-of-Stake (PoS) where all the nodes are equal peers in the network, and all compete to seal a block before the rest and be able to get cryptocurrencies in exchange."
+      }
+    ]
+  },
+  {
+    "code": "BLK-INT-1",
+    "question": "Can Smart Contracts be used in public, private and federated blockchains?",
+    "technology": "Blockchain",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "Yes",
+        "correct": true
+      },
+      {
+        "answer": "No"
+      }
+    ]
+  },
+  {
+    "code": "BLK-INT-2",
+    "question": "Is the following statement true? 'An orphaned block (block A) is a valid block, but it is not part of a blockchain. An orphaned block is created when two miners find a valid block (block A and block B) at almost the same time and both transmit to the network.'",
+    "technology": "Blockchain",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "BLK-INT-3",
+    "question": "Is the following statement true? 'In a Hierarchical Deterministic Wallet there is a master public key that gives access to all the private keys of the Wallet.'",
+    "technology": "Blockchain",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "BLK-INT-4",
+    "question": "Is the following statement true? 'A 51% attack can be defined as the one that is directed towards a blockchain with the intention that a person or organization obtains more than half of the computation generated by the miners of this cryptocurrency.'",
+    "technology": "Blockchain",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "BLK-ADV-1",
+    "question": "How can you calculate the probability that a random hash is valid?'",
+    "technology": "Blockchain",
+    "level": "Advanced",
+    "answers": [
+      {
+        "answer": "16^46/16^64=16^(-18)",
+        "correct": true
+      },
+      {
+        "answer": "16^64/16^16=16^(48)"
+      },
+      {
+        "answer": "16^64/16^46=16^(18)"
+      },
+      {
+        "answer": "16^46/16^64=16^(-16)"
+      }
+    ]
+  },
+
+  {
+    "code": "ETH-BEG-1",
+    "question": "Is the following statement true? 'The Ethereum Virtual Machine, or EVM, is a virtual machine that is part of the Bitcoin blockchain ecosystem.'",
+    "technology": "Ethereum",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
     "code": "SOL-BEG-1",
-    "question": "Solidity Beginner Question 1",
+    "question": "What is a Smart Contract?",
     "technology": "Solidity",
     "level": "Beginner",
     "answers": [
       {
-        "answer": "answer 1",
+        "answer": "It is a computer code written in Solidity or other languages. Smart contracts live off the network. They enforce rules and perform actions, negotiated by participants in those contracts."
+      },
+      {
+        "answer": "It is a computer code written in Solidity. Smart contracts live on the network. They enforce rules and perform actions, negotiated by participants in those contracts."
+      },
+      {
+        "answer": "It is a computer code written in Solidity or other languages. Smart contracts live on the network. They enforce rules and perform actions, negotiated by participants in those contracts.",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-2",
+    "question": "Is the following statement true? 'The very first thing that must be specified in a Solidity file is the compiler version. It is necessary because it prevents incompatibility errors which can be introduced when compiling with another version'",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True",
         "correct": true
       },
       {
-        "answer": "answer 1"
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-3",
+    "question": "Is the following statement true? 'In a Smart Contract writen in Solidity you can only import local files.'",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
       },
       {
-        "answer": "answer 1"
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-4",
+    "question": "What are Storage Variables in Solidity?",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "Storage variables in Solidity are persistent variables that are managed by the contract that owns it as a key-value datastore (256 bit key & value). The read and write of storage variables are more costly in terms of gas used per execution.",
+        "correct": true
       },
       {
-        "answer": "answer 1"
+        "answer": "Storage variables in Solidity are persistent variables that are managed by the contract that owns it as a string. The read and write of storage variables are free of gas cost per execution."
+      },
+      {
+        "answer": "Storage variables in Solidity are temporary variables that are managed by the contract that owns it as a key-value datastore (256 bit key & value). The read and write of storage variables are more costly in terms of gas used per execution."
+      },
+      {
+        "answer": "Storage variables in Solidity are temporary variables that are managed by the contract that owns it as a string. The read and write of storage variables have the same cost as memory variable read and write."
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-5",
+    "question": "Is the following statement true? 'Since the Spurious Dragon hard-fork you can deploy contracts bigger than 24576 bytes.'",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-6",
+    "question": "What is a smart contract's ABI?",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "It is a XML-based document that describes the functions, events, types, and other ABIs of that contract."
+      },
+      {
+        "answer": "It is a JSON-based document that describes the contract name and size."
+      },
+      {
+        "answer": "It is a JSON-based document that describes the functions, events, types, and other ABIs of that contract.",
+        "correct": true
+      },
+      {
+        "answer": "EVM bytecode is a low-level programming language that is compiled from a high-level programming language, in this case Solidity."
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-7",
+    "question": "What is an enum in Solidity?",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "Its a constant type that stores a list of named values such as short, long, or float. Usually used to define unknown constant values that are used across the contract(s) and facilitate the developing and reading of code."
+      },
+      {
+        "answer": "Its a constant type that stores a list of named values such as short, long, or float. Usually used to define known constant values that are used across the contract(s) and facilitate the developing and reading of code.",
+        "correct": true
+      },
+      {
+        "answer": "Its a variable type that stores a list of named values such as short, long, or float. Usually used to define known constant values that are used across the contract(s) and facilitate the developing and reading of code."
+      },
+      {
+        "answer": "Its a constant type that stores a list of named values such as array or boolean. Usually used to define known constant values that are used only one time and locally. Makes it harder to read the code."
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-8",
+    "question": "What is a Library in Solidity?",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "It's a type of contract that can not be called by other contracts."
+      },
+      {
+        "answer": "A library is a piece of code that can't be re-used."
+      },
+      {
+        "answer": "A library is a piece of code that other smart contracts can re-use.",
+        "correct": true
+      },
+      {
+        "answer": "It's a type of contract that stores data."
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-9",
+    "question": "Is the following statement true? 'Since the Spurious Dragon hard-fork you can't deploy contracts bigger than 24576 bytes.'",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-10",
+    "question": "Is the following statement true? 'Foreach is an example of loop that can be used in Solidity.'",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-11",
+    "question": "Among the kinds of loop can be used in Solidity, there are:'",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "ForEach, While and For"
+      },
+      {
+        "answer": "While, Do...While and For",
+        "correct": true
+      },
+      {
+        "answer": "Map, Do...While and For"
+      },
+      {
+        "answer": "While, While...for and For"
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-12",
+    "question": "Is the following statement true? 'For is an example of loop that can be used in Solidity.'",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-13",
+    "question": "Is the following statement true? 'In a Smart Contract writen in Solidity you can import local files and HTTP files (even from Github) like [import \"http://github.com/<owner>/<repo>/<path to the file>\"].'",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-14",
+    "question": "Is the following statement true? 'The very first thing that must be specified in a Solidity file is the contract name.'",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-15",
+    "question": "What extension does the source file have in Solidity?",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": ".txt"
+      },
+      {
+        "answer": ".js"
+      },
+      {
+        "answer": ".ts"
+      },
+      {
+        "answer": ".sol",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-16",
+    "question": "What is a constructor in Solidity?",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "It is a function that is executed every time the contract is called."
+      },
+      {
+        "answer": "It's a type of contract that can not be called by other contracts."
+      },
+      {
+        "answer": "It is a function that is executed once when a contract is called for the first time."
+      },
+      {
+        "answer": "It is a function that is executed once when a contract is created.",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-17",
+    "question": "Can the constructor be called after the creation of a smart contract?",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "Yes"
+      },
+      {
+        "answer": "No",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-18",
+    "question": "Is the following statement true? 'State variables are values that are permanently stored in contract storage.'",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-19",
+    "question": "Is the following statement true? 'State variables are values that are temporarily stored in contract storage.'",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "SOL-BEG-20",
+    "question": "What is one difference between types int and uint in Solidity?",
+    "technology": "Solidity",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "None. They are the same."
+      },
+      {
+        "answer": "Uint type can store an array of int type values."
+      },
+      {
+        "answer": "Int type can store an array of uint type values."
+      },
+      {
+        "answer": "Uint type can store only positive values while int types allows negative and positive values.",
+        "correct": true
       }
     ]
   },
   {
     "code": "SOL-INT-1",
-    "question": "Solidity Intermediate Question 2",
+    "question": "Is the following statement true? 'The read and write of storage variables are more costly in terms of gas used per execution.'",
     "technology": "Solidity",
     "level": "Intermediate",
     "answers": [
       {
-        "answer": "answer 1"
-      },
-      {
-        "answer": "answer 1"
-      },
-      {
-        "answer": "answer 1",
+        "answer": "True",
         "correct": true
       },
       {
-        "answer": "answer 1"
+        "answer": "False"
       }
     ]
   },
   {
-    "code": "SOL-ADV-1",
-    "question": "Solidity Advanced Question 3",
+    "code": "SOL-INT-2",
+    "question": "What exactly is the EVM bytecode generated by solidity compiler?",
     "technology": "Solidity",
-    "level": "Advanced",
+    "level": "Intermediate",
     "answers": [
       {
-        "answer": "answer 1"
-      },
-      {
-        "answer": "answer 1",
+        "answer": "EVM bytecode is a low-level programming language that is compiled from a high-level programming language, in this case Solidity",
         "correct": true
       },
       {
-        "answer": "answer 1"
+        "answer": "EVM bytecode is a high-level programming language that is compiled from a low-level programming language, in this case Solidity"
       },
       {
-        "answer": "answer 1"
+        "answer": "It is a JSON-based document that describes the functions, events and types of that contract."
+      },
+      {
+        "answer": "It is a JSON-based document that is compiled from a low-level programming language, in this case Solidity."
+      }
+    ]
+  },
+  {
+    "code": "SOL-INT-3",
+    "question": "Is the following statement true? 'The read and write of storage variables are less costly in terms of gas used per execution.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "SOL-INT-4",
+    "question": "Is the following statement true? 'There are two types of Library: Deployed and Embedded.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "SOL-INT-5",
+    "question": "Is the following statement true? 'There are only one type of Library: Embedded.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "SOL-INT-6",
+    "question": "What is the mapping type?",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "Mappings can be seen as hash tables, which are virtually initialized so that every possible key exists and is mapped to a value whose byte-representation is all zeros — a type’s default value.",
+        "correct": true
+      },
+      {
+        "answer": "Mappings can be seen as hash tables, which are virtually initialized so that every possible key exists and is mapped to a value whose byte-representation is all ones — a type’s default value."
+      },
+      {
+        "answer": "Mappings can be seen as fixed lenght arrays where only the pre-defined values are accessible."
+      },
+      {
+        "answer": "Its a constant type that stores a list of named values such as short, long, or float. Usually used to define known constant values that are used across the contract(s) and facilitate the developing and reading of code."
+      }
+    ]
+  },
+  {
+    "code": "SOL-INT-7",
+    "question": "Is the following statement true? 'Mappings can not be multi-level wich means that a mapping can not have another mapping as one of his members.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "SOL-INT-8",
+    "question": "Is the following statement true? 'Mappings can be multi-level wich means that a mapping can have another mapping as any of his members.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "SOL-INT-9",
+    "question": "Is the following statement true? 'Mappings can be multi-level wich means that a mapping can have another mapping as long it is not the first member.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
       }
     ]
   }
