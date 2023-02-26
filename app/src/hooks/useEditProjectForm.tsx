@@ -12,8 +12,11 @@ import {
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { Project } from '~/types/types';
+import { getFileFromImageUri } from '~/utils/formatters';
+import { useEffect } from 'react';
 
 const schema = z.object({
+  id: z.number().optional(),
   author: z
     .string()
     .min(PROJECT_NAME_MIN_LENGTH, {
@@ -60,6 +63,15 @@ export type EditProjectFormInputs = z.infer<typeof schema>;
 
 // not using TRPC because of file upload
 const createProject = async (data: FormData) => {
+  const res = await axios.post('/api/projects/create', data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return res.data as Project;
+};
+
+const updateProject = async (data: FormData) => {
   const res = await axios.post('/api/projects/edit', data, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -68,7 +80,7 @@ const createProject = async (data: FormData) => {
   return res.data as Project;
 };
 
-export const useEditProjectForm = () => {
+export const useEditProjectForm = (project?: Project) => {
   const router = useRouter();
 
   const { register, handleSubmit, control, formState, reset } =
@@ -81,6 +93,40 @@ export const useEditProjectForm = () => {
       },
     });
 
+  useEffect(() => {
+    async function getDefaultValues(project?: Project) {
+      if (project) {
+        const {
+          codeUrl,
+          author,
+          id,
+          content: { title, description, url, coverImageUrl },
+        } = project;
+        const techs = project.content.technologies.map((t) => t.id);
+        const tags = project.content.tags.map((t) => t.id);
+        const image = coverImageUrl
+          ? await getFileFromImageUri(
+              '/images/communityProjects/' + coverImageUrl
+            )
+          : undefined;
+
+        reset({
+          id,
+          codeUrl,
+          author,
+          title,
+          tags,
+          techs,
+          description,
+          url,
+          image,
+        });
+      }
+    }
+
+    getDefaultValues(project);
+  }, [project, reset]);
+
   // const { mutate, isLoading } = useMutation({
   //   mutationFn: (data: FormData) => createProject(data),
   //   onSuccess: (data) => {
@@ -90,11 +136,7 @@ export const useEditProjectForm = () => {
 
   const onSubmit = handleSubmit(async (data) => {
     const formData = new FormData();
-    const image = data.image;
-    if (image) {
-      formData.append('image', image);
-    }
-    console.log({ data });
+    formData.append('image', data.image);
 
     formData.append('author', data.author);
     formData.append('title', data.title);
@@ -105,8 +147,12 @@ export const useEditProjectForm = () => {
     formData.append('tags', JSON.stringify(data.tags));
 
     // mutate(formData);
-    const project = await createProject(formData);
-    router.replace(`/projects/${project.id}/${project.content.slug}`);
+    if (data.id) formData.append('id', data.id.toString());
+    const resProject = data.id
+      ? await updateProject(formData)
+      : await createProject(formData);
+
+    router.replace(`/projects/${resProject.id}/${resProject.content.slug}`);
   });
 
   return {

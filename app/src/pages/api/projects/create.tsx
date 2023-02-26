@@ -23,7 +23,6 @@ export const config = {
 };
 
 const reqDataSchema = z.object({
-  id: z.number(),
   author: z
     .string()
     .min(PROJECT_NAME_MIN_LENGTH, {
@@ -73,18 +72,15 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
     where: { id: session.user.userId },
   });
 
-  // Check user has Pond SBT or is admin
-  if (!user || !user.isAdmin) {
+  // Check user has Pond SBT
+  if (!user || !user.hasPondSBT) {
     return res.status(401).send('Unauthorized');
   }
-
-  console.log('edit - Autorized');
-
+  console.log('Autorized');
   const form = new formidable.IncomingForm();
   form.parse(req, async function (err, fields, files) {
     if (Array.isArray(files.image)) {
-      res.status(401).send('Unauthorized');
-      return;
+      return res.status(401).send('Unauthorized');
     }
     const image = files.image;
 
@@ -94,9 +90,7 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
     fields['tags'] = Array.isArray(fields['tags'])
       ? JSON.parse(fields['tags'][0])
       : JSON.parse(fields['tags']);
-
-    console.log('edit - fields parsed');
-
+    console.log('fields parsed');
     try {
       const validFields = reqDataSchema.parse({
         ...fields,
@@ -104,14 +98,12 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       const slug = slugify(validFields.title);
-      console.log('edit - getting Image Eext', image.mimetype);
       const extension = getImageExtFromType(image.mimetype || '');
       const outputFilename = `${slug}-${new Date().getTime()}${extension}`;
-      console.log({ outputFilename });
+      console.log(outputFilename);
       await saveFile(image, './public' + PROJECTS_IMAGE_PATH + outputFilename);
-      console.log('edit - writing db...');
-      const project = await prisma.communityProject.update({
-        where: { id: validFields.id },
+
+      const project = await prisma.communityProject.create({
         data: {
           author: validFields.author,
           codeUrl: validFields.codeUrl || null,
@@ -134,11 +126,12 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
         // TODO: Move defaultSelect outside of roouters
         select: defaultProjectSelect,
       });
-      console.log('edit - db written.');
-
-      res.status(201).json(project);
+      res.writeHead(201, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(project));
+      return;
+      // return res.status(201).json(project);
     } catch (error) {
-      res.status(400);
+      return res.status(400);
     }
   });
   return;
