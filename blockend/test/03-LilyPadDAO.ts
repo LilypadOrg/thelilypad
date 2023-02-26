@@ -18,8 +18,8 @@ import Web3 from "web3";
 import { EventSubmitedEventObject } from "../typechain-types/contracts/LilyPad";
 import deployPondSBT from "../deploy/02-deploy-pondSBT";
 import { MemberStruct } from "../types/contractTypes";
-import { LilyPadExecutor } from "../typechain-types/contracts/Governance/LilyPadExecutor.sol";
-import { LilyPadExecutor__factory } from "../typechain-types/factories/contracts/Governance/LilyPadExecutor.sol";
+import { LilyPadExecutor } from "../typechain-types/contracts/Governance/LilyPadExecutor";
+import { LilyPadExecutor__factory } from "../typechain-types/factories/contracts/Governance/index";
 import { chainMine, chainSleep, currentNetWork, getAccount } from "../scripts/utils";
 import { executeDaoProcess } from "../scripts/daoUtils";
 import { networkConfig } from "../helper-hardhat.config";
@@ -198,7 +198,7 @@ describe("LilyPadDAO", function () {
         }
     });
     describe("DaoTest", function () {
-        it("Try to create a proposal and vote. It should work with no problems", async function () {
+        it("DaoTest::01::Try to create a proposal and vote. It should work with no problems", async function () {
             const { deployer, safeCaller } = await getNamedAccounts();
 
             console.log(
@@ -247,7 +247,7 @@ describe("LilyPadDAO", function () {
                 "Proposal not executed correctly :-("
             );
         });
-        it("Try to create a proposal and vote, but not reaching quorum. It should revert when trying to queue proposal", async function () {
+        it("DaoTest::02::Try to create a proposal and vote, but not reaching quorum. It should revert when trying to queue proposal", async function () {
             const { deployer, safeCaller } = await getNamedAccounts();
 
             const executorMinDelay = networkConfig[currentNetWork()].executorMinDelay;
@@ -293,6 +293,202 @@ describe("LilyPadDAO", function () {
             assert(
                 (await _lilyPadGovernorContract.levelThreshold()).eq(1),
                 "Proposal executed without quorum :-("
+            );
+        });
+    });
+    describe("TreasureTest", function () {
+        it("TreasureTest::01::Try to create mint a token and check if the treasure grows. It should work with no problems", async function () {
+            const { deployer, safeCaller } = await getNamedAccounts();
+            const _web3: Web3 = web3;
+            console.log(
+                `************************************** Mint Token **************************************************`
+            );
+            const accounts: any[] = await ethers.getSigners();
+            const user = accounts[1];
+
+            const initialTreasureBalance = await _lilyPadTreasureContract.daoTreasure();
+            console.log(
+                `Treasure balance before new mint: ${await web3.utils.fromWei(
+                    initialTreasureBalance.toString(),
+                    "ether"
+                )} eth!`
+            );
+
+            const mintTx = await _lilyPadContract.mintTokenForMember(user.address, {
+                value: BASE_FEE,
+            });
+            await mintTx.wait(1);
+
+            const memberValues = await _lilyPadContract.getMember(user.address);
+
+            assert(memberValues.tokenId.gt(0), "Token not minted correctly :-(");
+
+            console.log(`Member ${user.address} minted token ${memberValues.tokenId}`);
+
+            console.log(
+                `************************************** Checking Treasure after mint ********************************`
+            );
+
+            const treasureBalance = await _lilyPadTreasureContract.daoTreasure();
+
+            assert(
+                treasureBalance.gt(0) && treasureBalance.gt(initialTreasureBalance),
+                "Treasure did not received fees :-("
+            );
+
+            console.log(
+                `Treasure now owns ${await web3.utils.fromWei(
+                    treasureBalance.toString(),
+                    "ether"
+                )} eth!`
+            );
+        });
+        it("TreasureTest::02::Try to propose funds request, approve and execute. It should work with no problems", async function () {
+            const { deployer, safeCaller } = await getNamedAccounts();
+            const _web3: Web3 = web3;
+
+            const accounts: any[] = await ethers.getSigners();
+            const user = accounts[1];
+
+            const initialTreasureBalance = await _lilyPadTreasureContract.daoTreasure();
+
+            console.log(
+                `************************************** Checking Treasure ********************************`
+            );
+
+            const treasureBalance = await _lilyPadTreasureContract.daoTreasure();
+
+            assert(treasureBalance.gt(0), "Treasure did not received fees :-(");
+
+            console.log(
+                `Treasure owns ${await web3.utils.fromWei(
+                    treasureBalance.toString(),
+                    "ether"
+                )} eth!`
+            );
+
+            console.log(
+                `************************************** Propose and Voting ******************************************`
+            );
+
+            //proposal description can be plain text or a ipfs hash with the description
+            //i recommend the ipfs hash. this way the proposals can be well descripted without make unviable to propose
+            const PROPOSAL_DESCRIPTION =
+                "bafkreicwrdofqb56rkspleeo3deyxpl4ku23bncxrsozfh6mr7pgsmjkge";
+            const args = [BASE_FEE, user.address];
+
+            const factory = await ethers.getContractFactory("LilyPadTreasure");
+            const PROPOSAL_FUNCTION = factory.interface.encodeFunctionData(
+                "withdrawFromTreasure",
+                args
+            );
+
+            await chainMine(2);
+
+            //total voting supply
+            console.log(`Total voting suply: ${await _pondSBTContract.totalSupply()}`);
+
+            //check requester initial balance
+            const initialBalance = await _web3.eth.getBalance(user.address);
+            console.log(
+                `Requester Initial Balance: ${_web3.utils.fromWei(initialBalance, "ether")}`
+            );
+
+            await executeDaoProcess(
+                [_lilyPadTreasureContract.address],
+                [0],
+                [PROPOSAL_FUNCTION],
+                PROPOSAL_DESCRIPTION,
+                _souls[1],
+                _souls,
+                1,
+                _lilyPadGovernorContract,
+                networkConfig[currentNetWork()].votingDelay,
+                networkConfig[currentNetWork()].votingPeriod,
+                networkConfig[currentNetWork()].executorMinDelay
+            );
+
+            //check if requester balance changed
+            const finalBalance = await _web3.eth.getBalance(user.address);
+            console.log(`Requester Final Balance: ${_web3.utils.fromWei(finalBalance, "ether")}`);
+
+            assert(
+                BigNumber.from(finalBalance).gt(initialBalance),
+                "Proposal not executed correctly :-("
+            );
+        });
+        it("TreasureTest::03::Try to propose funds request, dont approve and try to queue. It should revert", async function () {
+            const { deployer, safeCaller } = await getNamedAccounts();
+            const _web3: Web3 = web3;
+
+            const accounts: any[] = await ethers.getSigners();
+            const user = accounts[1];
+
+            const initialTreasureBalance = await _lilyPadTreasureContract.daoTreasure();
+
+            console.log(
+                `************************************** Checking Treasure ********************************`
+            );
+
+            const treasureBalance = await _lilyPadTreasureContract.daoTreasure();
+
+            assert(treasureBalance.gt(0), "Treasure did not received fees :-(");
+
+            console.log(
+                `Treasure owns ${await web3.utils.fromWei(
+                    treasureBalance.toString(),
+                    "ether"
+                )} eth!`
+            );
+
+            console.log(
+                `************************************** Propose and Voting ******************************************`
+            );
+
+            //proposal description can be plain text or a ipfs hash with the description
+            //i recommend the ipfs hash. this way the proposals can be well descripted without make unviable to propose
+            const PROPOSAL_DESCRIPTION =
+                "bafkreicwrdofqb56rkspleeo3deyxpl4ku23bncxrsozfh6mr7pgsmjkge";
+            const args = [BASE_FEE, user.address];
+
+            const factory = await ethers.getContractFactory("LilyPadTreasure");
+            const PROPOSAL_FUNCTION = factory.interface.encodeFunctionData(
+                "withdrawFromTreasure",
+                args
+            );
+
+            await chainMine(2);
+
+            //total voting supply
+            console.log(`Total voting suply: ${await _pondSBTContract.totalSupply()}`);
+
+            //check requester initial balance
+            const initialBalance = await _web3.eth.getBalance(user.address);
+            console.log(
+                `Requester Initial Balance: ${_web3.utils.fromWei(initialBalance, "ether")}`
+            );
+
+            await executeDaoProcess(
+                [_lilyPadTreasureContract.address],
+                [0],
+                [PROPOSAL_FUNCTION],
+                PROPOSAL_DESCRIPTION,
+                _souls[1],
+                _souls,
+                0,
+                _lilyPadGovernorContract,
+                networkConfig[currentNetWork()].votingDelay,
+                networkConfig[currentNetWork()].votingPeriod,
+                networkConfig[currentNetWork()].executorMinDelay
+            );
+
+            //check if requester balance changed
+            const finalBalance = await _web3.eth.getBalance(user.address);
+            console.log(`Requester Final Balance: ${_web3.utils.fromWei(finalBalance, "ether")}`);
+
+            assert(
+                BigNumber.from(finalBalance).eq(initialBalance),
+                "Non Approved Proposal executed :-()"
             );
         });
     });

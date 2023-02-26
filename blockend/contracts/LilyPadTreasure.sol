@@ -89,11 +89,7 @@ contract LilyPadTreasure is
     /**
      * @notice receive ETH to enrich palace treasure.
      */
-    function _depositToDAOTreasure(
-        address _sender,
-        uint256 _tokenId,
-        uint256 amount
-    ) private {
+    function _depositToDAOTreasure(address _sender, uint256 _tokenId, uint256 amount) private {
         require(amount > 0, "invalid amount");
 
         daoBalance += amount;
@@ -104,12 +100,10 @@ contract LilyPadTreasure is
     /**
      * @notice withdraw balance for Propose fund.
      */
-    function withdrawFromTreasure(uint256 _amount, address payable _funded)
-        external
-        nonReentrant
-        whenNotPaused
-        onlyDao
-    {
+    function withdrawFromTreasure(
+        uint256 _amount,
+        address payable _funded
+    ) external nonReentrant whenNotPaused onlyDao {
         _withdrawFromTreasure(_funded, _amount);
     }
 

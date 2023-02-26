@@ -163,7 +163,7 @@ describe("PondSBT", function () {
         };
     });
     describe("MintFunctions", function () {
-        it("Try to mint pondSBT to member. It should work with no problems", async function () {
+        it("MintFunctions::01::Try to mint pondSBT to member. It should work with no problems", async function () {
             const { deployer, safeCaller } = await getNamedAccounts();
             const accounts: any[] = await ethers.getSigners();
             const user = accounts[1];
@@ -223,7 +223,7 @@ describe("PondSBT", function () {
         });
     });
     describe("BurnFunctions", function () {
-        it("Try to burn pondSBT. It should burn membership too", async function () {
+        it("BurnFunctions::01::Try to burn pondSBT. It should burn membership too", async function () {
             const { deployer, safeCaller } = await getNamedAccounts();
             const accounts: any[] = await ethers.getSigners();
             const user = accounts[1];

@@ -108,9 +108,11 @@ contract PondSBT is
 
         _tokenIdCounter.increment();
 
-        _mint(_member, _tokenIdCounter.current());
+        uint256 tokenId = _tokenIdCounter.current();
 
-        emit SoulBounded(_member, _tokenIdCounter.current());
+        _mint(_member, tokenId);
+
+        emit SoulBounded(_member, tokenId);
         uint256 _devsAmount;
 
         if (devPerc > 0) {
@@ -135,21 +137,15 @@ contract PondSBT is
         mainContract.burnBabyBurn(msg.sender);
     }
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721sbUpgradeable)
-        returns (string memory)
-    {
+    function tokenURI(
+        uint256 tokenId
+    ) public view override(ERC721sbUpgradeable) returns (string memory) {
         return mainContract.constructTokenUri(tokenId, _baseURI());
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721sbUpgradeable, ERC721sbEnumerableUpgradeable)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view override(ERC721sbUpgradeable, ERC721sbEnumerableUpgradeable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 

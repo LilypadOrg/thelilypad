@@ -32,7 +32,7 @@ describe("LilyPad", function () {
         assert(_pondSBTContract, "Could not deploy PondSBT");
     });
     describe("Eventfunctions", function () {
-        it("Try to submit course with correct signature from safeCaller. It should work with no problems", async function () {
+        it("Eventfunctions::01::Try to submit course with correct signature from safeCaller. It should work with no problems", async function () {
             const { deployer } = await getNamedAccounts();
             const safeCaller = deployer;
             const _web3: Web3 = web3;
@@ -86,7 +86,7 @@ describe("LilyPad", function () {
 
             assert(course.eventTypeId.eq(1), "Course not created");
         });
-        it("Try to submit course with diferente data from signature. It should revert", async function () {
+        it("Eventfunctions::02::Try to submit course with diferente data from signature. It should revert", async function () {
             const { deployer } = await getNamedAccounts();
             const safeCaller = deployer;
 
@@ -137,7 +137,7 @@ describe("LilyPad", function () {
             const course = await _lilyPadContract.getEvent(1);
             assert(course.accolades.length <= 0, "Course created from malicious request :-(");
         });
-        it("Try to submit course with multiple accolades. It should work with no problems", async function () {
+        it("Eventfunctions::03::Try to submit course with multiple accolades. It should work with no problems", async function () {
             const { deployer } = await getNamedAccounts();
             const _web3: Web3 = web3;
             const safeCaller = deployer;
@@ -193,7 +193,7 @@ describe("LilyPad", function () {
             assert(course.eventTypeId.eq(1), "Course not created");
             assert(course.accolades.length > 1, "Course not created with multiple accolades");
         });
-        it("Try to subscribe course with multiple accolades with no typing. It should work with no problems", async function () {
+        it("Eventfunctions::04::Try to subscribe course with multiple accolades with no typing. It should work with no problems", async function () {
             const { deployer } = await getNamedAccounts();
             const _web3: Web3 = web3;
             const safeCaller = deployer;
@@ -251,7 +251,7 @@ describe("LilyPad", function () {
         });
     });
     describe("Memberfunctions", function () {
-        it("Try to submit member with correct signature from safeCaller. It should work with no problems", async function () {
+        it("Memberfunctions::01::Try to submit member with correct signature from safeCaller. It should work with no problems", async function () {
             //create member
             const { deployer } = await getNamedAccounts();
             const safeCaller = deployer;
@@ -293,7 +293,7 @@ describe("LilyPad", function () {
 
             assert(_member.pathChosen, "Member not created :-(");
         });
-        it("Try to submit member with incorrect signature from safeCaller. It should revert", async function () {
+        it("Memberfunctions::02::Try to submit member with incorrect signature from safeCaller. It should revert", async function () {
             //create member
             const { deployer } = await getNamedAccounts();
             const safeCaller = deployer;
@@ -338,7 +338,7 @@ describe("LilyPad", function () {
 
             assert(!_member.pathChosen, "Member created with malicious data :-(");
         });
-        it("Complete course and checks if it reflects in SBT tokenUri. It should return the complete course data in the token Uri", async function () {
+        it("Memberfunctions::03::Complete course and checks if it reflects in SBT tokenUri. It should return the complete course data in the token Uri", async function () {
             //create member
             const { deployer } = await getNamedAccounts();
             const safeCaller = deployer;
@@ -436,7 +436,7 @@ describe("LilyPad", function () {
 
             assert(finalTokenUri.attributes.length == 2, "Wrong count of attributes");
         });
-        it("award badge and checks if it reflects in SBT tokenUri. It should return the complete course data in the token Uri", async function () {
+        it("Memberfunctions::04::award badge and checks if it reflects in SBT tokenUri. It should return the complete course data in the token Uri", async function () {
             //create member
             const { deployer } = await getNamedAccounts();
             const safeCaller = deployer;
@@ -566,7 +566,7 @@ describe("LilyPad", function () {
 
             assert(finalTokenUri.badges.length == 1, "Wrong count of badges");
         });
-        it("Try to update member with correct signature from safeCaller. It should work with no problems", async function () {
+        it("Memberfunctions::05::Try to update member with correct signature from safeCaller. It should work with no problems", async function () {
             //create member
             const { deployer } = await getNamedAccounts();
             const safeCaller = deployer;
