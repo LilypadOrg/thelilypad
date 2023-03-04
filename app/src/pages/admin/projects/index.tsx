@@ -82,16 +82,16 @@ const AdminProjectsPage: NextPage = () => {
                   </Button>
                 </td>
                 <td>
-                  <Button
-                    className="flex items-center gap-x-2"
-                    variant="primary"
-                    subVariant="outline"
-                  >
-                    <Link href={`/admin/projects/${project.id}`}>
+                  <Link href={`/projects/edit/${project.id}`}>
+                    <Button
+                      className="flex items-center gap-x-2"
+                      variant="primary"
+                      subVariant="outline"
+                    >
                       <MdOutlineModeEdit />
                       <p className="hidden sm:block">Edit</p>
-                    </Link>
-                  </Button>
+                    </Button>
+                  </Link>
                 </td>
                 <td>
                   <Button

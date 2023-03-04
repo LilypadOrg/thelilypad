@@ -112,12 +112,13 @@ export const projectsRouter = createRouter()
       const { id } = input;
       const userId = ctx.session?.user?.userId || -1;
       const isAdmin = ctx.session?.user?.isAdmin || false;
+      console.log('isAdmin', isAdmin);
       const project = await prisma.communityProject.findFirst({
         where: {
           id,
-          ...(isAdmin
-            ? {}
-            : { OR: [{ isVisible: true }, { submittedById: userId }] }),
+          // ...(isAdmin
+          //   ? {}
+          //   : { OR: [{ isVisible: true }, { submittedById: userId }] }),
         },
         select: defaultProjectSelect,
       });

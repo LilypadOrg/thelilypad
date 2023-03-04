@@ -16,10 +16,17 @@ import ReactCrop, {
 import { canvasPreview } from '~/utils/canvasPreview';
 import { ACCEPTED_IMAGE_TYPES } from '~/utils/constants';
 import Modal from '~/components/modals/Modal';
-import { InputProps } from './Input';
+// import { InputProps } from './Input';
 import 'react-image-crop/dist/ReactCrop.css';
 import { Dialog } from '@headlessui/react';
 import { BiCrop } from 'react-icons/bi';
+
+export type InputProps = {
+  id?: string;
+  name: string;
+  label?: string;
+  className?: string;
+} & React.ComponentProps<'input'>;
 
 export type FormInputProps<TFormValues extends FieldValues> = {
   name: Path<TFormValues>;

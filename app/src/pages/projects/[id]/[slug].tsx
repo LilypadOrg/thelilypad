@@ -13,8 +13,8 @@ import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
 const ProjectPage: NextPage = () => {
-  const id = Number(useRouter().query.id);
   const router = useRouter();
+  const id = Number(router.query.id);
 
   const {
     data: project,

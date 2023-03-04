@@ -20,8 +20,9 @@ const getChainId = () => {
 
 const getContractAddress = (contractName: string) => {
   const chainId = getChainId();
+  const contractData = addresses[chainId] || addresses[1337];
 
-  const contractAddress = addresses[chainId].find(
+  const contractAddress = contractData.find(
     (c) => c.contract === contractName
   )?.address;
 
