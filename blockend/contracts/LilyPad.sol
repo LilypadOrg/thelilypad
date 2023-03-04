@@ -394,7 +394,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
 
         addressToMember[_memberAddress].pathChosen = true;
         addressToMember[_memberAddress].xp = _initialXp;
-        addressToMember[_memberAddress].DAO = false;
+        addressToMember[_memberAddress].DAO = true;
         addressToMember[_memberAddress].tokenId = 0;
         for (uint256 idx = 0; idx < _completedEvents.length; idx++) {
             addressToMember[_memberAddress].completedEvents.push(_completedEvents[idx]);
@@ -468,6 +468,21 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
 
             updateJourney(_memberAddress);
         }
+    }
+
+    // MEMBER FUNCTIONS
+    /**
+     *@notice Block Member from DAO
+     *@dev blocked members cant vote nor propose
+     *IN
+     *@param _memberAddress: member address
+     *@param _status: DAO access status. False: blocked;
+     *OUT
+     */
+    function _memberDaoStatus(address _memberAddress, bool _status) internal {
+        require(!addressToMember[_memberAddress].pathChosen, "Path Already Chosen");
+        //TODO: emit events
+        addressToMember[_memberAddress].DAO = _status;
     }
 
     /**
