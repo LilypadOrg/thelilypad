@@ -23,33 +23,49 @@ export function initialLevels(): ILilyPad.LevelStruct[] {
         {
             level: 1,
             xpInit: 0,
-            xpFin: 999,
+            xpFin: 500,
             image: web3.utils.fromAscii(
-                "bafkreid5wecvxn5mecr7y4yd5ln5txecssta3rbu3nmrinyt2a7i7bivcu"
+                "bafybeig4bsle3vn6wbzkami5mqfpbfridr373k76afzzolmjyvtengemh4"
             ),
         },
         {
             level: 2,
-            xpInit: 1000,
-            xpFin: 1999,
+            xpInit: 501,
+            xpFin: 1300,
             image: web3.utils.fromAscii(
-                "bafybeigeorcqattgtnhpodx5qizim6uibrer3qincicxr2zaktmomzsjqa"
+                "bafybeick5ny2fakshlw5oht62qpg4rg7twiuqxckjvszdeczc6mdizqv4i"
             ),
         },
         {
             level: 3,
-            xpInit: 2000,
-            xpFin: 2999,
+            xpInit: 1301,
+            xpFin: 2300,
             image: web3.utils.fromAscii(
-                "bafybeihwzknzd6x3jhg7wevpiummrpr3jbs5ompja337eskrfm2jyxxece"
+                "bafybeifnquuxfuvsj7fwcw7yeawgrglfpi4isdol3cr3bffinjjcsilj3y"
             ),
         },
         {
             level: 4,
-            xpInit: 3000,
-            xpFin: 3999,
+            xpInit: 2301,
+            xpFin: 3600,
             image: web3.utils.fromAscii(
-                "bafkreib2jrno7jqqgipb7ezlqbleoygxiklehytanklhaq4o5twyx5qbca"
+                "bafybeigwodh2awyhj2y3ifbagbthkuam5sapaywcict6bphr5n2i5rwgcu"
+            ),
+        },
+        {
+            level: 5,
+            xpInit: 3601,
+            xpFin: 5100,
+            image: web3.utils.fromAscii(
+                "bafybeicy3p2zewqcbohasrm2n44valvns5xsregfmxm5fsz5mmbb4xmoc4"
+            ),
+        },
+        {
+            level: 6,
+            xpInit: 5101,
+            xpFin: 7000,
+            image: web3.utils.fromAscii(
+                "bafybeicex57ugualsn7ibfxpkwpkvrzqaqaqsie6hwvnqhc5427o2fcg44"
             ),
         },
     ];
