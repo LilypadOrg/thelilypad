@@ -91,7 +91,7 @@ const Home: NextPage = () => {
         <div className="col-span-2 hidden h-full bg-[url('/homeBanner.png')] bg-cover md:block">
           <div className="space-y-3 px-8 pt-12">
             <p className="max-w-[80%] text-4xl leading-[2.8rem] text-secondary-400">
-              A community endeavouring to guide those self-learning in Web3
+              A community endeavouring to guide those self-ilearning in Web3
             </p>
             <p className="text-4xl text-main-yellow">#GoYou</p>
           </div>
@@ -151,7 +151,7 @@ const Home: NextPage = () => {
         </div>
       </div>
       <hr className="my-14 w-full bg-main-gray-dark" />
-      <div className="gradient-bg-bottom px-[2.5rem]  pb-12 lg:px-[5.5rem]">
+      <div className="px-[2.5rem]  pb-12 lg:px-[5.5rem]">
         {/* Top 10 courses */}
         <CourseCarousel
           title="Top 10 Courses"
@@ -160,7 +160,7 @@ const Home: NextPage = () => {
         />
       </div>
       {/* View all resources  */}
-      <div className="w-full space-y-4 bg-primary-400 px-8 py-5">
+      <div className="w-full space-y-4 bg-primary-300/80 px-8 py-5">
         <h1 className="mt-0 text-4xl">Or View all resources</h1>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           {bigResourceList.map((courseName, i) => (

@@ -30,6 +30,10 @@ const CourseCarousel = ({
       {title && <h4 className="text-2xl md:text-3xl lg:text-4xl">{title}</h4>}
       {/* Card Container */}
       <Swiper
+        style={{
+          maxHeight: '500px',
+          paddingBottom: '3rem',
+        }}
         pagination={{
           clickable: true,
         }}

@@ -53,6 +53,7 @@ const AddCourseToRoadmap = ({
   );
 
   const handleAddToRoadmap = () => {
+    console.log('Hello world');
     mutateAddToRoadmap({
       courseId,
       roadmap: !inRoadmap,
@@ -62,7 +63,7 @@ const AddCourseToRoadmap = ({
   return type === 'standard' ? (
     <button
       onClick={handleAddToRoadmap}
-      className="mt-8 rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500"
+      className="absolute rounded-[6.5px] bg-primary-400 px-10 py-2 font-bold text-white disabled:bg-gray-500"
     >
       {`${inRoadmap ? 'Remove from' : 'Add to'} personal roadmap`}
     </button>

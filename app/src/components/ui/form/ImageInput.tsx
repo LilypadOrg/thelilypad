@@ -189,7 +189,7 @@ FormInputProps<TFormValues>) => {
   return (
     <>
       <Modal open={showModal} setOpen={setShowModal}>
-        <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-secondary-300 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+        <Dialog.Panel className="relative transform overflow-hidden rounded-sm bg-secondary-300 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
           <div className=" p-4 text-left">
             <div className="flex gap-x-2">
               <div className=" mx-0 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-secondary-300 sm:h-10 sm:w-10">

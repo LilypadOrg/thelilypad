@@ -139,13 +139,13 @@ const CoursePage: NextPage = () => {
               <div className="grid w-[75%] grid-cols-3 gap-4">
                 <div className="flex flex-col gap-4 bg-gray-200 p-4 text-center">
                   <p className="text-xl font-bold">XP</p>
-                  <div className="flex h-full items-center justify-center rounded-lg bg-gray-400">
+                  <div className="flex h-full items-center justify-center rounded-sm bg-gray-400">
                     <p className="text-4xl">{formatNumber(course.xp)}</p>
                   </div>
                 </div>
                 <div className="col-span-2 flex flex-col gap-4 bg-gray-200 p-4 text-center">
                   <p className="text-xl font-bold">Accolades</p>
-                  <div className="flex h-full items-center justify-center gap-x-4 rounded-lg bg-gray-400 py-2">
+                  <div className="flex h-full items-center justify-center gap-x-4 rounded-sm bg-gray-400 py-2">
                     <Image
                       alt="badge"
                       src="/images/badges/badge.png"
@@ -232,14 +232,14 @@ const CoursePage: NextPage = () => {
         <div className="mt-8 flex flex-col">
           <h1 className="text-4xl">Something about the community</h1>
           <div className="flex space-x-8">
-            <div className="relative min-h-[353px] min-w-[51.2%] rounded-lg border-[0.15rem] border-primary-600 bg-primary-600 text-white ">
+            <div className="relative min-h-[353px] min-w-[51.2%] rounded-sm border-[0.15rem] border-primary-600 bg-primary-600 text-white ">
               {project?.content.coverImageUrl && (
                 <Image
                   src={`${PROJECTS_IMAGE_PATH}${project.content.coverImageUrl}`}
                   alt="community project thumbnail"
                   layout="fill"
                   objectFit="contain"
-                  className="rounded-lg transition-all hover:scale-95"
+                  className="rounded-sm transition-all hover:scale-95"
                 />
               )}
             </div>

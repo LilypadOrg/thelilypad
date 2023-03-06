@@ -75,7 +75,7 @@ const CourseCategories: NextPage = () => {
         </p>
       </div>
       {/* Course Carousel */}
-      <div className="bg-main-gray-light pt-2 pb-4">
+      <div className="bg-primary-100/80 pt-2 pb-4">
         <div className="px-[2.5rem]  lg:px-[5.5rem]">
           <CourseCarousel
             title={`Top 10 ${topic} Courses`}
@@ -144,7 +144,7 @@ const CourseCategories: NextPage = () => {
             Even I suck at titles
           </h1>
           <div className="flex flex-col space-y-4  lg:flex-row lg:space-x-8 lg:space-y-0">
-            <div className="min-h-[200px]  min-w-[60%] rounded-lg  bg-main-gray-dark text-white lg:min-h-[353px]"></div>
+            <div className="min-h-[200px]  min-w-[60%] rounded-sm  bg-main-gray-dark text-white lg:min-h-[353px]"></div>
             <div className="flex flex-col space-y-4">
               <p className="font-semibold">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -158,7 +158,7 @@ const CourseCategories: NextPage = () => {
                 cum quo deleniti quis iusto?Lorem ipsum, dolor sit amet
                 consectetur adipisicing elit. Saepe quibusdam tempore aliquid
               </p>
-              <div className="mb-6 flex justify-between rounded-md bg-main-gray-light py-2 px-4 lg:mb-0">
+              <div className="mb-6 flex justify-between rounded-md bg-primary-300 py-2 px-4 lg:mb-0">
                 <p>Go somewhere else</p>
                 <p className="font-normal">&#62;</p>
               </div>

@@ -38,7 +38,7 @@ const About = () => {
               <div className="cardFront">Mission</div>
               <div className="cardBack font flex flex-col justify-around text-white">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                <button className="rounded-lg bg-white p-4 text-black">
+                <button className="rounded-sm bg-white p-4 text-black">
                   More Information
                 </button>
               </div>

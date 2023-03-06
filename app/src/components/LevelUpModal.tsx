@@ -83,7 +83,7 @@ const LevelUpModal = ({
           >
             test
           </button> */}
-          <div className="relative h-[400px] w-[400px] rounded-lg border-4 border-black ">
+          <div className="relative h-[400px] w-[400px] rounded-sm border-4 border-black ">
             <div
               className={`absolute top-0 left-0 h-[405px]  ${
                 sbtVisibility.prev ? 'opacity-100' : 'opacity-0'

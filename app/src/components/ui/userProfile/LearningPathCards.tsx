@@ -16,7 +16,7 @@ export const LearningPathCards = ({
   return (
     <div className="flex flex-col items-center space-y-4 rounded-md bg-white p-4 shadow-lg">
       <div className="flex items-center justify-between space-x-4">
-        <div className="flex h-6 w-8 items-center justify-center rounded-full bg-green-600">
+        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-600">
           <TiTick className="text-lg text-white" />
         </div>
         <p className="text-md font-semibold leading-5">{title}</p>

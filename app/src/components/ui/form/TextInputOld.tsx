@@ -24,7 +24,7 @@ const TextInput = ({
     <div className="flex flex-col gap-4">
       <label className="font-bold uppercase tracking-widest">{labelStr}</label>
       <input
-        className="rounded-lg bg-secondary-300 p-2 placeholder:text-gray-500"
+        className="rounded-sm bg-secondary-300 p-2 placeholder:text-gray-500"
         placeholder={placeholder || labelStr}
         {...register(name)}
       />

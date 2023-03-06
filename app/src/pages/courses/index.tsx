@@ -109,10 +109,10 @@ const Courses: NextPage = () => {
         </div>
         {/* Aside */}
         <div className="col-span-4 mt-8 flex flex-col gap-4 lg:col-span-1">
-          <h4>Browse courses</h4>
-          <h6>Level</h6>
+          <h4 className="mb-0">Browse courses</h4>
+          <h6 className="my-0">Level</h6>
           {levels && (
-            <div>
+            <div className="space-y-3">
               {levels.map((courseFilter) => (
                 /* Needs to be abstracted */
                 <BrowseCoursesLink
@@ -123,9 +123,9 @@ const Courses: NextPage = () => {
               ))}
             </div>
           )}
-          <h6>Technology</h6>
+          <h6 className="my-0">Technology</h6>
           {techs && (
-            <div>
+            <div className="space-y-3">
               {techs
                 .sort((a, b) => b._count.contents - a._count.contents)
                 .map((courseFilter, i) => (
@@ -157,9 +157,9 @@ const Courses: NextPage = () => {
               )}
             </div>
           )}
-          <h6>Tag</h6>
+          <h6 className="my-0">Tag</h6>
           {tags && (
-            <div>
+            <div className="space-y-3">
               {tags
                 .sort((a, b) => b._count.contents - a._count.contents)
                 .map((courseFilter, i) => (
