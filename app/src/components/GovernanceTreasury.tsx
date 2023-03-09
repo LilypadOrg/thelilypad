@@ -67,7 +67,7 @@ const GovernanceTreasury = () => {
 
   return (
     <div
-      className="rounded-lg border-4 border-polygon-purple"
+      className="rounded-sm border-4 border-polygon-purple"
       style={{ padding: '5px 30px 5px' }}
     >
       <h3>Treasury</h3>

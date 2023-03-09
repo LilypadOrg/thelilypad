@@ -10,7 +10,7 @@ const TreasureWidget = () => {
   return (
     <div>
       <Link href={`/dao`}>
-        <button className="hidden rounded-lg border-primary-500 bg-primary-400 p-2 text-xs  font-bold  text-white shadow-md shadow-gray-300 lg:block lg:p-2 lg:text-lg">
+        <button className="hidden rounded-sm border-primary-500 bg-primary-400 p-2 text-xs  font-bold  text-white shadow-md shadow-gray-300 lg:block lg:p-2 lg:text-lg">
           Froggy DAO Treasury:{' '}
           {ethers.utils.formatUnits((treasureValue ?? 0).toString(), 'ether')}
           {/* {web3.utils.fromWei((treasureValue ?? 0).toString(), 'ether')} */}

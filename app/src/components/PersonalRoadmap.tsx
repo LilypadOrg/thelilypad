@@ -11,7 +11,11 @@ const RoadmapByLevel = ({
   level: string;
 }) => {
   return (
-    <div className="flex flex-col space-y-10 border-t-2 border-main-gray-dark px-[2.5rem]  py-12 lg:px-[5.5rem]">
+    <div
+      className={`flex flex-col space-y-10 border-t-2 ${
+        level === 'intermediate' ? 'bg-primary-100/80' : ''
+      } border-primary-100/80 px-[2.5rem]  py-12 lg:px-[5.5rem]`}
+    >
       <div className="flex space-x-8">
         <div className="flex flex-col space-y-6">
           <p className="text-md font-semibold leading-5 underline">
@@ -35,7 +39,7 @@ const RoadmapByLevel = ({
       </div>
       <div className="flex justify-end gap-x-4">
         <Link href={`/courses/browse/level/${level}`}>
-          <button className="rounded-md bg-gray-800  py-2 px-2 font-semibold text-white lg:px-10 lg:py-2">
+          <button className="rounded-md bg-primary-700/80 py-2 px-2 font-semibold text-white lg:px-10 lg:py-2">
             More {capitalizeFirstLetter(level)} courses
           </button>
         </Link>

@@ -211,7 +211,7 @@ const EditProfileModal = ({
       ref={modalRef}
       onClick={hideModal}
     >
-      <div className="relative mt-20 transform overflow-hidden rounded-lg bg-secondary-400 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+      <div className="relative mt-20 transform overflow-hidden rounded-sm bg-secondary-400 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
         <div className="bg-secondary-400 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
           <div className="sm:flex sm:items-start">
             <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
@@ -228,7 +228,7 @@ const EditProfileModal = ({
                       Username
                     </label>
                     <input
-                      className="rounded-lg bg-secondary-300 p-2 placeholder:text-gray-500"
+                      className="rounded-sm bg-secondary-300 p-2 placeholder:text-gray-500"
                       placeholder="Username"
                       defaultValue={
                         userProfile?.username === userProfile?.address
@@ -242,7 +242,7 @@ const EditProfileModal = ({
                       Bio
                     </label>
                     <textarea
-                      className="rounded-lg bg-secondary-300 p-2 placeholder:text-gray-500"
+                      className="rounded-sm bg-secondary-300 p-2 placeholder:text-gray-500"
                       placeholder="Bio"
                       {...register('bio')}
                       defaultValue={userProfile.bio || ''}
@@ -289,7 +289,7 @@ const EditProfileModal = ({
                         (mode === 'create' && !createMember) || isLoading
                       }
                       type="submit"
-                      className={`inline-flex w-full justify-center rounded-md border border-transparent bg-primary-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
+                      className={`inline-flex  w-full cursor-pointer justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
                         isLoading && 'cursor-not-allowed'
                       }`}
                     >

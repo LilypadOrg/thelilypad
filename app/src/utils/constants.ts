@@ -24,7 +24,7 @@ export const TEST_QUESTIONS_BY_LEVEL: { [level: string]: number } = {
 // export const TEST_COOLDOWN_MS = 12 * 60 * 60 * 1000; // Hours * 60 minutes * 60 seconds * 1000 milliseconds
 export const TEST_COOLDOWN_MS = 10 * 1000; // Hours * 60 minutes * 60 seconds * 1000 milliseconds
 // export const TEST_DURATION_MS = 60 * 60 * 1000;
-export const TEST_DURATION_MS = 0.2 * 60 * 1000;
+export const TEST_DURATION_MS = 60 * 60 * 1000;
 export const TEST_SHOW_RESULT_MS = 1 * 60 * 1000;
 export const TEST_PASS_RATE = 0.75;
 

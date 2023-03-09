@@ -23,7 +23,7 @@ const links = [
 
 const AboutHomeLinks = () => {
   return (
-    <div className="flex h-full flex-col rounded-lg bg-main-gray-light p-6">
+    <div className="flex h-full flex-col rounded-sm bg-main-gray-light p-6">
       {/* Heading and sub */}
       <div>
         <h1 className="mb-0 text-[1.15rem] lg:text-2xl">

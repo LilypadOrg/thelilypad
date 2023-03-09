@@ -30,7 +30,7 @@ const AccountWidget = () => {
   return user ? (
     <div>
       <Link href={`/profiles/${user.username}`}>
-        <button className="text-p rounded-lg  bg-secondary-400 p-2 font-bold text-white shadow-md shadow-gray-300">
+        <button className="text-p rounded-sm  bg-secondary-400 p-2 font-bold text-white shadow-md shadow-gray-300">
           Lvl: {user.level.number} / XP: {user.xp}
         </button>
       </Link>

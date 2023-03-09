@@ -21,7 +21,7 @@ const InfoTile = ({
   link: string;
 }) => {
   return (
-    <div className="flex items-center justify-between  rounded-md border-2 border-main-gray-light py-3 px-4">
+    <div className="flex items-center justify-between  rounded-md border-2 bg-primary-200 py-3 px-4">
       <div className="space-y-1">
         <p className="text-lg font-bold">{title}</p>
         <LevelPill level={tag} classes="bg-main-gray-light" />
@@ -143,7 +143,7 @@ const ProfilePage: NextPage = () => {
       {/* My Accolades */}
       <div
         id="path"
-        className="flex flex-col bg-main-gray-light px-[2.5rem]  py-16 lg:px-[5.5rem]"
+        className="flex flex-col bg-primary-100/80 px-[2.5rem]  py-16 lg:px-[5.5rem]"
       >
         <h1 className="mb-1 text-3xl font-bold">My Accolades</h1>
         <p className="font-light lg:w-[40%]">
@@ -161,29 +161,6 @@ const ProfilePage: NextPage = () => {
           <Link href={`/profiles/${username}/accolades`}>
             See all accolades
           </Link>
-        </div>
-      </div>
-      {/* My Learning Path */}
-      <div
-        id="path"
-        className="flex flex-col bg-main-gray-light px-[2.5rem]  py-16 lg:px-[5.5rem]"
-      >
-        <h1 className="mb-1 text-3xl font-bold">My Learning Path</h1>
-        <p className="font-light lg:w-[40%]">
-          These are the most recent Accolades you have earned (or will earn once
-          holding a Pond Token). Great job! Click on each to learn more and
-          share badges you have earned!
-        </p>
-        <div className="mt-6 flex flex-wrap gap-6">
-          {paths.map((i) => (
-            <LearningPathCards
-              title="Intro into Web3 : basic steps"
-              link={`/course/${i} `}
-              linkTitle={'View all course'}
-              img={`/images/frongLevels/l${i}.png`}
-              key={i}
-            />
-          ))}
         </div>
       </div>
       {/* My Events */}
@@ -218,7 +195,29 @@ const ProfilePage: NextPage = () => {
           />
         ))}
       </div>
-
+      {/* My Learning Path */}
+      <div
+        id="path"
+        className="flex flex-col bg-primary-100/80 px-[2.5rem]  py-16 lg:px-[5.5rem]"
+      >
+        <h1 className="mb-1 text-3xl font-bold">My Learning Path</h1>
+        <p className="font-light lg:w-[40%]">
+          These are the most recent Accolades you have earned (or will earn once
+          holding a Pond Token). Great job! Click on each to learn more and
+          share badges you have earned!
+        </p>
+        <div className="gird-cols-1 mt-6 grid gap-6 md:grid-cols-3  lg:grid-cols-4">
+          {paths.map((i) => (
+            <LearningPathCards
+              title="Intro into Web3 : basic steps"
+              link={`/course/${i} `}
+              linkTitle={'View all course'}
+              img={`/images/frongLevels/l${i}.png`}
+              key={i}
+            />
+          ))}
+        </div>
+      </div>
       <PersonalRoadmap roadmapCourses={roadmapCourses} />
     </div>
   );

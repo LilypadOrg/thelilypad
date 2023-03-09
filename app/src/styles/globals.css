@@ -14,6 +14,15 @@ html {
     animation-delay: 2s;
   }
 }
+@layer components {
+  .btn-primary {
+    @apply shadow-[5px_6px_3px_#56565685] px-12 py-6 bg-secondary-400 hover:shadow-[-0.5px_0px_3px_#565656] transition-all;
+  }
+
+  .primary-shadow { 
+    @apply shadow-[5px_6px_3px_#56565685];
+  }
+}
 
 @layer base {
   body {
@@ -121,7 +130,7 @@ html {
 
 .cardFront,
 .cardBack {
-  @apply absolute h-full w-full rounded-lg border-4 border-main-yellow text-center font-bold;
+  @apply absolute h-full w-full rounded-sm border-4 border-main-yellow text-center font-bold;
   backface-visibility: hidden;
 }
 

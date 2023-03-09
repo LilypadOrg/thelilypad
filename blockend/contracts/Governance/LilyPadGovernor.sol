@@ -52,9 +52,10 @@ contract LilyPadGovernor is
     }
 
     function isWorthy(address member) internal view {
-        (, , uint256 level, , , , ) = mainContract.getMember(member);
+        (, , uint256 level, bool isDAO, , , ) = mainContract.getMember(member);
 
         require(level >= levelThreshold, "Get your Level Higher! Contribute More!");
+        require(isDAO, "What you did wrong now? You're blocked!");
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -73,8 +74,8 @@ contract LilyPadGovernor is
     ) public initializer {
         __Governor_init("LilyPadGovernor");
         __GovernorSettings_init(
-            _votingDelay, /* 6545 blocks (~1 day) */
-            _votingPeriod, /* 45818 blocks (~1 week) */
+            _votingDelay /* 6545 blocks (~1 day) */,
+            _votingPeriod /* 45818 blocks (~1 week) */,
             1 /*Threshold to participate */
         );
         __GovernorCompatibilityBravo_init();
@@ -116,7 +117,9 @@ contract LilyPadGovernor is
         return super.votingPeriod();
     }
 
-    function quorum(uint256 blockNumber)
+    function quorum(
+        uint256 blockNumber
+    )
         public
         view
         override(IGovernorUpgradeable, GovernorVotesQuorumFractionUpgradeable)
@@ -125,7 +128,9 @@ contract LilyPadGovernor is
         return super.quorum(blockNumber);
     }
 
-    function state(uint256 proposalId)
+    function state(
+        uint256 proposalId
+    )
         public
         view
         override(GovernorUpgradeable, IGovernorUpgradeable, GovernorTimelockControlUpgradeable)
@@ -185,7 +190,9 @@ contract LilyPadGovernor is
         return super._executor();
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         override(GovernorUpgradeable, IERC165Upgradeable, GovernorTimelockControlUpgradeable)

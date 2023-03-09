@@ -16,11 +16,11 @@ export const SpotLightCards = ({
   console.log(`${PROJECTS_IMAGE_PATH}${coverImageUrl}`);
 
   return (
-    <>
+    <div className="cursor-pointer">
       <Link href={`/projects/${id}/${slug}`}>
         <div
           key={`featured-${title}`}
-          className="relative flex items-center justify-center rounded-lg border-[0.1rem] border-primary-600 bg-primary-600"
+          className="primary-shadow relative flex items-center justify-center border-[0.1rem] border-primary-700 bg-dark-blue shadow-[10px_10px_1px_#7B61FF] transition-all hover:shadow-[-1px_-1px_1px_#7B61FF]"
         >
           {coverImageUrl && (
             <Image
@@ -28,11 +28,10 @@ export const SpotLightCards = ({
               alt={`${title} thumbnail`}
               height={320}
               width={420}
-              className="rounded-lg transition-all hover:scale-95"
             />
           )}
           <div
-            className={` absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg p-4 text-white  ${
+            className={` absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-sm p-4 text-white  ${
               !teal ? 'bg-primary-500' : 'bg-secondary-400'
             }`}
           >
@@ -46,6 +45,6 @@ export const SpotLightCards = ({
           </div>
         </div>
       </Link>
-    </>
+    </div>
   );
 };
