@@ -101,7 +101,7 @@ const TestForm = ({
               onClick={() => {
                 setQuestionIndex(i);
               }}
-              className={`mx-1 rounded-lg border-2 border-secondary-500 p-2 ${bgColor}`}
+              className={`mx-1 rounded-sm border-2 border-secondary-500 p-2 ${bgColor}`}
             >
               {(i + 1).toString().padStart(2, '0')}
             </button>

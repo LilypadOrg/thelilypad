@@ -19,7 +19,7 @@ const BrowseCoursesLink = ({
 }) => {
   return (
     <Link href={`/courses/browse/${courseFilterType}/${courseFilter.slug}`}>
-      <button className="flex w-full items-center justify-between rounded-md bg-main-gray-light py-2 px-4">
+      <button className="flex w-full items-center justify-between rounded-md bg-primary-300 py-2 px-4">
         <p>
           {courseFilter.name} ({courseFilter._count.contents})
         </p>

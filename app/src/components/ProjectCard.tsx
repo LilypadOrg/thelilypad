@@ -20,7 +20,7 @@ export const SpotLightCards = ({
       <Link href={`/projects/${id}/${slug}`}>
         <div
           key={`featured-${title}`}
-          className="primary-shadow relative flex items-center justify-center border-[0.1rem] border-primary-600 bg-primary-600 shadow-[10px_10px_1px_#7B61FF] transition-all hover:shadow-[-1px_-1px_1px_#7B61FF]"
+          className="primary-shadow relative flex items-center justify-center border-[0.1rem] border-primary-700 bg-dark-blue shadow-[10px_10px_1px_#7B61FF] transition-all hover:shadow-[-1px_-1px_1px_#7B61FF]"
         >
           {coverImageUrl && (
             <Image
@@ -31,7 +31,7 @@ export const SpotLightCards = ({
             />
           )}
           <div
-            className={` absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-lg p-4 text-white  ${
+            className={` absolute bottom-4 right-4 max-w-[45%] space-y-2 rounded-sm p-4 text-white  ${
               !teal ? 'bg-primary-500' : 'bg-secondary-400'
             }`}
           >

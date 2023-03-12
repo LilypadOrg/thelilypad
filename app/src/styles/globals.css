@@ -130,7 +130,7 @@ html {
 
 .cardFront,
 .cardBack {
-  @apply absolute h-full w-full rounded-lg border-4 border-main-yellow text-center font-bold;
+  @apply absolute h-full w-full rounded-sm border-4 border-main-yellow text-center font-bold;
   backface-visibility: hidden;
 }
 

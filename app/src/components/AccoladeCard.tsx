@@ -7,7 +7,7 @@ const AccoladeCard = ({ accolade }: { accolade: Accolade }) => {
     // TODO: remove fix heigth
     <div
       className="flex min-h-[350px]
-       max-w-[20rem] flex-col justify-between self-start rounded-lg  bg-white
+       max-w-[20rem] flex-col justify-between self-start rounded-sm  bg-white
        text-center lg:min-w-[20rem]"
     >
       <div className="flex flex-col justify-start">

@@ -46,14 +46,14 @@ const Modal = ({
         //   ref={modalRef}
         //   onClick={hideModal}
         // >
-        //   <div className="relative mt-20 transform overflow-hidden rounded-lg bg-secondary-400 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+        //   <div className="relative mt-20 transform overflow-hidden rounded-sm bg-secondary-400 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
         //     <div className="bg-secondary-400 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
         <div
           className={`fixed inset-0 z-[100] overflow-hidden bg-[rgba(0,0,0,0.5)] p-1`}
           ref={modalRef}
           onClick={hideModal}
         >
-          <div className="relative mx-auto mt-20 mb-5 w-full max-w-2xl transform  overflow-auto rounded-lg bg-secondary-400 text-left shadow-xl transition-all">
+          <div className="relative mx-auto mt-20 mb-5 w-full max-w-2xl transform  overflow-auto rounded-sm bg-secondary-400 text-left shadow-xl transition-all">
             <div className=" bg-secondary-400 px-4 py-4 sm:p-6 sm:pb-4">
               {children}
             </div>

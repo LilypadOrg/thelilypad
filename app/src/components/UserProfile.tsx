@@ -69,7 +69,7 @@ const UserProfile = ({
         />
       )}
       <div className="gradient-bg-top my-8 flex items-center justify-center px-[5.5rem]">
-        <div className="-mr-3 hidden min-h-[255px] w-[38%] rounded-lg bg-primary-500 p-8 pl-12 text-white shadow-sm lg:block">
+        <div className="-mr-3 hidden min-h-[255px] w-[38%] rounded-sm bg-primary-500 p-8 pl-12 text-white shadow-sm lg:block">
           <div className="flex items-baseline gap-2">
             <h1 className="text-2xl font-bold">
               {userProfile.username === userProfile.address
@@ -87,23 +87,23 @@ const UserProfile = ({
         >
           <>
             {/* {isLoadingOnChainProfile && (
-              <div className="relative flex h-[325px] w-[280px]  cursor-pointer items-center justify-center rounded-lg border-4 border-black bg-gray-500 shadow-xl lg:h-[425px]  lg:w-[380px]">
+              <div className="relative flex h-[325px] w-[280px]  cursor-pointer items-center justify-center rounded-sm border-4 border-black bg-gray-500 shadow-xl lg:h-[425px]  lg:w-[380px]">
                 <div className="h-full w-full animate-pulse bg-gray-400"></div>
               </div>
             )} */}
             {/* {!userProfile.hasPondSBT && (
-              <div className="relative flex h-[325px] w-[280px]  cursor-pointer items-center justify-center rounded-lg border-4 border-black bg-gray-400 p-4 shadow-xl lg:h-[425px] lg:w-[380px]">
+              <div className="relative flex h-[325px] w-[280px]  cursor-pointer items-center justify-center rounded-sm border-4 border-black bg-gray-400 p-4 shadow-xl lg:h-[425px] lg:w-[380px]">
                 <Image
                   src="/images/profileSBT/level1-gray.jpg"
                   alt="sbt"
                   layout="fill"
                   objectFit="cover"
-                  className="rounded-lg opacity-25"
+                  className="rounded-sm opacity-25"
                 />
               </div>
             )} */}
             {/* {userProfile.hasPondSBT && ( */}
-            <div className="relative flex h-[380px] w-[380px] cursor-pointer items-center justify-center rounded-lg border-4 border-black p-4 shadow-xl">
+            <div className="relative flex h-[380px] w-[380px] cursor-pointer items-center justify-center rounded-sm border-4 border-black p-4 shadow-xl">
               <Image
                 // loader={() => sbtImageUrl}
                 src={sbtImageUrl}
@@ -116,7 +116,7 @@ const UserProfile = ({
             {/* )} */}
           </>
         </Tilt>
-        <div className="-ml-3 hidden min-h-[255px] w-[38%] items-stretch rounded-lg bg-primary-500 p-8 pl-12 text-white shadow-sm lg:block">
+        <div className="-ml-3 hidden min-h-[255px] w-[38%] items-stretch rounded-sm bg-primary-500 p-8 pl-12 text-white shadow-sm lg:block">
           <h1 className="text-2xl font-bold">My Tech Stack</h1>
           <div className="grid grid-cols-3 gap-2">
             {userProfile.technologies.map((language) => (
@@ -134,13 +134,13 @@ const UserProfile = ({
           <div className="space-y-4">
             <button
               onClick={openModal}
-              className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white"
+              className="btn-primary text-xl font-semibold leading-4 tracking-wide text-white"
             >
               {userProfile.hasOnChainProfile ? 'Update' : 'Create'} Profile
             </button>
             {userProfile.hasOnChainProfile && !userProfile.hasPondSBT && (
               <button
-                className="w-full rounded-[6.5px] bg-primary-400 px-10 py-4 font-bold text-white hover:bg-primary-400 disabled:bg-gray-500"
+                className="btn-primary text-xl font-semibold leading-4 tracking-wide text-white"
                 onClick={() => setMintModalOpen(true)}
               >
                 Mint Your SBT
