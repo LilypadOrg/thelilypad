@@ -91,7 +91,7 @@ const Home: NextPage = () => {
         <div className="col-span-2 hidden h-full bg-[url('/homeBanner.png')] bg-cover md:block">
           <div className="space-y-3 px-8 pt-12">
             <p className="max-w-[80%] text-4xl leading-[2.8rem] text-secondary-400">
-              A community endeavouring to guide those self-ilearning in Web3
+              A community endeavouring to guide those self-learning in Web3
             </p>
             <p className="text-4xl text-main-yellow">#GoYou</p>
           </div>

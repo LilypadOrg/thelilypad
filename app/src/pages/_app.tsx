@@ -64,6 +64,7 @@ export default withTRPC<AppRouter>({
     const url = vercelUrl
       ? `https://${vercelUrl}/api/trpc`
       : 'http://localhost:3000/api/trpc';
+    console.log({ url });
     return {
       url,
       transformer: superjson,
