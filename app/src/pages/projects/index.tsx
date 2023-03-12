@@ -9,7 +9,7 @@ import { SpotLightCardsLoading } from '~/components/ui/Loaders';
 import { useSession } from 'next-auth/react';
 import Button from '~/components/ui/Button';
 import Link from 'next/link';
-import useAdmin from '~/hooks/useAdmin';
+// import useAdmin from '~/hooks/useAdmin';
 
 const Projects: NextPage = () => {
   // TODO: fix use of admin to allow project creation
