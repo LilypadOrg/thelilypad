@@ -18,7 +18,6 @@ const GovernanceList = () => {
   const [currentList, setCurrentList] = useState(proposalList);
 
   useEffect(() => {
-    console.log('teste');
     setCurrentList([]);
     utils.invalidateQueries(['dao.list']);
   }, []);
@@ -74,7 +73,7 @@ const GovernanceList = () => {
       buttons.push(
         <button
           className={
-            currentPage == i + 1 ? 'btn btn-active btn-xs' : 'btn btn-xs'
+            currentPage == i + 1 ? 'btn-active btn-xs btn' : 'btn-xs btn'
           }
           onClick={() => onPageClick(i + 1)}
         >

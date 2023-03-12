@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { createRouter } from '~/server/createRouter';
 import { prisma } from '~/server/prisma';
 import { BROWSE_COURSES_ITEMS } from '~/utils/constants';
+import { deleteProjectImage } from '~/utils/files';
 
 export const defaultProjectSelect =
   Prisma.validator<Prisma.CommunityProjectSelect>()({
@@ -108,20 +109,24 @@ export const projectsRouter = createRouter()
     input: z.object({
       id: z.number(),
     }),
-    async resolve({ input, ctx }) {
+    async resolve({ ctx, input }) {
+      console.log('ctx.session ostia puttana', ctx.session?.user.userId);
       const { id } = input;
-      const userId = ctx.session?.user?.userId || -1;
+      const userId = ctx.session?.user.userId;
       const isAdmin = ctx.session?.user?.isAdmin || false;
+      console.log('userId', userId);
       console.log('isAdmin', isAdmin);
+
       const project = await prisma.communityProject.findFirst({
         where: {
           id,
-          // ...(isAdmin
-          //   ? {}
-          //   : { OR: [{ isVisible: true }, { submittedById: userId }] }),
+          ...(isAdmin
+            ? {}
+            : { OR: [{ isVisible: true }, { submittedById: userId }] }),
         },
         select: defaultProjectSelect,
       });
+
       if (!project) {
         throw new TRPCError({
           code: 'NOT_FOUND',
@@ -186,7 +191,12 @@ export const projectsRouter = createRouter()
       try {
         const project = await prisma.communityProject.delete({
           where: { id: input },
+          select: defaultProjectSelect,
         });
+        if (project.content.coverImageUrl) {
+          deleteProjectImage(project.content.coverImageUrl);
+        }
+
         return project;
       } catch (err) {
         throw new TRPCError({

@@ -148,7 +148,7 @@ export const daoRouter = createRouter()
         }
         return proposal;
       } catch (err) {
-        console.log(err);
+        err;
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `Error retrieving data. Error: ${err}`,

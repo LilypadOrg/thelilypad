@@ -15,13 +15,15 @@ import { useEffect } from 'react';
 const ProjectPage: NextPage = () => {
   const router = useRouter();
   const id = Number(router.query.id);
+  const { data: session, status: sessionStatus } = useSession();
 
   const {
     data: project,
     isLoading,
     error,
-  } = trpc.useQuery(['projects.byId', { id }]);
-  const { data: session } = useSession();
+  } = trpc.useQuery(['projects.byId', { id }], {
+    enabled: sessionStatus !== 'loading',
+  });
 
   const isOwner = session?.user?.userId === project?.submittedById;
 

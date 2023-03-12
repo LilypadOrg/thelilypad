@@ -4,7 +4,6 @@ import { BsExclamationTriangle } from 'react-icons/bs';
 import Modal from './Modal';
 import { trpc } from '~/utils/trpc';
 import Spinner from '../ui/Spinner';
-import { signOut } from 'next-auth/react';
 import { Project } from '~/types/types';
 
 const DeleteProjectModal = ({
@@ -23,7 +22,6 @@ const DeleteProjectModal = ({
     {
       onSuccess: () => {
         utils.invalidateQueries('projects.all');
-        signOut();
         setOpen(false);
       },
     }

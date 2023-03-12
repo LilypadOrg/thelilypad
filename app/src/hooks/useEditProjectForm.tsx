@@ -72,7 +72,7 @@ const createProject = async (data: FormData) => {
 };
 
 const updateProject = async (data: FormData) => {
-  const res = await axios.post('/api/projects/edit', data, {
+  const res = await axios.put('/api/projects/edit', data, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

@@ -82,25 +82,23 @@ const AdminProjectsPage: NextPage = () => {
                   </Button>
                 </td>
                 <td>
-                  <Link href={`/projects/edit/${project.id}`}>
-                    <Button
-                      className="flex items-center gap-x-2"
-                      variant="primary"
-                      subVariant="outline"
-                    >
-                      <MdOutlineModeEdit />
-                      <p className="hidden sm:block">Edit</p>
-                    </Button>
-                  </Link>
+                  <Button variant="primary" subVariant="outline">
+                    <Link href={`/projects/edit/${project.id}`} passHref>
+                      <div className="flex items-center gap-x-2">
+                        <MdOutlineModeEdit />
+                        <p className="hidden sm:block">Edit</p>
+                      </div>
+                    </Link>
+                  </Button>
                 </td>
                 <td>
                   <Button
                     className="flex items-center gap-x-2"
                     variant="danger"
                     subVariant="outline"
+                    onClick={() => handleDelete(project)}
                   >
-                    {' '}
-                    <MdDeleteOutline onClick={() => handleDelete(project)} />
+                    <MdDeleteOutline />
                     <p className="hidden sm:block">Delete</p>
                   </Button>
                 </td>

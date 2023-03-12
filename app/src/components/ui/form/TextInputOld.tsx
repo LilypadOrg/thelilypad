@@ -18,8 +18,6 @@ const TextInput = ({
   } = useFormContext();
   const labelStr = label || capitalizeFirstLetter(name);
 
-  console.log(errors[name]?.message);
-
   return (
     <div className="flex flex-col gap-4">
       <label className="font-bold uppercase tracking-widest">{labelStr}</label>

@@ -178,7 +178,7 @@ model CommunityProject {
   id        Int      @id @default(autoincrement())
   author    String
   codeUrl   String?
-  content   Content @relation(fields: [contentId], references: [id])
+  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)  
   contentId Int     @unique
   submittedBy           User?      @relation(fields: [submittedById], references: [id])
   submittedById         Int?

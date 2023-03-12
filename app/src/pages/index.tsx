@@ -96,7 +96,7 @@ const Home: NextPage = () => {
             <p className="text-4xl text-main-yellow">#GoYou</p>
           </div>
         </div>
-        <div className="col-span-3 flex h-full items-center justify-center bg-main-yellow bg-[url('/homeBanner.png')] px-6 md:col-span-1 md:bg-[url('')]">
+        <div className="] col-span-3 flex h-full items-center justify-center bg-main-yellow bg-[url('/homeBanner.png')] px-6 md:col-span-1">
           <div className="flex flex-col items-center space-y-8">
             <div className="flex w-full justify-between">
               <div className="flex max-w-[55%] flex-col justify-between">

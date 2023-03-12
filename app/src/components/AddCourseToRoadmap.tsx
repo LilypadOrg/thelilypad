@@ -53,7 +53,6 @@ const AddCourseToRoadmap = ({
   );
 
   const handleAddToRoadmap = () => {
-    console.log('Hello world');
     mutateAddToRoadmap({
       courseId,
       roadmap: !inRoadmap,

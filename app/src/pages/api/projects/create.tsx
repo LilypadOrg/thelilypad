@@ -13,8 +13,8 @@ import {
 import formidable from 'formidable';
 import { prisma } from '~/server/prisma';
 import { getImageExtFromType, slugify } from '~/utils/formatters';
-import fs from 'fs';
 import { defaultProjectSelect } from '~/server/routers/projects';
+import { saveFormFile } from '~/utils/files';
 
 export const config = {
   api: {
@@ -62,6 +62,11 @@ const reqDataSchema = z.object({
   tags: z.number().array(),
 });
 
+interface ParsedForm {
+  fields: formidable.Fields;
+  files: formidable.Files;
+}
+
 const post = async (req: NextApiRequest, res: NextApiResponse) => {
   // Check user is authenticated
   const session = await getSession({ req });
@@ -76,9 +81,18 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
   if (!user || !user.hasPondSBT) {
     return res.status(401).send('Unauthorized');
   }
-  console.log('Autorized');
   const form = new formidable.IncomingForm();
-  form.parse(req, async function (err, fields, files) {
+
+  const formPromise = new Promise<ParsedForm>((resolve, reject) => {
+    form.parse(req, async function (err, fields, files) {
+      if (err) reject();
+      resolve({ fields, files });
+    });
+  });
+
+  try {
+    const { fields, files } = await formPromise;
+
     if (Array.isArray(files.image)) {
       return res.status(401).send('Unauthorized');
     }
@@ -90,58 +104,49 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
     fields['tags'] = Array.isArray(fields['tags'])
       ? JSON.parse(fields['tags'][0])
       : JSON.parse(fields['tags']);
-    console.log('fields parsed');
-    try {
-      const validFields = reqDataSchema.parse({
-        ...fields,
-        image,
-      });
 
-      const slug = slugify(validFields.title);
-      const extension = getImageExtFromType(image.mimetype || '');
-      const outputFilename = `${slug}-${new Date().getTime()}${extension}`;
-      console.log(outputFilename);
-      await saveFile(image, './public' + PROJECTS_IMAGE_PATH + outputFilename);
+    const validFields = reqDataSchema.parse({
+      ...fields,
+      image,
+    });
 
-      const project = await prisma.communityProject.create({
-        data: {
-          author: validFields.author,
-          codeUrl: validFields.codeUrl || null,
-          submittedBy: { connect: { id: session.user.userId } },
-          content: {
-            create: {
-              title: validFields.title,
-              slug,
-              description: validFields.description,
-              url: validFields.url,
-              coverImageUrl: outputFilename,
-              contentType: { connect: { name: 'Community Project' } },
-              technologies: {
-                connect: validFields.techs.map((l) => ({ id: l })),
-              },
-              tags: { connect: validFields.tags.map((l) => ({ id: l })) },
+    const slug = slugify(validFields.title);
+    const extension = getImageExtFromType(image.mimetype || '');
+    const outputFilename = `${slug}-${new Date().getTime()}${extension}`;
+    await saveFormFile(
+      image,
+      './public' + PROJECTS_IMAGE_PATH + outputFilename
+    );
+
+    const project = await prisma.communityProject.create({
+      data: {
+        author: validFields.author,
+        codeUrl: validFields.codeUrl || null,
+        submittedBy: { connect: { id: session.user.userId } },
+        content: {
+          create: {
+            title: validFields.title,
+            slug,
+            description: validFields.description,
+            url: validFields.url,
+            coverImageUrl: outputFilename,
+            contentType: { connect: { name: 'Community Project' } },
+            technologies: {
+              connect: validFields.techs.map((l) => ({ id: l })),
             },
+            tags: { connect: validFields.tags.map((l) => ({ id: l })) },
           },
         },
-        // TODO: Move defaultSelect outside of roouters
-        select: defaultProjectSelect,
-      });
-      res.writeHead(201, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(project));
-      return;
-      // return res.status(201).json(project);
-    } catch (error) {
-      return res.status(400);
-    }
-  });
-  return;
-};
-
-const saveFile = async (file: formidable.File, fileName: string) => {
-  const data = fs.readFileSync(file.filepath);
-  fs.writeFileSync(fileName, data);
-  fs.unlinkSync(file.filepath);
-  return;
+      },
+      // TODO: Move defaultSelect outside of roouters
+      select: defaultProjectSelect,
+    });
+    return res.status(200).send(JSON.stringify(project));
+    // return res.status(201).json(project);
+  } catch (error) {
+    console.log(error);
+    return res.status(400);
+  }
 };
 
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
