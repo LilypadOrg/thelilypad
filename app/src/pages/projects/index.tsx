@@ -12,7 +12,8 @@ import Link from 'next/link';
 import useAdmin from '~/hooks/useAdmin';
 
 const Projects: NextPage = () => {
-  useAdmin();
+  // TODO: fix use of admin to allow project creation
+  // useAdmin();
   const { data: projects, isLoading } = trpc.useQuery(['projects.all']);
   const { data: session } = useSession();
   const { data: user } = trpc.useQuery(
