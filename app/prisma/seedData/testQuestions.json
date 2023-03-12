@@ -927,6 +927,21 @@
     ]
   },
   {
+    "code": "SOL-INT-17",
+    "question": "Is the following statement true? 'In memory array variables, to add a new element you just have to call [array].push(element).'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
     "code": "SOL-ADV-1",
     "question": "Is the following statement true? 'It is recommended to use the bytes32 type instead of the string type when the length of the string is known because it is much cheaper to work and store.'",
     "technology": "Solidity",
@@ -1085,6 +1100,507 @@
       },
       {
         "answer": "tx.sender returns the sender of the transaction and msg.origin returns the sender of the current call."
+      }
+    ]
+  },
+  {
+    "code": "HAR-BEG-1",
+    "question": "What is hardhat?",
+    "technology": "Hardhat",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "Its a development language used to create smart contracts."
+      },
+      {
+        "answer": "Its a famous wallet to interact with smart contracts."
+      },
+      {
+        "answer": "Hardhat is a Solidity development environment.",
+        "correct": true
+      },
+      {
+        "answer": "Its a development language used to create dApps."
+      }
+    ]
+  },
+  {
+    "code": "HAR-BEG-2",
+    "question": "Is the following statement true? 'Hardhat is a Solidity development environment built using Node.js'?",
+    "technology": "Hardhat",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "HAR-BEG-3",
+    "question": "Is the following statement true? 'Hardhat is a Solidity development environment built using Java'?",
+    "technology": "Hardhat",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "HAR-BEG-4",
+    "question": "Is the following statement true? 'Hardhat has a built in network for dApp testing'?",
+    "technology": "Hardhat",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "HAR-BEG-5",
+    "question": "What is the JS tool used for testing creation in Hardhat?",
+    "technology": "Hardhat",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "ChaiJS",
+        "correct": true
+      },
+      {
+        "answer": "Yarn"
+      },
+      {
+        "answer": "NPM"
+      },
+      {
+        "answer": "EthersJS"
+      }
+    ]
+  },
+  {
+    "code": "HAR-BEG-6",
+    "question": "What is the Hardhat command to compile the Smart Contracts?",
+    "technology": "Hardhat",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "hardhat run"
+      },
+      {
+        "answer": "hardhat build"
+      },
+      {
+        "answer": "hardhat compile",
+        "correct": true
+      },
+      {
+        "answer": "hardhat test"
+      }
+    ]
+  },
+  {
+    "code": "HAR-BEG-7",
+    "question": "What is the Hardhat command to compile the Smart Contracts?",
+    "technology": "Hardhat",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "hardhat run"
+      },
+      {
+        "answer": "hardhat build"
+      },
+      {
+        "answer": "hardhat compile",
+        "correct": true
+      },
+      {
+        "answer": "hardhat test"
+      }
+    ]
+  },
+  {
+    "code": "HAR-BEG-8",
+    "question": "Is the following statement true? 'Hardhat does not possess any built-in, nor plugin, to manage deployed versions of smart contracts'?",
+    "technology": "Hardhat",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "HAR-BEG-9",
+    "question": "What's the name of the plugin that can be used to manage deploy versions in hardhat?",
+    "technology": "Hardhat",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "@nomicfoundation/hardhat-toolbox"
+      },
+      {
+        "answer": "hardhat-deploy",
+        "correct": true
+      },
+      {
+        "answer": "solidity-coverage"
+      },
+      {
+        "answer": "hardhat-gas-reporter"
+      }
+    ]
+  },
+  {
+    "code": "HAR-BEG-10",
+    "question": "Is the following statement true? 'Hardhat has a strong community that develops plugins to be used with hardhat and make all developers life easier'?",
+    "technology": "Hardhat",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "HAR-BEG-11",
+    "question": "Is the following statement true? 'Hardhat can only be used with javascript'?",
+    "technology": "Hardhat",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "HAR-BEG-12",
+    "question": "Is the following statement true? 'Hardhat can only be used with javascript'?",
+    "technology": "Hardhat",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "HAR-BEG-13",
+    "question": "Is the following statement true? 'Hardhat can be used with javascript or typescript'?",
+    "technology": "Hardhat",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "HAR-INT-1",
+    "question": "Is the following statement true? 'Hardhat has no built-in tool for unit testing.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "HAR-INT-2",
+    "question": "What tools are used by Hardhat for testing?'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "ethersJS, MochaJS and ChaiJS",
+        "correct": true
+      },
+      {
+        "answer": "web3JS, MochaJS and ChaiJS"
+      },
+      {
+        "answer": "typescript, MochaJS and ethersJS"
+      },
+      {
+        "answer": "web3JS, MochaJS and ethersJS"
+      }
+    ]
+  },
+  {
+    "code": "HAR-INT-3",
+    "question": "Is the following statement true? 'The 'beforeEach' section of testing script can only be used once in the beginning of it.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "HAR-INT-4",
+    "question": "Is the following statement true? 'The 'beforeEach' section of testing script can only be used once in a describe section.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "HAR-INT-5",
+    "question": "What is the purpose of the 'beforeEach' section of hardhat testing script?",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "There is no 'beforeEach' section in hardhat testing."
+      },
+      {
+        "answer": "Group testing scenarios with the same context."
+      },
+      {
+        "answer": "Define values and execute commands necessary for the execution of the testing scenarios."
+      },
+      {
+        "answer": "Define values and execute commands necessary for the execution of the testing scenarios inside the same 'describe' section.",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "HAR-INT-6",
+    "question": "Is the following statement true? 'There can be only one 'describe' section at the beginning of the script.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "HAR-INT-7",
+    "question": "Is the following statement true? 'There can be nested 'describe' sections.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "HAR-INT-8",
+    "question": "What is the command to run hardhat testing?'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "hardhat testing"
+      },
+      {
+        "answer": "hardhat run test"
+      },
+      {
+        "answer": "hardhat test",
+        "correct": true
+      },
+      {
+        "answer": "hardhat proof"
+      }
+    ]
+  },
+  {
+    "code": "HAR-INT-9",
+    "question": "Is the following statement true? 'The '--grep' tag available in hardhat test command allows the execution of specific section with the exact label informed.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "HAR-INT-10",
+    "question": "Is the following statement true? 'The '--grep' tag available in hardhat test command allows the execution of specific section containing the informed text in its label.'",
+    "technology": "Solidity",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "HAR-ADV-01",
+    "question": "Wich community hardhat plugin allows to check the coverage of the unit testing created?'",
+    "technology": "Solidity",
+    "level": "Advanced",
+    "answers": [
+      {
+        "answer": "solidity-coverage",
+        "correct": true
+      },
+      {
+        "answer": "hardhat-watcher"
+      },
+      {
+        "answer": "hardhat-gas-reporter"
+      },
+      {
+        "answer": "coverage"
+      }
+    ]
+  },
+  {
+    "code": "HAR-ADV-02",
+    "question": "Is the following statement true? 'The @typechain/hardhat community plugin manages the creation of contract related typings to easily work with TypeScript.'",
+    "technology": "Solidity",
+    "level": "Advanced",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "HAR-ADV-03",
+    "question": "Is the following statement true? 'The @typechain/hardhat community plugin manages the gas cost of each transaction executed in a testing or script.'",
+    "technology": "Solidity",
+    "level": "Advanced",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "HAR-ADV-04",
+    "question": "For What the following code is used in hardhat? 'const r = await tx.wait(1)'",
+    "technology": "Solidity",
+    "level": "Advanced",
+    "answers": [
+      {
+        "answer": "Retrieve the wallet address that executed the transaction."
+      },
+      {
+        "answer": "Retrieve the executed transaction receipt.",
+        "correct": true
+      },
+      {
+        "answer": "Execute a transaction"
+      },
+      {
+        "answer": "Nothing. It will throw an error."
+      }
+    ]
+  },
+  {
+    "code": "HAR-ADV-05",
+    "question": "What will be the value of the 'r' constant in the following code? 'const r = tx.wait(1)'",
+    "technology": "Solidity",
+    "level": "Advanced",
+    "answers": [
+      {
+        "answer": "Nothing. It will throw an error."
+      },
+      {
+        "answer": "It will be the executed transaction receipt."
+      },
+      {
+        "answer": "It will be a contract object containning the contract abi of the transaction."
+      },
+      {
+        "answer": "It will be a Promise of a receipt since the tx.wait function is asynchronous",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "HAR-ADV-06",
+    "question": "Is the following statement true? 'The correct and secure way to deploy a Contract with Proxy pattern in hardhat is using the HardhatUpgrades plugin.'",
+    "technology": "Solidity",
+    "level": "Advanced",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
       }
     ]
   }
