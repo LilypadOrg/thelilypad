@@ -27,13 +27,11 @@ const defaultUserCourseSelect = Prisma.validator<Prisma.UserCourseSelect>()({
       id: true,
       levels: true,
       xp: true,
-      accolades: true,
-      userCourses: {
+      accolades: {
         select: {
-          roadmap: true,
-          completed: true,
-          completedOn: true,
-          lastTestPassed: true,
+          id: true,
+          description: true,
+          imageUrl: true,
         },
       },
       content: {
@@ -45,6 +43,15 @@ const defaultUserCourseSelect = Prisma.validator<Prisma.UserCourseSelect>()({
           technologies: true,
           tags: true,
           slug: true,
+          url: true,
+        },
+      },
+      userCourses: {
+        select: {
+          roadmap: true,
+          completed: true,
+          completedOn: true,
+          lastTestPassed: true,
         },
       },
     },
