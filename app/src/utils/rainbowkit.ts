@@ -10,10 +10,18 @@ const availableChains =
     ? [chain.polygonMumbai]
     : [chain.polygon, chain.polygonMumbai, chain.localhost];
 
-const { chains, provider } = configureChains(availableChains, [
-  // alchemyProvider({ apiKey: process.env.ALCHEMY_API_KEY }),
-  publicProvider(),
-]);
+const providers =
+  process.env.NODE_ENV === 'production'
+    ? [
+        publicProvider(),
+        // alchemyProvider({ apiKey: process.env.ALCHEMY_API_KEY }),
+      ]
+    : [
+        publicProvider(),
+        // alchemyProvider({ apiKey: process.env.ALCHEMY_API_KEY }),
+      ];
+
+const { chains, provider } = configureChains(availableChains, providers);
 
 const { connectors } = getDefaultWallets({
   appName: 'The Lily Pad',

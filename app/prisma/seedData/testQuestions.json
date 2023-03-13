@@ -1331,7 +1331,7 @@
   {
     "code": "HAR-INT-1",
     "question": "Is the following statement true? 'Hardhat has no built-in tool for unit testing.'",
-    "technology": "Solidity",
+    "technology": "Hardhat",
     "level": "Intermediate",
     "answers": [
       {
@@ -1346,7 +1346,7 @@
   {
     "code": "HAR-INT-2",
     "question": "What tools are used by Hardhat for testing?'",
-    "technology": "Solidity",
+    "technology": "Hardhat",
     "level": "Intermediate",
     "answers": [
       {
@@ -1367,7 +1367,7 @@
   {
     "code": "HAR-INT-3",
     "question": "Is the following statement true? 'The 'beforeEach' section of testing script can only be used once in the beginning of it.'",
-    "technology": "Solidity",
+    "technology": "Hardhat",
     "level": "Intermediate",
     "answers": [
       {
@@ -1382,7 +1382,7 @@
   {
     "code": "HAR-INT-4",
     "question": "Is the following statement true? 'The 'beforeEach' section of testing script can only be used once in a describe section.'",
-    "technology": "Solidity",
+    "technology": "Hardhat",
     "level": "Intermediate",
     "answers": [
       {
@@ -1397,7 +1397,7 @@
   {
     "code": "HAR-INT-5",
     "question": "What is the purpose of the 'beforeEach' section of hardhat testing script?",
-    "technology": "Solidity",
+    "technology": "Hardhat",
     "level": "Intermediate",
     "answers": [
       {
@@ -1418,7 +1418,7 @@
   {
     "code": "HAR-INT-6",
     "question": "Is the following statement true? 'There can be only one 'describe' section at the beginning of the script.'",
-    "technology": "Solidity",
+    "technology": "Hardhat",
     "level": "Intermediate",
     "answers": [
       {
@@ -1433,7 +1433,7 @@
   {
     "code": "HAR-INT-7",
     "question": "Is the following statement true? 'There can be nested 'describe' sections.'",
-    "technology": "Solidity",
+    "technology": "Hardhat",
     "level": "Intermediate",
     "answers": [
       {
@@ -1448,7 +1448,7 @@
   {
     "code": "HAR-INT-8",
     "question": "What is the command to run hardhat testing?'",
-    "technology": "Solidity",
+    "technology": "Hardhat",
     "level": "Intermediate",
     "answers": [
       {
@@ -1469,7 +1469,7 @@
   {
     "code": "HAR-INT-9",
     "question": "Is the following statement true? 'The '--grep' tag available in hardhat test command allows the execution of specific section with the exact label informed.'",
-    "technology": "Solidity",
+    "technology": "Hardhat",
     "level": "Intermediate",
     "answers": [
       {
@@ -1484,7 +1484,7 @@
   {
     "code": "HAR-INT-10",
     "question": "Is the following statement true? 'The '--grep' tag available in hardhat test command allows the execution of specific section containing the informed text in its label.'",
-    "technology": "Solidity",
+    "technology": "Hardhat",
     "level": "Intermediate",
     "answers": [
       {
@@ -1499,11 +1499,11 @@
   {
     "code": "HAR-ADV-01",
     "question": "Wich community hardhat plugin allows to check the coverage of the unit testing created?'",
-    "technology": "Solidity",
+    "technology": "Hardhat",
     "level": "Advanced",
     "answers": [
       {
-        "answer": "solidity-coverage",
+        "answer": "Hardhat-coverage",
         "correct": true
       },
       {
@@ -1520,7 +1520,7 @@
   {
     "code": "HAR-ADV-02",
     "question": "Is the following statement true? 'The @typechain/hardhat community plugin manages the creation of contract related typings to easily work with TypeScript.'",
-    "technology": "Solidity",
+    "technology": "Hardhat",
     "level": "Advanced",
     "answers": [
       {
@@ -1535,7 +1535,7 @@
   {
     "code": "HAR-ADV-03",
     "question": "Is the following statement true? 'The @typechain/hardhat community plugin manages the gas cost of each transaction executed in a testing or script.'",
-    "technology": "Solidity",
+    "technology": "Hardhat",
     "level": "Advanced",
     "answers": [
       {
@@ -1550,7 +1550,7 @@
   {
     "code": "HAR-ADV-04",
     "question": "For What the following code is used in hardhat? 'const r = await tx.wait(1)'",
-    "technology": "Solidity",
+    "technology": "Hardhat",
     "level": "Advanced",
     "answers": [
       {
@@ -1571,7 +1571,7 @@
   {
     "code": "HAR-ADV-05",
     "question": "What will be the value of the 'r' constant in the following code? 'const r = tx.wait(1)'",
-    "technology": "Solidity",
+    "technology": "Hardhat",
     "level": "Advanced",
     "answers": [
       {
@@ -1592,7 +1592,7 @@
   {
     "code": "HAR-ADV-06",
     "question": "Is the following statement true? 'The correct and secure way to deploy a Contract with Proxy pattern in hardhat is using the HardhatUpgrades plugin.'",
-    "technology": "Solidity",
+    "technology": "Hardhat",
     "level": "Advanced",
     "answers": [
       {

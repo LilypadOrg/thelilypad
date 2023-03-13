@@ -80,12 +80,16 @@ const CoursePage: NextPage = () => {
         {/* hero image */}
         <div className="relative flex h-[200px] w-full items-center justify-center rounded-md bg-main-gray-light sm:h-[300px] md:h-[400px] lg:h-[600px]">
           {course.content.coverImageUrl && (
-            <Image
-              alt="thumbnail"
-              src={course.content.coverImageUrl}
-              layout="fill"
-              objectFit="contain"
-            />
+            <Link className="cursor-pointer" href={course.content.url}>
+              <a target="_blank">
+                <Image
+                  alt="thumbnail"
+                  src={course.content.coverImageUrl}
+                  layout="fill"
+                  objectFit="contain"
+                />
+              </a>
+            </Link>
           )}
           {/* play button */}
           {/* <div className="h-14 w-14 rounded-full bg-secondary-400 shadow-md"></div> */}

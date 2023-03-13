@@ -340,27 +340,43 @@ export const testsRouter = createRouter()
 
         const questionsToExtract = TEST_QUESTIONS_BY_LEVEL[levelSlug];
 
-        const questionsByTech = Math.floor(questionsToExtract / techs.length);
+        // const questionsByTech = Math.floor(questionsToExtract / techs.length);
 
         type QuestionIds = Array<{ id: number }>;
         const questionIds: QuestionIds = [];
 
-        for (let i = 0; i < techs.length; i++) {
-          const limit =
-            i < techs.length - 1
-              ? questionsByTech
-              : questionsToExtract - questionsByTech * i;
-          const questions: QuestionIds =
-            await prisma.$queryRaw`select tq.id from "TestQuestion" tq
-            INNER JOIN "Level" lv ON tq."levelId" = lv.id   
-            INNER JOIN "Technology" tc ON tq."techId" = tc.id
-            WHERE tc.slug = ${techs[i]}
-            AND lv.slug = ${levelSlug}
-            order by random()
-            limit ${limit}`;
+        // for (let i = 0; i < techs.length; i++) {
+        //   const limit =
+        //     i < techs.length - 1
+        //       ? questionsByTech
+        //       : questionsToExtract - questionsByTech * i;
+        //   const questions: QuestionIds =
+        //     await prisma.$queryRaw`select tq.id from "TestQuestion" tq
+        //     INNER JOIN "Level" lv ON tq."levelId" = lv.id
+        //     INNER JOIN "Technology" tc ON tq."techId" = tc.id
+        //     WHERE tc.slug = ${techs[i]}
+        //     AND lv.slug = ${levelSlug}
+        //     order by random()
+        //     limit ${limit}`;
 
-          questionIds.push(...questions);
-        }
+        //   questionIds.push(...questions);
+        // }
+
+        const techFilter = techs.map((t) => "'" + t + "'").join(', ');
+        const levelFilter = course.levels
+          .map((l) => "'" + l.slug + "'")
+          .join(', ');
+
+        const questions: QuestionIds =
+          await prisma.$queryRawUnsafe(`select tq.id from "TestQuestion" tq
+        INNER JOIN "Level" lv ON tq."levelId" = lv.id   
+        INNER JOIN "Technology" tc ON tq."techId" = tc.id
+        WHERE tc.slug IN (${techFilter})
+        AND lv.slug IN (${levelFilter})
+        order by random()
+        limit ${questionsToExtract}`);
+
+        questionIds.push(...questions);
 
         // const questions = await prisma
         const testInstance = await prisma.testinstance.create({

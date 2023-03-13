@@ -13,6 +13,8 @@ import { trpc } from '~/utils/trpc';
 import { SpotLightCards } from '~/components/ui/Home';
 import { SpotLightCardsLoading } from '~/components/ui/Loaders';
 import { HiChevronRight } from 'react-icons/hi';
+import HomePageModal from '~/components/modals/HomePageModal';
+import { useEffect, useState } from 'react';
 // import AboutHomeLinks from '~/components/AboutHomeLinks';
 // import BrowseCoursesLink from '~/components/BrowseCoursesLink';
 // import { useMemo } from 'react';
@@ -51,6 +53,13 @@ const Home: NextPage = () => {
   //   }
   // }, [tags, techs]);
 
+  const [open, setOpen] = useState<boolean>(false);
+
+  // TODO: make modal no longer show up if it has been closed already
+  useEffect(() => {
+    // setOpen(true);
+  }, []);
+
   // load courses for courses section
   const { data: courses, isLoading: coursesLoading } = trpc.useQuery([
     'courses.all',
@@ -86,6 +95,7 @@ const Home: NextPage = () => {
   const bigResourceList = [...coursesList];
   return (
     <div>
+      <HomePageModal open={open} setOpen={setOpen} />
       {/* Hero and cards */}
       <div className="grid h-[55vh] grid-cols-3">
         <div className="col-span-2 hidden h-full bg-[url('/homeBanner.png')] bg-cover md:block">

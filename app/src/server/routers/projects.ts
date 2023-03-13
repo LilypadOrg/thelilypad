@@ -110,12 +110,9 @@ export const projectsRouter = createRouter()
       id: z.number(),
     }),
     async resolve({ ctx, input }) {
-      console.log('ctx.session ostia puttana', ctx.session?.user.userId);
       const { id } = input;
       const userId = ctx.session?.user.userId;
       const isAdmin = ctx.session?.user?.isAdmin || false;
-      console.log('userId', userId);
-      console.log('isAdmin', isAdmin);
 
       const project = await prisma.communityProject.findFirst({
         where: {

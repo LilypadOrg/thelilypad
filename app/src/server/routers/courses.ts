@@ -19,6 +19,7 @@ const defaultCourseSelect = Prisma.validator<Prisma.CourseSelect>()({
       technologies: true,
       tags: true,
       slug: true,
+      url: true,
     },
   },
   userCourses: {
