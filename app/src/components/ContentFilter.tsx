@@ -1,8 +1,4 @@
-import { inferQueryOutput } from '~/utils/trpc';
-
-type FilterOptions = inferQueryOutput<
-  'tags.byContentTYpe' | 'levels.byContentTYpe' | 'technologies.byContentTYpe'
->;
+import { FilterOptions } from '~/types/types';
 
 const ContentFilter = ({
   filterName,

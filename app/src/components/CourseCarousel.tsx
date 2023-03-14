@@ -72,33 +72,17 @@ const CourseCarousel = ({
       >
         {isLoading &&
           loaders.map((i) => (
-            <SwiperSlide key={`course-${i}`}>
+            <SwiperSlide key={`${title}-loader- course-${i}`}>
               <CourseCardLoading />
             </SwiperSlide>
           ))}
         {courses &&
           courses!.map((course) => (
-            <SwiperSlide key={`course-${course.id}`}>
-              <CourseCard
-                key={`course-${course.id}`}
-                course={course}
-                type={type}
-              />
+            <SwiperSlide key={`${title}-course-${course.id}`}>
+              <CourseCard course={course} type={type} />
             </SwiperSlide>
           ))}
       </Swiper>
-
-      {/* <div className="mt-8 flex space-x-8 overflow-x-auto px-2 py-2">
-        {isLoading && loaders.map((i) => <CourseCardLoading key={i} />)}
-        {courses &&
-          courses!.map((course) => (
-            <CourseCard
-              key={`course-${course.id}`}
-              course={course}
-              type={type}
-            />
-          ))}
-      </div> */}
     </div>
   );
 };

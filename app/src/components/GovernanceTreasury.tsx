@@ -2,13 +2,13 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDAOTreasure } from '~/hooks/useDAOTreasure';
 import { formatNumber } from '~/utils/formatters';
 import { ethers } from 'ethers';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 
 const GovernanceTreasury = () => {
   //const { data } = trpc.useQuery(['environment.getEnvironment']);
   //const env = data;
-  const utils = trpc.useContext();
-  trpc.useQuery(['external.getTreasureTokenPrice'], {
+  const utils = api.useContext();
+  api.external.getTreasureTokenPrice.useQuery(undefined, {
     onSuccess: (data) => {
       if ((data ?? '0') != '0') {
         setPriceUsd(data ?? '0');
@@ -29,7 +29,7 @@ const GovernanceTreasury = () => {
   const [treasureUsd, setTreasureUsd] = useState('');
 
   function fetchPrice() {
-    utils.invalidateQueries(['external.getTreasureTokenPrice']);
+    utils.external.getTreasureTokenPrice.invalidate();
   }
 
   useEffect(() => {
@@ -71,7 +71,7 @@ const GovernanceTreasury = () => {
       style={{ padding: '5px 30px 5px' }}
     >
       <h3>Treasury</h3>
-      <div className="flex grid grid-flow-col grid-cols-12 gap-1">
+      <div className="grid grid-flow-col grid-cols-12 gap-1">
         <div className="flex shrink items-center">
           <img
             src="https://cryptologos.cc/logos/polygon-matic-logo.png?v=024"

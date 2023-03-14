@@ -13,7 +13,7 @@ import {
 import formidable from 'formidable';
 import { prisma } from '~/server/prisma';
 import { getImageExtFromType, slugify } from '~/utils/formatters';
-import { defaultProjectSelect } from '~/server/routers/projects';
+import { defaultProjectSelect } from '~/server/api/routers/projects';
 import { deleteProjectImage, saveFormFile } from '~/utils/files';
 
 export const config = {

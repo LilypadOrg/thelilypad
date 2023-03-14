@@ -5,7 +5,7 @@ import {
 } from 'wagmi';
 import { SBT_MINT_FEE } from '~/utils/constants';
 import { getLilyPadAddress, getLilyPadABI } from '~/utils/contracts';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 
 export const useMintSBT = (address: string, enableMint: boolean) => {
   const { config: mintTokenConfig } = usePrepareContractWrite({
@@ -22,9 +22,7 @@ export const useMintSBT = (address: string, enableMint: boolean) => {
   const { data: mintTokenRes, write: mintToken } =
     useContractWrite(mintTokenConfig);
 
-  const { mutate: upadteHasPondSBT } = trpc.useMutation([
-    'users.setHasPondSBT',
-  ]);
+  const { mutate: upadteHasPondSBT } = api.users.setHasPondSbt.useMutation();
 
   const { isLoading, error, isSuccess } = useWaitForTransaction({
     hash: mintTokenRes?.hash,

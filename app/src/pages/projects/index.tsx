@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 // import React, { useState } from 'react';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { SpotLightCards } from '~/components/ui/Home';
@@ -14,10 +14,10 @@ import Link from 'next/link';
 const Projects: NextPage = () => {
   // TODO: fix use of admin to allow project creation
   // useAdmin();
-  const { data: projects, isLoading } = trpc.useQuery(['projects.all']);
+  const { data: projects, isLoading } = api.projects.all.useQuery();
   const { data: session } = useSession();
-  const { data: user } = trpc.useQuery(
-    ['users.byAddress', { address: session?.user?.address || '' }],
+  const { data: user } = api.users.byAddress.useQuery(
+    { address: session?.user?.address || '' },
     {
       enabled: Boolean(session?.user?.address),
     }

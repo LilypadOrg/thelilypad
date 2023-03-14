@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
 import Link from 'next/link';
 import LevelPill from '../../components/ui/LevelPill';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
 import { Accolade, RoadmapCourses } from '~/types/types';
 import { LearningPathCards } from '~/components/ui/userProfile';
@@ -42,17 +42,15 @@ const ProfilePage: NextPage = () => {
   //   { username },
   // ]);
 
-  const { data: userCourses } = trpc.useQuery([
-    'usercourses.all',
-    { username },
-  ]);
+  const { data: userCourses } = api.usercourses.all.useQuery({ username });
 
-  const { data: userProfile, isSuccess: isSuccessUserProfile } = trpc.useQuery(
-    ['users.byUsername', { username: username! }],
-    {
-      enabled: !!username,
-    }
-  );
+  const { data: userProfile, isSuccess: isSuccessUserProfile } =
+    api.users.byUsername.useQuery(
+      { username: username! },
+      {
+        enabled: !!username,
+      }
+    );
 
   const initRoadmap: RoadmapCourses = {
     beginner: [],

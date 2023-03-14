@@ -5,7 +5,7 @@ import {
 } from 'wagmi';
 import { Session } from 'next-auth';
 import { getLilyPadAddress, getLilyPadABI } from '~/utils/contracts';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 import { useOnChainProfile } from '~/hooks/useOnChainProfile';
 import LevelUpModal from './LevelUpModal';
 import { useState } from 'react';
@@ -21,7 +21,7 @@ export const CompleteCourse = ({
   courseId: number;
   completed: boolean;
 }) => {
-  const utils = trpc.useContext();
+  const utils = api.useContext();
   const [levelUpModal, setLevelUpModal] = useState<{
     prevSBT: string;
     currSBT: string;
@@ -31,18 +31,16 @@ export const CompleteCourse = ({
 
   const { data: onChainProfile } = useOnChainProfile(user?.address);
 
-  const { data: completeEventSignature } = trpc.useQuery(
-    [
-      'blockend.signCompleteEvent',
+  const { data: completeEventSignature } =
+    api.blockend.signCompleteEvent.useQuery(
       {
         address: user.address,
         courseId: courseId,
       },
-    ],
-    {
-      enabled: !!onChainProfile && onChainProfile.pathChosen && !completed,
-    }
-  );
+      {
+        enabled: !!onChainProfile && onChainProfile.pathChosen && !completed,
+      }
+    );
 
   const { config: completeCourseConfig } = usePrepareContractWrite({
     address: getLilyPadAddress(),
@@ -67,7 +65,7 @@ export const CompleteCourse = ({
   });
 
   const { mutate: mutateCompleted, isLoading: isLoadingMutateCompleted } =
-    trpc.useMutation(['usercourses.complete'], {
+    api.usercourses.complete.useMutation({
       onSuccess: (data) => {
         if (onChainProfile?.pathChosen && data.levelUp) {
           setLevelUpModal({
@@ -78,10 +76,10 @@ export const CompleteCourse = ({
           });
         }
         // utils.refetchQueries(['usercourses.all', { userId: user.userId }]);
-        utils.refetchQueries(['courses.byId', { id: courseId }]);
-        utils.refetchQueries(['users.byAddress', { address: user.address }]);
+        utils.courses.byId.refetch({ id: courseId });
+        utils.users.byAddress.refetch({ address: user.address });
         if (user.name) {
-          utils.refetchQueries(['users.byUsername', { username: user.name }]);
+          utils.users.byUsername.refetch({ username: user.name });
         }
       },
     });

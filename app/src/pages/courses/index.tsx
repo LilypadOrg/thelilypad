@@ -5,7 +5,7 @@ import CourseCarousel from '~/components/CourseCarousel';
 import { CourseCardLoading } from '~/components/ui/Loaders';
 import { useContentFilter } from '~/hooks/useContentFilter';
 import { ContentType } from '~/types/types';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 import { Swiper, SwiperSlide } from 'swiper/react';
 // Import Swiper styles
 import 'swiper/css';
@@ -79,9 +79,8 @@ const Courses: NextPage = () => {
 
   const carouselsTags = tags?.filter((t) => filterTags.includes(t.slug));
 
-  const { data: courses, isLoading: coursesLoading } = trpc.useQuery([
-    'courses.all',
-  ]);
+  const { data: courses, isLoading: coursesLoading } =
+    api.courses.all.useQuery();
 
   return (
     <div className="gradient-bg-top-courses px-[2.5rem] pt-2 lg:px-[5.5rem]">
@@ -91,13 +90,13 @@ const Courses: NextPage = () => {
           {(filtersLoading || coursesLoading) && <Loader />}
           {carouselsTags &&
             courses &&
-            carouselsTags.map((t) => {
+            carouselsTags.map((t, i) => {
               const filteredCourses = courses.filter(
                 (c) => !!c.content.tags.find((t2) => t2.slug === t.slug)
               );
               if (filteredCourses)
                 return (
-                  <div key={`courses-tag-${t}`}>
+                  <div key={`courses-tag-${t}-${i}`}>
                     <CourseCarousel
                       title={`${t.name} courses`}
                       courses={filteredCourses}

@@ -2,7 +2,7 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import PageTitle from '~/components/ui/PageTitle';
 import useAdmin from '~/hooks/useAdmin';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 import { MdDeleteOutline } from 'react-icons/md';
 import { MdOutlineModeEdit } from 'react-icons/md';
 import DeleteProjectModal from '~/components/modals/DeleteProjectModal';
@@ -14,12 +14,12 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 const AdminProjectsPage: NextPage = () => {
   useAdmin();
 
-  const utils = trpc.useContext();
-  const { data: project, isLoading } = trpc.useQuery(
-    ['projects.all', { visibility: 'All' }],
+  const utils = api.useContext();
+  const { data: project, isLoading } = api.projects.all.useQuery(
+    { visibility: 'All' },
     {
       onSuccess: () => {
-        utils.invalidateQueries(['projects.all', { visibility: 'All' }]);
+        utils.projects.all.invalidate({ visibility: 'All' });
       },
     }
   );
@@ -32,7 +32,7 @@ const AdminProjectsPage: NextPage = () => {
     setShowDeleteModal(true);
   };
 
-  const { mutate: setVisibility } = trpc.useMutation(['projects.setIsVisible']);
+  const { mutate: setVisibility } = api.projects.setIsVisible.useMutation();
 
   const setProjectVisibility = async (project: Project) => {
     setVisibility({ id: project.id, isVisible: !project.isVisible });

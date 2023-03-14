@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { TestFormInputs, TestInstanceExt } from '~/types/types';
@@ -22,29 +22,30 @@ const Test: NextPage = () => {
   const courseId = Number(router.query.courseId);
 
   const { data: session, status: sessionStatus } = useSession();
-  const { data: course } = trpc.useQuery(['courses.byId', { id: courseId }]);
+  const { data: course } = api.courses.byId.useQuery({ id: courseId });
 
   const userCourse =
     course?.userCourses.length === 1 ? course?.userCourses[0] : undefined;
 
-  const { data: existingTest, isLoading: isLoadingExisting } = trpc.useQuery(
-    ['tests.single', { courseId }],
-    {
-      enabled: !!session && !!courseId,
-      onSuccess: (data) => {
-        setCurrentTest(data);
-      },
-    }
-  );
+  const { data: existingTest, isLoading: isLoadingExisting } =
+    api.tests.single.useQuery(
+      { courseId },
+      {
+        enabled: !!session && !!courseId,
+        onSuccess: (data) => {
+          setCurrentTest(data);
+        },
+      }
+    );
 
-  const { mutate: createTest } = trpc.useMutation(['tests.createInstance'], {
+  const { mutate: createTest } = api.tests.createInstance.useMutation({
     onSuccess: (data) => {
       setTestState('edit');
       setCurrentTest(data);
     },
   });
 
-  const { mutate: getTestResults } = trpc.useMutation(['tests.result'], {
+  const { mutate: getTestResults } = api.tests.result.useMutation({
     onSuccess: (data) => {
       setCurrentTest(data);
       if (data.isPassed) {
@@ -153,56 +154,61 @@ const Test: NextPage = () => {
               </button>
             </div>
           )}
-          {(testState === 'passed' || testState === 'cooldown') && currentTest && (
-            <div>
-              {(testState === 'passed' || testState === 'cooldown') && (
-                <div className="mb-4  ">
-                  <p className="text-4xl font-bold">
-                    {testState === 'passed' ? (
-                      <span className="text-green-600">Test passed 🎉</span>
-                    ) : (
-                      <span className="text-red-600">Test failed 😭</span>
+          {(testState === 'passed' || testState === 'cooldown') &&
+            currentTest && (
+              <div>
+                {(testState === 'passed' || testState === 'cooldown') && (
+                  <div className="mb-4  ">
+                    <p className="text-4xl font-bold">
+                      {testState === 'passed' ? (
+                        <span className="text-green-600">Test passed 🎉</span>
+                      ) : (
+                        <span className="text-red-600">Test failed 😭</span>
+                      )}
+                    </p>
+                    {testState === 'cooldown' && (
+                      <div>
+                        You can retry in{' '}
+                        <CountDown
+                          classes="inline"
+                          startValue={Math.floor(
+                            currentTest.coolDownTime / 1000
+                          )}
+                          handleOver={handleCoolDownOver}
+                        />
+                      </div>
                     )}
-                  </p>
-                  {testState === 'cooldown' && (
-                    <div>
-                      You can retry in{' '}
-                      <CountDown
-                        classes="inline"
-                        startValue={Math.floor(currentTest.coolDownTime / 1000)}
-                        handleOver={handleCoolDownOver}
+                    {resultStats && (
+                      <div className="text-xl">
+                        <p>
+                          Total questions:{' '}
+                          <span className="font-bold">{resultStats.total}</span>{' '}
+                          - Correct Answers:{' '}
+                          <span className="font-bold">
+                            {resultStats.correct}
+                          </span>{' '}
+                          - Correct:{' '}
+                          <span className="font-bold">
+                            {(resultStats.correct / resultStats.total) * 100}%
+                          </span>
+                        </p>
+                        <p>
+                          You need {TEST_PASS_RATE * 100}% correct answers to
+                          pass the test.
+                        </p>
+                      </div>
+                    )}
+                    {testState === 'passed' && (
+                      <CompleteCourse
+                        courseId={courseId}
+                        completed={userCourse?.completed || false}
+                        user={session.user}
                       />
-                    </div>
-                  )}
-                  {resultStats && (
-                    <div className="text-xl">
-                      <p>
-                        Total questions:{' '}
-                        <span className="font-bold">{resultStats.total}</span> -
-                        Correct Answers:{' '}
-                        <span className="font-bold">{resultStats.correct}</span>{' '}
-                        - Correct:{' '}
-                        <span className="font-bold">
-                          {(resultStats.correct / resultStats.total) * 100}%
-                        </span>
-                      </p>
-                      <p>
-                        You need {TEST_PASS_RATE * 100}% correct answers to pass
-                        the test.
-                      </p>
-                    </div>
-                  )}
-                  {testState === 'passed' && (
-                    <CompleteCourse
-                      courseId={courseId}
-                      completed={userCourse?.completed || false}
-                      user={session.user}
-                    />
-                  )}
-                </div>
-              )}
-            </div>
-          )}
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
           {showTest && <TestForm submitTest={submitTest} test={currentTest} />}
         </>

@@ -4,13 +4,13 @@ import {
   DaoProposalEntity,
   DaoProposalModel,
 } from '~/server/entities/DaoProposalEntity';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 import ProposalStatusWidget from './ProposalStatusWidget';
 
 const pageQtty = 10;
 
 const GovernanceList = () => {
-  const utils = trpc.useContext();
+  const utils = api.useContext();
   const proposalList: DaoProposalModel[] = [{}];
   //const [rowCount, setRowCount] = useState(0);
   const [pageCount, setPageCount] = useState(0);
@@ -19,10 +19,10 @@ const GovernanceList = () => {
 
   useEffect(() => {
     setCurrentList([]);
-    utils.invalidateQueries(['dao.list']);
+    utils.dao.list.invalidate();
   }, []);
 
-  trpc.useQuery(['dao.count'], {
+  api.dao.count.useQuery(undefined, {
     onSuccess: (data) => {
       if ((data ?? 0) > 0) {
         //setRowCount(data ?? 0);
@@ -37,14 +37,11 @@ const GovernanceList = () => {
     },
   });
 
-  const { isLoading } = trpc.useQuery(
-    [
-      'dao.list',
-      {
-        take: pageQtty,
-        skip: pageQtty * (currentPage - 1),
-      },
-    ],
+  const { isLoading } = api.dao.list.useQuery(
+    {
+      take: pageQtty,
+      skip: pageQtty * (currentPage - 1),
+    },
     {
       initialData: [{}],
       onSuccess: (data) => {
@@ -60,7 +57,7 @@ const GovernanceList = () => {
   );
 
   useMemo(() => {
-    utils.invalidateQueries(['dao.list']);
+    utils.dao.list.invalidate();
   }, [currentPage]);
 
   const onPageClick = (pagNum: number) => {
@@ -73,7 +70,7 @@ const GovernanceList = () => {
       buttons.push(
         <button
           className={
-            currentPage == i + 1 ? 'btn-active btn-xs btn' : 'btn-xs btn'
+            currentPage == i + 1 ? 'btn btn-active btn-xs' : 'btn btn-xs'
           }
           onClick={() => onPageClick(i + 1)}
         >

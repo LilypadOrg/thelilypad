@@ -9,7 +9,7 @@ import {
   USERNAME_MIN_LENGTH,
 } from '~/utils/constants';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 import LevelPill from './ui/LevelPill';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
@@ -38,20 +38,17 @@ const EditProfileModal = ({
   };
 
   const router = useRouter();
-  const utils = trpc.useContext();
+  const utils = api.useContext();
   const modalRef = useRef(null);
 
-  const { data: techs } = trpc.useQuery(['technologies.all']);
+  const { data: techs } = api.technologies.all.useQuery();
   const { mutate: updateProfile, isLoading: isLoadingUpateProfile } =
-    trpc.useMutation(['users.updateProfile'], {
+    api.users.updateProfile.useMutation({
       onError: (err) => {
         toast.error(err.message);
       },
       onSuccess: (data) => {
-        utils.invalidateQueries([
-          'users.byUsername',
-          { username: data.username },
-        ]);
+        utils.users.byUsername.invalidate({ username: data.username });
         const changeRoute = userProfile.username !== data.username;
         if (changeRoute) router.replace(`/profiles/${data.username}`);
         closeModal();
@@ -66,9 +63,8 @@ const EditProfileModal = ({
     []
   );
 
-  const { data: createMemberSignature } = trpc.useQuery(
-    [
-      'blockend.signCreateMember',
+  const { data: createMemberSignature } =
+    api.blockend.signCreateMember.useQuery(
       {
         xp: userProfile?.xp || 0,
         courses:
@@ -76,11 +72,10 @@ const EditProfileModal = ({
             .filter((c) => c.completed)
             .map((c) => c.courseId) || [],
       },
-    ],
-    {
-      enabled: mode === 'create',
-    }
-  );
+      {
+        enabled: mode === 'create',
+      }
+    );
 
   const { config: createMemberConfig } = usePrepareContractWrite({
     address: getLilyPadAddress(),
@@ -289,7 +284,7 @@ const EditProfileModal = ({
                         (mode === 'create' && !createMember) || isLoading
                       }
                       type="submit"
-                      className={`inline-flex  w-full cursor-pointer justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
+                      className={`bg-primary  inline-flex w-full cursor-pointer justify-center rounded-md border border-transparent px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
                         isLoading && 'cursor-not-allowed'
                       }`}
                     >

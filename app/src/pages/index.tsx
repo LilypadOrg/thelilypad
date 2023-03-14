@@ -8,7 +8,7 @@ import {
   // HOMEPAGE_COURSE_FILTERS,
   HOMEPAGE_FEATURED_ITEMS,
 } from '~/utils/constants';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 // import { useSession } from 'next-auth/react';
 import { SpotLightCards } from '~/components/ui/Home';
 import { SpotLightCardsLoading } from '~/components/ui/Loaders';
@@ -61,16 +61,13 @@ const Home: NextPage = () => {
   }, []);
 
   // load courses for courses section
-  const { data: courses, isLoading: coursesLoading } = trpc.useQuery([
-    'courses.all',
-    { take: HOMEPAGE_COURSE_CAROUSEL },
-  ]);
+  const { data: courses, isLoading: coursesLoading } = api.courses.all.useQuery(
+    { take: HOMEPAGE_COURSE_CAROUSEL }
+  );
 
   // load projects for featured section
-  const { data: projects, isLoading: projectsLoading } = trpc.useQuery([
-    'projects.all',
-    { take: HOMEPAGE_FEATURED_ITEMS },
-  ]);
+  const { data: projects, isLoading: projectsLoading } =
+    api.projects.all.useQuery({ take: HOMEPAGE_FEATURED_ITEMS });
   const coursesList = [
     'Something',
     'Something',

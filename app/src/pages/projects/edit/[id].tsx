@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 import SpinningCircle from '~/components/ui/Loaders/SpinningCircle';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
@@ -15,9 +15,12 @@ const EditProjectPage: NextPage = () => {
     data: project,
     isLoading,
     error,
-  } = trpc.useQuery(['projects.byId', { id }], {
-    enabled: sessionStatus !== 'loading',
-  });
+  } = api.projects.byId.useQuery(
+    { id },
+    {
+      enabled: sessionStatus !== 'loading',
+    }
+  );
 
   useEffect(() => {
     if (error?.data?.code === 'NOT_FOUND') {

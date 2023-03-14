@@ -10,7 +10,7 @@ import {
 } from 'wagmi';
 import { SBT_MINT_FEE } from '~/utils/constants';
 import { getLilyPadABI, getLilyPadAddress } from '~/utils/contracts';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 
 const MintSBTModal = ({
   open,
@@ -21,7 +21,7 @@ const MintSBTModal = ({
   closeModal: (isSuccess: boolean) => void;
   address: string;
 }) => {
-  const utils = trpc.useContext();
+  const utils = api.useContext();
 
   const { config: mintTokenConfig } = usePrepareContractWrite({
     address: getLilyPadAddress(),
@@ -36,16 +36,15 @@ const MintSBTModal = ({
   const { data: mintTokenRes, write: mintToken } =
     useContractWrite(mintTokenConfig);
 
-  const { mutateAsync: upadteHasPondSBT } = trpc.useMutation([
-    'users.setHasPondSBT',
-  ]);
+  const { mutateAsync: upadteHasPondSBT } =
+    api.users.setHasPondSbt.useMutation();
 
   const { isLoading: isLoadingMintToken } = useWaitForTransaction({
     hash: mintTokenRes?.hash,
     onSuccess: async () => {
       const user = await upadteHasPondSBT({ hasPondSBT: true });
-      utils.refetchQueries(['users.byAddress', { address: user.address }]);
-      utils.refetchQueries(['users.byUsername', { username: user.username }]);
+      utils.users.byAddress.refetch({ address: user.address });
+      utils.users.byUsername.refetch({ username: user.username });
 
       closeModal(true);
     },

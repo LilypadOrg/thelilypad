@@ -14,7 +14,5 @@ export const useDAOTreasure = () => {
     enabled: true,
   });
 
-  console.log({ error });
-
   return { treasureValue, refetchProfile, isLoadingTreasureValue };
 };
