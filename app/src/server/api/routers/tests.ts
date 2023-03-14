@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { prisma } from '~/server/prisma';
+import { prisma } from '~/server/db';
 import {
   BROWSE_COURSES_ITEMS,
   TEST_QUESTIONS_BY_LEVEL,

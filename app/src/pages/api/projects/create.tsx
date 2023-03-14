@@ -11,7 +11,7 @@ import {
   PROJECT_NAME_MIN_LENGTH,
 } from '~/utils/constants';
 import formidable from 'formidable';
-import { prisma } from '~/server/prisma';
+import { prisma } from '~/server/db';
 import { getImageExtFromType, slugify } from '~/utils/formatters';
 import { defaultProjectSelect } from '~/server/api/routers/projects';
 import { saveFormFile } from '~/utils/files';
