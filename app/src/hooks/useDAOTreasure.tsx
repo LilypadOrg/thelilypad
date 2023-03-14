@@ -6,7 +6,6 @@ export const useDAOTreasure = () => {
     data: treasureValue,
     refetch: refetchProfile,
     isLoading: isLoadingTreasureValue,
-    error,
   } = useContractRead({
     address: getLilyPadTreasure(),
     abi: getLilyPadTreasureABI(),
