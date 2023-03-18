@@ -1603,5 +1603,473 @@
         "answer": "False"
       }
     ]
+  },
+  {
+    "code": "CHA-BEG-01",
+    "question": "What is ChainLink?",
+    "technology": "ChainLink",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "A web3 services platform that connects smart contracts to any Web 2.0 API",
+        "correct": true
+      },
+      {
+        "answer": "A blockchain platform that supports smart contracts and decentralized applications"
+      },
+      {
+        "answer": "A cryptocurrency that enables fast and cheap transactions"
+      },
+      {
+        "answer": "A data provider that aggregates market prices and feeds them to smart contracts"
+      }
+    ]
+  },
+  {
+    "code": "CHA-BEG-02",
+    "question": "What is an oracle?",
+    "technology": "ChainLink",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "A device that predicts the future"
+      },
+      {
+        "answer": "Blockchain oracles are entities that connect blockchains to external systems",
+        "correct": true
+      },
+      {
+        "answer": "A protocol that governs the interaction of smart contracts"
+      },
+      {
+        "answer": "A network that connects different blockchains"
+      }
+    ]
+  },
+  {
+    "code": "CHA-BEG-03",
+    "question": "What is a data feed?",
+    "technology": "ChainLink",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "A stream of real-world data that is delivered to smart contracts via oracles"
+      },
+      {
+        "answer": "A feed of social media posts that is curated by smart contracts via oracles"
+      },
+      {
+        "answer": "A feed of cryptocurrency prices that is updated by smart contracts via oracles"
+      },
+      {
+        "answer": "All of the above",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "CHA-BEG-04",
+    "question": "What is ChainLink VRF?",
+    "technology": "ChainLink",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "A service that provides verifiable random numbers to smart contracts",
+        "correct": true
+      },
+      {
+        "answer": "A service that provides variable rate fees to smart contracts"
+      },
+      {
+        "answer": "A service that provides voice recognition features to smart contracts"
+      },
+      {
+        "answer": "A service that provides video rendering functions to smart contracts"
+      }
+    ]
+  },
+  {
+    "code": "CHA-BEG-05",
+    "question": "What is ChainLink Automation?",
+    "technology": "ChainLink",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "A service that automates tasks and workflows for smart contracts",
+        "correct": true
+      },
+      {
+        "answer": "A service that automates the creation and deployment of smart contracts"
+      },
+      {
+        "answer": "A service that automates the testing and debugging of smart contracts"
+      },
+      {
+        "answer": "All of the above"
+      }
+    ]
+  },
+  {
+    "code": "CHA-BEG-06",
+    "question": "What is a hybrid smart contract?",
+    "technology": "ChainLink",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "A smart contract that combines on-chain and off-chain logic",
+        "correct": true
+      },
+      {
+        "answer": "A smart contract that runs on multiple blockchains simultaneously"
+      },
+      {
+        "answer": "A smart contract that can switch between different programming languages"
+      },
+      {
+        "answer": "None of the above"
+      }
+    ]
+  },
+  {
+    "code": "CHA-BEG-07",
+    "question": "What is the ChainLink token (LINK)?",
+    "technology": "ChainLink",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "An ERC-20 token that is used to pay for data and services on the ChainLink network."
+      },
+      {
+        "answer": "An ERC-677 token that inherits functionality from the ERC-20 token standard and allows token transfers to contain a data payload."
+      },
+      {
+        "answer": "Both A and B",
+        "correct": true
+      },
+      {
+        "answer": "Neither A nor B"
+      }
+    ]
+  },
+  {
+    "code": "CHA-BEG-08",
+    "question": "How does ChainLink ensure security and reliability of its oracles?",
+    "technology": "ChainLink",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "By using multiple independent node operators to provide data redundancy and aggregation."
+      },
+      {
+        "answer": "By using cryptographic proofs to verify the authenticity and integrity of data sources."
+      },
+      {
+        "answer": "By using economic incentives and penalties to align node operator's interests with data quality"
+      },
+      {
+        "answer": "All of the above",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "CHA-BEG-09",
+    "question": "Wich of the following methods ChainLink uses to ensure security and reliability of its oracles?",
+    "technology": "ChainLink",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "By using multiple independent node operators to provide data redundancy and aggregation.",
+        "correct": true
+      },
+      {
+        "answer": "By using plain and open proofs to verify the authenticity and integrity of data sources."
+      },
+      {
+        "answer": "By using moral incentives and penalties to align node operator's interests with data quality"
+      },
+      {
+        "answer": "By being friends with node operator's that works better because of friendship."
+      }
+    ]
+  },
+  {
+    "code": "CHA-BEG-10",
+    "question": "Is the following statement true: 'ChainLink token (LINK) is an ERC-1155 token that inherits functionality from the ERC-20 token standard and allows token transfers to contain a data payload.?'",
+    "technology": "ChainLink",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "CHA-BEG-11",
+    "question": "What are some of the benefits of using ChainLink for smart contract development?",
+    "technology": "ChainLink",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "Access to authentic data and information through oracle operators",
+        "correct": true
+      },
+      {
+        "answer": "An efficient security system for its users"
+      },
+      {
+        "answer": "Compatibility between different blockchains and data sources"
+      },
+      {
+        "answer": "All of the above"
+      }
+    ]
+  },
+  {
+    "code": "CHA-BEG-12",
+    "question": "Is the following statement true: 'ChainLink aggregates data only from ethereum, making it's consistency and security higher.'",
+    "technology": "ChainLink",
+    "level": "Beginner",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "CHA-INT-01",
+    "question": "What is the method for requesting randomness in ChainLink VRF? ",
+    "technology": "ChainLink",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "Payment"
+      },
+      {
+        "answer": "Donation"
+      },
+      {
+        "answer": "Subscription",
+        "correct": true
+      },
+      {
+        "answer": "Transfer"
+      }
+    ]
+  },
+  {
+    "code": "CHA-INT-02",
+    "question": "What is the minimum amount of LINK tokens required to use ChainLink VRF?",
+    "technology": "ChainLink",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "1 LINK"
+      },
+      {
+        "answer": "10 LINK",
+        "correct": true
+      },
+      {
+        "answer": "100 LINK"
+      },
+      {
+        "answer": "1000 LINK"
+      }
+    ]
+  },
+  {
+    "code": "CHA-INT-03",
+    "question": "What is the difference between ChainLink VRF and ChainLink OCR?",
+    "technology": "ChainLink",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "ChainLink VRF is used for off-chain computation while ChainLink OCR is used for generating random numbers"
+      },
+      {
+        "answer": "ChainLink VRF is a ChainLink product provided for generating random numbers while ChainLink OCR is part of ChainLink Arquiteture to aggregate nodes reporting",
+        "correct": true
+      },
+      {
+        "answer": "ChainLink VRF is used for generating random numbers while ChainLink OCR is used to outsource automation of on-chain maintenance tasks"
+      },
+      {
+        "answer": "ChainLink VRF and ChainLink OCR are the same"
+      }
+    ]
+  },
+  {
+    "code": "CHA-INT-04",
+    "question": "What is the difference between ChainLink VRF and ChainLink Keepers?",
+    "technology": "ChainLink",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "ChainLink VRF is used for generating random numbers while ChainLink Keepers is used to outsource automation of on-chain maintenance tasks",
+        "correct": true
+      },
+      {
+        "answer": "ChainLink VRF is used for off-chain computation while ChainLink Keepers is used for generating random numbers"
+      },
+      {
+        "answer": "ChainLink VRF and ChainLink Keepers are the same"
+      },
+      {
+        "answer": "ChainLink VRF and ChainLink Keepers are used for generating random numbers "
+      }
+    ]
+  },
+  {
+    "code": "CHA-INT-05",
+    "question": "What is the difference between ChainLink VRF and ChainLink Price Feeds?",
+    "technology": "ChainLink",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "ChainLink VRF is used for off-chain computation while ChainLink Price Feeds is used for generating random numbers"
+      },
+      {
+        "answer": "ChainLink VRF is used for generating random numbers while ChainLink Price Feeds is used to outsource automation of on-chain maintenance tasks"
+      },
+      {
+        "answer": "ChainLink VRF and ChainLink Price Feeds are the same"
+      },
+      {
+        "answer": "ChainLink VRF is used for generating random numbers while ChainLink Price Feeds connects the smart contract to the real-world market prices of assets.",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "CHA-INT-06",
+    "question": "Is the following statement true: 'ChainLink Off-Chain Reporting (OCR) is part of ChainLink Architeture that consists of an aggregated report with each node reported data observation and signature that are then submitted on-chain in a single transaction.'?",
+    "technology": "ChainLink",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "CHA-INT-07",
+    "question": "How can I use ChainLink VRF?",
+    "technology": "ChainLink",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "Importing VRFConsumerBaseV2 and VRFCoordinatorV2Interface Contracts.",
+        "correct": true
+      },
+      {
+        "answer": "Importing AggregatorV3Interface and VRFCoordinatorV2Interface Contracts"
+      },
+      {
+        "answer": "Importing AggregatorV3Interface Contract"
+      },
+      {
+        "answer": "Importing ChainLinkClient and ConfirmedOwner Contracts."
+      }
+    ]
+  },
+  {
+    "code": "CHA-INT-08",
+    "question": "Is the following statement true: 'To start a VRF request, the function requestRandomWords from the VRF Coordinator contract must be called and the caller contract must implements the fulfillRandomWords function.'?",
+    "technology": "ChainLink",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
+  },
+  {
+    "code": "CHA-INT-09",
+    "question": "Is the following statement true: 'To start a VRF request, the function rollDice must be called and it will return the random number.'?",
+    "technology": "ChainLink",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "True"
+      },
+      {
+        "answer": "False",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "CHA-INT-10",
+    "question": "To fetch the latest usd price of ether, what function of the price feed Agregator should be called?",
+    "technology": "ChainLink",
+    "level": "Intermediate",
+    "answers": [
+      {
+        "answer": "buildChainLinkRequest"
+      },
+      {
+        "answer": "fulfillRandomWords"
+      },
+      {
+        "answer": "latestRoundData",
+        "correct": true
+      },
+      {
+        "answer": "requestRandomWords"
+      }
+    ]
+  },
+  {
+    "code": "CHA-ADV-01",
+    "question": "Wich of the following are methods to request randomness from ChainLink VFR?",
+    "technology": "ChainLink",
+    "level": "Advanced",
+    "answers": [
+      {
+        "answer": "Following and Indirect Subscription"
+      },
+      {
+        "answer": "Following and Direct Funding"
+      },
+      {
+        "answer": "Subscription and Indirect Funding"
+      },
+      {
+        "answer": "Subscription and Direct Funding",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "code": "CHA-ADV-02",
+    "question": "Is the following statement true: 'Direct Funding method is suggested for infrequent one-off requests cases'?",
+    "technology": "ChainLink",
+    "level": "Advanced",
+    "answers": [
+      {
+        "answer": "True",
+        "correct": true
+      },
+      {
+        "answer": "False"
+      }
+    ]
   }
 ]
