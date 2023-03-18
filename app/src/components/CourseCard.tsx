@@ -105,7 +105,7 @@ const CourseCard = ({
 
         <div className=" px-4 pt-0 pb-2">
           <div className="mb-2 overflow-hidden  whitespace-nowrap text-[.885rem] font-bold lg:text-lg">
-            <Link href={`/courses/${course.content.id}/${course.content.slug}`}>
+            <Link href={`/courses/${course.id}/${course.content.slug}`}>
               {limitStrLength(course.content.title, 80)}
             </Link>
           </div>

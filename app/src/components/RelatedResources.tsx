@@ -1,7 +1,5 @@
 import Link from 'next/link';
-import { inferQueryOutput } from '~/utils/trpc';
-
-type Resources = inferQueryOutput<'resources.all'>;
+import { Resources } from '~/types/types';
 
 const RelatedResources = ({ resources }: { resources: Resources }) => {
   return (

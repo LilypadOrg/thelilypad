@@ -10,7 +10,7 @@ import { CompleteCourse } from '~/components/CompleteCourse';
 import CourseCard from '~/components/CourseCard';
 import LevelPill from '~/components/ui/LevelPill';
 import { BROWSE_COURSES_ITEMS, PROJECTS_IMAGE_PATH } from '~/utils/constants';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 import { FaCogs } from 'react-icons/fa';
 import { AiFillTags } from 'react-icons/ai';
 import { MdGrade } from 'react-icons/md';
@@ -18,41 +18,35 @@ import { formatNumber } from '~/utils/formatters';
 
 const CoursePage: NextPage = () => {
   const id = Number(useRouter().query.id);
-  const { data: course, isLoading } = trpc.useQuery(['courses.byId', { id }]);
+  const { data: course, isLoading } = api.courses.byId.useQuery({ id });
 
   const { data: session } = useSession();
 
   const userCourse =
     course?.userCourses.length === 1 ? course?.userCourses[0] : undefined;
 
-  const { data: relatedResources } = trpc.useQuery(
-    [
-      'resources.related',
-      {
-        tags: course?.content.tags.map((t) => t.slug),
-        technologies: course?.content.technologies.map((t) => t.slug),
-      },
-    ],
+  const { data: relatedResources } = api.resources.related.useQuery(
+    {
+      tags: course?.content.tags.map((t) => t.slug),
+      technologies: course?.content.technologies.map((t) => t.slug),
+    },
     {
       enabled: !!course,
     }
   );
 
-  const { data: relatedCourses } = trpc.useQuery(
-    [
-      'courses.related',
-      {
-        tags: course?.content.tags.map((t) => t.slug),
-        technologies: course?.content.technologies.map((t) => t.slug),
-        excludeCourseId: course?.id,
-      },
-    ],
+  const { data: relatedCourses } = api.courses.related.useQuery(
+    {
+      tags: course?.content.tags.map((t) => t.slug),
+      technologies: course?.content.technologies.map((t) => t.slug),
+      excludeCourseId: course?.id,
+    },
     {
       enabled: !!course,
     }
   );
 
-  const { data: project } = trpc.useQuery(['projects.random']);
+  const { data: project } = api.projects.random.useQuery();
 
   // TODO: pull rigght content
   // const project = projects?.find((p) => p.id === 30003);
@@ -80,12 +74,16 @@ const CoursePage: NextPage = () => {
         {/* hero image */}
         <div className="relative flex h-[200px] w-full items-center justify-center rounded-md bg-main-gray-light sm:h-[300px] md:h-[400px] lg:h-[600px]">
           {course.content.coverImageUrl && (
-            <Image
-              alt="thumbnail"
-              src={course.content.coverImageUrl}
-              layout="fill"
-              objectFit="contain"
-            />
+            <Link className="cursor-pointer" href={course.content.url}>
+              <a target="_blank">
+                <Image
+                  alt="thumbnail"
+                  src={course.content.coverImageUrl}
+                  layout="fill"
+                  objectFit="contain"
+                />
+              </a>
+            </Link>
           )}
           {/* play button */}
           {/* <div className="h-14 w-14 rounded-full bg-secondary-400 shadow-md"></div> */}

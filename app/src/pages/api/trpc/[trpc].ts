@@ -1,32 +1,19 @@
-/**
- * This file contains tRPC's HTTP response handler
- */
-import * as trpcNext from '@trpc/server/adapters/next';
-import { createContext } from '~/server/context';
-import { appRouter } from '~/server/routers/_app';
+import { createNextApiHandler } from '@trpc/server/adapters/next';
 
-export default trpcNext.createNextApiHandler({
+import { env } from '../../../env';
+import { createTRPCContext } from '../../../server/api/trpc';
+import { appRouter } from '../../../server/api/root';
+
+// export API handler
+export default createNextApiHandler({
   router: appRouter,
-  /**
-   * @link https://trpc.io/docs/context
-   */
-  createContext,
-  /**
-   * @link https://trpc.io/docs/error-handling
-   */
-  onError({ error }) {
-    console.error('Error:', error);
-  },
-  /**
-   * Enable query batching
-   */
-  batching: {
-    enabled: true,
-  },
-  /**
-   * @link https://trpc.io/docs/caching#api-response-caching
-   */
-  // responseMeta() {
-  //   // ...
-  // },
+  createContext: createTRPCContext,
+  onError:
+    env.NODE_ENV === 'development'
+      ? ({ path, error }) => {
+          console.error(
+            `❌ tRPC failed on ${path ?? '<no-path>'}: ${error.message}`
+          );
+        }
+      : undefined,
 });

@@ -2,9 +2,8 @@ import React from 'react';
 import { Dialog } from '@headlessui/react';
 import { BsExclamationTriangle } from 'react-icons/bs';
 import Modal from './Modal';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 import Spinner from '../ui/Spinner';
-import { signOut } from 'next-auth/react';
 import { Project } from '~/types/types';
 
 const DeleteProjectModal = ({
@@ -16,18 +15,14 @@ const DeleteProjectModal = ({
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   project: Project | undefined;
 }) => {
-  const utils = trpc.useContext();
+  const utils = api.useContext();
 
-  const { mutate: executeDelete, isLoading } = trpc.useMutation(
-    ['projects.delete'],
-    {
-      onSuccess: () => {
-        utils.invalidateQueries('projects.all');
-        signOut();
-        setOpen(false);
-      },
-    }
-  );
+  const { mutate: executeDelete, isLoading } = api.projects.delete.useMutation({
+    onSuccess: () => {
+      utils.projects.all.invalidate();
+      setOpen(false);
+    },
+  });
 
   const deleteProject = () => {
     if (project) {

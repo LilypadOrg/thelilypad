@@ -9,14 +9,12 @@ import {
 import { SessionProvider } from 'next-auth/react';
 import { WagmiConfig } from 'wagmi';
 import { wagmiClient, chains } from '../utils/rainbowkit';
-import { withTRPC } from '@trpc/next';
-import { AppRouter } from '~/server/routers/_app';
-import superjson from 'superjson';
 import Navbar from '~/components/Navbar';
 import Footer from '~/components/Footer';
 import { Session } from 'next-auth';
 import Head from 'next/head';
 import Avatar from '~/components/Avatar';
+import { api } from '~/utils/api';
 
 const getSiweMessageOptions: GetSiweMessageOptions = () => ({
   statement: 'Sign in to The Lily Pad',
@@ -51,38 +49,4 @@ const MyApp = ({
   );
 };
 
-export default withTRPC<AppRouter>({
-  config() {
-    /**
-     * If you want to use SSR, you need to use the server's full URL
-     * @link https://trpc.io/docs/ssr
-     */
-    // const url = 'https://thelilypad.vercel.app//api/trpc';
-
-    const vercelUrl =
-      process.env.VERCEL_URL || process.env.NEXT_PUBLIC_VERCEL_URL;
-    const url = vercelUrl
-      ? `https://${vercelUrl}/api/trpc`
-      : 'http://localhost:3000/api/trpc';
-    return {
-      url,
-      transformer: superjson,
-      /**
-       * @link https://react-query.tanstack.com/reference/QueryClient
-       */
-      // queryClientConfig: {
-      //   defaultOptions: {
-      //     queries: { staleTime: 60 },
-      //     queryCache: new QueryCache({
-      //       onSuccess: () => {
-      //       },
-      //     }),
-      //   },
-      // },
-    };
-  },
-  /**
-   * @link https://trpc.io/docs/ssr
-   */
-  ssr: true,
-})(MyApp);
+export default api.withTRPC(MyApp);

@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import ProposalStatusWidget from '~/components/ProposalStatusWidget';
 import BackButton from '~/components/ui/BackButton';
 import { DaoProposalEntity } from '~/server/entities/DaoProposalEntity';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 
 export type ProposalHeaderProps = {
   propId: number;
@@ -18,7 +18,7 @@ export type ProposalHeaderProps = {
 const ProposalPage: NextPage = () => {
   const id = Number(useRouter().query.id);
 
-  const { data: proposal, isLoading } = trpc.useQuery(['dao.byId', { id }]);
+  const { data: proposal, isLoading } = api.dao.byId.useQuery({ id });
   const daoEntity = DaoProposalEntity.parse(proposal);
 
   const ProposalHeader = ({

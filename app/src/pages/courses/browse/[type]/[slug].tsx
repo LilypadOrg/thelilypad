@@ -9,54 +9,48 @@ import {
   BROWSE_COURSES_CAT_FILTERS,
   BROWSE_COURSES_ITEMS,
 } from '~/utils/constants';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 
 const CourseCategories: NextPage = () => {
   const router = useRouter();
 
   const { type, slug } = router.query;
 
-  const { data: courses, isLoading: coursesLoading } = trpc.useQuery([
-    'courses.all',
+  const { data: courses, isLoading: coursesLoading } = api.courses.all.useQuery(
     {
       tags: type === 'tag' ? slug : undefined,
       technologies: type === 'tech' ? slug : undefined,
       levels: type === 'level' ? slug : undefined,
-    },
-  ]);
+    }
+  );
 
-  const { data: tagTitle } = trpc.useQuery(
-    ['tags.bySlug', { slug: Array.isArray(slug) ? slug[0] : slug || '' }],
+  const { data: tagTitle } = api.tags.bySlug.useQuery(
+    { slug: Array.isArray(slug) ? slug[0] : slug || '' },
     {
       enabled: !!slug && type === 'tag',
     }
   );
 
-  const { data: techTitle } = trpc.useQuery(
-    [
-      'technologies.bySlug',
-      { slug: Array.isArray(slug) ? slug[0] : slug || '' },
-    ],
+  const { data: techTitle } = api.technologies.bySlug.useQuery(
+    { slug: Array.isArray(slug) ? slug[0] : slug || '' },
     {
       enabled: !!slug && type === 'tech',
     }
   );
 
-  const { data: levelTitle } = trpc.useQuery(
-    ['levels.bySlug', { slug: Array.isArray(slug) ? slug[0] : slug || '' }],
+  const { data: levelTitle } = api.levels.bySlug.useQuery(
+    { slug: Array.isArray(slug) ? slug[0] : slug || '' },
     {
       enabled: !!slug && type === 'level',
     }
   );
 
-  const { data: techs } = trpc.useQuery([
-    'technologies.byContentTYpe',
-    { contentType: ContentType.COURSE },
-  ]);
-  const { data: tags } = trpc.useQuery([
-    'tags.byContentTYpe',
-    { contentType: ContentType.COURSE },
-  ]);
+  const { data: techs } = api.technologies.byContentTYpe.useQuery({
+    contentType: ContentType.COURSE,
+  });
+  const { data: tags } = api.tags.byContentTYpe.useQuery({
+    contentType: ContentType.COURSE,
+  });
 
   const topic = tagTitle?.name || techTitle?.name || levelTitle?.name || '';
 

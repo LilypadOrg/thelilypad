@@ -1,4 +1,4 @@
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 import PillSelector from '~/components/PillSelector';
 import SpinningCircle from '~/components/ui/Loaders/SpinningCircle';
 import { useEditProjectForm } from '~/hooks/useEditProjectForm';
@@ -17,10 +17,10 @@ const EditProjectForm = ({ project }: { project?: Project }) => {
     control,
   } = useEditProjectForm(project);
 
-  const { data: techs } = trpc.useQuery(['technologies.all']);
+  const { data: techs } = api.technologies.all.useQuery();
   const techOptions = techs?.map((t) => ({ value: t.id, label: t.name })) || [];
 
-  const { data: tags } = trpc.useQuery(['tags.all']);
+  const { data: tags } = api.tags.all.useQuery();
   const tagOptions = tags?.map((t) => ({ value: t.id, label: t.name })) || [];
 
   return (

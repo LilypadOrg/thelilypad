@@ -109,8 +109,6 @@ FormInputProps<TFormValues>) => {
     }
   };
 
-  console.log({ value });
-
   const setNewImage = useCallback((file: File) => {
     setCrop(undefined); // Makes crop preview update between images.
     setIsCropCompleted(false);

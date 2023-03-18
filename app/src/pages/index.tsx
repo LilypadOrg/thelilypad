@@ -8,11 +8,13 @@ import {
   // HOMEPAGE_COURSE_FILTERS,
   HOMEPAGE_FEATURED_ITEMS,
 } from '~/utils/constants';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 // import { useSession } from 'next-auth/react';
 import { SpotLightCards } from '~/components/ui/Home';
 import { SpotLightCardsLoading } from '~/components/ui/Loaders';
 import { HiChevronRight } from 'react-icons/hi';
+import HomePageModal from '~/components/modals/HomePageModal';
+import { useEffect, useState } from 'react';
 // import AboutHomeLinks from '~/components/AboutHomeLinks';
 // import BrowseCoursesLink from '~/components/BrowseCoursesLink';
 // import { useMemo } from 'react';
@@ -51,17 +53,21 @@ const Home: NextPage = () => {
   //   }
   // }, [tags, techs]);
 
+  const [open, setOpen] = useState<boolean>(false);
+
+  // TODO: make modal no longer show up if it has been closed already
+  useEffect(() => {
+    // setOpen(true);
+  }, []);
+
   // load courses for courses section
-  const { data: courses, isLoading: coursesLoading } = trpc.useQuery([
-    'courses.all',
-    { take: HOMEPAGE_COURSE_CAROUSEL },
-  ]);
+  const { data: courses, isLoading: coursesLoading } = api.courses.all.useQuery(
+    { take: HOMEPAGE_COURSE_CAROUSEL }
+  );
 
   // load projects for featured section
-  const { data: projects, isLoading: projectsLoading } = trpc.useQuery([
-    'projects.all',
-    { take: HOMEPAGE_FEATURED_ITEMS },
-  ]);
+  const { data: projects, isLoading: projectsLoading } =
+    api.projects.all.useQuery({ take: HOMEPAGE_FEATURED_ITEMS });
   const coursesList = [
     'Something',
     'Something',
@@ -86,17 +92,18 @@ const Home: NextPage = () => {
   const bigResourceList = [...coursesList];
   return (
     <div>
+      <HomePageModal open={open} setOpen={setOpen} />
       {/* Hero and cards */}
       <div className="grid h-[55vh] grid-cols-3">
         <div className="col-span-2 hidden h-full bg-[url('/homeBanner.png')] bg-cover md:block">
           <div className="space-y-3 px-8 pt-12">
             <p className="max-w-[80%] text-4xl leading-[2.8rem] text-secondary-400">
-              A community endeavouring to guide those self-ilearning in Web3
+              A community endeavouring to guide those self-learning in Web3
             </p>
             <p className="text-4xl text-main-yellow">#GoYou</p>
           </div>
         </div>
-        <div className="col-span-3 flex h-full items-center justify-center bg-main-yellow bg-[url('/homeBanner.png')] px-6 md:col-span-1 md:bg-[url('')]">
+        <div className="] col-span-3 flex h-full items-center justify-center bg-main-yellow bg-[url('/homeBanner.png')] px-6 md:col-span-1">
           <div className="flex flex-col items-center space-y-8">
             <div className="flex w-full justify-between">
               <div className="flex max-w-[55%] flex-col justify-between">

@@ -6,7 +6,7 @@ import { AiFillTags } from 'react-icons/ai';
 import { FaCogs } from 'react-icons/fa';
 import { BsGithub } from 'react-icons/bs';
 import LevelPill from '~/components/ui/LevelPill';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 import { TbWorld } from 'react-icons/tb';
 import { PROJECTS_IMAGE_PATH } from '~/utils/constants';
 import { useSession } from 'next-auth/react';
@@ -15,13 +15,18 @@ import { useEffect } from 'react';
 const ProjectPage: NextPage = () => {
   const router = useRouter();
   const id = Number(router.query.id);
+  const { data: session, status: sessionStatus } = useSession();
 
   const {
     data: project,
     isLoading,
     error,
-  } = trpc.useQuery(['projects.byId', { id }]);
-  const { data: session } = useSession();
+  } = api.projects.byId.useQuery(
+    { id },
+    {
+      enabled: sessionStatus !== 'loading',
+    }
+  );
 
   const isOwner = session?.user?.userId === project?.submittedById;
 

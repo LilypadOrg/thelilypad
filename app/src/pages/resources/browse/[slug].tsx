@@ -1,7 +1,6 @@
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import ResourceCard from '~/components/ResourceCard';
-// import { trpc } from '~/utils/trpc';
 import resources from '../../../../prisma/seedData/resources.json';
 
 const Resource: NextPage = () => {

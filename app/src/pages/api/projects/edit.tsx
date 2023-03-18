@@ -11,10 +11,10 @@ import {
   PROJECT_NAME_MIN_LENGTH,
 } from '~/utils/constants';
 import formidable from 'formidable';
-import { prisma } from '~/server/prisma';
+import { prisma } from '~/server/db';
 import { getImageExtFromType, slugify } from '~/utils/formatters';
-import fs from 'fs';
-import { defaultProjectSelect } from '~/server/routers/projects';
+import { defaultProjectSelect } from '~/server/api/routers/projects';
+import { deleteProjectImage, saveFormFile } from '~/utils/files';
 
 export const config = {
   api: {
@@ -63,7 +63,12 @@ const reqDataSchema = z.object({
   tags: z.number().array(),
 });
 
-const post = async (req: NextApiRequest, res: NextApiResponse) => {
+interface ParsedForm {
+  fields: formidable.Fields;
+  files: formidable.Files;
+}
+
+const put = async (req: NextApiRequest, res: NextApiResponse) => {
   // Check user is authenticated
   const session = await getSession({ req });
   if (!session) {
@@ -78,13 +83,19 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(401).send('Unauthorized');
   }
 
-  console.log('edit - Autorized');
-
   const form = new formidable.IncomingForm();
-  form.parse(req, async function (err, fields, files) {
+  const formPromise = new Promise<ParsedForm>((resolve, reject) => {
+    form.parse(req, async function (err, fields, files) {
+      if (err) reject();
+      resolve({ fields, files });
+    });
+  });
+
+  try {
+    const { fields, files } = await formPromise;
+
     if (Array.isArray(files.image)) {
-      res.status(401).send('Unauthorized');
-      return;
+      return res.status(401).send('Unauthorized');
     }
     const image = files.image;
 
@@ -95,67 +106,67 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
       ? JSON.parse(fields['tags'][0])
       : JSON.parse(fields['tags']);
 
-    console.log('edit - fields parsed');
+    const validFields = reqDataSchema.parse({
+      ...fields,
+      id: Number(fields.id),
+      image,
+    });
 
-    try {
-      const validFields = reqDataSchema.parse({
-        ...fields,
-        image,
-      });
+    const slug = slugify(validFields.title);
+    const extension = getImageExtFromType(image.mimetype || '');
+    const outputFilename = `${slug}-${new Date().getTime()}${extension}`;
+    await saveFormFile(
+      image,
+      './public' + PROJECTS_IMAGE_PATH + outputFilename
+    );
 
-      const slug = slugify(validFields.title);
-      console.log('edit - getting Image Eext', image.mimetype);
-      const extension = getImageExtFromType(image.mimetype || '');
-      const outputFilename = `${slug}-${new Date().getTime()}${extension}`;
-      console.log({ outputFilename });
-      await saveFile(image, './public' + PROJECTS_IMAGE_PATH + outputFilename);
-      console.log('edit - writing db...');
-      const project = await prisma.communityProject.update({
-        where: { id: validFields.id },
-        data: {
-          author: validFields.author,
-          codeUrl: validFields.codeUrl || null,
-          submittedBy: { connect: { id: session.user.userId } },
-          content: {
-            create: {
-              title: validFields.title,
-              slug,
-              description: validFields.description,
-              url: validFields.url,
-              coverImageUrl: outputFilename,
-              contentType: { connect: { name: 'Community Project' } },
-              technologies: {
-                connect: validFields.techs.map((l) => ({ id: l })),
-              },
-              tags: { connect: validFields.tags.map((l) => ({ id: l })) },
+    const existingProject = await prisma.communityProject.findUniqueOrThrow({
+      where: { id: validFields.id },
+      select: { content: { select: { id: true, coverImageUrl: true } } },
+    });
+    await prisma.content.delete({
+      where: { id: existingProject.content.id },
+    });
+    if (existingProject.content.coverImageUrl) {
+      deleteProjectImage(existingProject.content.coverImageUrl);
+    }
+
+    const project = await prisma.communityProject.create({
+      data: {
+        author: validFields.author,
+        codeUrl: validFields.codeUrl || null,
+        submittedBy: { connect: { id: session.user.userId } },
+        content: {
+          create: {
+            title: validFields.title,
+            slug,
+            description: validFields.description,
+            url: validFields.url,
+            coverImageUrl: outputFilename,
+            contentType: { connect: { name: 'Community Project' } },
+            technologies: {
+              connect: validFields.techs.map((l) => ({ id: l })),
             },
+            tags: { connect: validFields.tags.map((l) => ({ id: l })) },
           },
         },
-        // TODO: Move defaultSelect outside of roouters
-        select: defaultProjectSelect,
-      });
-      console.log('edit - db written.');
-
-      res.status(201).json(project);
-    } catch (error) {
-      res.status(400);
-    }
-  });
-  return;
-};
-
-const saveFile = async (file: formidable.File, fileName: string) => {
-  const data = fs.readFileSync(file.filepath);
-  fs.writeFileSync(fileName, data);
-  fs.unlinkSync(file.filepath);
-  return;
+      },
+      // TODO: Move defaultSelect outside of roouters
+      select: defaultProjectSelect,
+    });
+    return res.status(200).send(JSON.stringify(project));
+    // return res.status(201).json(project);
+  } catch (error) {
+    console.log(error);
+    return res.status(400);
+  }
 };
 
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
   req.method === 'POST'
-    ? post(req, res)
+    ? console.log('POST')
     : req.method === 'PUT'
-    ? console.log('PUT')
+    ? put(req, res)
     : req.method === 'DELETE'
     ? console.log('DELETE')
     : req.method === 'GET'

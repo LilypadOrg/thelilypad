@@ -7,7 +7,6 @@ import {
   // getPondSBTABI,
   // getPondSBTAddress,
 } from '~/utils/contracts';
-// import { trpc } from '~/utils/trpc';
 
 export const useOnChainProfile = (address: string | undefined) => {
   const {

@@ -1,6 +1,6 @@
 import { BiAddToQueue } from 'react-icons/bi';
 import { toast } from 'react-toastify';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 
 const AddCourseToRoadmap = ({
   courseId,
@@ -11,11 +11,10 @@ const AddCourseToRoadmap = ({
   inRoadmap: boolean;
   type: 'small' | 'standard';
 }) => {
-  const utils = trpc.useContext();
+  const utils = api.useContext();
 
-  const { mutate: mutateAddToRoadmap } = trpc.useMutation(
-    ['usercourses.addToRoadmap'],
-    {
+  const { mutate: mutateAddToRoadmap } =
+    api.usercourses.addToRoadmap.useMutation({
       // onMutate: async () => {
       //   // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
       //   await utils.cancelQuery(['courses.all']);
@@ -46,14 +45,12 @@ const AddCourseToRoadmap = ({
         toast.error(err.message);
       },
       onSuccess: () => {
-        utils.invalidateQueries(['courses.byId', { id: courseId }]);
-        utils.invalidateQueries(['courses.byUsername']);
+        utils.courses.byId.invalidate({ id: courseId });
+        utils.courses.byUsername.invalidate();
       },
-    }
-  );
+    });
 
   const handleAddToRoadmap = () => {
-    console.log('Hello world');
     mutateAddToRoadmap({
       courseId,
       roadmap: !inRoadmap,

@@ -2,7 +2,7 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import PageTitle from '~/components/ui/PageTitle';
 import useAdmin from '~/hooks/useAdmin';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 
 const AdminProjectPage: NextPage = () => {
   useAdmin();
@@ -13,7 +13,7 @@ const AdminProjectPage: NextPage = () => {
     data: project,
     isLoading,
     // error,
-  } = trpc.useQuery(['projects.byId', { id }]);
+  } = api.projects.byId.useQuery({ id });
 
   // error?.data?.code === 'NOT_FOUND' && router.push('/');
 
