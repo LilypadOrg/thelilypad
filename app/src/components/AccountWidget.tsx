@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useAccount, useDisconnect } from 'wagmi';
 import { useEffect } from 'react';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 
 const AccountWidget = () => {
   const { address } = useAccount();
@@ -15,8 +15,8 @@ const AccountWidget = () => {
     }
   }, [address, session, disconnect]);
 
-  const { data: user } = trpc.useQuery(
-    ['users.byAddress', { address: session?.user.address || '' }],
+  const { data: user } = api.users.byAddress.useQuery(
+    { address: session?.user.address || '' },
     {
       enabled: !!session?.user,
       onSuccess: (data) => {

@@ -2,16 +2,13 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import AccoladeCard from '~/components/AccoladeCard';
 import CourseCard from '~/components/CourseCard';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 
 const UserAccolades: NextPage = () => {
   const router = useRouter();
   const username = router.query.username as string;
 
-  const { data: userCourses } = trpc.useQuery([
-    'usercourses.all',
-    { username },
-  ]);
+  const { data: userCourses } = api.usercourses.all.useQuery({ username });
 
   return (
     <div className="gradient-bg-top-courses px-[2.5rem] pt-2 lg:px-[5.5rem]">

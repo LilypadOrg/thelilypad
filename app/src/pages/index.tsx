@@ -2,66 +2,26 @@ import type { NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import CourseCarousel from '~/components/CourseCarousel';
-// import { ContentType } from '~/types/types';
 import {
   HOMEPAGE_COURSE_CAROUSEL,
-  // HOMEPAGE_COURSE_FILTERS,
   HOMEPAGE_FEATURED_ITEMS,
 } from '~/utils/constants';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 // import { useSession } from 'next-auth/react';
 import { SpotLightCards } from '~/components/ui/Home';
 import { SpotLightCardsLoading } from '~/components/ui/Loaders';
 import { HiChevronRight } from 'react-icons/hi';
-// import AboutHomeLinks from '~/components/AboutHomeLinks';
-// import BrowseCoursesLink from '~/components/BrowseCoursesLink';
-// import { useMemo } from 'react';
+import SectionTitle from '~/components/ui/SectionTitle';
 
 const Home: NextPage = () => {
-  // Load techs for side bar links - top tags and techs
-  // const { data: techs, isLoading: techsLoading } = trpc.useQuery([
-  //   'technologies.byContentTYpe',
-  //   { contentType: ContentType.COURSE },
-  // ]);
-
-  // Load tags for side bar links - top tags and techs
-  // const { data: tags, isLoading: tagsLoading } = trpc.useQuery([
-  //   'tags.byContentTYpe',
-  //   { contentType: ContentType.COURSE },
-  // ]);
-
-  // const { data: session } = useSession();
-
-  // load user data for profile link
-  // const { data: user } = trpc.useQuery(
-  //   ['users.byAddress', { address: session?.user.address || '' }],
-  //   {
-  //     enabled: !!session?.user,
-  //   }
-  // );
-
-  // create list of topTags and Techs for top-right sidebar
-  // const topTagsTechs = useMemo(() => {
-  //   if (tags && techs) {
-  //     return tags
-  //       .map((t) => ({ ...t, type: 'tag' }))
-  //       .concat(techs.map((t) => ({ ...t, type: 'tech' })))
-  //       .sort((a, b) => b._count.contents - a._count.contents)
-  //       .slice(0, HOMEPAGE_COURSE_FILTERS);
-  //   }
-  // }, [tags, techs]);
-
   // load courses for courses section
-  const { data: courses, isLoading: coursesLoading } = trpc.useQuery([
-    'courses.all',
-    { take: HOMEPAGE_COURSE_CAROUSEL },
-  ]);
+  const { data: courses, isLoading: coursesLoading } = api.courses.all.useQuery(
+    { take: HOMEPAGE_COURSE_CAROUSEL }
+  );
 
   // load projects for featured section
-  const { data: projects, isLoading: projectsLoading } = trpc.useQuery([
-    'projects.all',
-    { take: HOMEPAGE_FEATURED_ITEMS },
-  ]);
+  const { data: projects, isLoading: projectsLoading } =
+    api.projects.all.useQuery({ take: HOMEPAGE_FEATURED_ITEMS });
   const coursesList = [
     'Something',
     'Something',
@@ -128,15 +88,14 @@ const Home: NextPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Community Spotligh */}
       <div className="px-[2.5rem] pt-8 lg:px-[5.5rem]">
-        {/* Collection */}
         <div className="my-8">
           {/* First three collection */}
-          <h4 className="text-2xl md:text-3xl lg:text-4xl">
-            Community Spotlight
-          </h4>
+          <SectionTitle title="Community Spotlight" />
+
           <div className="md: grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {/* TODO : Handle error and improve logic */}
             {projectsLoading &&
               [1, 2, 3, 4, 5, 6].map((i) => <SpotLightCardsLoading key={i} />)}
             {projects?.map((p, index: number) => (
@@ -147,12 +106,12 @@ const Home: NextPage = () => {
               />
             ))}
           </div>
-          {/* Next two collection */}
         </div>
       </div>
+      {/* Divider */}
       <hr className="my-14 w-full bg-main-gray-dark" />
+      {/* Top 10 courses */}
       <div className="px-[2.5rem]  pb-12 lg:px-[5.5rem]">
-        {/* Top 10 courses */}
         <CourseCarousel
           title="Top 10 Courses"
           courses={courses}

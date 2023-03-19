@@ -1,7 +1,11 @@
 import { Prisma } from '@prisma/client';
 import { BigNumber } from 'ethers';
-import { testInstanceSelect } from '~/server/routers/tests';
-import { inferQueryOutput } from '~/utils/trpc';
+import { testInstanceSelect } from '~/server/api/routers/tests';
+// TODO: find replacement for this
+import type { inferRouterOutputs } from '@trpc/server';
+import { AppRouter } from '~/server/api/root';
+
+type RouterOutput = inferRouterOutputs<AppRouter>;
 
 export enum ContentType {
   COURSE = 'Course',
@@ -10,18 +14,23 @@ export enum ContentType {
   COMMUNITY_PROJECT = 'Community Project',
 }
 
-export type Course = inferQueryOutput<'courses.byId'>;
-export type Courses = inferQueryOutput<'courses.all'>;
-export type CoursesByUser = inferQueryOutput<'courses.byUsername'>;
-export type UserProfile = inferQueryOutput<'users.byUsername'>;
-export type Tech = inferQueryOutput<'technologies.bySlug'>;
-export type Techs = inferQueryOutput<'technologies.all'>;
-export type UserCourse = inferQueryOutput<'usercourses.single'>;
-export type UserCourseWithContent =
-  inferQueryOutput<'usercourses.singleWithContent'>;
-export type UserCourses = inferQueryOutput<'usercourses.all'>;
-export type Question = inferQueryOutput<'tests.questionById'>;
-export type Project = inferQueryOutput<'projects.byId'>;
+export type FilterOptions =
+  | RouterOutput['tags']['byContentTYpe']
+  | RouterOutput['levels']['byContentTYpe']
+  | RouterOutput['technologies']['byContentTYpe'];
+
+export type Resources = RouterOutput['resources']['all'];
+
+export type Course = RouterOutput['courses']['byId'];
+export type Courses = RouterOutput['courses']['all'];
+export type CoursesByUser = RouterOutput['courses']['byUsername'];
+export type UserProfile = RouterOutput['users']['byUsername'];
+export type Tech = RouterOutput['technologies']['bySlug'];
+export type Techs = RouterOutput['technologies']['all'];
+export type UserCourse = RouterOutput['usercourses']['single'];
+export type UserCourses = RouterOutput['usercourses']['all'];
+export type Question = RouterOutput['tests']['questionById'];
+export type Project = RouterOutput['projects']['byId'];
 
 export interface TokenMedata {
   image: string;

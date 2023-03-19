@@ -19,27 +19,10 @@ const CourseCard = ({
 }) => {
   const { data: session } = useSession();
 
-  // pull all the courses the user is enrolled to or has completed
-  // this is used instead of querying the specific course under the assumption the query result is cached andused
-  // for all courses (TODO: assumption need to be verified)
-  // const { data: userCourses } = trpc.useQuery(
-  //   ['usercourses.all', { userId: session?.user.userId || -1 }],
-  //   {
-  //     enabled: !!session,
-  //     cacheTime: 1000 * 60,
-  //   }
-  // );
-
+  // each course has a userCourse array, but it's empty if the user is not logged in]
+  // each course only has one userCourse, so we can access it with [0]
   const completed = course.userCourses[0]?.completed;
   const inRoadmap = course.userCourses[0]?.roadmap;
-
-  // const completed = useMemo(() => {
-  //   return !!userCourses?.find((c) => c.courseId === course.id && c.completed);
-  // }, [userCourses, course.id]);
-
-  // const inRoadmap = useMemo(() => {
-  //   return !!userCourses?.find((c) => c.courseId === course.id && c.roadmap);
-  // }, [userCourses, course.id]);
 
   return (
     // TODO: remove fix heigth

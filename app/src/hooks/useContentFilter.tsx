@@ -1,24 +1,19 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { ContentType } from '~/types/types';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 
 export const useContentFilter = (contenType: ContentType) => {
   const [contentFilters, setContentFilters] = useState<ContentFilterType>({});
 
-  const { data: levels, isLoading: levelsLoading } = trpc.useQuery([
-    'levels.byContentTYpe',
-  ]);
+  const { data: levels, isLoading: levelsLoading } =
+    api.levels.byContentTYpe.useQuery();
 
-  const { data: tags, isLoading: tagsLoading } = trpc.useQuery([
-    'tags.byContentTYpe',
-    { contentType: contenType },
-  ]);
+  const { data: tags, isLoading: tagsLoading } =
+    api.tags.byContentTYpe.useQuery({ contentType: contenType });
 
-  const { data: techs, isLoading: techsLoading } = trpc.useQuery([
-    'technologies.byContentTYpe',
-    { contentType: contenType },
-  ]);
+  const { data: techs, isLoading: techsLoading } =
+    api.technologies.byContentTYpe.useQuery({ contentType: contenType });
 
   const router = useRouter();
 

@@ -5,7 +5,7 @@ import LiLyPadContract from './contracts/LilyPad';
 // import PondSBTContract from './contracts/PondSBT.json';
 import PondSBTContract from './contracts/PondSBT';
 // import LilyPadTreasureContract from './contracts/LilyPadTreasure.json';
-import LilyPadTreasureContract from './contracts/LilyPadTreasure';
+import LilyPadTreasureContract from './contracts/LilyPadTreasure.json';
 import LilyPadGovernorContract from './contracts/LilyPadGovernor.json';
 import LilyPadExecutorContract from './contracts/LilyPadExecutor.json';
 
@@ -66,7 +66,7 @@ export const getPondSBTABI = () => {
 
 export const getLilyPadTreasureABI = () => {
   // return LilyPadTreasureContract.abi;
-  return LilyPadTreasureContract;
+  return LilyPadTreasureContract.abi;
 };
 
 export const getLilyPadGovernorABI = () => {

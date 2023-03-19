@@ -8,9 +8,9 @@ import {
   USERNAME_MAX_LENGTH,
   USERNAME_MIN_LENGTH,
 } from '~/utils/constants';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { trpc } from '~/utils/trpc';
-import LevelPill from './ui/LevelPill';
+import { useEffect, useState } from 'react';
+import { api } from '~/utils/api';
+import LevelPill from '../ui/LevelPill';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 import { getLilyPadABI, getLilyPadAddress } from '~/utils/contracts';
@@ -20,17 +20,19 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import { BigNumber } from 'ethers';
+import Modal from './Modal';
+import { Dialog } from '@headlessui/react';
 
 const EditProfileModal = ({
   open,
+  setOpen,
   mode,
   userProfile,
-  closeModal,
 }: {
   open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   mode: 'update' | 'create';
   userProfile: NonNullable<UserProfile>;
-  closeModal: () => void;
 }) => {
   type Inputs = {
     username: string;
@@ -38,23 +40,19 @@ const EditProfileModal = ({
   };
 
   const router = useRouter();
-  const utils = trpc.useContext();
-  const modalRef = useRef(null);
+  const utils = api.useContext();
 
-  const { data: techs } = trpc.useQuery(['technologies.all']);
+  const { data: techs } = api.technologies.all.useQuery();
   const { mutate: updateProfile, isLoading: isLoadingUpateProfile } =
-    trpc.useMutation(['users.updateProfile'], {
+    api.users.updateProfile.useMutation({
       onError: (err) => {
         toast.error(err.message);
       },
       onSuccess: (data) => {
-        utils.invalidateQueries([
-          'users.byUsername',
-          { username: data.username },
-        ]);
+        utils.users.byUsername.invalidate({ username: data.username });
         const changeRoute = userProfile.username !== data.username;
         if (changeRoute) router.replace(`/profiles/${data.username}`);
-        closeModal();
+        setOpen(false);
       },
     });
 
@@ -66,9 +64,8 @@ const EditProfileModal = ({
     []
   );
 
-  const { data: createMemberSignature } = trpc.useQuery(
-    [
-      'blockend.signCreateMember',
+  const { data: createMemberSignature } =
+    api.blockend.signCreateMember.useQuery(
       {
         xp: userProfile?.xp || 0,
         courses:
@@ -76,11 +73,10 @@ const EditProfileModal = ({
             .filter((c) => c.completed)
             .map((c) => c.courseId) || [],
       },
-    ],
-    {
-      enabled: mode === 'create',
-    }
-  );
+      {
+        enabled: mode === 'create',
+      }
+    );
 
   const { config: createMemberConfig } = usePrepareContractWrite({
     address: getLilyPadAddress(),
@@ -112,30 +108,6 @@ const EditProfileModal = ({
       });
     },
   });
-
-  /* ---- Modal Stuff ----- */
-
-  const hideModal = (e: React.MouseEvent<HTMLElement>) => {
-    if (modalRef.current === e.target) {
-      closeModal();
-    }
-  };
-
-  const keyPress = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && open) {
-        closeModal();
-      }
-    },
-    [closeModal, open]
-  );
-
-  useEffect(() => {
-    document.addEventListener('keydown', keyPress);
-    return () => document.removeEventListener('keydown', keyPress);
-  }, [keyPress]);
-
-  /* ---- Modal Stuff ----- */
 
   useEffect(() => {
     if (techs) {
@@ -206,12 +178,8 @@ const EditProfileModal = ({
   const isLoading = isLoadingCreateMember || isLoadingUpateProfile;
 
   return (
-    <div
-      className="fixed top-0 left-0 z-50 flex h-full w-full items-center justify-center overflow-auto bg-[rgba(0,0,0,0.5)] p-1"
-      ref={modalRef}
-      onClick={hideModal}
-    >
-      <div className="relative mt-20 transform overflow-hidden rounded-sm bg-secondary-400 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+    <Modal open={open} setOpen={setOpen}>
+      <Dialog.Panel className="relative transform overflow-hidden rounded-sm bg-secondary-300 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
         <div className="bg-secondary-400 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
           <div className="sm:flex sm:items-start">
             <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
@@ -289,7 +257,7 @@ const EditProfileModal = ({
                         (mode === 'create' && !createMember) || isLoading
                       }
                       type="submit"
-                      className={`inline-flex  w-full cursor-pointer justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
+                      className={`bg-primary  inline-flex w-full cursor-pointer justify-center rounded-md border border-transparent px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
                         isLoading && 'cursor-not-allowed'
                       }`}
                     >
@@ -322,7 +290,7 @@ const EditProfileModal = ({
                       )}
                     </button>
                     <button
-                      onClick={closeModal}
+                      onClick={() => setOpen(false)}
                       type="button"
                       className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                     >
@@ -334,8 +302,8 @@ const EditProfileModal = ({
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </Dialog.Panel>
+    </Modal>
   );
 };
 

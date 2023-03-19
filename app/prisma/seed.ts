@@ -11,7 +11,7 @@ import accolades from './seedData/accolades.json';
 import events from './seedData/events.json';
 import functions from './seedData/daoFunctions.json';
 import { slugify } from '../src/utils/formatters';
-import { seedTestsBulk } from './seedScripts/seedTests';
+import { seedTests } from './seedScripts/seedTests';
 
 const prisma = new PrismaClient();
 
@@ -27,7 +27,7 @@ async function main() {
   await seedCommunityProjects();
   await seedAccolades();
   await seedEvents();
-  await seedTestsBulk();
+  await seedTests();
   await seedDaoFunctions();
 }
 
