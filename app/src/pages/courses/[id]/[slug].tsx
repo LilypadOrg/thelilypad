@@ -199,7 +199,7 @@ const CoursePage: NextPage = () => {
           <h1 className="mt-8 text-4xl">Related Courses</h1>
         </div>
         {/* Grid */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {relatedCourses?.map((course) => (
             <CourseCard key={`related-courses-${course.id}`} course={course} />
           ))}
@@ -216,20 +216,20 @@ const CoursePage: NextPage = () => {
       <div className="gradient-bg-bottom px-[5.5rem] pb-14">
         <div className="my-10 w-full space-y-4">
           <h1 className="mt-8 text-4xl">Related Resources</h1>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
             {relatedResources?.map((res) => (
               <Link
                 href={`/resources/${res.id}/${res.slug}`}
                 key={`related-resources-${res.id}`}
               >
-                <button className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
-                  <p className="">{res.title}</p>
+                <button className="flex w-full items-center justify-between rounded-md bg-primary-300 py-2 px-4">
+                  <p className="self-start">{res.title}</p>
                 </button>
               </Link>
             ))}
           </div>
         </div>
-        <div className="mt-8 flex flex-col">
+        {/* <div className="mt-8 flex flex-col">
           <h1 className="text-4xl">Something about the community</h1>
           <div className="flex space-x-8">
             <div className="relative min-h-[353px] min-w-[51.2%] rounded-sm border-[0.15rem] border-primary-600 bg-primary-600 text-white ">
@@ -247,6 +247,34 @@ const CoursePage: NextPage = () => {
               <h4 className="font-bold">{project?.content.title}</h4>
               <p className="font-[350]">{project?.content.description}</p>
               <div className="flex justify-between rounded-md bg-main-gray-light py-2 px-4">
+                <p>Go somewhere else</p>
+                <p className="font-normal">&#62;</p>
+              </div>
+            </div>
+          </div>
+        </div> */}
+        {/* TITLE AND IMAGE */}
+        <div className="mb-8 flex flex-col">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl">
+            {' '}
+            Even I suck at titles
+          </h1>
+          <div className="flex flex-col space-y-4  lg:flex-row lg:space-x-8 lg:space-y-0">
+            <div className="min-h-[200px]  min-w-[60%] rounded-sm  bg-main-gray-dark text-white lg:min-h-[353px]"></div>
+            <div className="flex flex-col space-y-4">
+              <p className="font-semibold">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Aspernatur ab ratione vel. Lorem ipsum dolor sit amet
+                consectetur.
+              </p>
+              <p className="font-[350]">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Molestiae, eligendi! Sit maiores corporis, nobis obcaecati
+                tempore deserunt vel cum labore eum nostrum. Ratione porro dolor
+                cum quo deleniti quis iusto?Lorem ipsum, dolor sit amet
+                consectetur adipisicing elit. Saepe quibusdam tempore aliquid
+              </p>
+              <div className="mb-6 flex justify-between rounded-md bg-primary-300 py-2 px-4 lg:mb-0">
                 <p>Go somewhere else</p>
                 <p className="font-normal">&#62;</p>
               </div>

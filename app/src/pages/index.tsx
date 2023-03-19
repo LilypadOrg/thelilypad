@@ -87,7 +87,7 @@ const Home: NextPage = () => {
   return (
     <div>
       {/* Hero and cards */}
-      <div className="grid h-[55vh] grid-cols-3">
+      <div className="grid h-screen grid-cols-3">
         <div className="col-span-2 hidden h-full bg-[url('/homeBanner.png')] bg-cover md:block">
           <div className="space-y-3 px-8 pt-12">
             <p className="max-w-[80%] text-4xl leading-[2.8rem] text-secondary-400">
@@ -100,7 +100,7 @@ const Home: NextPage = () => {
           <div className="flex flex-col items-center space-y-8">
             <div className="flex w-full justify-between">
               <div className="flex max-w-[55%] flex-col justify-between">
-                <p className="text-xl text-gray-300 md:text-black">
+                <p className="text-xl text-gray-300">
                   <span className="font-bold">
                     Track your self-learning progress
                   </span>{' '}
