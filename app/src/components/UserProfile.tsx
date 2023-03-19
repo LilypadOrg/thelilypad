@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { UserProfile as UserProfileType } from '~/types/types';
 import { formatAddress, getSBTLocalURL } from '~/utils/formatters';
-import EditProfileModal from './EditProfileModal';
-import MintSBTModal from './MintSBTModal';
+import EditProfileModal from './modals/EditProfileModal';
+import MintSBTModal from './modals/MintSBTModal';
 import Tilt from 'react-parallax-tilt';
 import Image from 'next/image';
 import TagsPill from './TagsPill';
@@ -30,12 +30,7 @@ const UserProfile = ({
     setEditModalMode(userProfile.hasOnChainProfile ? 'update' : 'create');
   };
 
-  const closeEditModal = () => {
-    setEditModalOpen(false);
-  };
-
   const closeMintModal = (isSuccess = false) => {
-    setMintModalOpen(false);
     if (isSuccess) {
       fireCelebration();
     }
@@ -56,7 +51,7 @@ const UserProfile = ({
       {session && editModalOpen && (
         <EditProfileModal
           open={editModalOpen}
-          closeModal={closeEditModal}
+          setOpen={setEditModalOpen}
           userProfile={userProfile}
           mode={editModalMode}
         />
@@ -64,6 +59,7 @@ const UserProfile = ({
       {session && mintModalOpen && (
         <MintSBTModal
           open={mintModalOpen}
+          setOpen={setMintModalOpen}
           closeModal={closeMintModal}
           address={userProfile.address}
         />

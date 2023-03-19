@@ -12,7 +12,7 @@ import { SBT_MINT_FEE } from '~/utils/constants';
 import { getLilyPadABI, getLilyPadAddress } from '~/utils/contracts';
 import { api } from '~/utils/api';
 
-const MintSBTModal = ({
+const MintSBTModalOld = ({
   open,
   closeModal,
   address,
@@ -141,7 +141,7 @@ const MintSBTModal = ({
   );
 };
 
-export default MintSBTModal;
+export default MintSBTModalOld;
 
 //  <div
 //       className="relative z-10"
