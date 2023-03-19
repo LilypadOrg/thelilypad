@@ -7,6 +7,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination } from 'swiper';
+import SectionTitle from './ui/SectionTitle';
 
 interface Props {
   bgColor?: string;
@@ -15,8 +16,6 @@ interface Props {
   type?: 'simple' | 'full';
   isLoading: boolean;
 }
-
-const loaders = [1, 2, 3, 4, 5];
 
 const CourseCarousel = ({
   bgColor,
@@ -27,7 +26,7 @@ const CourseCarousel = ({
 }: Props) => {
   return (
     <div className={`my-8 ${bgColor && bgColor}`}>
-      {title && <h4 className="text-2xl md:text-3xl lg:text-4xl">{title}</h4>}
+      {title && <SectionTitle title={title} />}
       {/* Card Container */}
       <Swiper
         style={{
@@ -71,7 +70,7 @@ const CourseCarousel = ({
         className="mySwiper"
       >
         {isLoading &&
-          loaders.map((i) => (
+          [1, 2, 3, 4, 5].map((i) => (
             <SwiperSlide key={`${title}-loader- course-${i}`}>
               <CourseCardLoading />
             </SwiperSlide>

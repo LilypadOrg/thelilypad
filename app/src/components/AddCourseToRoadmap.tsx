@@ -15,38 +15,14 @@ const AddCourseToRoadmap = ({
 
   const { mutate: mutateAddToRoadmap } =
     api.usercourses.addToRoadmap.useMutation({
-      // onMutate: async () => {
-      //   // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-      //   await utils.cancelQuery(['courses.all']);
-
-      //   // Snapshot the previous value
-      //   const previousCourses = utils.getQueryData(['courses.all']);
-
-      //   // Optimistically update to the new value
-      //   const updatedCourse = { ...course };
-      //   if (updatedCourse.course) {
-      //     if (updatedCourse.course.userCourses.length > 0) {
-      //       updatedCourse.course.userCourses[0].roadmap = !inRoadmap;
-      //     } else {
-      //       updatedCourse.course.userCourses.push({ roadmap: true });
-      //     }
-      //   }
-      //   utils.setQueryData(['courses.all'], (old) => {
-      //     if (old) {
-      //       return old?.map((o) => (o.id === course.id ? updatedCourse : o));
-      //     }
-      //     return [updatedCourse];
-      //   });
-
-      //   // Return a context object with the snapshotted value
-      //   // return { previousTodos };
-      // },
       onError: (err) => {
         toast.error(err.message);
       },
       onSuccess: () => {
         utils.courses.byId.invalidate({ id: courseId });
         utils.courses.byUsername.invalidate();
+        // TODO: not optimal, as it reload all courses, but works for now
+        utils.courses.all.invalidate();
       },
     });
 
