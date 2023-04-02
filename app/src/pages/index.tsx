@@ -47,44 +47,51 @@ const Home: NextPage = () => {
   return (
     <div>
       {/* Hero and cards */}
-      <div className="grid h-screen grid-cols-3">
-        <div className="col-span-2 hidden h-full bg-[url('/homeBanner.png')] bg-cover md:block">
-          <div className="space-y-3 px-8 pt-12">
-            <p className="max-w-[80%] text-4xl leading-[2.8rem] text-secondary-400">
-              A community endeavouring to guide those self-learning in Web3
-            </p>
-            <p className="text-4xl text-main-yellow">#GoYou</p>
-          </div>
-        </div>
-        <div className="] col-span-3 flex h-full items-center justify-center bg-main-yellow bg-[url('/homeBanner.png')] px-6 md:col-span-1">
-          <div className="flex flex-col items-center space-y-8">
-            <div className="flex w-full justify-between">
-              <div className="flex max-w-[55%] flex-col justify-between">
-                <p className="text-xl text-gray-300">
-                  <span className="font-bold">
-                    Track your self-learning progress
-                  </span>{' '}
-                  and show it ot the world through the{' '}
-                  <span className="font-bold">soulbound token</span>
-                </p>
-                <div className="mt-3 flex items-center text-lg font-semibold">
-                  <HiChevronRight className="text-2xl text-secondary-400" />
-                  <p className="text-secondary-400">Learn More</p>
+      <div className="h-[calc(100vh-4rem)] bg-[url('/homeBanner.png')] bg-cover bg-center">
+        <div className="grid h-full w-full grid-cols-1 bg-dark-blue/50 px-6 py-6 lg:grid-cols-12 lg:justify-items-end">
+          {/* Left */}
+          <div className="flex flex-col items-center space-y-6 lg:col-span-7 lg:items-start lg:justify-center">
+            <div className="space-y-3">
+              <p className="text-2xl font-semibold leading-[1.9rem] text-white lg:text-5xl">
+                A community{' '}
+                <span className="text-main-yellow">endeavouring</span> to guide
+                those <span className="text-main-yellow">self-learning</span> in
+                Web3
+              </p>
+              {/* <p className="text-2xl text-secondary-400">#GoYou</p> */}
+            </div>
+            <div className="flex flex-col items-center space-y-8 lg:max-w-[90%]">
+              <div className="flex w-full justify-between">
+                <div className="flex flex-col justify-between">
+                  <p className="text-xl text-gray-300 lg:text-3xl">
+                    <span className="font-bold">
+                      Track your self-learning progress
+                    </span>{' '}
+                    and show it ot the world through the{' '}
+                    <span className="font-bold">soulbound token</span>
+                  </p>
+                  <div className="my-3 flex items-center text-lg font-semibold lg:text-xl">
+                    <HiChevronRight className="text-2xl text-secondary-400" />
+                    <p className="text-secondary-400">Learn More</p>
+                  </div>
                 </div>
               </div>
-              <Image
-                src="/images/sbt-frontpage.gif"
-                alt="sbt"
-                layout="intrinsic"
-                width="175px"
-                height="175px"
-                className="block"
-              />
+              <button className="btn-primary text-xl font-semibold leading-4 tracking-wide text-white lg:mt-2 lg:self-start">
+                {' '}
+                Minting now !
+              </button>
             </div>
-            <button className="btn-primary text-xl font-semibold leading-4 tracking-wide text-white">
-              {' '}
-              Minting now !
-            </button>
+          </div>
+          {/* Right */}
+          <div className="order-first flex h-full items-center justify-center rounded-lg lg:order-last lg:col-span-5">
+            <Image
+              src="/images/sbt-frontpage.gif"
+              alt="sbt"
+              layout="intrinsic"
+              width="475px"
+              height="375px"
+              className="block rounded-lg"
+            />
           </div>
         </div>
       </div>
