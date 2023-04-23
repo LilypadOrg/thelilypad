@@ -48,5 +48,12 @@ export const useContentFilter = (contenType: ContentType) => {
 
   const isLoading = levelsLoading || tagsLoading || techsLoading;
 
-  return { techs, tags, levels, isLoading, contentFilters, updateFilter };
+  return {
+    techs,
+    tags,
+    levels,
+    isLoading,
+    contentFilters,
+    updateFilter,
+  };
 };

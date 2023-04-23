@@ -69,6 +69,7 @@ const Loader = () => {
 const Courses: NextPage = () => {
   const filterTags = ['web2', 'web3'];
   const [showMoreTechs, setShowMoreTechs] = useState<boolean>(false);
+  const [showMoreTags, setShowMoreTags] = useState<boolean>(false);
 
   const {
     techs,
@@ -171,7 +172,7 @@ const Courses: NextPage = () => {
                       />
                     )}
                     {i > 4 && (
-                      <div className={`${showMoreTechs ? 'block' : 'hidden'}`}>
+                      <div className={`${showMoreTags ? 'block' : 'hidden'}`}>
                         <BrowseCoursesLink
                           key={`home-coursefilter-${courseFilter.slug}`}
                           courseFilterType="tech"
@@ -183,7 +184,7 @@ const Courses: NextPage = () => {
                 ))}
               {tags.length > 5 && (
                 <div className="mt-2 text-right">
-                  <button onClick={() => setShowMoreTechs((val) => !val)}>
+                  <button onClick={() => setShowMoreTags((val) => !val)}>
                     Show {showMoreTechs ? 'Less' : 'More'} Options
                   </button>
                 </div>
