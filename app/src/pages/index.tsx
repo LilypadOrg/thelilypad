@@ -1,5 +1,4 @@
 import type { NextPage } from 'next';
-import Image from 'next/image';
 import CourseCarousel from '~/components/CourseCarousel';
 import {
   HOMEPAGE_COURSE_CAROUSEL,
@@ -8,12 +7,12 @@ import {
 import { api } from '~/utils/api';
 import { SpotLightCards } from '~/components/ui/Home';
 import { SpotLightCardsLoading } from '~/components/ui/Loaders';
-import { HiChevronRight } from 'react-icons/hi';
 import SectionTitle from '~/components/ui/SectionTitle';
 import { useContentFilter } from '~/hooks/useContentFilter';
 import { ContentType } from '~/types/types';
 import BrowseCoursesLink from '~/components/BrowseCoursesLink';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
+import HomeHero from '~/components/HomeHero';
 
 const Home: NextPage = () => {
   // load courses for courses section
@@ -21,7 +20,7 @@ const Home: NextPage = () => {
     { take: HOMEPAGE_COURSE_CAROUSEL }
   );
 
-  const [showContent, setShowContent] = useState<boolean>(false);
+  // const [showContent, setShowContent] = useState<boolean>(false);
   // load projects for featured section
   const { data: projects, isLoading: projectsLoading } =
     api.projects.all.useQuery({ take: HOMEPAGE_FEATURED_ITEMS });
@@ -29,84 +28,21 @@ const Home: NextPage = () => {
   const { techs, tags } = useContentFilter(ContentType.COURSE);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const enableContent = () => {
-    setShowContent(true);
-    setTimeout(() => {
-      if (contentRef.current) {
-        contentRef.current.scrollIntoView(true);
-      }
-    }, 200);
-  };
+  // const enableContent = () => {
+  //   setShowContent(true);
+  //   setTimeout(() => {
+  //     if (contentRef.current) {
+  //       contentRef.current.scrollIntoView(true);
+  //     }
+  //   }, 200);
+  // };
 
   return (
     <div>
       {/* Hero and cards */}
-      <div className="grid h-[55vh] min-h-screen grid-cols-3">
-        <div className="col-span-2 hidden h-full bg-[url('/homeBanner.png')] bg-cover md:block">
-          <div className="space-y-3 px-8 pt-12">
-            <div className="flex flex-col items-center gap-y-8 text-center">
-              <h2 className="lie text-5xl leading-none sm:text-7xl lg:text-8xl">
-                <span className="text-secondary-300">Join our</span>{' '}
-                <span className=" bg-gradient-to-r from-primary-400 to-primary-400 bg-clip-text font-extrabold leading-none text-transparent">
-                  Web3 Self LEarning
-                </span>{' '}
-                <span className="text-secondary-300">Community</span>
-              </h2>
-            </div>
+      <HomeHero scrollToRef={contentRef} />
 
-            <div className="flex space-x-4">
-              <button
-                className="btn-primary rounded-xl text-lg font-semibold leading-4 tracking-wide text-white"
-                onClick={enableContent}
-              >
-                Browse Content
-              </button>
-              <button
-                className="btn-primary rounded-xl text-lg font-semibold leading-4 tracking-wide text-white"
-                onClick={enableContent}
-              >
-                Connect Wallet
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="] col-span-3 flex h-full items-center justify-center bg-main-yellow bg-[url('/homeBanner.png')] px-6 md:col-span-1">
-          <div className="flex flex-col items-center space-y-8">
-            <div className="flex w-full justify-between">
-              <div className="flex max-w-[55%] flex-col justify-between">
-                <p className="text-xl text-gray-300 md:text-black">
-                  <span className="font-bold">
-                    Track your self-learning progress
-                  </span>{' '}
-                  and show it ot the world through the{' '}
-                  <span className="font-bold">soulbound token</span>
-                </p>
-                <div className="mt-3 flex items-center text-lg font-semibold">
-                  <HiChevronRight className="text-2xl text-secondary-400" />
-                  <p className="text-secondary-400">Learn More</p>
-                </div>
-              </div>
-              <button className="btn-primary text-xl font-semibold leading-4 tracking-wide text-white lg:mt-2 lg:self-start">
-                {' '}
-                Minting now !
-              </button>
-            </div>
-          </div>
-          {/* Right */}
-          <div className="order-first flex h-full items-center justify-center rounded-lg lg:order-last lg:col-span-5">
-            <Image
-              src="/images/sbt-frontpage.gif"
-              alt="sbt"
-              layout="intrinsic"
-              width="475px"
-              height="375px"
-              className="block rounded-lg"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div ref={contentRef} className={`${showContent ? 'visible' : 'hidden'}`}>
+      <div ref={contentRef} className={` mx-auto`}>
         {/* Community Spotligh */}
         <div className="px-[2.5rem] pt-8 lg:px-[5.5rem]">
           <div className="my-8">

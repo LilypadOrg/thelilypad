@@ -34,7 +34,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <meta name="theme-color" content="#ffffff" />
       </Head>
       <Navbar />
-      <main className="mx-auto min-h-[100vh] max-w-6xl">{children}</main>
+      <main className="mx-auto min-h-[100vh] max-w-7xl">{children}</main>
       <ToastContainer
         position="top-right"
         autoClose={5000}
