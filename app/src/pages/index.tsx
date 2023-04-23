@@ -86,19 +86,22 @@ const Home: NextPage = () => {
                   <p className="text-secondary-400">Learn More</p>
                 </div>
               </div>
-              <Image
-                src="/images/sbt-frontpage.gif"
-                alt="sbt"
-                layout="intrinsic"
-                width="175px"
-                height="175px"
-                className="block"
-              />
+              <button className="btn-primary text-xl font-semibold leading-4 tracking-wide text-white lg:mt-2 lg:self-start">
+                {' '}
+                Minting now !
+              </button>
             </div>
-            <button className="btn-primary text-xl font-semibold leading-4 tracking-wide text-white">
-              {' '}
-              Minting now !
-            </button>
+          </div>
+          {/* Right */}
+          <div className="order-first flex h-full items-center justify-center rounded-lg lg:order-last lg:col-span-5">
+            <Image
+              src="/images/sbt-frontpage.gif"
+              alt="sbt"
+              layout="intrinsic"
+              width="475px"
+              height="375px"
+              className="block rounded-lg"
+            />
           </div>
         </div>
       </div>

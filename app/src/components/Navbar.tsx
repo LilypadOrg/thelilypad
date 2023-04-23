@@ -35,8 +35,8 @@ const Navbar = () => {
   return (
     <div className="h-[4rem]">
       <div
-        className={`fixed z-50 h-16 w-full bg-white dark:bg-slate-900 ${
-          shadow ? 'bg-white shadow-sm shadow-gray-400' : ''
+        className={`fixed z-50 h-16 w-full bg-slate-900 ${
+          shadow ? 'bg-slate-900 shadow-sm shadow-slate-800' : ''
         } `}
       >
         <div className="mx-auto flex h-full max-w-7xl items-center justify-start px-2">
@@ -55,7 +55,7 @@ const Navbar = () => {
           {/* hidden for screen size below medium (i.e.: mobile) 
             //TODO: move border styling out of individual lis
             */}
-          <ul className="hidden md:flex md:flex-grow">
+          <ul className="hidden text-white md:flex md:flex-grow">
             {navBarItems.map((link) => (
               <li
                 key={`navlink-${link.path}`}
