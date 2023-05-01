@@ -40,7 +40,7 @@ const HomeHero = ({
       </div>
       <div className="col-span-3 flex h-full flex-col  items-center justify-evenly gap-y-4  bg-[url('/homeBanner.png')] px-4 md:col-span-1">
         <div className="flex  flex-col justify-center text-3xl">
-          <p className=" text-gray-300 md:text-black">
+          <p className=" text-gray-300">
             <span className="font-bold">Track your self-learning progress</span>{' '}
             and show it to the world through the{' '}
             <span className="font-bold">soulbound token</span>
