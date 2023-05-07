@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDAOTreasure } from '~/hooks/useDAOTreasure';
 import { formatNumber } from '~/utils/formatters';
 import { ethers } from 'ethers';
 import { api } from '~/utils/api';
+import Image from 'next/image';
 
 const GovernanceTreasury = () => {
   //const { data } = trpc.useQuery(['environment.getEnvironment']);
@@ -28,9 +29,9 @@ const GovernanceTreasury = () => {
   const [priceUsd, setPriceUsd] = useState('');
   const [treasureUsd, setTreasureUsd] = useState('');
 
-  function fetchPrice() {
+  const fetchPrice = useCallback(() => {
     utils.external.getTreasureTokenPrice.invalidate();
-  }
+  }, [utils.external.getTreasureTokenPrice]);
 
   useEffect(() => {
     let controller: AbortController;
@@ -50,7 +51,7 @@ const GovernanceTreasury = () => {
         }
       }
     };
-  }, []);
+  }, [fetchPrice]);
 
   useMemo(() => {
     let fmtTreasureBalanceUsd;
@@ -73,9 +74,11 @@ const GovernanceTreasury = () => {
       <h3>Treasury</h3>
       <div className="grid grid-flow-col grid-cols-12 gap-1">
         <div className="flex shrink items-center">
-          <img
+          <Image
             src="https://cryptologos.cc/logos/polygon-matic-logo.png?v=024"
             width="28"
+            height="28"
+            alt="Polygon Logo"
           />
         </div>
         <div className="row-span-11 flex items-start">
