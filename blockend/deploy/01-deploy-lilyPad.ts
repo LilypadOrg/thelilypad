@@ -624,13 +624,6 @@ const deployLilyPad: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
     }
 
     for (const course of initialCourses()) {
-        //var flattenedArray = course.accolades.map((i: ILilyPad.AccoladeStruct) => {
-        //    return (
-        //        i.eventId.toString() +
-        //        web3.utils.toAscii(i.title.toString()) +
-        //        web3.utils.toAscii(i.badge.toString())
-        //    );
-        //});
         let lista: number[] = [];
         course.technologies.forEach((e) => {
             let number = Number(e);
@@ -644,10 +637,6 @@ const deployLilyPad: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
             { t: "uint256", v: Number(course.xp) },
             { t: "uint256", v: Number(course.level) },
             ...lista
-            //{
-            //    t: "string",
-            //    v: flattenedArray.join(""),
-            //}
         );
 
         const signedData = await web3.eth.sign(hash!, deployer);
@@ -664,6 +653,22 @@ const deployLilyPad: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
             signedData
         );
         await createCourseTx.wait(1);
+    }
+
+    for (const tech of initialTechBadges()) {
+        console.log(`Creating badge for ${tech.techId} level ${tech.level}`);
+        try {
+            const createTechBadgeTx = await lilypadContract.submitBadge(
+                0,
+                tech.techId,
+                tech.level,
+                tech.badge
+            );
+
+            await createTechBadgeTx.wait(1);
+        } catch (e: any) {
+            console.log(e.message);
+        }
     }
 
     const lilyPadArtifact = await deployments.getArtifact("LilyPad");

@@ -237,23 +237,63 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         return technologies[_technologyId];
     }
 
-    //TECHNOLOGY FUNCTIONS
-    /**
-     *@notice Create Badge for tech and event
-     *IN
-     *@param _eventBadges: array with event badges to submitt
-     *@param _techBadges: array with tech badges to submitt
-     *OUT
-     */
     function submitBadge(
-        EventBadge[] calldata _eventBadges,
-        TechBadge[] calldata _techBadges
+        uint256 _eventId,
+        uint256 _techId,
+        uint256 _level,
+        bytes calldata _badge
     ) external onlyOwner {
-        _submitEventBadges(_eventBadges);
-        _submitTechBadges(_techBadges);
+        if (_eventId > 0) {
+            //its an event
+            //EventBadge[] memory badges = eventBadges[_eventId];
+            //uint256 arrayLength = badges.length;
+
+            bool exists;
+            /*for (uint256 idxImg = 0; idxImg <= arrayLength; ++idxImg) {
+                if (
+                    keccak256(abi.encodePacked(badges[idxImg].badge)) ==
+                    keccak256(abi.encodePacked(_badge))
+                ) {
+                    exists = true;
+                    break;
+                }
+            }*/
+
+            if (!exists) eventBadges[_eventId].push(EventBadge({eventId: _eventId, badge: _badge}));
+        } else {
+            //its a tech
+            //TechBadge[] memory badges = techBadges[_techId];
+            //uint256 arrayLength = badges.length;
+
+            bool exists;
+            /*for (uint256 idx = 0; idx <= arrayLength; ++idx) {
+                if (
+                    badges[idx].level == _level &&
+                    keccak256(abi.encodePacked(badges[idx].badge)) ==
+                    keccak256(abi.encodePacked(_badge))
+                ) {
+                    exists = true;
+                    break;
+                }
+            }*/
+
+            if (!exists)
+                techBadges[_techId].push(
+                    TechBadge({techId: _techId, level: _level, badge: _badge})
+                );
+        }
     }
 
-    function _submitEventBadges(EventBadge[] calldata _eventBadges) internal {
+    //TECHNOLOGY FUNCTIONS
+    //function submitBadge(
+    //    EventBadge[] calldata _eventBadges,
+    //    TechBadge[] calldata _techBadges
+    //) external onlyOwner {
+    //_submitEventBadges(_eventBadges);
+    //    _submitTechBadges(_techBadges);
+    //}
+
+    /*function _submitEventBadges(EventBadge[] calldata _eventBadges) internal {
         uint256 eventBadgesLength = _eventBadges.length;
 
         for (uint256 idx = 0; idx < eventBadgesLength; ++idx) {
@@ -287,6 +327,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
             TechBadge[] memory badges = techBadges[_techBadges[idx].techId];
             uint256 arrayLength = badges.length;
 
+            revert(StringsUpgradeable.toString(arrayLength));
             bool exists;
             for (uint256 idxImg = 0; idxImg <= arrayLength; ++idxImg) {
                 if (
@@ -308,7 +349,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
                     })
                 );
         }
-    }
+    }*/
 
     /**
      *@notice Get Technology badge by level

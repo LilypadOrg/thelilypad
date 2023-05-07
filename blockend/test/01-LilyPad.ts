@@ -41,7 +41,8 @@ describe("LilyPad", function () {
 
             courseArray.push({
                 eventId: 0,
-                title: web3.utils.fromAscii("Primeiro curso"),
+                techId: 1,
+                level: 1,
                 badge: web3.utils.fromAscii("BADGE SVG"),
             });
 
