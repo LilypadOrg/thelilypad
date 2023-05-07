@@ -13,7 +13,8 @@ export type EventStructOutput = [
     eventTypeId: BigNumber;
     eventName: string;
     xp: BigNumber;
-    accolades: ILilyPad.AccoladeStruct[];
+    level: BigNumber;
+    technologies: BigNumber[];
 };
 
 export type EventStruct = {
@@ -21,5 +22,6 @@ export type EventStruct = {
     eventTypeId: PromiseOrValue<BigNumberish>;
     eventName: PromiseOrValue<BytesLike>;
     xp: PromiseOrValue<BigNumberish>;
-    accolades: ILilyPad.AccoladeStruct[];
+    level: PromiseOrValue<BigNumberish>;
+    technologies: PromiseOrValue<BigNumberish>[];
 };

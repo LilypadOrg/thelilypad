@@ -23,10 +23,14 @@ pragma solidity ^0.8.4;
 import "./IPondSBT.sol";
 
 interface ILilyPad {
+    error TechNotFound(uint256 techId);
+    error NotAFrog(address _address);
+
     event EventSubmited(address owner, uint256 eventId, uint256 eventTypeId, bytes eventName);
 
     event EventCompleted(address member, uint256 eventId, string eventName);
-    event BadgeEarned(address member, uint256 eventId, bytes badgeIdentifier, string badgeName);
+    event BadgeEarned(address member, uint256 eventId, uint256 techId, uint256 level);
+    event BadgesEarned(address member, uint256[] eventId, uint256 techId, uint256 level);
 
     event LevelReached(address member, uint256 currentXp, uint256 level);
 
@@ -37,6 +41,29 @@ interface ILilyPad {
         uint256 xpInit;
         uint256 xpFin;
         bytes image;
+    }
+
+    struct TechBadge {
+        uint256 techId;
+        uint256 level;
+        bytes badge;
+    }
+
+    struct EventBadge {
+        uint256 eventId;
+        bytes badge;
+    }
+
+    struct Technology {
+        uint256 techId;
+        bytes techName;
+    }
+
+    struct Accolade {
+        uint256 eventId;
+        uint256 techId;
+        uint256 level;
+        bytes badge;
     }
 
     struct Member {
@@ -53,18 +80,13 @@ interface ILilyPad {
         bytes name;
     }
 
-    struct Accolade {
-        uint256 eventId;
-        bytes title;
-        bytes badge;
-    }
-
     struct Event {
         uint256 id;
         uint256 eventTypeId;
         bytes eventName;
+        uint256 level;
         uint256 xp;
-        Accolade[] accolades;
+        uint256[] technologies;
     }
 
     struct Journey {
@@ -81,7 +103,9 @@ interface ILilyPad {
         bool done;
     }
 
-    function getMember(address memberAddress)
+    function getMember(
+        address memberAddress
+    )
         external
         view
         returns (
@@ -94,27 +118,23 @@ interface ILilyPad {
             Accolade[] memory badges
         );
 
-    function getEvent(uint256 eventId)
-        external
-        view
-        returns (
-            uint256 eventTypeId,
-            uint256 xp,
-            Accolade[] memory accolades
-        );
+    function getEvent(
+        uint256 eventId
+    ) external view returns (uint256 eventTypeId, uint256 xp, Technology[] memory eventTechs);
 
     function completedEvent(address _member, uint256 _eventId) external view returns (bool);
 
     function badgeEarned(
         address _member,
         uint256 _eventId,
-        bytes memory _accoladeTitle
+        uint256 _techId,
+        uint256 _level
     ) external view returns (bool);
 
-    function constructTokenUri(uint256 _tokenId, string memory _baseUri)
-        external
-        view
-        returns (string memory);
+    function constructTokenUri(
+        uint256 _tokenId,
+        string memory _baseUri
+    ) external view returns (string memory);
 
-    function burnBabyBurn(address member) external;
+    function burnBabeBurn(address member) external;
 }
