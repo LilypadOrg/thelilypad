@@ -20,7 +20,7 @@ const GovernanceList = () => {
   useEffect(() => {
     setCurrentList([]);
     utils.dao.list.invalidate();
-  }, []);
+  }, [utils.dao.list]);
 
   api.dao.count.useQuery(undefined, {
     onSuccess: (data) => {
@@ -58,7 +58,7 @@ const GovernanceList = () => {
 
   useMemo(() => {
     utils.dao.list.invalidate();
-  }, [currentPage]);
+  }, [utils.dao.list]);
 
   const onPageClick = (pagNum: number) => {
     setCurrentPage(pagNum);

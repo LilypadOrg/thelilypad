@@ -40,7 +40,9 @@ const MyApp = ({
               />
             </Head>
             <Navbar />
-            <Component {...pageProps} />
+            <main className="mx-auto min-h-[100vh]">
+              <Component {...pageProps} />
+            </main>
             <Footer />
           </RainbowKitProvider>
         </RainbowKitSiweNextAuthProvider>

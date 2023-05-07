@@ -7,7 +7,7 @@ const Footer = () => {
   const footerSecItems = getFooterSecItems();
 
   return (
-    <div className="grid h-[24rem] w-full grid-cols-2 content-center justify-items-center bg-dark-blue bg-[url('/footerBanner.svg')] bg-contain text-white">
+    <div className="mt-8 grid h-[24rem] w-full grid-cols-2 content-center justify-items-center bg-dark-blue bg-[url('/footerBanner.svg')] bg-contain text-white">
       <div>
         <ul className="space-y-4">
           {footerMainItems.map((l) => (

@@ -9,7 +9,7 @@ import AddCourseToRoadmap from '~/components/AddCourseToRoadmap';
 import { CompleteCourse } from '~/components/CompleteCourse';
 import CourseCard from '~/components/CourseCard';
 import LevelPill from '~/components/ui/LevelPill';
-import { BROWSE_COURSES_ITEMS, PROJECTS_IMAGE_PATH } from '~/utils/constants';
+import { BROWSE_COURSES_ITEMS } from '~/utils/constants';
 import { api } from '~/utils/api';
 import { FaCogs } from 'react-icons/fa';
 import { AiFillTags } from 'react-icons/ai';
@@ -45,8 +45,6 @@ const CoursePage: NextPage = () => {
       enabled: !!course,
     }
   );
-
-  const { data: project } = api.projects.random.useQuery();
 
   // TODO: pull rigght content
   // const project = projects?.find((p) => p.id === 30003);
