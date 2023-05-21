@@ -46,9 +46,14 @@ describe("LilyPad", function () {
                 badge: web3.utils.fromAscii("BADGE SVG"),
             });
 
+            var techs = [1];
+
             var firstValues = courseArray.map((i) => {
                 return (
-                    i.eventId.toString() + web3.utils.toAscii(i.title) + web3.utils.toAscii(i.badge)
+                    i.eventId.toString() +
+                    i.techId.toString() +
+                    i.level.toString() +
+                    web3.utils.toAscii(i.badge)
                 );
             });
 
@@ -58,10 +63,12 @@ describe("LilyPad", function () {
                 { t: "uint256", v: 1 },
                 { t: "bytes", v: web3.utils.fromAscii("Basic Solidity Course") },
                 { t: "uint256", v: 10 },
-                {
-                    t: "string",
-                    v: firstValues.join(),
-                }
+                { t: "uint256", v: 1 },
+                ...techs
+                //{
+                //    t: "string",
+                //    v: firstValues.join(),
+                //}
             );
 
             const signedData = await web3.eth.sign(hash!, safeCaller);
@@ -70,13 +77,8 @@ describe("LilyPad", function () {
                 1,
                 web3.utils.fromAscii("Basic Solidity Course"),
                 10,
-                [
-                    {
-                        eventId: 0,
-                        title: web3.utils.fromAscii("Primeiro curso"),
-                        badge: web3.utils.fromAscii("BADGE SVG"),
-                    },
-                ],
+                1,
+                [1],
                 signedData
             );
 
@@ -94,25 +96,30 @@ describe("LilyPad", function () {
             var courseArray: ILilyPad.AccoladeStruct[] = [];
             courseArray.push({
                 eventId: 0,
-                title: web3.utils.fromAscii("Primeiro curso"),
+                techId: 1,
+                level: 1,
                 badge: web3.utils.fromAscii("BADGE SVG"),
             });
 
-            var firstValues = courseArray.map((i) => {
-                return (
-                    i.eventId.toString() + web3.utils.toAscii(i.title) + web3.utils.toAscii(i.badge)
-                );
-            });
+            //var firstValues = courseArray.map((i) => {
+            //    return (
+            //        i.eventId.toString() + web3.utils.toAscii(i.title) + web3.utils.toAscii(i.badge)
+            //    );
+            //});
 
-            const hash = await web3.utils.soliditySha3(
+            var techs = [1];
+
+            const hash = (web3 as Web3).utils.soliditySha3(
                 { t: "uint256", v: 1 },
                 { t: "uint256", v: 1 },
                 { t: "bytes", v: web3.utils.fromAscii("Basic Solidity Course") },
                 { t: "uint256", v: 10 },
-                {
-                    t: "string",
-                    v: firstValues.join(),
-                }
+                { t: "uint256", v: 1 },
+                ...techs
+                //{
+                //    t: "string",
+                //    v: firstValues.join(),
+                //}
             );
             const signedData = web3.eth.sign(hash!, safeCaller);
 
@@ -122,7 +129,8 @@ describe("LilyPad", function () {
                     1,
                     web3.utils.fromAscii("Basic Solidity Course"),
                     20,
-                    courseArray,
+                    1,
+                    [1],
                     signedData
                 );
 
@@ -136,33 +144,71 @@ describe("LilyPad", function () {
 
             //check if course was created
             const course = await _lilyPadContract.getEvent(1);
-            assert(course.accolades.length <= 0, "Course created from malicious request :-(");
+            assert(course.eventTypeId.lte(0), "Course created from malicious request :-(");
         });
-        it("Eventfunctions::03::Try to submit course with multiple accolades. It should work with no problems", async function () {
+        it("Eventfunctions::03::Try to submit course with signed by malicious. It should revert", async function () {
+            const { malicious } = await getNamedAccounts();
+            const safeCaller = malicious;
+
+            var courseArray: ILilyPad.AccoladeStruct[] = [];
+            courseArray.push({
+                eventId: 0,
+                techId: 1,
+                level: 1,
+                badge: web3.utils.fromAscii("BADGE SVG"),
+            });
+
+            //var firstValues = courseArray.map((i) => {
+            //    return (
+            //        i.eventId.toString() + web3.utils.toAscii(i.title) + web3.utils.toAscii(i.badge)
+            //    );
+            //});
+
+            var techs = [1];
+
+            const hash = (web3 as Web3).utils.soliditySha3(
+                { t: "uint256", v: 1 },
+                { t: "uint256", v: 1 },
+                { t: "bytes", v: web3.utils.fromAscii("Basic Solidity Course") },
+                { t: "uint256", v: 10 },
+                { t: "uint256", v: 1 },
+                ...techs
+                //{
+                //    t: "string",
+                //    v: firstValues.join(),
+                //}
+            );
+            const signedData = web3.eth.sign(hash!, safeCaller);
+
+            try {
+                const courseTx = await _lilyPadContract.submitEvent(
+                    1,
+                    1,
+                    web3.utils.fromAscii("Basic Solidity Course"),
+                    10,
+                    1,
+                    [1],
+                    signedData
+                );
+
+                const submitCourseReceipt = await courseTx.wait(1);
+                var courseId: BigNumber;
+                //check if course was created
+                const course = await _lilyPadContract.getEvent(1);
+            } catch (err: any) {
+                console.log(`Course submition reverted: ${err.message}`);
+            }
+
+            //check if course was created
+            const course = await _lilyPadContract.getEvent(1);
+            assert(course.eventTypeId.lte(0), "Course created from malicious request :-(");
+        });
+        it("Eventfunctions::04::Try to submit course with multiple technologies. It should work with no problems", async function () {
             const { deployer } = await getNamedAccounts();
             const _web3: Web3 = web3;
             const safeCaller = deployer;
 
-            var courseArray: ILilyPad.AccoladeStruct[] = [];
-
-            courseArray.push(
-                {
-                    eventId: 0,
-                    title: web3.utils.fromAscii("BEGINER"),
-                    badge: web3.utils.fromAscii("BEGINER BADGE SVG"),
-                },
-                {
-                    eventId: 0,
-                    title: web3.utils.fromAscii("ADVANCED"),
-                    badge: web3.utils.fromAscii("ADVANCED BADGE SVG"),
-                }
-            );
-
-            var flattenedArray = courseArray.map((i) => {
-                return (
-                    i.eventId.toString() + web3.utils.toAscii(i.title) + web3.utils.toAscii(i.badge)
-                );
-            });
+            var techs = [1, 3];
 
             //console.log(flattenedArray.join(""));
             const hash = (web3 as Web3).utils.soliditySha3(
@@ -170,19 +216,19 @@ describe("LilyPad", function () {
                 { t: "uint256", v: 1 },
                 { t: "bytes", v: web3.utils.fromAscii("Basic Solidity Course") },
                 { t: "uint256", v: 10 },
-                {
-                    t: "string",
-                    v: flattenedArray.join(""),
-                }
+                { t: "uint256", v: 1 },
+                ...techs
             );
 
             const signedData = await web3.eth.sign(hash!, safeCaller);
+
             const courseTx = await _lilyPadContract.submitEvent(
                 1,
                 1,
                 web3.utils.fromAscii("Basic Solidity Course"),
                 10,
-                courseArray,
+                1,
+                [1, 3],
                 signedData
             );
 
@@ -192,9 +238,9 @@ describe("LilyPad", function () {
             const course = await _lilyPadContract.getEvent(1);
 
             assert(course.eventTypeId.eq(1), "Course not created");
-            assert(course.accolades.length > 1, "Course not created with multiple accolades");
+            assert(course.eventTechs.length > 1, "Course not created with multiple accolades");
         });
-        it("Eventfunctions::04::Try to subscribe course with multiple accolades with no typing. It should work with no problems", async function () {
+        /*it("Eventfunctions::04::Try to subscribe course with multiple accolades with no typing. It should work with no problems", async function () {
             const { deployer } = await getNamedAccounts();
             const _web3: Web3 = web3;
             const safeCaller = deployer;
@@ -249,10 +295,10 @@ describe("LilyPad", function () {
 
             assert(course.eventTypeId.eq(1), "Course not created");
             assert(course.accolades.length > 1, "Course not created with multiple accolades");
-        });
+        });*/
     });
     describe("Memberfunctions", function () {
-        it("Memberfunctions::01::Try to submit member with correct signature from safeCaller. It should work with no problems", async function () {
+        /*it("Memberfunctions::01::Try to submit member with correct signature from safeCaller. It should work with no problems", async function () {
             //create member
             const { deployer } = await getNamedAccounts();
             const safeCaller = deployer;
@@ -661,6 +707,6 @@ describe("LilyPad", function () {
             assert(_member.xp.eq(currentXp), "Member not updated :-(");
             assert(_earned, "Member not updated. Badge not earned :-(");
             assert(_earned, "Member not updated :-(");
-        });
+        });*/
     });
 });

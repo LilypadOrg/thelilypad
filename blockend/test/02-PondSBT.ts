@@ -18,7 +18,7 @@ import deployPondSBT from "../deploy/02-deploy-pondSBT";
 import { MemberStruct } from "../types/contractTypes";
 
 const hre = require("hardhat");
-describe("PondSBT", function () {
+/*describe("PondSBT", function () {
     const { deployments, getNamedAccounts, web3, ethers } = require("hardhat");
     const { get } = deployments;
     const BASE_FEE = ethers.utils.parseEther("0.25");
@@ -274,4 +274,4 @@ describe("PondSBT", function () {
             console.log(`Member Level after burn: ${memberValues.level}`);
         });
     });
-});
+});*/

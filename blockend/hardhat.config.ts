@@ -111,6 +111,9 @@ const config: HardhatUserConfig = {
         safeCaller: {
             default: 2,
         },
+        malicious: {
+            default: 3,
+        },
     },
     solidity: {
         compilers: [
@@ -120,7 +123,7 @@ const config: HardhatUserConfig = {
                     viaIR: true,
                     optimizer: {
                         enabled: true,
-                        runs: 2000,
+                        runs: 1500,
                     },
                 },
             },
