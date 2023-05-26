@@ -1,6 +1,22 @@
 import { ethers, network } from "hardhat";
+import Web3 from "web3";
 
 export const burnAddress = "0x0000000000000000000000000000000000000000";
+
+export function getSignatureParameters(signature: string, web3: Web3) {
+    const r = signature.slice(0, 66);
+    const s = `0x${signature.slice(66, 130)}`;
+    let vString = `0x${signature.slice(130, 132)}`;
+    let v = web3.utils.toDecimal(vString);
+
+    if (![27, 28].includes(v)) v += 27;
+
+    return {
+        r,
+        s,
+        v,
+    };
+}
 
 export async function getAccount(accountType: string, qtty: number = 0) {
     const { ethers, network } = require("hardhat");
