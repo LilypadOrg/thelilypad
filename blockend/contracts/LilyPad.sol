@@ -116,15 +116,15 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         require(recoverSigner(message, sig) == safeCaller, "I don't take orders from you");
     }
 
-    function getAccoladesStr(Accolade[] calldata _accolades) internal pure returns (string memory) {
+    function getAccoladesStr(Accolade[] calldata _accolades) internal view returns (string memory) {
         string memory _string;
         for (uint256 idx = 0; idx < _accolades.length; ++idx) {
             _string = string(
                 abi.encodePacked(
                     _string,
-                    _accolades[idx].eventId,
-                    _accolades[idx].techId,
-                    _accolades[idx].level,
+                    StringsUpgradeable.toString(_accolades[idx].eventId),
+                    StringsUpgradeable.toString(_accolades[idx].techId),
+                    StringsUpgradeable.toString(_accolades[idx].level),
                     _accolades[idx].badge
                 )
             );

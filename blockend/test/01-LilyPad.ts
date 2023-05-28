@@ -512,14 +512,14 @@ describe("LilyPad", function () {
 
             buff = Buffer.from(tokenUri.replace("data:application/json;base64,", ""), "base64");
             text = buff.toString("ascii");
-            console.log(text);
+
             let finalTokenUri = JSON.parse(text);
 
             console.log(`tokenUri: ${text}`);
 
             assert(finalTokenUri.attributes.length == 2, "Wrong count of attributes");
         });
-        /*it("Memberfunctions::04::award badge and checks if it reflects in SBT tokenUri. It should return the complete course data in the token Uri", async function () {
+        it("Memberfunctions::04::award badge and checks if it reflects in SBT tokenUri. It should return the complete course data in the token Uri", async function () {
             //create member
             const { deployer } = await getNamedAccounts();
             const safeCaller = deployer;
@@ -541,6 +541,7 @@ describe("LilyPad", function () {
 
             //generates sig data
             let hash = (web3 as Web3).utils.soliditySha3(
+                { t: "address", v: user.address },
                 { t: "uint256", v: initialXp },
                 ...completedCourses,
                 {
@@ -552,7 +553,7 @@ describe("LilyPad", function () {
             let signedData = await web3.eth.sign(hash!, safeCaller);
             const courseTx = await _lilyPadContract
                 .connect(user)
-                .createMember(initialXp, completedCourses, badges, signedData);
+                .createMember(user.address, initialXp, completedCourses, badges, signedData);
 
             await courseTx.wait(1);
 
@@ -584,47 +585,44 @@ describe("LilyPad", function () {
 
             assert(initialTokenUri.attributes.length == 1, "wrong number of attributes");
 
-            let completedEvent = 10003;
             //generates sig data
-            hash = (web3 as Web3).utils.soliditySha3(
-                { t: "address", v: user.address },
-                { t: "uint256", v: completedEvent }
-            );
+            var accoladesArray: ILilyPad.AccoladeStruct[] = [];
 
-            signedData = await web3.eth.sign(hash!, safeCaller);
-
-            console.log(`Signed data: ${signedData}`);
-            const completeEventTx = await _lilyPadContract.completeEvent(
-                user.address,
-                completedEvent,
-                signedData
-            );
-
-            await completeEventTx.wait(1);
-
-            //generates sig data
-            var accoladesArray: any[] = [];
-
-            accoladesArray.push([
-                10003,
-                web3.utils.fromAscii("Beginner"),
-                web3.utils.fromAscii("N/A"),
-            ]);
+            accoladesArray.push({
+                eventId: 0,
+                techId: 3,
+                level: 1,
+                badge: web3.utils.fromAscii(
+                    "bafkreicfez4ls7m52skiompb2xmvkfrk5cwdxnhk42wahxp5wggdz5t67m"
+                ),
+            });
 
             flattenedBadgesArray = accoladesArray.map((i) => {
                 return (
-                    i[0].toString() +
-                    web3.utils.toAscii(i[1].toString()) +
-                    web3.utils.toAscii(i[2].toString())
+                    i.eventId?.toString() +
+                    i.techId?.toString() +
+                    i.level?.toString() +
+                    web3.utils.toAscii(i.badge)
                 );
             });
 
+            //const badgeAwardHash = (web3 as Web3).utils.soliditySha3(
+            //    user.address,
+            //    flattenedBadgesArray.join("")
+            //);
+
+            console.log(flattenedBadgesArray.join(""));
             const badgeAwardHash = (web3 as Web3).utils.soliditySha3(
-                user.address,
-                flattenedBadgesArray.join("")
+                { t: "address", v: user.address },
+                {
+                    t: "string",
+                    v: flattenedBadgesArray.join(""),
+                }
             );
 
             const badgeAwardSignedData = await web3.eth.sign(badgeAwardHash!, safeCaller);
+
+            console.log(`Award Badge Sig: ${badgeAwardSignedData}`);
 
             const awardBadgeTx = await _lilyPadContract.awardBadge(
                 user.address,
@@ -671,6 +669,7 @@ describe("LilyPad", function () {
 
             //generates sig data
             let hash = (web3 as Web3).utils.soliditySha3(
+                { t: "address", v: user.address },
                 { t: "uint256", v: initialXp },
                 ...completedCourses,
                 {
@@ -681,9 +680,13 @@ describe("LilyPad", function () {
 
             let signedData = await web3.eth.sign(hash!, safeCaller);
 
-            const courseTx = await _lilyPadContract
-                .connect(user)
-                .createMember(initialXp, completedCourses, badges, signedData);
+            const courseTx = await _lilyPadContract.createMember(
+                user.address,
+                initialXp,
+                completedCourses,
+                badges,
+                signedData
+            );
 
             await courseTx.wait(1);
 
@@ -692,20 +695,32 @@ describe("LilyPad", function () {
             assert(_member.pathChosen, "Member not created :-(");
 
             //try to update member data
-            badges = []; //badges is just an accolade array
-            badges.push([1, web3.utils.fromAscii("BEGINER"), web3.utils.fromAscii("N/A")]);
+            //generates sig data
+            var accoladesArray: ILilyPad.AccoladeStruct[] = [];
 
-            completedCourses = [1];
+            accoladesArray.push({
+                eventId: 0,
+                techId: 3,
+                level: 1,
+                badge: web3.utils.fromAscii(
+                    "bafkreicfez4ls7m52skiompb2xmvkfrk5cwdxnhk42wahxp5wggdz5t67m"
+                ),
+            });
 
-            flattenedBadgesArray = badges.map((i) => {
+            flattenedBadgesArray = accoladesArray.map((i) => {
                 return (
-                    i[0].toString() +
-                    web3.utils.toAscii(i[1].toString()) +
-                    web3.utils.toAscii(i[2].toString())
+                    i.eventId?.toString() +
+                    i.techId?.toString() +
+                    i.level?.toString() +
+                    web3.utils.toAscii(i.badge)
                 );
             });
 
-            const { xp, accolades } = await _lilyPadContract.getEvent(1);
+            console.log(flattenedBadgesArray.join(""));
+
+            completedCourses = [1];
+
+            const { xp } = await _lilyPadContract.getEvent(1);
             const currentXp = Number(xp) + initialXp;
             console.log(`Event xp: ${xp}`);
 
@@ -728,21 +743,17 @@ describe("LilyPad", function () {
                 true,
                 currentXp,
                 completedCourses,
-                badges,
+                accoladesArray,
                 signedData
             );
             const memberUpdtReceipt = await memberUpdtTx.wait(1);
 
             _member = await _lilyPadContract.getMember(user.address);
 
-            const _earned = await _lilyPadContract.badgeEarned(
-                user.address,
-                1,
-                web3.utils.fromAscii("BEGINER")
-            );
+            const _earned = await _lilyPadContract.badgeEarned(user.address, 0, 3, 1);
             assert(_member.xp.eq(currentXp), "Member not updated :-(");
             assert(_earned, "Member not updated. Badge not earned :-(");
             assert(_earned, "Member not updated :-(");
-        });*/
+        });
     });
 });
