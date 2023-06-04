@@ -91,3 +91,30 @@ export async function chainMine(blocks: number) {
 export function currentNetWork(): number {
     return network.config.chainId ?? 1337;
 }
+
+export async function verifyContractFile(
+    contractAddress: string,
+    contractFile: string,
+    args: any[]
+) {
+    const { run } = require("hardhat");
+    console.log("Verifying contract...");
+    console.log(`Contract Address: ${contractAddress}`);
+    console.log(`Arguments: ${args}`);
+
+    console.log(`Etherscan API key: ${process.env.ETHERSCAN_API_KEY}`);
+    try {
+        const result = await run("verify:verify", {
+            address: contractAddress,
+            constructorArguments: args,
+            contract: contractFile,
+        });
+        console.log("Verifyied!");
+        return true;
+    } catch (err: any) {
+        if (err.message.toLowerCase().includes("already verified"))
+            console.log("Already Verified!");
+        else console.error(err);
+        return false;
+    }
+}

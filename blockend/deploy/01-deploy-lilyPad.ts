@@ -1,7 +1,7 @@
 import { ethers, network, upgrades } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { encode_function_data } from "../scripts/utils";
+import { currentNetWork, encode_function_data, verifyContractFile } from "../scripts/utils";
 import {
     LilyPad,
     LilyPadProxyAdmin__factory,
@@ -12,6 +12,7 @@ import { ILilyPad } from "../typechain-types/contracts/LilyPad";
 import { EventStruct } from "../types/EventStruct";
 import { BigNumber, BigNumberish } from "ethers";
 import Web3 from "web3";
+import { networkConfig } from "../helper-hardhat.config";
 
 const BASE_FEE = ethers.utils.parseEther("0.25");
 
@@ -584,6 +585,14 @@ const deployLilyPad: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
 
     console.log(`LilyPad deployed to ${lilypadContract.address}`);
 
+    if ((networkConfig[currentNetWork()].verify ?? false) && process.env.ETHERSCAN_API_KEY) {
+        console.log("Awaiting 6 blocks to send LilyPad verification request...");
+
+        await lilypadContract.deployTransaction.wait(6);
+
+        await verifyContractFile(lilypadContract.address, "contracts/LilyPad.sol:LilyPad", []);
+    }
+
     //deploy proxy admin
     const proxyAdminFactory: LilyPadProxyAdmin__factory = await ethers.getContractFactory(
         "LilyPadProxyAdmin"
@@ -593,6 +602,16 @@ const deployLilyPad: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
 
     console.log(`LilypadProxyAdmin deployed to ${lilyPadProxyAdminContract.address}`);
 
+    if ((networkConfig[currentNetWork()].verify ?? false) && process.env.ETHERSCAN_API_KEY) {
+        console.log("Awaiting 6 blocks to send LilyPadProxyAdmin verification request...");
+        await lilyPadProxyAdminContract.deployTransaction.wait(6);
+
+        await verifyContractFile(
+            lilyPadProxyAdminContract.address,
+            "contracts/proxy/LilyPadProxyAdmin.sol:LilyPadProxyAdmin",
+            []
+        );
+    }
     //deploy proxy
     const encoded_initializer = encode_function_data();
 
@@ -605,6 +624,17 @@ const deployLilyPad: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
     await lilyPadProxyContract.deployed();
 
     console.log(`LilyPadProxy deployed to ${lilyPadProxyContract.address}`);
+
+    if ((networkConfig[currentNetWork()].verify ?? false) && process.env.ETHERSCAN_API_KEY) {
+        console.log("Awaiting 6 blocks to send LilyPadProxy verification request...");
+        await lilyPadProxyContract.deployTransaction.wait(6);
+
+        await verifyContractFile(
+            lilyPadProxyContract.address,
+            "contracts/proxy/LilyPadProxy.sol:LilyPadProxy",
+            [lilypadContract.address, lilyPadProxyAdminContract.address, encoded_initializer]
+        );
+    }
 
     //get instance of contract
     lilypadContract = await lilypadFactory.attach(lilyPadProxyContract.address);

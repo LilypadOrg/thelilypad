@@ -1,13 +1,14 @@
 import { ethers, network, upgrades } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { encode_function_data } from "../scripts/utils";
+import { currentNetWork, encode_function_data, verifyContractFile } from "../scripts/utils";
 import {
     LilyPad__factory,
     PondSBTProxyAdmin__factory,
     PondSBTProxy__factory,
     PondSBT__factory,
 } from "../typechain-types";
+import { networkConfig } from "../helper-hardhat.config";
 
 const BASE_FEE = ethers.utils.parseEther("0.05");
 
@@ -28,6 +29,13 @@ const deployPondSBT: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
 
     console.log(`Pond SBT deployed to ${pondSbtContract.address}`);
 
+    if ((networkConfig[currentNetWork()].verify ?? false) && process.env.ETHERSCAN_API_KEY) {
+        console.log("Awaiting 6 blocks to send PondSBT verification request...");
+        await pondSbtContract.deployTransaction.wait(6);
+
+        await verifyContractFile(pondSbtContract.address, "contracts/PondSBT.sol:PondSBT", []);
+    }
+
     //deploy proxy admin
     const proxyAdminFactory: PondSBTProxyAdmin__factory = await ethers.getContractFactory(
         "PondSBTProxyAdmin"
@@ -36,6 +44,17 @@ const deployPondSBT: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
     await pondSBTProxyAdminContract.deployed();
 
     console.log(`PondSBTProxyAdmin deployed to ${pondSBTProxyAdminContract.address}`);
+
+    if ((networkConfig[currentNetWork()].verify ?? false) && process.env.ETHERSCAN_API_KEY) {
+        console.log("Awaiting 6 blocks to send PondSBTProxyAdmin verification request...");
+        await pondSBTProxyAdminContract.deployTransaction.wait(6);
+
+        await verifyContractFile(
+            pondSBTProxyAdminContract.address,
+            "contracts/proxy/PondSBTProxyAdmin.sol:PondSBTProxyAdmin",
+            []
+        );
+    }
 
     //deploy proxy
     const encoded_initializer = encode_function_data();
@@ -49,6 +68,17 @@ const deployPondSBT: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
     await PondSBTProxyContract.deployed();
 
     console.log(`PondSBTProxy deployed to ${PondSBTProxyContract.address}`);
+
+    if ((networkConfig[currentNetWork()].verify ?? false) && process.env.ETHERSCAN_API_KEY) {
+        console.log("Awaiting 6 blocks to send PondSBTProxy verification request...");
+        await PondSBTProxyContract.deployTransaction.wait(6);
+
+        await verifyContractFile(
+            PondSBTProxyContract.address,
+            "contracts/proxy/PondSBTProxy.sol:PondSBTProxy",
+            [pondSbtContract.address, pondSBTProxyAdminContract.address, encoded_initializer]
+        );
+    }
 
     //get instance of contract
     pondSbtContract = await pondSbtFactory.attach(PondSBTProxyContract.address);

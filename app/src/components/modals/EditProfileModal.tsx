@@ -67,6 +67,7 @@ const EditProfileModal = ({
   const { data: createMemberSignature } =
     api.blockend.signCreateMember.useQuery(
       {
+        member: userProfile?.address,
         xp: userProfile?.xp || 0,
         courses:
           userProfile.courses
@@ -83,6 +84,7 @@ const EditProfileModal = ({
     abi: getLilyPadABI(),
     functionName: 'createMember',
     args: [
+      userProfile?.address,
       BigNumber.from(userProfile.xp), // _initialXP
       userProfile.courses
         .filter((c) => c.completed)
