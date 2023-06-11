@@ -395,7 +395,7 @@ ALTER TABLE "Accolade" ADD CONSTRAINT "Accolade_courseId_fkey" FOREIGN KEY ("cou
 ALTER TABLE "Event" ADD CONSTRAINT "Event_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "Content"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "CommunityProject" ADD CONSTRAINT "CommunityProject_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "Content"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "CommunityProject" ADD CONSTRAINT "CommunityProject_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "Content"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "CommunityProject" ADD CONSTRAINT "CommunityProject_submittedById_fkey" FOREIGN KEY ("submittedById") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

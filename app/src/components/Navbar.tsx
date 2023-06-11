@@ -33,6 +33,8 @@ const Navbar = () => {
   };
 
   return (
+    // TODO: fix menu button not showing on mobile
+    // TODO: centre logo
     <div className="h-[4rem]">
       <div
         className={`fixed z-50 h-16 w-full bg-slate-900 ${

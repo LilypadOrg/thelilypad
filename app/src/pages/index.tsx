@@ -38,6 +38,7 @@ const Home: NextPage = () => {
   // };
 
   return (
+    // TODO: link mint button and learn more button to rigth pages
     <div>
       {/* Hero and cards */}
       <HomeHero scrollToRef={contentRef} />
@@ -87,17 +88,17 @@ const Home: NextPage = () => {
           </Link>
         </div> */}
         </div>
-        <hr className="my-14 w-full bg-main-gray-dark" />
+        {/* <hr className="my-14 w-full bg-main-gray-dark" /> */}
         {/* Browse all courses  */}
-        <div className="w-full space-y-4  px-8 py-5">
+        <div className="w-full space-y-4  px-[2.5rem]  pb-12 lg:px-[5.5rem]">
           <SectionTitle title="Browse courses" />
-          <div className="flex items-start space-x-4 xl:items-center">
-            <div className="w-44 text-right font-semibold">
+          <div className="flex flex-col items-start gap-y-2 gap-x-4 md:flex-row xl:items-center">
+            <div className="w-44 font-semibold md:text-right">
               Top technologies
             </div>
             <div>
               {techs && (
-                <div className="grid justify-start  gap-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
+                <div className="grid grid-cols-2  justify-start gap-2 md:grid-cols-3 xl:grid-cols-6">
                   {techs
                     .sort((a, b) => b._count.contents - a._count.contents)
                     .map((courseFilter, i) => (
@@ -116,11 +117,11 @@ const Home: NextPage = () => {
               )}
             </div>
           </div>
-          <div className="flex items-start space-x-4 xl:items-center">
-            <div className="w-44 text-right font-semibold">Top Tags</div>
+          <div className="flex flex-col items-start gap-y-2 gap-x-4 md:flex-row xl:items-center">
+            <div className="w-44 font-semibold md:text-right">Top Tags</div>
             <div>
               {tags && (
-                <div className="grid justify-start  gap-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
+                <div className="grid grid-cols-2 justify-start gap-2 md:grid-cols-3 xl:grid-cols-6">
                   {tags
                     .sort((a, b) => b._count.contents - a._count.contents)
                     .map((courseFilter, i) => (

@@ -1,5 +1,6 @@
 const About = () => {
   return (
+    // TODO: replace Lorem ipsum with actual content
     <div className="flex h-screen flex-col items-center justify-center gap-32 pb-32">
       <div>
         <div className="z-10 flex flex-col text-center">

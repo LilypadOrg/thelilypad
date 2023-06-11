@@ -12,6 +12,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string().url(),
   NEXTAUTH_SECRET: z.string(),
   NODE_ENV: z.enum(['development', 'test', 'production']),
+  SHADOW_DATABASE_URL: z.string().url(),
   SIGNER_PRIVATE_KEY: z.string(),
 });
 
