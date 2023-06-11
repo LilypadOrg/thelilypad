@@ -2,7 +2,7 @@ import { ethers, network, upgrades } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { networkConfig } from "../helper-hardhat.config";
-import { burnAddress, currentNetWork } from "../scripts/utils";
+import { burnAddress, currentNetWork, verifyContractFile } from "../scripts/utils";
 import { LilyPadExecutor__factory, LilyPadGovernor__factory } from "../typechain-types";
 
 const deployLilyPadDao: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
@@ -39,6 +39,18 @@ const deployLilyPadDao: DeployFunction = async (hre: HardhatRuntimeEnvironment) 
         " getAdminAddress"
     );
 
+    //verify
+    if ((networkConfig[currentNetWork()].verify ?? false) && process.env.ETHERSCAN_API_KEY) {
+        console.log("Awaiting 6 blocks to send LilyPadDAO Executor verification request...");
+        await executorContract.deployTransaction.wait(6);
+
+        await verifyContractFile(
+            executorContract.address,
+            "contracts/LilyPadExecutor.sol:LilyPadExecutor",
+            []
+        );
+    }
+
     //deploy Dao Governor
     const sbtContract = await get("PondSBT");
     const mainContract = await get("LilyPad");
@@ -71,6 +83,18 @@ const deployLilyPadDao: DeployFunction = async (hre: HardhatRuntimeEnvironment) 
         await upgrades.erc1967.getAdminAddress(governorContract.address),
         " getAdminAddress"
     );
+
+    //verify
+    if ((networkConfig[currentNetWork()].verify ?? false) && process.env.ETHERSCAN_API_KEY) {
+        console.log("Awaiting 6 blocks to send LilyPadDAO Governor verification request...");
+        await governorContract.deployTransaction.wait(6);
+
+        await verifyContractFile(
+            governorContract.address,
+            "contracts/LilyPadGovernor.sol:LilyPadGovernor",
+            []
+        );
+    }
 
     const proposer_role = await executorInstance.PROPOSER_ROLE();
     const executor_role = await executorInstance.EXECUTOR_ROLE();

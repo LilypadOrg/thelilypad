@@ -1,6 +1,22 @@
 import { ethers, network } from "hardhat";
+import Web3 from "web3";
 
 export const burnAddress = "0x0000000000000000000000000000000000000000";
+
+export function getSignatureParameters(signature: string, web3: Web3) {
+    const r = signature.slice(0, 66);
+    const s = `0x${signature.slice(66, 130)}`;
+    let vString = `0x${signature.slice(130, 132)}`;
+    let v = web3.utils.toDecimal(vString);
+
+    if (![27, 28].includes(v)) v += 27;
+
+    return {
+        r,
+        s,
+        v,
+    };
+}
 
 export async function getAccount(accountType: string, qtty: number = 0) {
     const { ethers, network } = require("hardhat");
@@ -74,4 +90,31 @@ export async function chainMine(blocks: number) {
 
 export function currentNetWork(): number {
     return network.config.chainId ?? 1337;
+}
+
+export async function verifyContractFile(
+    contractAddress: string,
+    contractFile: string,
+    args: any[]
+) {
+    const { run } = require("hardhat");
+    console.log("Verifying contract...");
+    console.log(`Contract Address: ${contractAddress}`);
+    console.log(`Arguments: ${args}`);
+
+    console.log(`Etherscan API key: ${process.env.ETHERSCAN_API_KEY}`);
+    try {
+        const result = await run("verify:verify", {
+            address: contractAddress,
+            constructorArguments: args,
+            contract: contractFile,
+        });
+        console.log("Verifyied!");
+        return true;
+    } catch (err: any) {
+        if (err.message.toLowerCase().includes("already verified"))
+            console.log("Already Verified!");
+        else console.error(err);
+        return false;
+    }
 }

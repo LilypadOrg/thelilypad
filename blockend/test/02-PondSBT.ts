@@ -63,56 +63,39 @@ describe("PondSBT", function () {
         //create courses
         const _web3: Web3 = web3;
 
-        var courseArray: ILilyPad.AccoladeStruct[] = [];
-
-        courseArray.push(
-            {
-                eventId: 0,
-                title: web3.utils.fromAscii("BEGINER"),
-                badge: web3.utils.fromAscii("BEGINER BADGE SVG"),
-            },
-            {
-                eventId: 0,
-                title: web3.utils.fromAscii("ADVANCED"),
-                badge: web3.utils.fromAscii("ADVANCED BADGE SVG"),
-            }
-        );
-
-        var flattenedArray = courseArray.map((i) => {
-            return i.eventId.toString() + web3.utils.toAscii(i.title) + web3.utils.toAscii(i.badge);
-        });
+        var techList = [1];
 
         let hash = _web3.utils.soliditySha3(
-            { t: "uint256", v: 1 },
+            { t: "uint256", v: 20001 },
             { t: "uint256", v: 1 },
             { t: "bytes", v: web3.utils.fromAscii("Basic Solidity Course") },
             { t: "uint256", v: 10 },
-            {
-                t: "string",
-                v: flattenedArray.join(""),
-            }
+            { t: "uint256", v: 1 },
+            ...techList
         );
 
         console.log("Signing course data...");
         let signedData = await _web3.eth.sign(hash!, safeCaller);
         console.log(`Course Data Signed: ${signedData}`);
         const courseTx = await _lilyPadContract.submitEvent(
-            1,
+            20001,
             1,
             web3.utils.fromAscii("Basic Solidity Course"),
             10,
-            courseArray,
+            1,
+            techList,
             signedData
         );
 
         const submitCourseReceipt = await courseTx.wait(1);
         var eventId = 0;
         for (const ev of submitCourseReceipt.events!) {
+            console.log(ev);
             if (ev.event == "EventSubmited") {
                 eventId = ev.args!.eventId;
             }
         }
-        assert(eventId == 1, "Event not Submited!");
+        assert(eventId == 20001, "Event not Submited!");
 
         //create member
         const name: string = "Mirthis";
@@ -130,10 +113,15 @@ describe("PondSBT", function () {
 
         //generates sig data
         console.log("Signing member data...");
-        hash = _web3.utils.soliditySha3({ t: "uint256", v: initialXp }, ...completedCourses, {
-            t: "string",
-            v: flattenedBadgesArray.join(""),
-        });
+        hash = _web3.utils.soliditySha3(
+            { t: "address", v: user.address },
+            { t: "uint256", v: initialXp },
+            ...completedCourses,
+            {
+                t: "string",
+                v: flattenedBadgesArray.join(""),
+            }
+        );
 
         signedData = await _web3.eth.sign(hash!, safeCaller);
 
@@ -142,6 +130,7 @@ describe("PondSBT", function () {
         _lilyPadContract = await _lilyPadContract.connect(user);
 
         const memberTx = await _lilyPadContract.createMember(
+            user.address,
             initialXp,
             completedCourses,
             badges,

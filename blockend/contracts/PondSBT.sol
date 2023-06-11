@@ -134,7 +134,7 @@ contract PondSBT is
     function burn(uint256 tokenId) public virtual override(ERC721sbBurnableUpgradeable) {
         super.burn(tokenId);
         //updates membership data
-        mainContract.burnBabyBurn(msg.sender);
+        mainContract.burnBabeBurn(msg.sender);
     }
 
     function tokenURI(

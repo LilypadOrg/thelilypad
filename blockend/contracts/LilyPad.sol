@@ -29,6 +29,8 @@ import "base64-sol/base64.sol";
 import "./interface/ILilyPad.sol";
 import "./interface/IPondSBT.sol";
 
+//TODO: OPTIMIZE GAS
+//TODO: CHECK FOR CEI (CHECK, EFFECTS, INTERACTIONS)
 contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
     using StringsUpgradeable for uint256;
 
@@ -40,6 +42,10 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
 
     mapping(uint256 => Level) private levels;
     mapping(uint256 => EventType) private eventTypes;
+    mapping(uint256 => Technology) private technologies;
+
+    mapping(uint256 => TechBadge[]) private techBadges;
+    mapping(uint256 => EventBadge[]) private eventBadges;
 
     mapping(address => Member) private addressToMember;
     mapping(address => uint256[]) private memberJourneys;
@@ -47,12 +53,10 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
     mapping(uint256 => Journey) private journeys;
     mapping(uint256 => JourneyNode[]) private journeyNodes;
 
-    mapping(address => uint256) private addressToTokenId;
     mapping(uint256 => address) private tokenIdToAddress;
 
     //event variables
     mapping(uint256 => Event) private eventIdToEvent;
-    mapping(uint256 => mapping(bytes => Accolade)) private eventAccoladeTitleToAccolade;
 
     /**
      *@notice initialize proxy
@@ -62,18 +66,24 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *OUT
      */
     function initialize(
-        Level[] memory _levels,
-        EventType[] memory _eventTypes,
+        Level[] calldata _levels,
+        EventType[] calldata _eventTypes,
+        Technology[] calldata _technologies,
         address _safeCaller
     ) public initializer {
-        for (uint256 idx = 0; idx < _levels.length; idx++) {
+        for (uint256 idx = 0; idx < _levels.length; ++idx) {
             levels[_levels[idx].level] = _levels[idx];
             maxLevel = (maxLevel < _levels[idx].level) ? _levels[idx].level : maxLevel;
         }
 
-        for (uint256 idx = 0; idx < _eventTypes.length; idx++) {
+        for (uint256 idx = 0; idx < _eventTypes.length; ++idx) {
             eventTypes[_eventTypes[idx].id] = _eventTypes[idx];
         }
+
+        for (uint256 idx = 0; idx < _technologies.length; ++idx) {
+            technologies[_technologies[idx].techId] = _technologies[idx];
+        }
+
         __Ownable_init();
 
         safeCaller = _safeCaller;
@@ -106,14 +116,15 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         require(recoverSigner(message, sig) == safeCaller, "I don't take orders from you");
     }
 
-    function getAccoladesStr(Accolade[] memory _accolades) internal pure returns (string memory) {
+    function getAccoladesStr(Accolade[] calldata _accolades) internal view returns (string memory) {
         string memory _string;
-        for (uint256 idx = 0; idx < _accolades.length; idx++) {
+        for (uint256 idx = 0; idx < _accolades.length; ++idx) {
             _string = string(
                 abi.encodePacked(
                     _string,
-                    _accolades[idx].eventId.toString(),
-                    _accolades[idx].title,
+                    StringsUpgradeable.toString(_accolades[idx].eventId),
+                    StringsUpgradeable.toString(_accolades[idx].techId),
+                    StringsUpgradeable.toString(_accolades[idx].level),
                     _accolades[idx].badge
                 )
             );
@@ -123,7 +134,6 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
     }
 
     //LEVEL FUNCTIONS
-
     /**
      *@notice Create Level
      *IN
@@ -131,7 +141,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *OUT
      */
     function createLevel(Level[] calldata _levels) public onlyOwner {
-        for (uint256 idx = 0; idx < _levels.length; idx++) {
+        for (uint256 idx = 0; idx < _levels.length; ++idx) {
             if (levels[_levels[idx].level].level == 0) {
                 levels[_levels[idx].level] = _levels[idx];
                 maxLevel = (maxLevel < _levels[idx].level) ? _levels[idx].level : maxLevel;
@@ -161,7 +171,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *OUT
      */
     function createEventType(EventType[] calldata _eventTypes) public onlyOwner {
-        for (uint256 idx = 0; idx < _eventTypes.length; idx++) {
+        for (uint256 idx = 0; idx < _eventTypes.length; ++idx) {
             if (eventTypes[_eventTypes[idx].id].id == 0) {
                 eventTypes[_eventTypes[idx].id] = _eventTypes[idx];
             } else {
@@ -180,37 +190,209 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         return eventTypes[_eventTypeId];
     }
 
-    //COURSE FUNCTIONS
+    //TECHNOLOGY FUNCTIONS
+    /**
+     *@notice Create Technology
+     *IN
+     *@param _technologies: array with new tech to keep track. If type already exists, update it
+     *OUT
+     */
+    function createTechnology(
+        Technology[] calldata _technologies,
+        TechBadge[] calldata _badges
+    ) public onlyOwner {
+        for (uint256 idx = 0; idx < _technologies.length; ++idx) {
+            if (technologies[_technologies[idx].techId].techId == 0) {
+                technologies[_technologies[idx].techId] = _technologies[idx];
+                //keep track of badges to techId
+                uint256 badgesLength = _badges.length;
+                delete techBadges[_technologies[idx].techId];
 
+                for (uint256 idxBadges = 0; idxBadges < badgesLength; ++idxBadges) {
+                    techBadges[_technologies[idx].techId].push(_badges[idxBadges]);
+                }
+            } else {
+                technologies[_technologies[idx].techId].techName = _technologies[idx].techName;
+                //keep track of badges to techId
+                uint256 badgesLength = _badges.length;
+                delete techBadges[_technologies[idx].techId];
+
+                for (uint256 idxBadges = 0; idxBadges < badgesLength; ++idxBadges) {
+                    techBadges[_technologies[idx].techId].push(_badges[idxBadges]);
+                }
+            }
+        }
+    }
+
+    /**
+     *@notice Get Technology by Id
+     *IN
+     *@param _technologyId: Technology Id to search for
+     *OUT
+     */
+    function getTechnology(uint256 _technologyId) public view returns (Technology memory) {
+        return technologies[_technologyId];
+    }
+
+    function submitBadge(
+        uint256 _eventId,
+        uint256 _techId,
+        uint256 _level,
+        bytes memory _badge
+    ) external onlyOwner {
+        if (_eventId > 0) {
+            //its an event
+            EventBadge[] memory badges = eventBadges[_eventId];
+            uint256 arrayLength = badges.length;
+
+            bool exists;
+            uint256 idx = 0;
+
+            for (idx = 0; idx < arrayLength; ++idx) {
+                if (badges[idx].eventId == _eventId) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists) eventBadges[_eventId].push(EventBadge({eventId: _eventId, badge: _badge}));
+            else eventBadges[_eventId][idx].badge = _badge;
+        } else {
+            //its a tech
+            TechBadge[] memory badges = techBadges[_techId];
+            uint256 arrayLength = badges.length;
+
+            bool exists;
+            uint256 idx = 0;
+
+            for (idx = 0; idx < arrayLength; ++idx) {
+                if (badges[idx].level == _level && badges[idx].techId == _techId) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists)
+                techBadges[_techId].push(
+                    TechBadge({techId: _techId, level: _level, badge: _badge})
+                );
+            else techBadges[_techId][idx].badge = _badge;
+        }
+    }
+
+    //TECHNOLOGY FUNCTIONS
+    //function submitBadge(
+    //    EventBadge[] calldata _eventBadges,
+    //    TechBadge[] calldata _techBadges
+    //) external onlyOwner {
+    //_submitEventBadges(_eventBadges);
+    //    _submitTechBadges(_techBadges);
+    //}
+
+    /*function _submitEventBadges(EventBadge[] calldata _eventBadges) internal {
+        uint256 eventBadgesLength = _eventBadges.length;
+
+        for (uint256 idx = 0; idx < eventBadgesLength; ++idx) {
+            //check if already exists
+            EventBadge[] memory badges = eventBadges[_eventBadges[idx].eventId];
+            uint256 arrayLength = badges.length;
+
+            bool exists;
+            for (uint256 idxImg = 0; idxImg <= arrayLength; ++idxImg) {
+                if (
+                    keccak256(abi.encodePacked(badges[idx].badge)) ==
+                    keccak256(abi.encodePacked(_eventBadges[idx].badge))
+                ) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists)
+                eventBadges[_eventBadges[idx].eventId].push(
+                    EventBadge({eventId: _eventBadges[idx].eventId, badge: _eventBadges[idx].badge})
+                );
+        }
+    }
+
+    function _submitTechBadges(TechBadge[] calldata _techBadges) internal {
+        uint256 techBadgesLength = _techBadges.length;
+
+        for (uint256 idx = 0; idx < techBadgesLength; ++idx) {
+            //check if already exists
+            TechBadge[] memory badges = techBadges[_techBadges[idx].techId];
+            uint256 arrayLength = badges.length;
+
+            revert(StringsUpgradeable.toString(arrayLength));
+            bool exists;
+            for (uint256 idxImg = 0; idxImg <= arrayLength; ++idxImg) {
+                if (
+                    badges[idx].level == _techBadges[idx].level &&
+                    keccak256(abi.encodePacked(badges[idx].badge)) ==
+                    keccak256(abi.encodePacked(_techBadges[idx].badge))
+                ) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists)
+                techBadges[_techBadges[idx].techId].push(
+                    TechBadge({
+                        techId: _techBadges[idx].techId,
+                        level: _techBadges[idx].level,
+                        badge: _techBadges[idx].badge
+                    })
+                );
+        }
+    }*/
+
+    /**
+     *@notice Get Technology badge by level
+     *IN
+     *@param _technologyId: Technology Id to search for badge
+     *@param level: level to search for badge
+     *OUT
+     */
+    function getTechBadge(
+        uint256 _technologyId,
+        uint256 level
+    ) public view returns (TechBadge memory) {
+        TechBadge[] memory _badges = techBadges[_technologyId];
+
+        uint256 badgesLength = _badges.length;
+        for (uint256 idx = 0; idx < badgesLength; ++idx) {
+            if (_badges[idx].level == level) return _badges[idx];
+        }
+
+        return TechBadge({techId: 0, level: 0, badge: new bytes(0)});
+    }
+
+    //COURSE FUNCTIONS
     /**
      *@notice Submite a Course or Event to be featured in the Lilypad Platform
      *IN
      *@param _eventTypeId: event type id
      *@param _eventName: event name byteslike
      *@param _xp: xp given by course completion
-     *@param _accolades: list of accolades of the event
+     *@param _technologies: list of accolades of the event
      *@param _sig: signatura from safeCaller
      *OUT
      */
     function submitEvent(
         uint256 _eventId,
         uint256 _eventTypeId,
-        bytes memory _eventName,
+        bytes calldata _eventName,
         uint256 _xp,
-        Accolade[] memory _accolades,
+        uint256 _level,
+        uint256[] calldata _technologies,
         bytes memory _sig
     )
         public
         onlySafeCaller(
             prefixed(
                 keccak256(
-                    abi.encodePacked(
-                        _eventId,
-                        _eventTypeId,
-                        _eventName,
-                        _xp,
-                        getAccoladesStr(_accolades)
-                    )
+                    abi.encodePacked(_eventId, _eventTypeId, _eventName, _xp, _level, _technologies)
                 )
             ),
             _sig
@@ -222,20 +404,13 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         eventIdToEvent[_eventId].eventTypeId = _eventTypeId;
         eventIdToEvent[_eventId].xp = _xp;
         eventIdToEvent[_eventId].eventName = _eventName;
+        eventIdToEvent[_eventId].level = _level;
 
-        for (uint256 idx = 0; idx < _accolades.length; idx++) {
-            eventIdToEvent[_eventId].accolades.push(
-                Accolade({
-                    eventId: _eventId,
-                    title: _accolades[idx].title,
-                    badge: _accolades[idx].badge
-                })
-            );
-            eventAccoladeTitleToAccolade[_eventId][_accolades[idx].title] = Accolade({
-                eventId: _eventId,
-                title: _accolades[idx].title,
-                badge: _accolades[idx].badge
-            });
+        for (uint256 idx = 0; idx < _technologies.length; ++idx) {
+            if (technologies[_technologies[idx]].techId <= 0)
+                revert TechNotFound(_technologies[idx]);
+
+            eventIdToEvent[_eventId].technologies.push(_technologies[idx]);
         }
 
         emit EventSubmited(msg.sender, _eventId, _eventTypeId, _eventName);
@@ -248,14 +423,21 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *OUT
      *@return eventTypeId type of event
      *@return xp given by course completion or event participation
-     *@return accolades list of accolades of the event
+     *@return eventTechs list of accolades of the event
      */
     function getEvent(
         uint256 _id
-    ) public view returns (uint256 eventTypeId, uint256 xp, Accolade[] memory accolades) {
+    ) public view returns (uint256 eventTypeId, uint256 xp, Technology[] memory eventTechs) {
         Event memory _event = eventIdToEvent[_id];
 
-        return (_event.eventTypeId, _event.xp, _event.accolades);
+        uint256 eventTechLength = _event.technologies.length;
+        eventTechs = new Technology[](_event.technologies.length);
+
+        for (uint256 idx = 0; idx < eventTechLength; ++idx) {
+            eventTechs[idx] = technologies[_event.technologies[idx]];
+        }
+
+        return (_event.eventTypeId, _event.xp, eventTechs);
     }
 
     /**
@@ -265,7 +447,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *@param _id: event id
      *@param _eventTypeId: event type id
      *@param _xp: xp given by event completion or event participation
-     *@param _accolades: list of accolades of event
+     *@param _technologies: list of technologies of event
      *@param _sig: safeCaller signature
      *OUT
      */
@@ -274,14 +456,12 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         uint256 _eventTypeId,
         bytes memory _eventName,
         uint256 _xp,
-        Accolade[] memory _accolades,
+        uint256[] calldata _technologies,
         bytes memory _sig
     )
         public
         onlySafeCaller(
-            prefixed(
-                keccak256(abi.encodePacked(_id, _eventTypeId, _xp, getAccoladesStr(_accolades)))
-            ),
+            prefixed(keccak256(abi.encodePacked(_id, _eventTypeId, _xp, _technologies))),
             _sig
         )
     {
@@ -289,26 +469,12 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         eventIdToEvent[_id].eventTypeId = _eventTypeId;
         eventIdToEvent[_id].eventName = _eventName;
 
-        delete eventIdToEvent[_id].accolades;
+        delete eventIdToEvent[_id].technologies;
 
-        for (uint256 idx = 0; idx < _accolades.length; idx++) {
-            if (_accolades[idx].eventId != _id) revert("Invalid event id in accolade!");
+        uint256 eventTechLength = _technologies.length;
 
-            eventIdToEvent[_id].accolades.push(
-                Accolade({
-                    eventId: _accolades[idx].eventId,
-                    title: _accolades[idx].title,
-                    badge: _accolades[idx].badge
-                })
-            );
-
-            eventAccoladeTitleToAccolade[_accolades[idx].eventId][
-                _accolades[idx].title
-            ] = Accolade({
-                eventId: _accolades[idx].eventId,
-                title: _accolades[idx].title,
-                badge: _accolades[idx].badge
-            });
+        for (uint256 idx = 0; idx < eventTechLength; ++idx) {
+            eventIdToEvent[_id].technologies.push(_technologies[idx]);
         }
 
         //emit EventUpdated(msg.sender, _id, _eventTypeId, _eventName, _xp, _accolades);
@@ -358,20 +524,28 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *OUT
      */
     function createMember(
+        address _member,
         uint256 _initialXp,
-        uint256[] memory _completedEvents,
-        Accolade[] memory _badges,
+        uint256[] calldata _completedEvents,
+        Accolade[] calldata _badges,
         bytes memory _sig
     )
         public
         onlySafeCaller(
             prefixed(
-                keccak256(abi.encodePacked(_initialXp, _completedEvents, getAccoladesStr(_badges)))
+                keccak256(
+                    abi.encodePacked(
+                        _member,
+                        _initialXp,
+                        _completedEvents,
+                        getAccoladesStr(_badges)
+                    )
+                )
             ),
             _sig
         )
     {
-        _createMember(msg.sender, _initialXp, _completedEvents, _badges);
+        _createMember(_member, _initialXp, _completedEvents, _badges);
     }
 
     // MEMBER FUNCTIONS
@@ -396,11 +570,11 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         addressToMember[_memberAddress].xp = _initialXp;
         addressToMember[_memberAddress].DAO = true;
         addressToMember[_memberAddress].tokenId = 0;
-        for (uint256 idx = 0; idx < _completedEvents.length; idx++) {
+        for (uint256 idx = 0; idx < _completedEvents.length; ++idx) {
             addressToMember[_memberAddress].completedEvents.push(_completedEvents[idx]);
         }
 
-        for (uint256 idx = 0; idx < _badges.length; idx++) {
+        for (uint256 idx = 0; idx < _badges.length; ++idx) {
             addressToMember[_memberAddress].badges.push(_badges[idx]);
         }
 
@@ -421,8 +595,8 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         address _memberAddress,
         bool _dao,
         uint256 _xp,
-        uint256[] memory _completedEvents,
-        Accolade[] memory _badges,
+        uint256[] calldata _completedEvents,
+        Accolade[] calldata _badges,
         bytes memory _sig
     )
         public
@@ -441,6 +615,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
             _sig
         )
     {
+        //mapping(address => Member) storage _addressToMember = addressToMember;
         if (!addressToMember[_memberAddress].pathChosen) {
             _createMember(_memberAddress, _xp, _completedEvents, _badges);
         } else {
@@ -451,17 +626,22 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
 
             delete addressToMember[_memberAddress].completedEvents;
 
-            for (uint256 idx = 0; idx < _completedEvents.length; idx++) {
+            uint256 eventsLength = _completedEvents.length;
+            uint256 badgesLength = _badges.length;
+
+            for (uint256 idx = 0; idx < eventsLength; ++idx) {
                 addressToMember[_memberAddress].completedEvents.push(_completedEvents[idx]);
             }
 
-            for (uint256 idx = 0; idx < _completedEvents.length; idx++) {
-                if (!completedEvent(_memberAddress, _completedEvents[idx]))
-                    _completeEvent(_memberAddress, _completedEvents[idx], false);
-            }
-
-            for (uint256 idx = 0; idx < _badges.length; idx++) {
-                if (!badgeEarned(_memberAddress, _badges[idx].eventId, _badges[idx].title)) {
+            for (uint256 idx = 0; idx < badgesLength; ++idx) {
+                if (
+                    !badgeEarned(
+                        _memberAddress,
+                        _badges[idx].eventId,
+                        _badges[idx].techId,
+                        _badges[idx].level
+                    )
+                ) {
                     _awardBadge(_memberAddress, _badges[idx], false);
                 }
             }
@@ -486,23 +666,6 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
     }
 
     /**
-     *@notice Update member XP. Require member created for given address
-     *IN
-     *@param _member: member address
-     *@param _currentXp: member current xp
-     *OUT
-     */
-    function levelMember(
-        address _member,
-        uint256 _currentXp,
-        bytes memory _sig
-    ) public onlySafeCaller(prefixed(keccak256(abi.encodePacked(_member, _currentXp))), _sig) {
-        require(addressToMember[_member].pathChosen, "Path not chosen!");
-
-        addressToMember[msg.sender].xp = _currentXp;
-    }
-
-    /**
      *@notice update Member event completion
      *IN
      *@param _member: member address
@@ -515,16 +678,9 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         bytes memory _sig
     ) public onlySafeCaller(prefixed(keccak256(abi.encodePacked(_member, _eventId))), _sig) {
         //TODO: make it batch prepared
-        require(addressToMember[_member].pathChosen, "Path not chosen!");
+        if (!addressToMember[_member].pathChosen) revert NotAFrog(_member);
+
         if (!completedEvent(_member, _eventId)) _completeEvent(_member, _eventId, true);
-
-        //for (uint256 idx = 0; idx < _eventsId.length; idx++) {
-        //    if (!completedEvent(_member, _eventsId[idx]))
-        //        _completeEvent(_member, _eventsId[idx], false);
-        //}
-
-        //update journeys
-        //updateJourney(_member);
     }
 
     /**
@@ -539,21 +695,89 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
     function _completeEvent(address _member, uint256 _eventId, bool _updateJourney) internal {
         //check member current level
         uint256 currentLevel = getMemberLevel(_member);
-        addressToMember[_member].completedEvents.push(_eventId);
-        addressToMember[_member].xp += eventIdToEvent[_eventId].xp;
-        //update journeys
-        if (_updateJourney) updateJourney(_member);
 
-        emit EventCompleted(
-            _member,
-            _eventId,
-            string(abi.encodePacked(eventIdToEvent[_eventId].eventName))
-        );
+        Event memory _event = eventIdToEvent[_eventId];
+
+        addressToMember[_member].completedEvents.push(_eventId);
+        addressToMember[_member].xp += _event.xp;
+
+        emit EventCompleted(_member, _eventId, string(abi.encodePacked(_event.eventName)));
         //check member new level
         uint256 newLevel = getMemberLevel(_member);
 
         if (newLevel > currentLevel)
             emit LevelReached(_member, addressToMember[_member].xp, newLevel);
+
+        //award badges
+        uint256 eventBadgesLenght = eventBadges[_eventId].length;
+        uint256 techBadgesLenght = _event.technologies.length;
+
+        //award event badges
+        for (uint256 idx = 0; idx < eventBadgesLenght; ++idx) {
+            Accolade memory badge = Accolade({
+                eventId: _eventId,
+                techId: 0,
+                level: _event.level,
+                badge: eventBadges[_eventId][idx].badge
+            });
+
+            _awardBadge(_member, badge, false);
+        }
+
+        //award tech badges
+        for (uint256 idx = 0; idx < techBadgesLenght; ++idx) {
+            uint256 _level = _event.level;
+
+            while (_level > 0) {
+                TechBadge memory techBadge = getTechBadge(_event.technologies[idx], _level);
+
+                if (techBadge.techId > 0) {
+                    Accolade memory badge = Accolade({
+                        eventId: 0,
+                        techId: techBadge.techId,
+                        level: _level,
+                        badge: techBadge.badge
+                    });
+
+                    _awardBadge(_member, badge, false);
+                }
+
+                --_level;
+            }
+        }
+
+        //update journeys
+        if (_updateJourney) updateJourney(_member);
+    }
+
+    /**
+     *@notice Award badge to member for course completion or event participation.
+     *@dev in the _badges accolade object there is no need to send the badge image data. Just eventId and accoladeTitle
+     *IN
+     *@param _member: member address
+     *@param _techId: id of technology
+     *@param _level: level of earning
+     *OUT
+     */
+    function getAwardedBadge(
+        address _member,
+        uint256 _eventId,
+        uint256 _techId,
+        uint256 _level
+    ) public view returns (Accolade memory, uint256 badgeIndex) {
+        Accolade[] memory memberBadges = addressToMember[_member].badges;
+        uint256 badgesLength = memberBadges.length;
+
+        for (uint256 idx = 0; idx < badgesLength; ++idx) {
+            if (
+                (_techId > 0 &&
+                    memberBadges[idx].techId == _techId &&
+                    memberBadges[idx].level == _level) ||
+                (_eventId > 0 && memberBadges[idx].eventId == _eventId)
+            ) return (memberBadges[idx], idx);
+        }
+
+        return (Accolade({eventId: 0, techId: 0, level: 0, badge: new bytes(0)}), 0);
     }
 
     /**
@@ -566,8 +790,8 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      */
     function awardBadge(
         address _member,
-        Accolade[] memory _badges,
-        bytes memory _sig
+        Accolade[] calldata _badges,
+        bytes calldata _sig
     )
         public
         onlySafeCaller(
@@ -575,9 +799,11 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
             _sig
         )
     {
-        for (uint256 idx = 0; idx < _badges.length; idx++) {
-            if (!badgeEarned(_member, _badges[idx].eventId, _badges[idx].title))
-                _awardBadge(_member, _badges[idx], true);
+        for (uint256 idx = 0; idx < _badges.length; ++idx) {
+            //if (
+            //    !badgeEarned(_member, _badges[idx].eventId, _badges[idx].techId, _badges[idx].level)
+            //)
+            _awardBadge(_member, _badges[idx], true);
         }
     }
 
@@ -591,24 +817,58 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *OUT
      */
     function _awardBadge(address _member, Accolade memory _accolade, bool _updateJourney) internal {
-        addressToMember[_member].badges.push(
-            Accolade({
-                eventId: _accolade.eventId,
-                title: _accolade.title,
-                //get the current badge art for immutability purpose
-                badge: eventAccoladeTitleToAccolade[_accolade.eventId][_accolade.title].badge
-            })
-        );
+        if (!badgeEarned(_member, _accolade.eventId, _accolade.techId, _accolade.level)) {
+            addressToMember[_member].badges.push(
+                Accolade({
+                    eventId: _accolade.eventId,
+                    techId: _accolade.techId,
+                    level: _accolade.level,
+                    //get the current badge art for immutability purpose
+                    badge: _accolade.badge
+                })
+            );
+
+            emit BadgeEarned(_member, _accolade.eventId, _accolade.techId, _accolade.level);
+        } /* else {
+            (Accolade memory existingAccolade, uint256 idx) = getAwardedBadge(
+                _member,
+                _accolade.eventId,
+                _accolade.techId,
+                _accolade.level
+            );
+
+            addressToMember[_member].badges[idx]
+                if (!arrayContains(existingAccolade.eventId, _accolade.eventId[eventIdx])) {
+                    addressToMember[_member].badges[idx].eventsId.push(
+                        _accolade.eventsId[eventIdx]
+                    );
+                    emit BadgeEarned(
+                        _member,
+                        _accolade.eventsId[eventIdx],
+                        _accolade.techId,
+                        _accolade.level
+                    );
+                }
+
+            uint256 eventsLength = _accolade.eventsId.length;
+
+            for (uint256 eventIdx = 0; eventIdx < eventsLength; ++eventIdx) {
+                if (!arrayContains(existingAccolade.eventsId, _accolade.eventsId[eventIdx])) {
+                    addressToMember[_member].badges[idx].eventsId.push(
+                        _accolade.eventsId[eventIdx]
+                    );
+                    emit BadgeEarned(
+                        _member,
+                        _accolade.eventsId[eventIdx],
+                        _accolade.techId,
+                        _accolade.level
+                    );
+                }
+            }
+        }*/
 
         //update journeys
         if (_updateJourney) updateJourney(_member);
-
-        emit BadgeEarned(
-            _member,
-            _accolade.eventId,
-            _accolade.title,
-            string(abi.encodePacked(_accolade.title))
-        );
     }
 
     /**
@@ -620,7 +880,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *@return bool: if event was already completed
      */
     function completedEvent(address _member, uint256 _eventId) public view returns (bool) {
-        for (uint256 idx = 0; idx < addressToMember[_member].completedEvents.length; idx++) {
+        for (uint256 idx = 0; idx < addressToMember[_member].completedEvents.length; ++idx) {
             if (addressToMember[_member].completedEvents[idx] == _eventId) return true;
         }
 
@@ -631,20 +891,24 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *@notice Check if badge was already earned
      *IN
      *@param _member: member address
-     *@param _eventId: id of event
+     *@param _techId: id of tech
      *OUT
      *@return bool: if badge was already completed
      */
     function badgeEarned(
         address _member,
         uint256 _eventId,
-        bytes memory _accoladeTitle
+        uint256 _techId,
+        uint256 _level
     ) public view returns (bool) {
-        for (uint256 idx = 0; idx < addressToMember[_member].badges.length; idx++) {
-            if (
-                addressToMember[_member].badges[idx].eventId == _eventId &&
-                keccak256(addressToMember[_member].badges[idx].title) == keccak256(_accoladeTitle)
-            ) return true;
+        Accolade[] memory list = addressToMember[_member].badges;
+
+        uint256 badgesLength = list.length;
+
+        for (uint256 idx = 0; idx < badgesLength; ++idx) {
+            if (_techId > 0 && list[idx].techId == _techId && list[idx].level == _level)
+                return true;
+            else if (_eventId > 0 && list[idx].eventId == _eventId) return true;
         }
 
         return false;
@@ -659,10 +923,22 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *@return bool: if all badges were already earned
      */
     function allBadgesEarned(address _member, uint256 _eventId) internal view returns (bool) {
-        Accolade[] memory _accolades = eventIdToEvent[_eventId].accolades;
+        Event memory _event = eventIdToEvent[_eventId];
 
-        for (uint256 idx = 0; idx < _accolades.length; idx++) {
-            if (!badgeEarned(_member, _eventId, _accolades[idx].title)) return false;
+        uint256 length = _event.technologies.length;
+
+        for (uint256 idx = 0; idx < length; ++idx) {
+            TechBadge[] memory _techBadges = techBadges[_event.technologies[idx]];
+            for (uint256 badgeIdx = 0; badgeIdx < _techBadges.length; ++badgeIdx) {
+                if (
+                    !badgeEarned(
+                        _member,
+                        0,
+                        _techBadges[badgeIdx].techId,
+                        _techBadges[badgeIdx].level
+                    )
+                ) return false;
+            }
         }
         return true;
     }
@@ -746,12 +1022,14 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *@return uint256: member level
      */
     function getMemberLevel(address _memberAddress) public view returns (uint256) {
-        for (uint256 idx = 1; idx <= maxLevel; idx++) {
-            if (
-                addressToMember[_memberAddress].xp >= levels[idx].xpInit &&
-                addressToMember[_memberAddress].xp <= levels[idx].xpFin
-            ) {
-                return levels[idx].level;
+        uint256 _maxLevel = maxLevel;
+        Member memory member = addressToMember[_memberAddress];
+
+        for (uint256 idx = 1; idx <= _maxLevel; ++idx) {
+            Level memory level = levels[idx];
+
+            if (member.xp >= level.xpInit && member.xp <= level.xpFin) {
+                return level.level;
             }
         }
         return 0;
@@ -760,9 +1038,9 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
     //JOURNEY FUNCTIONS
     function createJourney(
         uint256 _journeyId,
-        bytes memory _name,
+        bytes calldata _name,
         bool _badgeObligatory,
-        uint256[] memory _eventId
+        uint256[] calldata _eventId
     ) external onlyMember returns (Journey memory) {
         (bool _journeyExists, Journey memory _journeyFound) = journeyExists(msg.sender, _eventId);
 
@@ -776,7 +1054,9 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
                 badgeObligatory: _badgeObligatory
             });
 
-            for (uint256 nodeIdx = 0; nodeIdx < _eventId.length; nodeIdx++) {
+            uint256 eventLength = _eventId.length;
+
+            for (uint256 nodeIdx = 0; nodeIdx < eventLength; ++nodeIdx) {
                 bool journeyStepCompleted;
                 if (journeys[_journeyId].badgeObligatory)
                     journeyStepCompleted = allBadgesEarned(msg.sender, _eventId[nodeIdx]);
@@ -811,7 +1091,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         journeys[_journeyId].name = _name;
         journeys[_journeyId].badgeObligatory = _badgeObligatory;
 
-        for (uint256 nodeIdx = 0; nodeIdx < _eventsId.length; nodeIdx++) {
+        for (uint256 nodeIdx = 0; nodeIdx < _eventsId.length; ++nodeIdx) {
             bool journeyStepCompleted;
             if (journeys[_journeyId].badgeObligatory)
                 journeyStepCompleted = allBadgesEarned(msg.sender, _eventsId[nodeIdx]);
@@ -850,11 +1130,11 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         for (
             uint256 journeyIdx = 0;
             journeyIdx < memberJourneys[_memberAddress].length;
-            journeyIdx++
+            ++journeyIdx
         ) {
             bool _same = true;
             uint256 journeyId = memberJourneys[_memberAddress][journeyIdx];
-            for (uint256 nodeIdx = 0; nodeIdx < journeyNodes[journeyId].length; nodeIdx++) {
+            for (uint256 nodeIdx = 0; nodeIdx < journeyNodes[journeyId].length; ++nodeIdx) {
                 if (_eventsId[nodeIdx] != journeyNodes[journeyId][nodeIdx].eventId) {
                     _same = false;
                     continue;
@@ -870,7 +1150,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
     }
 
     function journeyCompleted(uint256 _journeyId) private view returns (bool) {
-        for (uint256 nodeIdx = 0; nodeIdx < journeyNodes[_journeyId].length; nodeIdx++) {
+        for (uint256 nodeIdx = 0; nodeIdx < journeyNodes[_journeyId].length; ++nodeIdx) {
             if (!journeyNodes[_journeyId][nodeIdx].done) return false;
         }
 
@@ -881,7 +1161,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
         for (
             uint256 journeyIdx = 0;
             journeyIdx < memberJourneys[_memberAddress].length;
-            journeyIdx++
+            ++journeyIdx
         ) {
             uint256 journeyId = memberJourneys[_memberAddress][journeyIdx];
 
@@ -889,7 +1169,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
 
             bool havePendingSteps;
 
-            for (uint256 nodeIdx = 0; nodeIdx < journeyNodes[journeyId].length; nodeIdx++) {
+            for (uint256 nodeIdx = 0; nodeIdx < journeyNodes[journeyId].length; ++nodeIdx) {
                 if (!journeyNodes[journeyId][nodeIdx].done)
                     if (journeys[journeyId].badgeObligatory)
                         journeyNodes[journeyId][nodeIdx].done = allBadgesEarned(
@@ -915,7 +1195,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
      *@param member: address of member to burn
      *OUT
      */
-    function burnBabyBurn(address member) external override {
+    function burnBabeBurn(address member) external override {
         require(
             msg.sender == address(sbtAddress),
             "LilyPad::Only SBT Contract can call menbership burn"
@@ -990,7 +1270,7 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
                 "}"
             )
         );
-        for (uint256 idx = 0; idx < _completedEvents.length; idx++) {
+        for (uint256 idx = 0; idx < _completedEvents.length; ++idx) {
             _attributes = string(abi.encodePacked(_attributes, ',{ "trait_type":"'));
 
             _attributes = string(
@@ -1015,18 +1295,45 @@ contract LilyPad is Initializable, OwnableUpgradeable, ILilyPad {
     function buildBadges(
         Accolade[] memory _badges,
         string memory _baseUri
-    ) internal pure returns (string memory) {
+    ) internal view returns (string memory) {
         string memory _badgesUri = '"badges": [';
-        for (uint256 idx = 0; idx < _badges.length; idx++) {
-            if (idx > 0) _badgesUri = string(abi.encodePacked(_badgesUri, ',{ "trait_type":"'));
+        for (uint256 idx = 0; idx < _badges.length; ++idx) {
+            if (idx > 0)
+                _badgesUri = string(abi.encodePacked(_badgesUri, ',{ "trait_type":"BADGE"'));
             else _badgesUri = string(abi.encodePacked(_badgesUri, '{ "trait_type":"BADGE"'));
 
-            _badgesUri = string(abi.encodePacked(_badgesUri, ', "value": "'));
-            _badgesUri = string(abi.encodePacked(_badgesUri, _badges[idx].title));
-            _badgesUri = string(abi.encodePacked(_badgesUri, '", "image": "'));
-            _badgesUri = string(abi.encodePacked(_badgesUri, _baseUri, _badges[idx].badge));
+            //_badgesUri = string(abi.encodePacked(_badgesUri, '{ "trait_type":"BADGE"'));
 
-            _badgesUri = string(abi.encodePacked(_badgesUri, '"}'));
+            if (_badges[idx].techId > 0) {
+                Technology memory tech = getTechnology(_badges[idx].techId);
+                //TechBadge memory techBadge = getTechBadge(_badges[idx].techId, _badges[idx].level);
+
+                _badgesUri = string(abi.encodePacked(_badgesUri, ', "value": "'));
+                _badgesUri = string(
+                    abi.encodePacked(
+                        _badgesUri,
+                        tech.techName,
+                        "(Level ",
+                        StringsUpgradeable.toString(_badges[idx].level),
+                        ")"
+                    )
+                );
+                _badgesUri = string(abi.encodePacked(_badgesUri, '", "image": "'));
+                _badgesUri = string(abi.encodePacked(_badgesUri, _baseUri, _badges[idx].badge));
+
+                _badgesUri = string(abi.encodePacked(_badgesUri, '"}'));
+            }
+
+            if (_badges[idx].eventId > 0) {
+                _badgesUri = string(abi.encodePacked(_badgesUri, ', "value": "'));
+                _badgesUri = string(
+                    abi.encodePacked(_badgesUri, eventIdToEvent[_badges[idx].eventId].eventName)
+                );
+                _badgesUri = string(abi.encodePacked(_badgesUri, '", "image": "'));
+                _badgesUri = string(abi.encodePacked(_badgesUri, _baseUri, _badges[idx].badge));
+
+                _badgesUri = string(abi.encodePacked(_badgesUri, '"}'));
+            }
         }
 
         _badgesUri = string(abi.encodePacked(_badgesUri, "]"));

@@ -9,14 +9,15 @@ export const blockenRouter = createTRPCRouter({
   signCreateMember: protectedProcedure
     .input(
       z.object({
+        member: z.string(),
         xp: z.number(),
         courses: z.number().array(),
       })
     )
     .query(async ({ input }) => {
       const ethHash = ethers.utils.solidityKeccak256(
-        ['uint256', 'uint256[]', 'string'],
-        [input.xp, [...input.courses], '']
+        ['address', 'uint256', 'uint256[]', 'string'],
+        [input.member, input.xp, [...input.courses], '']
       );
 
       const provider = ethers.providers.getDefaultProvider('homestead');

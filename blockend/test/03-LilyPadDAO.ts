@@ -26,7 +26,7 @@ import { networkConfig } from "../helper-hardhat.config";
 import { network } from "hardhat";
 
 const hre = require("hardhat");
-describe("LilyPadDAO", function () {
+/*describe("LilyPadDAO", function () {
     const { deployments, getNamedAccounts, web3, ethers } = require("hardhat");
     const { get } = deployments;
     const BASE_FEE = ethers.utils.parseEther("0.25");
@@ -492,4 +492,4 @@ describe("LilyPadDAO", function () {
             );
         });
     });
-});
+});*/

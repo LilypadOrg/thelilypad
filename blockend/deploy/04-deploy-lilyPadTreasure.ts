@@ -2,6 +2,8 @@ import { ethers, network, upgrades } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { LilyPadTreasure__factory } from "../typechain-types";
+import { currentNetWork, verifyContractFile } from "../scripts/utils";
+import { networkConfig } from "../helper-hardhat.config";
 
 const BASE_FEE = ethers.utils.parseEther("0.05");
 
@@ -30,6 +32,18 @@ const deployLilyPadTreasure: DeployFunction = async (hre: HardhatRuntimeEnvironm
         await upgrades.erc1967.getAdminAddress(treasureContract.address),
         " getAdminAddress"
     );
+
+    //verify
+    if ((networkConfig[currentNetWork()].verify ?? false) && process.env.ETHERSCAN_API_KEY) {
+        console.log("Awaiting 6 blocks to send LilyPadTreasure verification request...");
+        await treasureContract.deployTransaction.wait(6);
+
+        await verifyContractFile(
+            treasureContract.address,
+            "contracts/LilyPadTreasure.sol:LilyPadTreasure",
+            []
+        );
+    }
 
     //set treasure address to SBT Contract
     console.log("Setting treasure address to SBT Contract...");

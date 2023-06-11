@@ -86,6 +86,7 @@ const config: HardhatUserConfig = {
     etherscan: {
         // npx hardhat verify --network <NETWORK> <CONTRACT_ADDRESS> <CONSTRUCTOR_PARAMETERS>
         apiKey: {
+            polygonMumbai: ETHERSCAN_API_KEY,
             goerli: ETHERSCAN_API_KEY,
             mainnet: ETHERSCAN_API_KEY,
         },
@@ -111,18 +112,23 @@ const config: HardhatUserConfig = {
         safeCaller: {
             default: 2,
         },
+        malicious: {
+            default: 3,
+        },
     },
     solidity: {
         compilers: [
             {
                 version: "0.8.16",
                 settings: {
+                    viaIR: true,
                     optimizer: {
                         enabled: true,
-                        runs: 200,
+                        runs: 1500,
                     },
                 },
             },
+            { version: "0.8.2" },
             { version: "0.6.12" },
             { version: "0.4.19" },
         ],

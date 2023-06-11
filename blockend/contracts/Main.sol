@@ -16,11 +16,7 @@ contract Main is IMain {
     //COURSE FUNCTIONS
 
     //needs to yet consider SVG conversion - this is currently handled on the SBT contract
-    function submitCourse(
-        uint256 xp,
-        string memory accoladeTitle,
-        string memory badgeSVG
-    ) public {
+    function submitCourse(uint256 xp, string memory accoladeTitle, string memory badgeSVG) public {
         uint256 courseId = 1;
         Course memory course = Course({
             courseId: courseId,
@@ -33,15 +29,9 @@ contract Main is IMain {
         courseId++;
     }
 
-    function getCourse(uint256 id)
-        public
-        view
-        returns (
-            uint256 xp,
-            string memory accoladeTitle,
-            string memory badge
-        )
-    {
+    function getCourse(
+        uint256 id
+    ) public view returns (uint256 xp, string memory accoladeTitle, string memory badge) {
         Course memory course = courseIdToCourse[id];
         return (course.xp, course.accoladeTitle, course.badge);
     }
@@ -76,24 +66,22 @@ contract Main is IMain {
     }
 
     // added argument to get memberAddress
-    function getMember(address memberAddress)
+    function getMember(
+        address memberAddress
+    )
         public
         view
         override
-        returns (
-            bool pathChosen,
-            string memory name,
-            uint256 level,
-            bool DAO,
-            uint256 tokenId
-        )
+        returns (bool pathChosen, string memory name, uint256 level, bool DAO, uint256 tokenId)
     {
         Member memory member = addressToMember[memberAddress];
         return (member.pathChosen, member.name, member.level, member.DAO, member.tokenId);
     }
 
     // added argument to get memberAddress
-    function getMemberByTokenId(uint256 _tokenId)
+    function getMemberByTokenId(
+        uint256 _tokenId
+    )
         public
         view
         returns (
@@ -133,12 +121,7 @@ contract Main is IMain {
         courseIdToCourse[id] = course;
     }
 
-    function updateMember(
-        address _member,
-        string memory name,
-        bool dao,
-        uint256 level
-    ) public {
+    function updateMember(address _member, string memory name, bool dao, uint256 level) public {
         Member memory member = addressToMember[_member];
         member = Member({
             pathChosen: member.pathChosen,

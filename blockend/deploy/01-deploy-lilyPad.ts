@@ -1,7 +1,7 @@
 import { ethers, network, upgrades } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { encode_function_data } from "../scripts/utils";
+import { currentNetWork, encode_function_data, verifyContractFile } from "../scripts/utils";
 import {
     LilyPad,
     LilyPadProxyAdmin__factory,
@@ -10,8 +10,9 @@ import {
 } from "../typechain-types";
 import { ILilyPad } from "../typechain-types/contracts/LilyPad";
 import { EventStruct } from "../types/EventStruct";
-import { BigNumber } from "ethers";
+import { BigNumber, BigNumberish } from "ethers";
 import Web3 from "web3";
+import { networkConfig } from "../helper-hardhat.config";
 
 const BASE_FEE = ethers.utils.parseEther("0.25");
 
@@ -80,6 +81,270 @@ export function initialEventTypes(): ILilyPad.EventTypeStruct[] {
     ];
 }
 
+export function initialTechnologies(): ILilyPad.TechnologyStruct[] {
+    const { web3 } = require("hardhat");
+
+    return [
+        {
+            techId: 1,
+            techName: web3.utils.fromAscii("HTML"),
+        },
+        {
+            techId: 2,
+            techName: web3.utils.fromAscii("CSS"),
+        },
+        {
+            techId: 3,
+            techName: web3.utils.fromAscii("JavaScript"),
+        },
+        {
+            techId: 4,
+            techName: web3.utils.fromAscii("TypeScript"),
+        },
+        {
+            techId: 5,
+            techName: web3.utils.fromAscii("React"),
+        },
+        {
+            techId: 6,
+            techName: web3.utils.fromAscii("Next JS"),
+        },
+        {
+            techId: 7,
+            techName: web3.utils.fromAscii("Solidity"),
+        },
+        {
+            techId: 8,
+            techName: web3.utils.fromAscii("Hardhat"),
+        },
+        {
+            techId: 9,
+            techName: web3.utils.fromAscii("ChainLink"),
+        },
+        {
+            techId: 10,
+            techName: web3.utils.fromAscii("TheGraph"),
+        },
+        {
+            techId: 11,
+            techName: web3.utils.fromAscii("Moralis"),
+        },
+        {
+            techId: 12,
+            techName: web3.utils.fromAscii("IPFS"),
+        },
+        {
+            techId: 13,
+            techName: web3.utils.fromAscii("Scaffold-Eth"),
+        },
+        {
+            techId: 14,
+            techName: web3.utils.fromAscii("Node JS"),
+        },
+        {
+            techId: 15,
+            techName: web3.utils.fromAscii("OpenCV"),
+        },
+        {
+            techId: 16,
+            techName: web3.utils.fromAscii("Mediapipe"),
+        },
+        {
+            techId: 17,
+            techName: web3.utils.fromAscii("Python"),
+        },
+        {
+            techId: 18,
+            techName: web3.utils.fromAscii("Git"),
+        },
+        {
+            techId: 19,
+            techName: web3.utils.fromAscii("Command Line"),
+        },
+        {
+            techId: 20,
+            techName: web3.utils.fromAscii("Alchemy"),
+        },
+        {
+            techId: 21,
+            techName: web3.utils.fromAscii("Ethers JS"),
+        },
+        {
+            techId: 22,
+            techName: web3.utils.fromAscii("The Graph"),
+        },
+        {
+            techId: 23,
+            techName: web3.utils.fromAscii("Alchemy-SDK"),
+        },
+        {
+            techId: 24,
+            techName: web3.utils.fromAscii("Axios"),
+        },
+        {
+            techId: 25,
+            techName: web3.utils.fromAscii("React-Bootstrap"),
+        },
+        {
+            techId: 26,
+            techName: web3.utils.fromAscii("Tailwind CSS"),
+        },
+        {
+            techId: 27,
+            techName: web3.utils.fromAscii("Blockchain"),
+        },
+        {
+            techId: 28,
+            techName: web3.utils.fromAscii("Cryptography"),
+        },
+        {
+            techId: 29,
+            techName: web3.utils.fromAscii("SHA256"),
+        },
+        {
+            techId: 30,
+            techName: web3.utils.fromAscii("Ethereum"),
+        },
+        {
+            techId: 31,
+            techName: web3.utils.fromAscii("Bitcoin"),
+        },
+    ];
+}
+
+export function initialTechBadges(): ILilyPad.TechBadgeStruct[] {
+    const { web3 } = require("hardhat");
+
+    return [
+        {
+            techId: 3,
+            level: 1,
+            badge: web3.utils.fromAscii(
+                "bafkreicfez4ls7m52skiompb2xmvkfrk5cwdxnhk42wahxp5wggdz5t67m"
+            ),
+        },
+        {
+            techId: 3,
+            level: 2,
+            badge: web3.utils.fromAscii(
+                "bafybeic3csythornu6umkexdnxzv2vx7nxmvc24uz3fcx7x5pm5w2gmski"
+            ),
+        },
+        {
+            techId: 3,
+            level: 3,
+            badge: web3.utils.fromAscii(
+                "bafybeidj5ljt5entkpybwucq6pulxzkdkmsybaggstfp5yumvap4g6kjl4"
+            ),
+        },
+        {
+            techId: 7,
+            level: 1,
+            badge: web3.utils.fromAscii(
+                "bafybeifaarnxionjg2hawnksg4djx6imlxqyynr7fmmylqe72xpcjpvagm"
+            ),
+        },
+        {
+            techId: 7,
+            level: 2,
+            badge: web3.utils.fromAscii(
+                "bafybeidjkhkmkr6vwy4shgdojqngyytxzimstyfcmni5zp5fidukpucmam"
+            ),
+        },
+        {
+            techId: 7,
+            level: 3,
+            badge: web3.utils.fromAscii(
+                "bafybeifz5bcgdl3tp6ols5ydojrs6si7mtoamd2juszj5gbsj2u3i4kzgm"
+            ),
+        },
+        {
+            techId: 9,
+            level: 1,
+            badge: web3.utils.fromAscii(
+                "bafybeib6xo45wyajbro4ddxavh6kao5rxskad2r6dzw7gc4ikyvhsovnl4"
+            ),
+        },
+        {
+            techId: 9,
+            level: 2,
+            badge: web3.utils.fromAscii(
+                "bafybeibvcgfold7gpj2jai4z2yegeu5b444q2teozh2gjz7gbkqp4sr2fm"
+            ),
+        },
+        {
+            techId: 9,
+            level: 3,
+            badge: web3.utils.fromAscii(
+                "bafybeif3caqfxkll5g6n3d4ffos2qsdn24yhlsf5demj5y7afseeesv6qi"
+            ),
+        },
+        {
+            techId: 8,
+            level: 1,
+            badge: web3.utils.fromAscii(
+                "bafybeiad2jihksbugyzqltnekdt2c5bdq2jjwnuc2thdmmxor7qmz6uioe"
+            ),
+        },
+        {
+            techId: 8,
+            level: 2,
+            badge: web3.utils.fromAscii(
+                "bafybeih2oayq3usx56xpxjdqd4odnzoybq7u5x7nbjcznlaryedfhswdci"
+            ),
+        },
+        {
+            techId: 8,
+            level: 3,
+            badge: web3.utils.fromAscii(
+                "bafybeidm2cnyplizm7hnrawbuphefiysmznzukae7oxrpzxqfoovc6kqgm"
+            ),
+        },
+        {
+            techId: 14,
+            level: 1,
+            badge: web3.utils.fromAscii(
+                "bafybeiedix5kd6une344t35s42tq65xpo2uzk6m65lavuz4rm4lmb3uc5m"
+            ),
+        },
+        {
+            techId: 14,
+            level: 2,
+            badge: web3.utils.fromAscii(
+                "bafybeifhcubf7uxw2c62cyh2j3wnfabtrlzeyhnvpzl2vw4qdyw2vg76ba"
+            ),
+        },
+        {
+            techId: 14,
+            level: 3,
+            badge: web3.utils.fromAscii(
+                "bafybeiazhst5l4vkhzqgnojxmtken57polvj35c4sll4rmkc625tzuf5wm"
+            ),
+        },
+        {
+            techId: 26,
+            level: 1,
+            badge: web3.utils.fromAscii(
+                "bafybeifihfwyitpn3h7q2bk4klas5wgytgmziy4syv4vtogmaqhik6o7zi"
+            ),
+        },
+        {
+            techId: 26,
+            level: 2,
+            badge: web3.utils.fromAscii(
+                "bafybeibrimsihsguahni6o7gmcubvhwnd3qxkpenug3ncqyukhhjxg4vrq"
+            ),
+        },
+        {
+            techId: 26,
+            level: 3,
+            badge: web3.utils.fromAscii(
+                "bafybeiadwovtqxbhecoac6xfzelv7b53b5re4d6kvn236v6c7ozrootaby"
+            ),
+        },
+    ];
+}
+
 export function initialCourses(): EventStruct[] {
     const { web3 } = require("hardhat");
     let events: EventStruct[] = [];
@@ -91,8 +356,10 @@ export function initialCourses(): EventStruct[] {
             eventName: web3.utils.fromAscii(
                 "Learn Blockchain, Solidity, and Full Stack Web3 Development with JavaScript"
             ),
+            level: 2,
             xp: BigNumber.from(1000),
-            accolades: [
+            technologies: [7, 8, 9],
+            /*accolades: [
                 {
                     eventId: 10001,
                     title: web3.utils.fromAscii("Beginner"),
@@ -107,14 +374,16 @@ export function initialCourses(): EventStruct[] {
                         "bafkreiazbvvnpfoqei7jmnrv7slfnfwyfxnu32lr3xomczngz35y2vwrue"
                     ),
                 },
-            ],
+            ],*/
         },
         {
             id: BigNumber.from(10002),
             eventTypeId: BigNumber.from(1),
             eventName: web3.utils.fromAscii("Learn Web3 Dao - Freshman Track"),
+            level: 1,
             xp: BigNumber.from(500),
-            accolades: [
+            technologies: [3, 7],
+            /*accolades: [
                 {
                     eventId: 10002,
                     title: web3.utils.fromAscii("Beginner"),
@@ -122,14 +391,16 @@ export function initialCourses(): EventStruct[] {
                         "bafkreigocoayclhjm6yrtjp6kcczhsmkam6vh4reyy6w6fccvh6lc6encq"
                     ),
                 },
-            ],
+            ],*/
         },
         {
             id: BigNumber.from(10003),
             eventTypeId: BigNumber.from(1),
             eventName: web3.utils.fromAscii("CryptoZombies"),
+            level: 1,
             xp: BigNumber.from(1000),
-            accolades: [
+            technologies: [7],
+            /*accolades: [
                 {
                     eventId: 10003,
                     title: web3.utils.fromAscii("Beginner"),
@@ -137,14 +408,16 @@ export function initialCourses(): EventStruct[] {
                         "bafkreigocoayclhjm6yrtjp6kcczhsmkam6vh4reyy6w6fccvh6lc6encq"
                     ),
                 },
-            ],
+            ],*/
         },
         {
             id: BigNumber.from(10004),
             eventTypeId: BigNumber.from(1),
             eventName: web3.utils.fromAscii("SpeedRunEthereum - Challenge 0: Simple NFT Example"),
+            level: 2,
             xp: BigNumber.from(250),
-            accolades: [
+            technologies: [3, 4, 5, 7, 8, 13, 14],
+            /*accolades: [
                 {
                     eventId: 10004,
                     title: web3.utils.fromAscii("Intermediate"),
@@ -152,7 +425,7 @@ export function initialCourses(): EventStruct[] {
                         "bafkreiazbvvnpfoqei7jmnrv7slfnfwyfxnu32lr3xomczngz35y2vwrue"
                     ),
                 },
-            ],
+            ],*/
         },
         {
             id: BigNumber.from(10005),
@@ -160,8 +433,10 @@ export function initialCourses(): EventStruct[] {
             eventName: web3.utils.fromAscii(
                 "SpeedRunEthereum - Challenge 1: Decentralized Staking App"
             ),
+            level: 2,
             xp: BigNumber.from(250),
-            accolades: [
+            technologies: [3, 4, 5, 7, 8, 13, 14],
+            /*accolades: [
                 {
                     eventId: 10005,
                     title: web3.utils.fromAscii("Intermediate"),
@@ -169,14 +444,16 @@ export function initialCourses(): EventStruct[] {
                         "bafkreiazbvvnpfoqei7jmnrv7slfnfwyfxnu32lr3xomczngz35y2vwrue"
                     ),
                 },
-            ],
+            ],*/
         },
         {
             id: BigNumber.from(10006),
             eventTypeId: BigNumber.from(1),
             eventName: web3.utils.fromAscii("SpeedRunEthereum - Challenge 2: Token Vendor"),
+            level: 2,
             xp: BigNumber.from(250),
-            accolades: [
+            technologies: [3, 4, 5, 7, 8, 13, 14],
+            /*accolades: [
                 {
                     eventId: 10006,
                     title: web3.utils.fromAscii("Intermediate"),
@@ -184,14 +461,16 @@ export function initialCourses(): EventStruct[] {
                         "bafkreiazbvvnpfoqei7jmnrv7slfnfwyfxnu32lr3xomczngz35y2vwrue"
                     ),
                 },
-            ],
+            ],*/
         },
         {
             id: BigNumber.from(10007),
             eventTypeId: BigNumber.from(1),
             eventName: web3.utils.fromAscii("Advanced Computer Vision"),
+            level: 3,
             xp: BigNumber.from(500),
-            accolades: [
+            technologies: [15, 16, 17],
+            /*accolades: [
                 {
                     eventId: 10007,
                     title: web3.utils.fromAscii("Advanced"),
@@ -199,14 +478,16 @@ export function initialCourses(): EventStruct[] {
                         "bafkreibvowxntrika5e5jlrfeujlrpqbgnydk7prxxlbpcxfinlbgqfv4q"
                     ),
                 },
-            ],
+            ],*/
         },
         {
             id: BigNumber.from(10008),
             eventTypeId: BigNumber.from(1),
             eventName: web3.utils.fromAscii("Advanced Git"),
+            level: 3,
             xp: BigNumber.from(500),
-            accolades: [
+            technologies: [18, 19],
+            /*accolades: [
                 {
                     eventId: 10008,
                     title: web3.utils.fromAscii("Advanced"),
@@ -214,7 +495,75 @@ export function initialCourses(): EventStruct[] {
                         "bafkreibvowxntrika5e5jlrfeujlrpqbgnydk7prxxlbpcxfinlbgqfv4q"
                     ),
                 },
-            ],
+            ],*/
+        },
+        {
+            id: BigNumber.from(10009),
+            eventTypeId: BigNumber.from(1),
+            eventName: web3.utils.fromAscii("Portfolio Website"),
+            level: 1,
+            xp: BigNumber.from(500),
+            technologies: [6, 26],
+            /*accolades: [
+                {
+                    eventId: 10009,
+                    title: web3.utils.fromAscii("Advanced"),
+                    badge: web3.utils.fromAscii(
+                        "bafkreibvowxntrika5e5jlrfeujlrpqbgnydk7prxxlbpcxfinlbgqfv4q"
+                    ),
+                },
+            ],*/
+        },
+        {
+            id: BigNumber.from(10010),
+            eventTypeId: BigNumber.from(1),
+            eventName: web3.utils.fromAscii("Git and GitHub for Beginners - Crash Course"),
+            level: 1,
+            xp: BigNumber.from(250),
+            technologies: [18, 19],
+            /*accolades: [
+                {
+                    eventId: 10010,
+                    title: web3.utils.fromAscii("Advanced"),
+                    badge: web3.utils.fromAscii(
+                        "bafkreibvowxntrika5e5jlrfeujlrpqbgnydk7prxxlbpcxfinlbgqfv4q"
+                    ),
+                },
+            ],*/
+        },
+        {
+            id: BigNumber.from(10011),
+            eventTypeId: BigNumber.from(1),
+            eventName: web3.utils.fromAscii("Deep Reinforcement Learning in Python Tutorial"),
+            level: 3,
+            xp: BigNumber.from(800),
+            technologies: [17],
+            /*accolades: [
+                {
+                    eventId: 10011,
+                    title: web3.utils.fromAscii("Advanced"),
+                    badge: web3.utils.fromAscii(
+                        "bafkreibvowxntrika5e5jlrfeujlrpqbgnydk7prxxlbpcxfinlbgqfv4q"
+                    ),
+                },
+            ],*/
+        },
+        {
+            id: BigNumber.from(10012),
+            eventTypeId: BigNumber.from(1),
+            eventName: web3.utils.fromAscii("Python Object Oriented Programming (OOP)"),
+            level: 1,
+            xp: BigNumber.from(250),
+            technologies: [17],
+            /*accolades: [
+                {
+                    eventId: 10012,
+                    title: web3.utils.fromAscii("Advanced"),
+                    badge: web3.utils.fromAscii(
+                        "bafkreibvowxntrika5e5jlrfeujlrpqbgnydk7prxxlbpcxfinlbgqfv4q"
+                    ),
+                },
+            ],*/
         },
     ];
 }
@@ -236,6 +585,14 @@ const deployLilyPad: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
 
     console.log(`LilyPad deployed to ${lilypadContract.address}`);
 
+    if ((networkConfig[currentNetWork()].verify ?? false) && process.env.ETHERSCAN_API_KEY) {
+        console.log("Awaiting 6 blocks to send LilyPad verification request...");
+
+        await lilypadContract.deployTransaction.wait(6);
+
+        await verifyContractFile(lilypadContract.address, "contracts/LilyPad.sol:LilyPad", []);
+    }
+
     //deploy proxy admin
     const proxyAdminFactory: LilyPadProxyAdmin__factory = await ethers.getContractFactory(
         "LilyPadProxyAdmin"
@@ -245,6 +602,16 @@ const deployLilyPad: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
 
     console.log(`LilypadProxyAdmin deployed to ${lilyPadProxyAdminContract.address}`);
 
+    if ((networkConfig[currentNetWork()].verify ?? false) && process.env.ETHERSCAN_API_KEY) {
+        console.log("Awaiting 6 blocks to send LilyPadProxyAdmin verification request...");
+        await lilyPadProxyAdminContract.deployTransaction.wait(6);
+
+        await verifyContractFile(
+            lilyPadProxyAdminContract.address,
+            "contracts/proxy/LilyPadProxyAdmin.sol:LilyPadProxyAdmin",
+            []
+        );
+    }
     //deploy proxy
     const encoded_initializer = encode_function_data();
 
@@ -258,10 +625,26 @@ const deployLilyPad: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
 
     console.log(`LilyPadProxy deployed to ${lilyPadProxyContract.address}`);
 
+    if ((networkConfig[currentNetWork()].verify ?? false) && process.env.ETHERSCAN_API_KEY) {
+        console.log("Awaiting 6 blocks to send LilyPadProxy verification request...");
+        await lilyPadProxyContract.deployTransaction.wait(6);
+
+        await verifyContractFile(
+            lilyPadProxyContract.address,
+            "contracts/proxy/LilyPadProxy.sol:LilyPadProxy",
+            [lilypadContract.address, lilyPadProxyAdminContract.address, encoded_initializer]
+        );
+    }
+
     //get instance of contract
     lilypadContract = await lilypadFactory.attach(lilyPadProxyContract.address);
     //initialize proxy
-    var tx = await lilypadContract.initialize([], await initialEventTypes(), deployer);
+    var tx = await lilypadContract.initialize(
+        [],
+        await initialEventTypes(),
+        await initialTechnologies(),
+        deployer
+    );
     const txReceipt = await tx.wait(1);
 
     for (const lev of initialLevels()) {
@@ -271,12 +654,10 @@ const deployLilyPad: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
     }
 
     for (const course of initialCourses()) {
-        var flattenedArray = course.accolades.map((i: ILilyPad.AccoladeStruct) => {
-            return (
-                i.eventId.toString() +
-                web3.utils.toAscii(i.title.toString()) +
-                web3.utils.toAscii(i.badge.toString())
-            );
+        let lista: number[] = [];
+        course.technologies.forEach((e) => {
+            let number = Number(e);
+            lista.push(number);
         });
 
         const hash = (web3 as Web3).utils.soliditySha3(
@@ -284,10 +665,8 @@ const deployLilyPad: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
             { t: "uint256", v: Number(course.eventTypeId) },
             { t: "bytes", v: course.eventName.toString() },
             { t: "uint256", v: Number(course.xp) },
-            {
-                t: "string",
-                v: flattenedArray.join(""),
-            }
+            { t: "uint256", v: Number(course.level) },
+            ...lista
         );
 
         const signedData = await web3.eth.sign(hash!, deployer);
@@ -299,10 +678,27 @@ const deployLilyPad: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
             course.eventTypeId,
             course.eventName,
             course.xp,
-            course.accolades,
+            course.level,
+            course.technologies,
             signedData
         );
         await createCourseTx.wait(1);
+    }
+
+    for (const tech of initialTechBadges()) {
+        console.log(`Creating badge for ${tech.techId} level ${tech.level}`);
+        try {
+            const createTechBadgeTx = await lilypadContract.submitBadge(
+                0,
+                tech.techId,
+                tech.level,
+                tech.badge
+            );
+
+            await createTechBadgeTx.wait(1);
+        } catch (e: any) {
+            console.log(e.message);
+        }
     }
 
     const lilyPadArtifact = await deployments.getArtifact("LilyPad");
