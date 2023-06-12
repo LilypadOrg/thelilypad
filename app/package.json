@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "db:dev:push": "dotenv -e .env.local -- npx prisma db push",
-    "db:dev:seed": "dotenv -e .env.local -- ts-node --compiler-options {\\\"module\\\":\\\"commonjs\\\"} prisma/seed.ts"
+    "db:dev:seed": "dotenv -e .env.local -- ts-node --compiler-options {\\\"module\\\":\\\"commonjs\\\"} prisma/seed.ts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.7",
@@ -65,5 +66,6 @@
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
-  }
+  },
+
 }
