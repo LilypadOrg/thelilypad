@@ -1,1 +1,46 @@
-{"1337":[{"contract":"LilyPad","address":"0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"},{"contract":"PondSBT","address":"0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf"},{"contract":"LilyPadTreasure","address":"0x2bdCC0de6bE1f7D2ee689a0342D76F52E8EFABa3"},{"contract":"LilyPadExecutor","address":"0x36C02dA8a0983159322a80FFE9F24b1acfF8B570"},{"contract":"LilyPadGovernor","address":"0x4c5859f0F772848b2D91F1D83E2Fe57935348029"}],"80001":[{"contract":"LilyPad","address":"0x9B6B004a7B55B1eeC741f89E62f05F7c07101e8B"},{"contract":"PondSBT","address":"0xA4327782e8dB795440c75cd9FaC689500eC605d8"},{"contract":"LilyPadTreasure","address":"0x42131215f9829f34b3777bB22a107bbF59C72a06"},{"contract":"LilyPadExecutor","address":"0x964fb53eCB36F3f4C6C27ac465aA581D0db094A9"},{"contract":"LilyPadGovernor","address":"0xd3DbA16910EB29Aa0f489Ad34C5b958E6fEB02Cc"}]}
+{
+  "1337": [
+    {
+      "contract": "LilyPad",
+      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+    },
+    {
+      "contract": "PondSBT",
+      "address": "0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf"
+    },
+    {
+      "contract": "LilyPadTreasure",
+      "address": "0x2bdCC0de6bE1f7D2ee689a0342D76F52E8EFABa3"
+    },
+    {
+      "contract": "LilyPadExecutor",
+      "address": "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570"
+    },
+    {
+      "contract": "LilyPadGovernor",
+      "address": "0x4c5859f0F772848b2D91F1D83E2Fe57935348029"
+    }
+  ],
+  "80001": [
+    {
+      "contract": "LilyPad",
+      "address": "0xe85EF2C4199117De8EbEaA7a6Dc14ddBf869a667"
+    },
+    {
+      "contract": "PondSBT",
+      "address": "0x7cD97C8EB5F3B668fCDb2fB378c84C79459AD44f"
+    },
+    {
+      "contract": "LilyPadTreasure",
+      "address": "0x48FB5C10Aa8c435E64DF3800705b6d937DBFFA0B"
+    },
+    {
+      "contract": "LilyPadExecutor",
+      "address": "0xfA91f493bc1935C74127035a4B755E8BcD7feF2E"
+    },
+    {
+      "contract": "LilyPadGovernor",
+      "address": "0xCddC179C36E425E79464054f47D6B3AAF86dAb5F"
+    }
+  ]
+}

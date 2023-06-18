@@ -23,6 +23,7 @@ import { BigNumber } from 'ethers';
 import Modal from './Modal';
 import { Dialog } from '@headlessui/react';
 
+//TODO: MAKE UPDATE PROFILE WORK
 const EditProfileModal = ({
   open,
   setOpen,
@@ -84,7 +85,7 @@ const EditProfileModal = ({
     abi: getLilyPadABI(),
     functionName: 'createMember',
     args: [
-      // userProfile?.address,
+      userProfile?.address,
       // BigNumber.from(userProfile?.address), // _member
       BigNumber.from(userProfile.xp), // _initialXP
       userProfile.courses
