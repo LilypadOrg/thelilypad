@@ -1,5 +1,27 @@
 const LilyPadAbi = [
   {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_address',
+        type: 'address',
+      },
+    ],
+    name: 'NotAFrog',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'techId',
+        type: 'uint256',
+      },
+    ],
+    name: 'TechNotFound',
+    type: 'error',
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -16,18 +38,49 @@ const LilyPadAbi = [
       },
       {
         indexed: false,
-        internalType: 'bytes',
-        name: 'badgeIdentifier',
-        type: 'bytes',
+        internalType: 'uint256',
+        name: 'techId',
+        type: 'uint256',
       },
       {
         indexed: false,
-        internalType: 'string',
-        name: 'badgeName',
-        type: 'string',
+        internalType: 'uint256',
+        name: 'level',
+        type: 'uint256',
       },
     ],
     name: 'BadgeEarned',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'member',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256[]',
+        name: 'eventId',
+        type: 'uint256[]',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'techId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'level',
+        type: 'uint256',
+      },
+    ],
+    name: 'BadgesEarned',
     type: 'event',
   },
   {
@@ -157,16 +210,42 @@ const LilyPadAbi = [
     type: 'event',
   },
   {
-    inputs: [{ internalType: 'uint256', name: '_journeyId', type: 'uint256' }],
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_journeyId',
+        type: 'uint256',
+      },
+    ],
     name: 'abandonJourney',
     outputs: [
       {
         components: [
-          { internalType: 'uint256', name: 'id', type: 'uint256' },
-          { internalType: 'address', name: 'member', type: 'address' },
-          { internalType: 'bytes', name: 'name', type: 'bytes' },
-          { internalType: 'bool', name: 'done', type: 'bool' },
-          { internalType: 'bool', name: 'badgeObligatory', type: 'bool' },
+          {
+            internalType: 'uint256',
+            name: 'id',
+            type: 'uint256',
+          },
+          {
+            internalType: 'address',
+            name: 'member',
+            type: 'address',
+          },
+          {
+            internalType: 'bytes',
+            name: 'name',
+            type: 'bytes',
+          },
+          {
+            internalType: 'bool',
+            name: 'done',
+            type: 'bool',
+          },
+          {
+            internalType: 'bool',
+            name: 'badgeObligatory',
+            type: 'bool',
+          },
         ],
         internalType: 'struct ILilyPad.Journey',
         name: '',
@@ -178,18 +257,43 @@ const LilyPadAbi = [
   },
   {
     inputs: [
-      { internalType: 'address', name: '_member', type: 'address' },
+      {
+        internalType: 'address',
+        name: '_member',
+        type: 'address',
+      },
       {
         components: [
-          { internalType: 'uint256', name: 'eventId', type: 'uint256' },
-          { internalType: 'bytes', name: 'title', type: 'bytes' },
-          { internalType: 'bytes', name: 'badge', type: 'bytes' },
+          {
+            internalType: 'uint256',
+            name: 'eventId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'techId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'level',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'badge',
+            type: 'bytes',
+          },
         ],
         internalType: 'struct ILilyPad.Accolade[]',
         name: '_badges',
         type: 'tuple[]',
       },
-      { internalType: 'bytes', name: '_sig', type: 'bytes' },
+      {
+        internalType: 'bytes',
+        name: '_sig',
+        type: 'bytes',
+      },
     ],
     name: 'awardBadge',
     outputs: [],
@@ -198,27 +302,68 @@ const LilyPadAbi = [
   },
   {
     inputs: [
-      { internalType: 'address', name: '_member', type: 'address' },
-      { internalType: 'uint256', name: '_eventId', type: 'uint256' },
-      { internalType: 'bytes', name: '_accoladeTitle', type: 'bytes' },
+      {
+        internalType: 'address',
+        name: '_member',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_eventId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_techId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_level',
+        type: 'uint256',
+      },
     ],
     name: 'badgeEarned',
-    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'address', name: 'member', type: 'address' }],
-    name: 'burnBabyBurn',
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'member',
+        type: 'address',
+      },
+    ],
+    name: 'burnBabeBurn',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
     inputs: [
-      { internalType: 'address', name: '_member', type: 'address' },
-      { internalType: 'uint256', name: '_eventId', type: 'uint256' },
-      { internalType: 'bytes', name: '_sig', type: 'bytes' },
+      {
+        internalType: 'address',
+        name: '_member',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_eventId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes',
+        name: '_sig',
+        type: 'bytes',
+      },
     ],
     name: 'completeEvent',
     outputs: [],
@@ -227,21 +372,49 @@ const LilyPadAbi = [
   },
   {
     inputs: [
-      { internalType: 'address', name: '_member', type: 'address' },
-      { internalType: 'uint256', name: '_eventId', type: 'uint256' },
+      {
+        internalType: 'address',
+        name: '_member',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_eventId',
+        type: 'uint256',
+      },
     ],
     name: 'completedEvent',
-    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [
-      { internalType: 'uint256', name: '_tokenId', type: 'uint256' },
-      { internalType: 'string', name: '_baseUri', type: 'string' },
+      {
+        internalType: 'uint256',
+        name: '_tokenId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'string',
+        name: '_baseUri',
+        type: 'string',
+      },
     ],
     name: 'constructTokenUri',
-    outputs: [{ internalType: 'string', name: '', type: 'string' }],
+    outputs: [
+      {
+        internalType: 'string',
+        name: '',
+        type: 'string',
+      },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
@@ -249,8 +422,16 @@ const LilyPadAbi = [
     inputs: [
       {
         components: [
-          { internalType: 'uint256', name: 'id', type: 'uint256' },
-          { internalType: 'bytes', name: 'name', type: 'bytes' },
+          {
+            internalType: 'uint256',
+            name: 'id',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'name',
+            type: 'bytes',
+          },
         ],
         internalType: 'struct ILilyPad.EventType[]',
         name: '_eventTypes',
@@ -264,20 +445,56 @@ const LilyPadAbi = [
   },
   {
     inputs: [
-      { internalType: 'uint256', name: '_journeyId', type: 'uint256' },
-      { internalType: 'bytes', name: '_name', type: 'bytes' },
-      { internalType: 'bool', name: '_badgeObligatory', type: 'bool' },
-      { internalType: 'uint256[]', name: '_eventId', type: 'uint256[]' },
+      {
+        internalType: 'uint256',
+        name: '_journeyId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes',
+        name: '_name',
+        type: 'bytes',
+      },
+      {
+        internalType: 'bool',
+        name: '_badgeObligatory',
+        type: 'bool',
+      },
+      {
+        internalType: 'uint256[]',
+        name: '_eventId',
+        type: 'uint256[]',
+      },
     ],
     name: 'createJourney',
     outputs: [
       {
         components: [
-          { internalType: 'uint256', name: 'id', type: 'uint256' },
-          { internalType: 'address', name: 'member', type: 'address' },
-          { internalType: 'bytes', name: 'name', type: 'bytes' },
-          { internalType: 'bool', name: 'done', type: 'bool' },
-          { internalType: 'bool', name: 'badgeObligatory', type: 'bool' },
+          {
+            internalType: 'uint256',
+            name: 'id',
+            type: 'uint256',
+          },
+          {
+            internalType: 'address',
+            name: 'member',
+            type: 'address',
+          },
+          {
+            internalType: 'bytes',
+            name: 'name',
+            type: 'bytes',
+          },
+          {
+            internalType: 'bool',
+            name: 'done',
+            type: 'bool',
+          },
+          {
+            internalType: 'bool',
+            name: 'badgeObligatory',
+            type: 'bool',
+          },
         ],
         internalType: 'struct ILilyPad.Journey',
         name: '',
@@ -291,10 +508,26 @@ const LilyPadAbi = [
     inputs: [
       {
         components: [
-          { internalType: 'uint256', name: 'level', type: 'uint256' },
-          { internalType: 'uint256', name: 'xpInit', type: 'uint256' },
-          { internalType: 'uint256', name: 'xpFin', type: 'uint256' },
-          { internalType: 'bytes', name: 'image', type: 'bytes' },
+          {
+            internalType: 'uint256',
+            name: 'level',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'xpInit',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'xpFin',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'image',
+            type: 'bytes',
+          },
         ],
         internalType: 'struct ILilyPad.Level[]',
         name: '_levels',
@@ -308,7 +541,16 @@ const LilyPadAbi = [
   },
   {
     inputs: [
-      { internalType: 'uint256', name: '_initialXp', type: 'uint256' },
+      {
+        internalType: 'address',
+        name: '_member',
+        type: 'string',
+      },
+      {
+        internalType: 'uint256',
+        name: '_initialXp',
+        type: 'uint256',
+      },
       {
         internalType: 'uint256[]',
         name: '_completedEvents',
@@ -316,15 +558,36 @@ const LilyPadAbi = [
       },
       {
         components: [
-          { internalType: 'uint256', name: 'eventId', type: 'uint256' },
-          { internalType: 'bytes', name: 'title', type: 'bytes' },
-          { internalType: 'bytes', name: 'badge', type: 'bytes' },
+          {
+            internalType: 'uint256',
+            name: 'eventId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'techId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'level',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'badge',
+            type: 'bytes',
+          },
         ],
         internalType: 'struct ILilyPad.Accolade[]',
         name: '_badges',
         type: 'tuple[]',
       },
-      { internalType: 'bytes', name: '_sig', type: 'bytes' },
+      {
+        internalType: 'bytes',
+        name: '_sig',
+        type: 'bytes',
+      },
     ],
     name: 'createMember',
     outputs: [],
@@ -332,19 +595,148 @@ const LilyPadAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'uint256', name: '_id', type: 'uint256' }],
-    name: 'getEvent',
-    outputs: [
-      { internalType: 'uint256', name: 'eventTypeId', type: 'uint256' },
-      { internalType: 'uint256', name: 'xp', type: 'uint256' },
+    inputs: [
       {
         components: [
-          { internalType: 'uint256', name: 'eventId', type: 'uint256' },
-          { internalType: 'bytes', name: 'title', type: 'bytes' },
-          { internalType: 'bytes', name: 'badge', type: 'bytes' },
+          {
+            internalType: 'uint256',
+            name: 'techId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'techName',
+            type: 'bytes',
+          },
         ],
-        internalType: 'struct ILilyPad.Accolade[]',
-        name: 'accolades',
+        internalType: 'struct ILilyPad.Technology[]',
+        name: '_technologies',
+        type: 'tuple[]',
+      },
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'techId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'level',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'badge',
+            type: 'bytes',
+          },
+        ],
+        internalType: 'struct ILilyPad.TechBadge[]',
+        name: '_badges',
+        type: 'tuple[]',
+      },
+    ],
+    name: 'createTechnology',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_member',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_eventId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_techId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_level',
+        type: 'uint256',
+      },
+    ],
+    name: 'getAwardedBadge',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'eventId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'techId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'level',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'badge',
+            type: 'bytes',
+          },
+        ],
+        internalType: 'struct ILilyPad.Accolade',
+        name: '',
+        type: 'tuple',
+      },
+      {
+        internalType: 'uint256',
+        name: 'badgeIndex',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_id',
+        type: 'uint256',
+      },
+    ],
+    name: 'getEvent',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: 'eventTypeId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'xp',
+        type: 'uint256',
+      },
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'techId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'techName',
+            type: 'bytes',
+          },
+        ],
+        internalType: 'struct ILilyPad.Technology[]',
+        name: 'eventTechs',
         type: 'tuple[]',
       },
     ],
@@ -353,14 +745,26 @@ const LilyPadAbi = [
   },
   {
     inputs: [
-      { internalType: 'uint256', name: '_eventTypeId', type: 'uint256' },
+      {
+        internalType: 'uint256',
+        name: '_eventTypeId',
+        type: 'uint256',
+      },
     ],
     name: 'getEventType',
     outputs: [
       {
         components: [
-          { internalType: 'uint256', name: 'id', type: 'uint256' },
-          { internalType: 'bytes', name: 'name', type: 'bytes' },
+          {
+            internalType: 'uint256',
+            name: 'id',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'name',
+            type: 'bytes',
+          },
         ],
         internalType: 'struct ILilyPad.EventType',
         name: '',
@@ -371,15 +775,37 @@ const LilyPadAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'uint256', name: '_levelId', type: 'uint256' }],
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_levelId',
+        type: 'uint256',
+      },
+    ],
     name: 'getLevel',
     outputs: [
       {
         components: [
-          { internalType: 'uint256', name: 'level', type: 'uint256' },
-          { internalType: 'uint256', name: 'xpInit', type: 'uint256' },
-          { internalType: 'uint256', name: 'xpFin', type: 'uint256' },
-          { internalType: 'bytes', name: 'image', type: 'bytes' },
+          {
+            internalType: 'uint256',
+            name: 'level',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'xpInit',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'xpFin',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'image',
+            type: 'bytes',
+          },
         ],
         internalType: 'struct ILilyPad.Level',
         name: '',
@@ -391,15 +817,39 @@ const LilyPadAbi = [
   },
   {
     inputs: [
-      { internalType: 'address', name: '_memberAddress', type: 'address' },
+      {
+        internalType: 'address',
+        name: '_memberAddress',
+        type: 'address',
+      },
     ],
     name: 'getMember',
     outputs: [
-      { internalType: 'bool', name: 'pathChosen', type: 'bool' },
-      { internalType: 'uint256', name: 'xp', type: 'uint256' },
-      { internalType: 'uint256', name: 'level', type: 'uint256' },
-      { internalType: 'bool', name: 'DAO', type: 'bool' },
-      { internalType: 'uint256', name: 'tokenId', type: 'uint256' },
+      {
+        internalType: 'bool',
+        name: 'pathChosen',
+        type: 'bool',
+      },
+      {
+        internalType: 'uint256',
+        name: 'xp',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'level',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bool',
+        name: 'DAO',
+        type: 'bool',
+      },
+      {
+        internalType: 'uint256',
+        name: 'tokenId',
+        type: 'uint256',
+      },
       {
         internalType: 'uint256[]',
         name: 'completedEvents',
@@ -407,9 +857,26 @@ const LilyPadAbi = [
       },
       {
         components: [
-          { internalType: 'uint256', name: 'eventId', type: 'uint256' },
-          { internalType: 'bytes', name: 'title', type: 'bytes' },
-          { internalType: 'bytes', name: 'badge', type: 'bytes' },
+          {
+            internalType: 'uint256',
+            name: 'eventId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'techId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'level',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'badge',
+            type: 'bytes',
+          },
         ],
         internalType: 'struct ILilyPad.Accolade[]',
         name: 'badges',
@@ -420,15 +887,45 @@ const LilyPadAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'uint256', name: '_tokenId', type: 'uint256' }],
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_tokenId',
+        type: 'uint256',
+      },
+    ],
     name: 'getMemberByTokenId',
     outputs: [
-      { internalType: 'address', name: 'memberAddress', type: 'address' },
-      { internalType: 'bool', name: 'pathChosen', type: 'bool' },
-      { internalType: 'uint256', name: 'xp', type: 'uint256' },
-      { internalType: 'uint256', name: 'level', type: 'uint256' },
-      { internalType: 'bool', name: 'DAO', type: 'bool' },
-      { internalType: 'uint256', name: 'tokenId', type: 'uint256' },
+      {
+        internalType: 'address',
+        name: 'memberAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'bool',
+        name: 'pathChosen',
+        type: 'bool',
+      },
+      {
+        internalType: 'uint256',
+        name: 'xp',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'level',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bool',
+        name: 'DAO',
+        type: 'bool',
+      },
+      {
+        internalType: 'uint256',
+        name: 'tokenId',
+        type: 'uint256',
+      },
       {
         internalType: 'uint256[]',
         name: 'completedEvents',
@@ -436,9 +933,26 @@ const LilyPadAbi = [
       },
       {
         components: [
-          { internalType: 'uint256', name: 'eventId', type: 'uint256' },
-          { internalType: 'bytes', name: 'title', type: 'bytes' },
-          { internalType: 'bytes', name: 'badge', type: 'bytes' },
+          {
+            internalType: 'uint256',
+            name: 'eventId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'techId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'level',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'badge',
+            type: 'bytes',
+          },
         ],
         internalType: 'struct ILilyPad.Accolade[]',
         name: 'badges',
@@ -450,19 +964,111 @@ const LilyPadAbi = [
   },
   {
     inputs: [
-      { internalType: 'address', name: '_memberAddress', type: 'address' },
+      {
+        internalType: 'address',
+        name: '_memberAddress',
+        type: 'address',
+      },
     ],
     name: 'getMemberLevel',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [
-      { internalType: 'address', name: '_memberAddress', type: 'address' },
+      {
+        internalType: 'uint256',
+        name: '_technologyId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'level',
+        type: 'uint256',
+      },
+    ],
+    name: 'getTechBadge',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'techId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'level',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'badge',
+            type: 'bytes',
+          },
+        ],
+        internalType: 'struct ILilyPad.TechBadge',
+        name: '',
+        type: 'tuple',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_technologyId',
+        type: 'uint256',
+      },
+    ],
+    name: 'getTechnology',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'techId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'techName',
+            type: 'bytes',
+          },
+        ],
+        internalType: 'struct ILilyPad.Technology',
+        name: '',
+        type: 'tuple',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_memberAddress',
+        type: 'address',
+      },
     ],
     name: 'getTokenId',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
@@ -470,10 +1076,26 @@ const LilyPadAbi = [
     inputs: [
       {
         components: [
-          { internalType: 'uint256', name: 'level', type: 'uint256' },
-          { internalType: 'uint256', name: 'xpInit', type: 'uint256' },
-          { internalType: 'uint256', name: 'xpFin', type: 'uint256' },
-          { internalType: 'bytes', name: 'image', type: 'bytes' },
+          {
+            internalType: 'uint256',
+            name: 'level',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'xpInit',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'xpFin',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'image',
+            type: 'bytes',
+          },
         ],
         internalType: 'struct ILilyPad.Level[]',
         name: '_levels',
@@ -481,14 +1103,43 @@ const LilyPadAbi = [
       },
       {
         components: [
-          { internalType: 'uint256', name: 'id', type: 'uint256' },
-          { internalType: 'bytes', name: 'name', type: 'bytes' },
+          {
+            internalType: 'uint256',
+            name: 'id',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'name',
+            type: 'bytes',
+          },
         ],
         internalType: 'struct ILilyPad.EventType[]',
         name: '_eventTypes',
         type: 'tuple[]',
       },
-      { internalType: 'address', name: '_safeCaller', type: 'address' },
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'techId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'techName',
+            type: 'bytes',
+          },
+        ],
+        internalType: 'struct ILilyPad.Technology[]',
+        name: '_technologies',
+        type: 'tuple[]',
+      },
+      {
+        internalType: 'address',
+        name: '_safeCaller',
+        type: 'address',
+      },
     ],
     name: 'initialize',
     outputs: [],
@@ -497,18 +1148,11 @@ const LilyPadAbi = [
   },
   {
     inputs: [
-      { internalType: 'address', name: '_member', type: 'address' },
-      { internalType: 'uint256', name: '_currentXp', type: 'uint256' },
-      { internalType: 'bytes', name: '_sig', type: 'bytes' },
-    ],
-    name: 'levelMember',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      { internalType: 'address', name: '_memberAddress', type: 'address' },
+      {
+        internalType: 'address',
+        name: '_memberAddress',
+        type: 'address',
+      },
     ],
     name: 'mintTokenForMember',
     outputs: [],
@@ -518,7 +1162,13 @@ const LilyPadAbi = [
   {
     inputs: [],
     name: 'owner',
-    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
@@ -532,14 +1182,26 @@ const LilyPadAbi = [
   {
     inputs: [],
     name: 'safeCaller',
-    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'sbtAddress',
-    outputs: [{ internalType: 'contract IPondSBT', name: '', type: 'address' }],
+    outputs: [
+      {
+        internalType: 'contract IPondSBT',
+        name: '',
+        type: 'address',
+      },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
@@ -558,21 +1220,69 @@ const LilyPadAbi = [
   },
   {
     inputs: [
-      { internalType: 'uint256', name: '_eventId', type: 'uint256' },
-      { internalType: 'uint256', name: '_eventTypeId', type: 'uint256' },
-      { internalType: 'bytes', name: '_eventName', type: 'bytes' },
-      { internalType: 'uint256', name: '_xp', type: 'uint256' },
       {
-        components: [
-          { internalType: 'uint256', name: 'eventId', type: 'uint256' },
-          { internalType: 'bytes', name: 'title', type: 'bytes' },
-          { internalType: 'bytes', name: 'badge', type: 'bytes' },
-        ],
-        internalType: 'struct ILilyPad.Accolade[]',
-        name: '_accolades',
-        type: 'tuple[]',
+        internalType: 'uint256',
+        name: '_eventId',
+        type: 'uint256',
       },
-      { internalType: 'bytes', name: '_sig', type: 'bytes' },
+      {
+        internalType: 'uint256',
+        name: '_techId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_level',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes',
+        name: '_badge',
+        type: 'bytes',
+      },
+    ],
+    name: 'submitBadge',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_eventId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_eventTypeId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes',
+        name: '_eventName',
+        type: 'bytes',
+      },
+      {
+        internalType: 'uint256',
+        name: '_xp',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_level',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256[]',
+        name: '_technologies',
+        type: 'uint256[]',
+      },
+      {
+        internalType: 'bytes',
+        name: '_sig',
+        type: 'bytes',
+      },
     ],
     name: 'submitEvent',
     outputs: [],
@@ -580,7 +1290,13 @@ const LilyPadAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'address', name: 'newOwner', type: 'address' }],
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address',
+      },
+    ],
     name: 'transferOwnership',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -588,21 +1304,36 @@ const LilyPadAbi = [
   },
   {
     inputs: [
-      { internalType: 'uint256', name: '_id', type: 'uint256' },
-      { internalType: 'uint256', name: '_eventTypeId', type: 'uint256' },
-      { internalType: 'bytes', name: '_eventName', type: 'bytes' },
-      { internalType: 'uint256', name: '_xp', type: 'uint256' },
       {
-        components: [
-          { internalType: 'uint256', name: 'eventId', type: 'uint256' },
-          { internalType: 'bytes', name: 'title', type: 'bytes' },
-          { internalType: 'bytes', name: 'badge', type: 'bytes' },
-        ],
-        internalType: 'struct ILilyPad.Accolade[]',
-        name: '_accolades',
-        type: 'tuple[]',
+        internalType: 'uint256',
+        name: '_id',
+        type: 'uint256',
       },
-      { internalType: 'bytes', name: '_sig', type: 'bytes' },
+      {
+        internalType: 'uint256',
+        name: '_eventTypeId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes',
+        name: '_eventName',
+        type: 'bytes',
+      },
+      {
+        internalType: 'uint256',
+        name: '_xp',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256[]',
+        name: '_technologies',
+        type: 'uint256[]',
+      },
+      {
+        internalType: 'bytes',
+        name: '_sig',
+        type: 'bytes',
+      },
     ],
     name: 'updateEvent',
     outputs: [],
@@ -611,20 +1342,56 @@ const LilyPadAbi = [
   },
   {
     inputs: [
-      { internalType: 'uint256', name: '_journeyId', type: 'uint256' },
-      { internalType: 'bytes', name: '_name', type: 'bytes' },
-      { internalType: 'bool', name: '_badgeObligatory', type: 'bool' },
-      { internalType: 'uint256[]', name: '_eventsId', type: 'uint256[]' },
+      {
+        internalType: 'uint256',
+        name: '_journeyId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes',
+        name: '_name',
+        type: 'bytes',
+      },
+      {
+        internalType: 'bool',
+        name: '_badgeObligatory',
+        type: 'bool',
+      },
+      {
+        internalType: 'uint256[]',
+        name: '_eventsId',
+        type: 'uint256[]',
+      },
     ],
     name: 'updateJourney',
     outputs: [
       {
         components: [
-          { internalType: 'uint256', name: 'id', type: 'uint256' },
-          { internalType: 'address', name: 'member', type: 'address' },
-          { internalType: 'bytes', name: 'name', type: 'bytes' },
-          { internalType: 'bool', name: 'done', type: 'bool' },
-          { internalType: 'bool', name: 'badgeObligatory', type: 'bool' },
+          {
+            internalType: 'uint256',
+            name: 'id',
+            type: 'uint256',
+          },
+          {
+            internalType: 'address',
+            name: 'member',
+            type: 'address',
+          },
+          {
+            internalType: 'bytes',
+            name: 'name',
+            type: 'bytes',
+          },
+          {
+            internalType: 'bool',
+            name: 'done',
+            type: 'bool',
+          },
+          {
+            internalType: 'bool',
+            name: 'badgeObligatory',
+            type: 'bool',
+          },
         ],
         internalType: 'struct ILilyPad.Journey',
         name: '',
@@ -636,9 +1403,21 @@ const LilyPadAbi = [
   },
   {
     inputs: [
-      { internalType: 'address', name: '_memberAddress', type: 'address' },
-      { internalType: 'bool', name: '_dao', type: 'bool' },
-      { internalType: 'uint256', name: '_xp', type: 'uint256' },
+      {
+        internalType: 'address',
+        name: '_memberAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'bool',
+        name: '_dao',
+        type: 'bool',
+      },
+      {
+        internalType: 'uint256',
+        name: '_xp',
+        type: 'uint256',
+      },
       {
         internalType: 'uint256[]',
         name: '_completedEvents',
@@ -646,15 +1425,36 @@ const LilyPadAbi = [
       },
       {
         components: [
-          { internalType: 'uint256', name: 'eventId', type: 'uint256' },
-          { internalType: 'bytes', name: 'title', type: 'bytes' },
-          { internalType: 'bytes', name: 'badge', type: 'bytes' },
+          {
+            internalType: 'uint256',
+            name: 'eventId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'techId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'level',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes',
+            name: 'badge',
+            type: 'bytes',
+          },
         ],
         internalType: 'struct ILilyPad.Accolade[]',
         name: '_badges',
         type: 'tuple[]',
       },
-      { internalType: 'bytes', name: '_sig', type: 'bytes' },
+      {
+        internalType: 'bytes',
+        name: '_sig',
+        type: 'bytes',
+      },
     ],
     name: 'updateMember',
     outputs: [],
@@ -663,7 +1463,11 @@ const LilyPadAbi = [
   },
   {
     inputs: [
-      { internalType: 'address', name: '_newSafeCaller', type: 'address' },
+      {
+        internalType: 'address',
+        name: '_newSafeCaller',
+        type: 'address',
+      },
     ],
     name: 'updateSafeCaller',
     outputs: [],

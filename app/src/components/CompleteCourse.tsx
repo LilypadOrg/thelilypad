@@ -38,7 +38,8 @@ export const CompleteCourse = ({
         courseId: courseId,
       },
       {
-        enabled: !!onChainProfile && onChainProfile.pathChosen && !completed,
+        enabled:
+          !!onChainProfile && onChainProfile.pathChosen && !completed,
       }
     );
 
