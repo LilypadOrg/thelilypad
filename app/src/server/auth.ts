@@ -72,8 +72,6 @@ export const authOptions: NextAuthOptions = {
             JSON.parse(credentials?.message || '{}')
           );
 
-          console.log(`NEXTAUTH_URL: ${process.env.NEXTAUTH_URL}`);
-
           const nextAuthUrl =
             process.env.NEXTAUTH_URL ||
             (process.env.VERCEL_URL
