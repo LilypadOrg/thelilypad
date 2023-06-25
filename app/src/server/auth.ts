@@ -100,7 +100,7 @@ export const authOptions: NextAuthOptions = {
           // if (siwe.nonce !== (await getCsrfToken({ req }))) {
           //   return null;
           // }
-          console.log(siwe);
+
           await siwe.validate(credentials?.signature || '');
           const user = await prisma.user.upsert({
             where: { address: siwe.address },
