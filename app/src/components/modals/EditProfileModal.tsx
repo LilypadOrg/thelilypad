@@ -85,13 +85,11 @@ const EditProfileModal = ({
     abi: getLilyPadABI(),
     functionName: 'createMember',
     args: [
-      userProfile?.address,
+      userProfile.address,
       BigNumber.from(userProfile.xp), // _initialXP
-      (userProfile?.courses?.length ?? 0) > 0
-        ? userProfile.courses
-            .filter((c) => c.completed)
-            .map((c) => BigNumber.from(c.courseId))
-        : [], // -completedEvents
+      userProfile.courses
+        .filter((c) => c.completed)
+        .map((c) => BigNumber.from(c.courseId)) || [], // -completedEvents
       [], // _badges
       createMemberSignature as `0x${string}`, // _sig
     ],
@@ -104,7 +102,6 @@ const EditProfileModal = ({
   const { isLoading: isLoadingCreateMember } = useWaitForTransaction({
     hash: createMemberRes?.hash,
     onSuccess: () => {
-      console.log('teste');
       const data = getValues();
       updateProfile({
         username: data.username,
@@ -112,9 +109,6 @@ const EditProfileModal = ({
         technologies: selectedSkills.map((t) => t.id),
         hasOnChainProfile: true,
       });
-    },
-    onError: (e) => {
-      console.log(e.message);
     },
   });
 
@@ -157,7 +151,6 @@ const EditProfileModal = ({
   });
 
   const onSubmit: SubmitHandler<Inputs> = ({ username, bio }) => {
-    console.log(createMemberConfig);
     if (mode === 'create') {
       if (createMember) createMember({});
     } else {

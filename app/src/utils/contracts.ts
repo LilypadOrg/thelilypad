@@ -5,7 +5,8 @@ import { wagmiClient } from './rainbowkit';
 import LilyPadTreasureContract from './contracts/LilyPadTreasure.json';
 import LilyPadGovernorContract from './contracts/LilyPadGovernor.json';
 import LilyPadExecutorContract from './contracts/LilyPadExecutor.json';
-import LilyPadAbi from './contracts/LilyPad';
+import LiLyPadContract from './contracts/LilyPad.json';
+//import LilyPadAbi from './contracts/LilyPad';
 import PondSBT from './contracts/PondSBT';
 
 const addresses: {
@@ -29,7 +30,7 @@ const getContractAddress = (contractName: string) => {
     throw new Error(
       `No contract address found for ${contractName} on ${chainId}`
     );
-
+  //console.log(`${contractName} - ${contractAddress}`);
   return contractAddress;
 };
 
@@ -54,8 +55,8 @@ export const getLilyPadExecutorAddress = () => {
 };
 
 export const getLilyPadABI = () => {
-  // return LiLyPadContract.abi;
-  return LilyPadAbi;
+  return LiLyPadContract.abi;
+  //return LilyPadAbi;
   //return LiLyPadContract.abi;
 };
 

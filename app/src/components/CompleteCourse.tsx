@@ -39,7 +39,7 @@ export const CompleteCourse = ({
       },
       {
         enabled:
-          !!onChainProfile && onChainProfile.pathChosen && !completed,
+          !!onChainProfile && (onChainProfile as any).pathChosen && !completed,
       }
     );
 
@@ -68,7 +68,7 @@ export const CompleteCourse = ({
   const { mutate: mutateCompleted, isLoading: isLoadingMutateCompleted } =
     api.usercourses.complete.useMutation({
       onSuccess: (data) => {
-        if (onChainProfile?.pathChosen && data.levelUp) {
+        if ((onChainProfile as any)?.pathChosen && data.levelUp) {
           setLevelUpModal({
             prevSBT: getSBTLocalURL(data.user.levelNumber - 1),
             currSBT: getSBTLocalURL(data.user.levelNumber),

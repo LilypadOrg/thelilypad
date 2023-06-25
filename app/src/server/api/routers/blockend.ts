@@ -15,9 +15,9 @@ export const blockenRouter = createTRPCRouter({
       })
     )
     .query(async ({ input }) => {
-      console.log(`Member: ${input.member}`);
-      console.log(`Xp: ${input.xp}`);
-      console.log(`Courses: ${input.courses}`);
+      //console.log(`Member: ${input.member}`);
+      //console.log(`Xp: ${input.xp}`);
+      //console.log(`Courses: ${input.courses}`);
 
       const ethHash = ethers.utils.solidityKeccak256(
         ['address', 'uint256', 'uint256[]', 'string'],
@@ -30,7 +30,7 @@ export const blockenRouter = createTRPCRouter({
         ethers.utils.arrayify(ethHash)
       );
 
-      console.log(`Create Member Signature: ${ethSignature}`);
+      //console.log(`Create Member Signature: ${ethSignature}`);
       return ethSignature;
     }),
 
