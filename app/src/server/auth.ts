@@ -87,12 +87,8 @@ export const authOptions: NextAuthOptions = {
             nextAuthUrl?.substring(0, nextAuthUrl?.indexOf('-')) +
             nextAuthUrl?.substring(nextAuthUrl?.indexOf('.'));
 
-          console.log(`Clean authUrl: ${cleanNextAuthUrl}`);
-
           const nextAuthHost = new URL(cleanNextAuthUrl).host;
           if (siwe.domain !== nextAuthHost) {
-            console.log(`Siwe Domain: ${siwe.domain}`);
-            console.log(`nextAuthHost: ${nextAuthHost}`);
             throw new Error('siwe domain does not match nextAuthURL host');
           }
 

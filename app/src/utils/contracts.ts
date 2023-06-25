@@ -34,7 +34,6 @@ const getContractAddress = (contractName: string) => {
 };
 
 export const getLilyPadAddress = () => {
-  console.log(getContractAddress('LilyPad'));
   return getContractAddress('LilyPad');
 };
 
