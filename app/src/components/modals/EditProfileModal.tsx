@@ -88,9 +88,11 @@ const EditProfileModal = ({
       userProfile?.address,
       // BigNumber.from(userProfile?.address), // _member
       BigNumber.from(userProfile.xp), // _initialXP
-      userProfile.courses
-        .filter((c) => c.completed)
-        .map((c) => BigNumber.from(c.courseId)), // -completedEvents
+      (userProfile?.courses?.length ?? 0) > 0
+        ? userProfile.courses
+            .filter((c) => c.completed)
+            .map((c) => BigNumber.from(c.courseId))
+        : [], // -completedEvents
       [], // _badges
       createMemberSignature as `0x${string}`, // _sig
     ],
