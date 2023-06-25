@@ -83,7 +83,7 @@ export const authOptions: NextAuthOptions = {
           }
 
           //try to get the deployment info out of it
-          let cleanNextAuthUrl =
+          const cleanNextAuthUrl =
             nextAuthUrl?.substring(0, nextAuthUrl?.indexOf('-')) +
             nextAuthUrl?.substring(nextAuthUrl?.indexOf('.'));
 
