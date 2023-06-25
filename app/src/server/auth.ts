@@ -84,6 +84,8 @@ export const authOptions: NextAuthOptions = {
 
           const nextAuthHost = new URL(nextAuthUrl).host;
           if (siwe.domain !== nextAuthHost) {
+            console.log(`Siwe Domain: ${siwe.domain}`);
+            console.log(`nextAuthHost: ${nextAuthHost}`);
             throw new Error('siwe domain does not match nextAuthURL host');
           }
 
@@ -91,7 +93,7 @@ export const authOptions: NextAuthOptions = {
           // if (siwe.nonce !== (await getCsrfToken({ req }))) {
           //   return null;
           // }
-
+          console.log(siwe);
           await siwe.validate(credentials?.signature || '');
           const user = await prisma.user.upsert({
             where: { address: siwe.address },
