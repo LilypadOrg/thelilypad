@@ -86,7 +86,6 @@ const EditProfileModal = ({
     functionName: 'createMember',
     args: [
       userProfile?.address,
-      // BigNumber.from(userProfile?.address), // _member
       BigNumber.from(userProfile.xp), // _initialXP
       (userProfile?.courses?.length ?? 0) > 0
         ? userProfile.courses
@@ -112,6 +111,9 @@ const EditProfileModal = ({
         technologies: selectedSkills.map((t) => t.id),
         hasOnChainProfile: true,
       });
+    },
+    onError: (e) => {
+      console.log(e.message);
     },
   });
 
