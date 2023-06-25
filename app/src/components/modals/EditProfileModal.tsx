@@ -154,6 +154,7 @@ const EditProfileModal = ({
   });
 
   const onSubmit: SubmitHandler<Inputs> = ({ username, bio }) => {
+    console.log(createMemberConfig);
     if (mode === 'create') {
       if (createMember) createMember({});
     } else {
