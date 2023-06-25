@@ -89,7 +89,7 @@ export const authOptions: NextAuthOptions = {
 
           console.log(`Clean authUrl: ${cleanNextAuthUrl}`);
 
-          const nextAuthHost = new URL(nextAuthUrl).host;
+          const nextAuthHost = new URL(cleanNextAuthUrl).host;
           if (siwe.domain !== nextAuthHost) {
             console.log(`Siwe Domain: ${siwe.domain}`);
             console.log(`nextAuthHost: ${nextAuthHost}`);
