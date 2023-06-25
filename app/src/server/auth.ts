@@ -82,10 +82,14 @@ export const authOptions: NextAuthOptions = {
             throw new Error('Next Auth URL not defined!');
           }
 
-          const nextAuthHost = new URL(nextAuthUrl).host?.replace(
-            '-nmzx2kzap-the-lily-pad',
-            ''
-          );
+          //try to get the deployment info out of it
+          let cleanNextAuthUrl =
+            nextAuthUrl?.substring(0, nextAuthUrl?.indexOf('-')) +
+            nextAuthUrl?.substring(nextAuthUrl?.indexOf('.'));
+
+          console.log(`Clean authUrl: ${cleanNextAuthUrl}`);
+
+          const nextAuthHost = new URL(nextAuthUrl).host;
           if (siwe.domain !== nextAuthHost) {
             console.log(`Siwe Domain: ${siwe.domain}`);
             console.log(`nextAuthHost: ${nextAuthHost}`);
