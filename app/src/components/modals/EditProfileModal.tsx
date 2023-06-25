@@ -104,6 +104,7 @@ const EditProfileModal = ({
   const { isLoading: isLoadingCreateMember } = useWaitForTransaction({
     hash: createMemberRes?.hash,
     onSuccess: () => {
+      console.log('teste');
       const data = getValues();
       updateProfile({
         username: data.username,
